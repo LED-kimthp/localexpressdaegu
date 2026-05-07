@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Local Express Daegu</title><style>
+*{box-sizing:border-box} :root{--bg:#f5f2eb;--ink:#141412;--muted:#77736a;--line:#d8d1c5;--panel:#fbfaf6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5} a{color:inherit}
+.top{position:sticky;top:0;z-index:9;height:66px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(245,242,235,.9);backdrop-filter:blur(12px)}
+.brand{font-size:12px;letter-spacing:.18em}.nav{display:flex;gap:17px;font-size:12px;color:var(--muted)}.nav a{text-decoration:none}.util{justify-self:end;font-size:11px;color:var(--muted)}
+.hero{min-height:calc(100vh - 66px);display:grid;grid-template-columns:1.05fr .95fr;gap:40px;padding:74px 44px 56px;border-bottom:1px solid var(--line)}
+h1{font-size:clamp(56px,8vw,132px);line-height:.88;letter-spacing:-.078em;margin:0 0 42px;font-weight:400}.hero-main{font-size:clamp(27px,3vw,48px);line-height:1.18;letter-spacing:-.045em}.en{color:var(--muted);font-size:13px;line-height:1.72}
+.hero-side{display:flex;flex-direction:column;justify-content:space-between}.note{font-size:17px;line-height:1.82;word-break:keep-all}.kicker{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted)}
+.actions{display:flex;flex-direction:column;gap:10px}.action{display:flex;justify-content:space-between;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:14px 18px;font-size:14px}.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.layout{display:grid;grid-template-columns:315px minmax(0,1fr)}.side{position:sticky;top:66px;height:calc(100vh - 66px);overflow:auto;padding:28px;border-right:1px solid var(--line)}
+.side a{display:block;text-decoration:none;padding:17px 0;border-top:1px solid var(--line)}.side strong{display:block;font-weight:400;font-size:14px}.side small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+.intro{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;padding:70px 44px;border-bottom:1px solid var(--line)}.intro h2{font-size:clamp(34px,4.4vw,72px);line-height:.96;letter-spacing:-.065em;margin:12px 0 0;font-weight:400}
+.project{min-height:100vh;display:grid;grid-template-columns:minmax(340px,.68fr) minmax(520px,1.32fr);grid-template-rows:auto auto 1fr;gap:28px 38px;padding:54px 44px;border-bottom:1px solid var(--line)}
+.project h2{font-size:clamp(36px,5vw,78px);line-height:.96;letter-spacing:-.067em;margin:12px 0 0;font-weight:400}
+.frame{grid-column:2;grid-row:1/3;min-height:360px;max-height:60vh;border:1px solid var(--line);border-radius:28px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.22)}
+.frame img{width:100%;height:100%;max-height:60vh;object-fit:contain}.text{grid-column:1/3;grid-row:3;border-top:1px solid var(--line);padding-top:28px;margin-top:16px}
+.short{display:grid;grid-template-columns:1fr 1fr;gap:34px}.short p{margin:0 0 18px;font-size:16px;line-height:1.82;word-break:keep-all}
+.toggle{border:0;border-bottom:1px solid var(--line);background:transparent;padding:8px 0 7px;font-size:13px;letter-spacing:.06em;cursor:pointer;width:max-content}
+.archive{border-top:1px solid var(--line);margin-top:28px;padding-top:28px}.archive p{font-size:15px;line-height:1.9;word-break:keep-all}.archive-title{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+
+.gallery,.pdf,.hold{margin-top:36px;padding-top:30px;border-top:1px solid var(--line)}.gallery-head{display:grid;grid-template-columns:minmax(220px,.55fr) minmax(320px,1fr);gap:24px;align-items:end;margin-bottom:22px}.gallery-head h4,.pdf h4,.hold h4{font-weight:400;font-size:28px;letter-spacing:-.035em;margin:8px 0 0}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px}.thumb{flex:0 0 74px;height:48px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.24);cursor:pointer}.thumb.active{background:var(--ink);color:var(--bg)}
+.viewer{position:relative;min-height:430px;border:1px solid var(--line);border-radius:28px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.22)}
+.viewer img{width:100%;height:100%;max-height:70vh;object-fit:contain}.zone{position:absolute;top:0;bottom:0;width:50%;z-index:2}.left{left:0}.right{right:0}.caption{display:flex;gap:12px;margin-top:12px;font-size:12px;color:var(--muted)}
+.pdf-card{border:1px solid var(--line);border-radius:28px;padding:28px;margin-top:18px;background:rgba(255,255,255,.22);display:grid;grid-template-columns:minmax(260px,.7fr) 1fr;gap:26px;align-items:center}
+.pdf-card img{width:100%;max-height:360px;object-fit:contain;border-radius:18px;border:1px solid var(--line);background:white}.pdf-actions a,.pdf-actions span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:10px 14px;margin:12px 8px 0 0;text-decoration:none;font-size:13px}.pdf-actions span{color:var(--muted)}
+.contact{padding:72px 44px;border-bottom:1px solid var(--line)}.contact h2{font-size:56px;font-weight:400;letter-spacing:-.05em;margin:12px 0 28px}.contact a{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:10px 14px;text-decoration:none;margin-right:8px;font-size:13px}
+.footer{display:grid;grid-template-columns:1fr 1.4fr 1.2fr .9fr;gap:24px;padding:30px 44px 44px;font-size:11px;line-height:1.75;color:var(--muted);border-top:1px solid var(--line)}
+@media(max-width:1000px){.top{grid-template-columns:1fr auto;padding:0 18px}.nav,.util,.side{display:none}.hero,.intro,.project{display:block;padding:48px 20px}.layout{display:block}.frame{margin:24px 0;min-height:260px;max-height:none}.frame img{max-height:none}.short,.gallery-head,.pdf-card{display:block}.viewer{min-height:280px}.footer{display:block}.footer div{margin-bottom:18px}}
+
+/* v019 two-page linked refinement */
+.brand{letter-spacing:.08em;white-space:pre-line;line-height:1.25}
+.project{min-height:auto;display:block;padding:62px 44px;border-bottom:1px solid var(--line)}
+.project h2{max-width:980px;font-size:clamp(34px,5vw,72px)}
+.project-subtitle{font-size:clamp(22px,2.5vw,34px);color:var(--muted);letter-spacing:-.035em}
+.frame{display:none!important}
+.text{border-top:1px solid var(--line);padding-top:26px;margin-top:28px}
+.short{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
+.archive{max-width:980px}
+.reference-images{margin-top:34px;padding-top:28px;border-top:1px solid var(--line)}
+.reference-head{display:grid;grid-template-columns:minmax(190px,.38fr) 1fr;gap:24px;align-items:end;margin-bottom:18px}
+.reference-head h4{font-weight:400;font-size:24px;letter-spacing:-.035em;margin:6px 0 0}
+.reference-head p{font-size:13px!important;color:var(--muted);line-height:1.65;margin:0!important;white-space:pre-line}
+.ref-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:980px}
+.ref-grid figure{margin:0;border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.2)}
+.ref-grid img{display:block;width:100%;height:220px;object-fit:contain;background:var(--panel);border-radius:12px}
+.ref-grid figcaption{font-size:11px;color:var(--muted);line-height:1.55;margin-top:8px}
+.gallery,.pdf,.hold{display:none!important}
+@media(max-width:1000px){.project{padding:48px 20px}.short,.reference-head{display:block}.ref-grid{grid-template-columns:1fr}.ref-grid img{height:auto;max-height:260px}.project h2{font-size:44px}.project-subtitle{font-size:22px}}
+
+/* v020 refinement */
+.project{min-height:auto;display:grid;grid-template-columns:minmax(280px,.72fr) minmax(320px,1fr);gap:26px 36px;align-items:end;padding:58px 44px 64px;border-bottom:1px solid var(--line)}
+.project>div:first-child{grid-column:1}
+.project>.frame{grid-column:2;display:flex!important;min-height:260px;max-height:320px;height:300px;margin:0;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:rgba(255,255,255,.22);align-items:center;justify-content:center}
+.project>.frame img{width:100%;height:100%;object-fit:contain}
+.project>.text{grid-column:1/3;border-top:1px solid var(--line);padding-top:24px;margin-top:8px}
+.reference-head{display:grid;grid-template-columns:minmax(190px,.36fr) 1fr;gap:24px;align-items:end;margin-bottom:18px}
+.reference-head h4{display:none!important}
+.reference-head p{font-size:13px!important;color:var(--muted);line-height:1.65;margin:0!important;white-space:pre-line}
+.ref-grid img{height:190px}
+.en-inline,.en{color:var(--muted)}
+@media(max-width:1000px){
+  .project{display:block;padding:44px 20px 54px}
+  .project>.frame{height:260px;margin:22px 0}
+  .project>.text{border-top:1px solid var(--line);padding-top:22px}
+  .short,.reference-head{display:block}
+  .ref-grid{grid-template-columns:1fr}
+  .ref-grid img{height:auto;max-height:260px}
+}
+
+
+/* v022 refinement */
+.top{grid-template-columns:1fr auto 1fr}
+.brand{letter-spacing:.08em;white-space:pre-line;line-height:1.2}
+.hero{min-height:72vh;align-items:center;padding:58px 44px 60px}
+.hero-brandline{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero-led{font-size:clamp(90px,14vw,210px);line-height:.82;letter-spacing:-.09em;font-weight:400;margin:0}
+.hero-archive{font-size:18px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:8px 0 26px}
+.hero-main{max-width:12ch}
+.hero .en{max-width:38ch}
+.hero-side{justify-content:flex-end;gap:26px}
+.project{min-height:auto;display:grid;grid-template-columns:minmax(280px,.72fr) minmax(320px,1fr);gap:26px 36px;align-items:end;padding:58px 44px 64px;border-bottom:1px solid var(--line)}
+.project>div:first-child{grid-column:1}
+.project>.frame{grid-column:2;position:relative;display:flex!important;min-height:260px;max-height:320px;height:300px;margin:0;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:rgba(255,255,255,.22);align-items:center;justify-content:center}
+.project>.frame img{width:100%;height:100%;object-fit:contain}
+.frame-note{position:absolute;left:18px;bottom:18px;display:flex;flex-direction:column;gap:4px;max-width:52%;padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(251,250,246,.84);backdrop-filter:blur(8px)}
+.frame-note strong{font-size:14px;font-weight:400;line-height:1.35}
+.frame-note span{font-size:11px;line-height:1.5;color:var(--muted)}
+.project>.text{grid-column:1/3;border-top:1px solid var(--line);padding-top:24px;margin-top:8px}
+.short{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start;max-width:1100px}
+.short.center-split{grid-template-columns:minmax(280px,420px) minmax(280px,420px);justify-content:center;gap:54px}
+.short p{margin:0 0 18px;font-size:16px;line-height:1.88;word-break:keep-all}
+.short p.en{font-size:15px;line-height:1.9}
+.reference-images{margin-top:34px;padding-top:28px;border-top:1px solid var(--line)}
+.reference-head{display:grid;grid-template-columns:minmax(190px,.36fr) 1fr;gap:24px;align-items:end;margin-bottom:18px}
+.reference-head p{font-size:13px!important;color:var(--muted);line-height:1.68;margin:0!important;white-space:pre-line}
+.project-subtitle{display:block;font-size:clamp(22px,2.4vw,34px);color:var(--muted);letter-spacing:-.035em;line-height:1.18;margin-top:10px}
+#pan .project-subtitle{max-width:20ch}
+#letter h2 .project-subtitle{font-size:clamp(20px,2vw,28px)}
+@media(max-width:1000px){
+  .hero{min-height:auto;padding:42px 20px 48px;display:block}
+  .hero-led{font-size:112px}
+  .hero-archive{font-size:14px;margin-bottom:20px}
+  .hero-side{display:block;margin-top:32px}
+  .project{display:block;padding:44px 20px 54px}
+  .project>.frame{height:260px;margin:22px 0}
+  .frame-note{position:static;max-width:none;margin:12px}
+  .short,.short.center-split,.reference-head{display:block}
+  .short p.en{margin-top:18px}
+}
+
+/* v023 consolidated refinement */
+.top .brand-link{display:block;text-decoration:none;color:inherit;cursor:pointer}
+.top .brand-link:hover{opacity:.72}
+.hero{max-width:1560px;margin:0 auto;min-height:70vh;align-items:center;padding:56px 52px 58px;grid-template-columns:minmax(420px,.9fr) minmax(420px,.72fr);gap:72px}
+.hero-side{max-width:560px;justify-self:start;justify-content:flex-end;gap:26px}
+.hero .actions{max-width:560px}
+.hero-brandline{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero-led{font-size:clamp(92px,13vw,205px);line-height:.82;letter-spacing:-.09em;font-weight:400;margin:0}
+.hero-archive{font-size:17px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:8px 0 26px}
+.hero-main{white-space:normal;max-width:12ch}
+.section-title-en{margin-top:22px;font-size:17px;line-height:1.65;color:var(--muted);max-width:660px}
+#projects h2{font-size:clamp(32px,4.5vw,66px)}
+.project{max-width:1560px;margin:0 auto;display:grid;grid-template-columns:minmax(360px,.68fr) minmax(460px,1fr);grid-template-rows:auto auto auto;gap:28px 48px;align-items:center;padding:58px 52px 66px;border-bottom:1px solid var(--line)}
+.project>div:first-child{grid-column:1/3;grid-row:1}
+.project>.frame{grid-column:1;grid-row:2;position:relative;display:flex!important;min-height:260px;height:320px;max-height:360px;margin:0;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:rgba(255,255,255,.22);align-items:center;justify-content:center}
+.project>.frame img{width:100%;height:100%;object-fit:contain}
+.frame-note{position:absolute;left:18px;bottom:18px;display:flex;flex-direction:column;gap:4px;max-width:58%;padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(251,250,246,.84);backdrop-filter:blur(8px)}
+.frame-note strong{font-size:14px;font-weight:400;line-height:1.35}
+.frame-note span{font-size:11px;line-height:1.5;color:var(--muted)}
+.project>.text{grid-column:2;grid-row:2;border-top:0;padding-top:0;margin-top:0}
+.project .archive{grid-column:1/3}
+.project h2{font-size:clamp(40px,4.8vw,76px);line-height:.98}
+.project-subtitle{display:block;font-size:clamp(22px,2.2vw,32px);color:var(--muted);letter-spacing:-.035em;line-height:1.18;margin-top:10px}
+.short{display:block;max-width:680px}
+.short p{font-size:17px;line-height:1.88}
+.short p.en{font-size:15px;line-height:1.86;color:var(--muted);margin-top:18px}
+.reference-head{display:grid;grid-template-columns:minmax(190px,.36fr) 1fr;gap:24px;align-items:end;margin-bottom:18px}
+.reference-head p{font-size:13px!important;color:var(--muted);line-height:1.68;margin:0!important;white-space:pre-line}
+#contact .kicker{display:none}
+@media(max-width:1000px){
+  .hero{display:block;min-height:auto;padding:42px 20px 48px}
+  .hero-led{font-size:112px}
+  .hero-archive{font-size:14px;margin-bottom:20px}
+  .hero-side{max-width:none;margin-top:32px}
+  .project{display:block;padding:44px 20px 54px}
+  .project>.frame{height:260px;margin:22px 0}
+  .frame-note{position:static;max-width:none;margin:12px}
+  .short,.reference-head{display:block}
+  .short p.en{margin-top:18px}
+}
+
+/* v024 index photo + text refinement */
+#about h2,#projects h2{font-size:clamp(36px,4.1vw,62px)!important;line-height:1.08!important}
+.section-title-en{margin-top:20px;font-size:16px;line-height:1.65;color:var(--muted);max-width:640px}
+.project>.frame img{object-fit:cover}
+#dalseong .frame img,#shinjang .frame img{object-fit:cover}
+#bukseong .ref-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.book-frame img{object-fit:contain!important;background:var(--panel);padding:20px}
+.contact p{max-width:900px}
+@media(max-width:1000px){
+  #about h2,#projects h2{font-size:clamp(34px,8vw,40px)!important}
+  #bukseong .ref-grid{grid-template-columns:1fr}
+}
+
+/* v026 pre-publication fine fixes */
+.hero{gap:50px!important;grid-template-columns:minmax(430px,.92fr) minmax(430px,.78fr)!important}
+.hero-side{justify-self:start!important;max-width:600px!important}
+.hero-main{max-width:18ch!important;word-break:keep-all!important;overflow-wrap:normal!important}
+.hero .actions{margin-top:18px!important}
+.frame-note{max-width:55%!important}
+.book-frame{height:440px!important;max-height:460px!important}
+.book-frame img{object-fit:contain!important;background:var(--panel);padding:0!important;width:100%;height:100%}
+#bukseong .ref-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#bukseong .ref-grid img{object-fit:cover}
+@media(max-width:1000px){
+  .hero{gap:0!important}
+  .frame-note{position:static!important;max-width:none!important;margin:12px}
+  .book-frame{height:340px!important}
+  #bukseong .ref-grid{grid-template-columns:1fr!important}
+}
+</style></head><body>
+<header class="top"><a class="brand brand-link" href="#home">LED
+Local Express Daegu</a><nav class="nav"><a href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="methodology.html">Methodology</a><a href="#letter">Letter</a><a href="#contact">Contact</a></nav><div class="util"></div></header>
+<section class="hero" id="home"><div><div class="hero-brandline">Local Express Daegu</div><div class="hero-led">LED</div><div class="hero-archive">Archive</div><div class="hero-main">지금-여기의 장소와 기억을<br/>공공적 기록으로 다시 읽는<br/>예술 실천</div><p class="en">An artistic practice that re-reads place and memory as public record, here and now.</p></div><div class="hero-side"><div><div class="kicker">ARCHIVE PREVIEW</div><p class="note">로컬익스프레스대구는 장소와 이미지, 시민의 기억과 도시의 변화를 시각예술의 방식으로 기록하고 다시 읽습니다. 이 페이지는 주요 프로젝트를 지나 달성공원 커뮤니티 아카이브로 이어지는 기록면입니다.</p><p class="en">Local Express Daegu re-reads places, images, citizens’ memories, and urban change through visual arts. This homepage is a quiet record surface that moves from earlier projects toward the Dalseong Park community archive.</p></div><div class="actions"><a class="action primary" href="#dalseong"><span>Dalseong Park Project 보기</span><span>→</span></a><a class="action" href="#projects"><span>Projects / Archive 보기</span><span>↓</span></a><a class="action" href="methodology.html"><span>Methodology 읽기</span><span>→</span></a><a class="action" href="#letter"><span>Letter / Issue 00 읽기</span><span>↓</span></a></div></div></section>
+<div class="layout"><aside class="side"><div class="kicker">PROJECT INDEX</div><a href="#dalseong"><strong>Dalseong Park Project</strong><small>Place-based long-term record / Community archive, 2017–present</small></a><a href="#shinjang"><strong>신장동 아카이브</strong><small>Surface of place / Traces of movement / Urban change, 2021</small></a><a href="#regular"><strong>Regular Briefing, 14:00, 27 Days</strong><small>Same time / Dispersed places / Collective record, 2022</small></a><a href="#pan"><strong>PAN Series</strong><small>Portfolio Review / Lecture / Workshop / Exhibition / Locality, 2023</small></a><a href="#bukseong"><strong>공공하는 북성로</strong><small>Site-specific public art / Citizens’ record / Story Book, 2023</small></a><a href="#letter"><strong>Letter / Issue 00</strong><small>Preview / Publication / Coming soon</small></a></aside><main>
+<section class="intro" id="about"><div><div class="kicker">ABOUT</div><h2>로컬익스프레스대구는<br/>2017년 대구에서<br/>설립된 비영리 예술 단체입니다.</h2></div><div><p class="note">로컬익스프레스대구는 시각예술을 기반으로 전시, 공공예술, 리서치·아카이빙, 출판과 담론 생산을 이어가는 비영리 예술 단체입니다. 지역의 장소와 기억, 도시 변화와 생태, 아직 충분히 기록되지 않은 장면들을 차분히 살피고 공공의 기록으로 다시 놓습니다.</p><p class="en">Local Express Daegu is a nonprofit arts organization founded in Daegu in 2017. Based in visual arts, it develops exhibitions, public art projects, research and archiving, publishing, and discourse, working with places, memories, urban change, ecology, and voices that have not yet been sufficiently recorded. The organization re-reads local scenes and overlooked records through contemporary artistic practice, placing them again as public record.</p></div></section>
+<section class="intro" id="projects"><div><div class="kicker">PROJECTS / ARCHIVE</div><h2>지난 실천의 뿌리를<br/>다음 질문으로<br/>다시 읽습니다.</h2><div class="section-title-en">Re-reading earlier practices as they continue into the next questions.</div></div><div><p class="note">Projects / Archive는 로컬익스프레스대구의 실천들이 서로 다른 장소와 시간을 지나 어떻게 다음 질문으로 이어지는지 다시 읽는 공간입니다.</p><p class="en">Projects / Archive is a space for re-reading how the practices of Local Express Daegu have moved through different places and times, and how they continue into the next questions.</p></div></section>
+<section class="project" id="dalseong">
+<div><div class="kicker">2017–present / 장소 기반 장기 기록 / 커뮤니티 아카이브</div><h2>Dalseong Park Project</h2><div class="project-subtitle">Place-based long-term record / Community archive</div></div>
+<div class="frame"><img alt="공원, 동물원, 시민 기억의 시간이 겹쳐 있는 달성공원의 풍경" src="assets/index/dalseong_park/dalseong_hero_01.jpg"/><div class="frame-note"><strong>Dalseong Park Project</strong><span>하나의 장소에 겹쳐 있는 공원, 동물원, 시민 기억의 시간</span></div></div>
+<div class="text">
+<div class="short"><p>달성공원 프로젝트는 2017년부터 이어온 장소 기반 장기 기록 프로젝트입니다. 시민의 사진과 기억, 동물원의 시간, 도시 재편의 흐름을 함께 살피며 하나의 장소에 흩어진 시간을 다시 읽습니다.</p><p class="en">A place-based long-term record project that re-reads Dalseong Park through citizens’ photographs, memories, the history of the zoo, and urban change.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p><p>로컬익스프레스대구는 시민의 앨범 속 사진 한 장과 기억 한 줄을 통해, 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 천천히 모으고 다시 읽고자 합니다.</p><p>제출된 사진과 이야기는 동의와 확인을 거쳐 정리되며, 공개 여부와 선별은 사람의 판단을 통해 이루어집니다.</p><p class="en">The submitted photographs and stories are organized after consent and contextual review. Decisions about publication and selection remain a human judgment.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Dalseong Park Project
+시민의 사진과 기억을 통해 하나의 장소에 흩어진 시간을 다시 읽는 장기 기록 프로젝트
+A long-term record project re-reading the scattered times of one place through citizens’ photographs and memories.</p></div><div class="ref-grid"><figure><img alt="달성공원 동물원의 시간을 보여주는 장면" src="assets/index/dalseong_park/dalseong_ref_01.jpg"/><figcaption>01 · 동물원 구역의 풍경 / View of the zoo area</figcaption></figure><figure><img alt="시민의 산책과 공원의 표면" src="assets/index/dalseong_park/dalseong_ref_02.jpg"/><figcaption>02 · 공원 산책길과 훌라후프 / Park walkway and hula hoops</figcaption></figure><figure><img alt="장소 안에 남은 구조와 기억의 흔적" src="assets/index/dalseong_park/dalseong_ref_03.jpg"/><figcaption>03 · 달성공원 꽃마차 / Dalseong Park flower carriage</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+</div>
+</section>
+<section class="project" id="shinjang">
+<div><div class="kicker">장소의 표면 / 이동의 흔적 / 도시 재편의 감각</div><h2>신장동 아카이브</h2><div class="project-subtitle">Shinjang-dong Archive</div></div>
+<div class="frame"><img alt="장소의 표면에 겹친 언어, 이동, 도시의 시간" src="assets/index/shinjang_dong/shinjang_hero_01.jpg"/><div class="frame-note"><strong>신장동 아카이브</strong><span>장소의 표면에 겹친 언어, 이동, 도시의 시간</span></div></div>
+<div class="text">
+<div class="short"><p>신장동 아카이브는 K-55 인근 신장동을 하나의 상징적 출발점으로 삼아, 전후 미군기지 주변의 생계와 외화, 언어와 문화, 상업과 밤의 문화, 그리고 오늘의 산업지형이 겹치는 장소의 표면을 사진, 영상, 설치의 방식으로 살핀 프로젝트입니다.</p><p class="en">Shinjang-dong Archive takes Shinjang-dong near K-55 as a symbolic point of departure, tracing the surfaces where livelihood, foreign currency, language, commerce, nightlife, and contemporary industrial landscapes overlap.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>신장동은 과거 송탄이라 불리던 기지촌의 시간과 미군기지 주변에서 형성된 생계, 외화, 언어와 문화의 혼종, 상업과 밤의 문화가 겹쳐진 장소입니다.</p><p>이 프로젝트는 신장동을 좁은 지명으로 고정하지 않고, 기지와 강, 도시 외곽의 산업지형 사이에서 반복되는 이동, 자본, 경계의 감각을 함께 보았습니다.</p><p>사진은 거리의 표면, 빛, 간판, 물리적 거리, 멀리 보이는 산업 시설의 풍경을 통해 그 관계를 은유적으로 배치합니다.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>신장동 아카이브
+장소의 표면, 이동의 흔적, 도시 재편의 감각을 함께 읽는 이미지
+Image records reading the surface of place, traces of movement, and urban change.</p></div><div class="ref-grid"><figure><img alt="과일가게, 신장동" src="assets/index/shinjang_dong/shinjang_ref_01.jpg"/><figcaption>01 · 과일가게, 신장동 / Fruit shop, Shinjang-dong</figcaption></figure><figure><img alt="강 건너의 경계 지형" src="assets/index/shinjang_dong/shinjang_ref_02.jpg"/><figcaption>02 · 강 건너의 경계 지형 / Boundary landscape across the river</figcaption></figure><figure><img alt="공장 주차장, 평택" src="assets/index/shinjang_dong/shinjang_ref_03.jpg"/><figcaption>03 · 공장 주차장, 평택 / Factory parking lot, Pyeongtaek</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+</div>
+</section>
+<section class="project" id="regular">
+<div><div class="kicker">같은 시간 / 흩어진 장소 / 공동 기록</div><h2>Regular Briefing, 14:00, 27 Days</h2></div>
+<div class="frame"><img alt="대구예술발전소 1층과 2층에 걸쳐 구성된 전시의 규모와 기록의 벽" src="assets/index/regular_briefing/regular_hero_01.jpg"/><div class="frame-note"><strong>Regular Briefing, 14:00, 27 Days</strong><span>대구예술발전소 1층과 2층에 걸쳐 구성된 전시의 규모와 기록의 벽</span></div></div>
+<div class="text">
+<div class="short"><p>Regular Briefing, 14:00, 27 Days는 팬데믹 시기 매일 오후 2시에 반복되던 공적 브리핑의 시간을 서로 다른 장소의 일상 기록과 작가들의 작업으로 다시 구성한 전시입니다. 대구예술발전소 1층과 2층에 걸쳐 구성되었으며, 참여자의 기록과 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업을 함께 놓았습니다.</p><p class="en">A collective exhibition that reconfigured the public time of daily briefings through everyday records and artists’ works from dispersed places. Presented across the first and second floors of Daegu Art Factory, it brought together participants’ records and works in painting, video, installation, and community art.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>전시는 Section 1 〈정례브리핑 14시, 27일 / 14.27〉, Section 2 〈On-팬데믹〉, Section 3 〈Off-팬데믹〉으로 구성되었고, 대구예술발전소 1층과 2층에 걸쳐 펼쳐졌습니다.</p><p>Section 1은 전 세계 60여 곳의 참여자들이 27컷 일회용 카메라로 27일 동안 매일 오후 2시의 장면을 남긴 기록입니다. 각자의 장소에서 도착한 사진과 메시지, 늦게 회수된 카메라와 비어 있는 자리까지 전시 안에 함께 놓이며, 기록이 발생하고 도착하고 배열되는 과정을 보여주었습니다.</p><p>Section 2와 Section 3은 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업으로 이어졌습니다. 전시는 참여자의 일상 기록과 작가들의 작업을 함께 놓으며, 팬데믹 시기의 시간과 그 이후의 감각을 여러 층위로 구성했습니다.</p><p class="en">The exhibition placed participants’ everyday records and artists’ works together, composing the time of the pandemic and its aftermath in multiple layers.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Regular Briefing, 14:00, 27 Days
+전시의 구조와 시간의 배열을 보여주는 이미지
+Reference images showing the structure of the exhibition and the arrangement of time.</p></div><div class="ref-grid"><figure><img alt="전시 입구 구성, 1층" src="assets/index/regular_briefing/regular_ref_01.jpg"/><figcaption>01 · 전시 입구 구성, 1층 / Entrance installation, first floor</figcaption></figure><figure><img alt="설치와 공간 구조, 1전시실 앞" src="assets/index/regular_briefing/regular_ref_02.jpg"/><figcaption>02 · 설치와 공간 구조, 1전시실 앞 / Installation and spatial structure, near Exhibition Hall 1</figcaption></figure><figure><img alt="전시 전경, 2전시실" src="assets/index/regular_briefing/regular_ref_03.jpg"/><figcaption>03 · 전시 전경, 2전시실 / Exhibition view, Exhibition Hall 2</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+</div>
+</section>
+<section class="project" id="pan">
+<div><div class="kicker">포트폴리오 리뷰 / 강연 / 워크숍 / 전시 / 지역성</div><h2>PAN Series</h2><div class="project-subtitle">A process-based research series on locality</div></div>
+<div class="frame"><img alt="PAN Series 전시 장면" src="assets/index/pan_series/pan_hero_01.jpg"/><div class="frame-note"><strong>PAN Series</strong><span>포트폴리오 리뷰 / 강연 / 워크숍 / 전시 / 지역성</span></div></div>
+<div class="text">
+<div class="short"><p>PAN Series는 ‘판’이라는 말이 가진 장면, 무대, 자리의 감각에서 출발한 과정형 리서치 프로젝트입니다. 포트폴리오 리뷰, 강연, 워크숍, 전시를 거치며 작업과 말, 관계와 장소가 만나는 임시적인 장을 만들었습니다.</p><p class="en">A process-based research series that moved through portfolio review, lectures, workshops, and exhibition, creating a temporary field where work, language, relationships, and place could meet.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>PAN_1 Portfolio Review, PAN_2 Lecture Series, PAN_3 Exhibition — Me, Here, Us로 이어진 과정은 지역에서 작업한다는 질문을 서로의 작업과 조건을 함께 말하는 자리로 옮겼습니다.</p><p>리뷰는 작업을 다시 보는 자리로, 강연과 워크숍은 질문의 언어와 관계를 만드는 과정으로 놓였습니다. 전시는 그 흐름이 모여 형성된 장면입니다.</p><p class="en">The series moves from portfolio review to lectures, workshops, and exhibition, opening a temporary field where work, language, relationships, and place can meet.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>PAN Series
+포트폴리오 리뷰, 강연, 워크숍, 전시로 이어지는 과정
+A process-based series moving through portfolio review, lectures, workshops, and exhibition.</p></div><div class="ref-grid"><figure><img alt="작업을 다시 보는 자리" src="assets/index/pan_series/pan_ref_01.jpg"/><figcaption>01 · 작업을 다시 보는 자리 / Portfolio Review</figcaption></figure><figure><img alt="질문의 언어가 오가는 자리" src="assets/index/pan_series/pan_ref_02.jpg"/><figcaption>02 · 질문의 언어가 오가는 자리 / Lecture · Workshop</figcaption></figure><figure><img alt="과정이 전시 장면으로 모이는 자리" src="assets/index/pan_series/pan_ref_03.jpg"/><figcaption>03 · 과정이 전시 장면으로 모이는 자리 / Exhibition</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+</div>
+</section>
+<section class="project" id="bukseong">
+<div><div class="kicker">장소 특정적 공공예술 / 시민 기록 / Story Book</div><h2>공공하는 북성로</h2></div>
+<div class="frame"><img alt="북성로 현장 리서치의 전체 흐름" src="assets/index/bukseong_ro/bukseong_ref_01.jpg"/><div class="frame-note"><strong>공공하는 북성로</strong><span>북성로를 걷고, 보고, 쓰고, 그리는 현장 리서치</span></div></div>
+<div class="text">
+<div class="short"><p>공공하는 북성로는 대구 북성로 일대의 장소성과 시민의 기억을 워크숍, 현장 기록, 출판의 방식으로 다룬 장소 특정적 공공예술 프로젝트입니다.</p><p class="en">A site-specific public art project in Bukseong-ro, Daegu, developed through workshops, field records, participant materials, and a Story Book.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>공공하는 북성로는 북성로의 역사와 도시재생의 흐름, 공공예술과 지역성에 관한 질문을 함께 다룬 프로젝트입니다. 워크숍과 오픈 스터디, 현장 리서치를 거치며 참여자들은 각자의 시선으로 북성로를 걷고, 보고, 쓰고, 그렸습니다.</p><p>Story Book은 참여자의 텍스트, 드로잉, 사진으로 구성되어 책으로 출간된 기록입니다. 시민의 말과 장소의 기억, 예술적 형식이 한 권의 책 안에 놓이며, 북성로를 하나의 풍경보다 여러 사람의 경험이 겹친 장소로 다시 읽게 합니다.</p><p>홈페이지에서는 Story Book과 프로젝트 과정의 일부 preview만 소개합니다. 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Only a partial preview of the Story Book and project process is introduced on the website. The full material will be handled later after checking consent and the scope of publication.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>공공하는 북성로
+현장 리서치, 오픈 스터디, 스토리북 제작으로 이어지는 프로젝트 과정
+Image records from field research, open study, and Story Book production.</p></div><div class="ref-grid"><figure><img alt="현장 리서치" src="assets/index/bukseong_ro/bukseong_hero_01.jpg"/><figcaption>01 · 현장 리서치 / Field research</figcaption></figure><figure><img alt="오픈 스터디" src="assets/index/bukseong_ro/bukseong_ref_02.jpg"/><figcaption>02 · 오픈 스터디 / Open study</figcaption></figure><figure><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><figcaption>03 · 공공하는 북성로 Story Book / Story Book preview</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+</div>
+</section>
+<section class="project" id="letter"><div><div class="kicker">COMING SOON</div><h2>Letter / Issue 00<br/><span class="project-subtitle">Coming soon</span></h2></div><div class="book-frame frame"><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><div class="frame-note"><strong>공공하는 북성로 Story Book</strong><span>참여자의 텍스트, 드로잉, 사진으로 구성된 출판 기록</span></div></div><div class="text"><div class="short"><p>Letter / Issue 00은 준비 중입니다. 첫 번째 Issue는 공공하는 북성로 Story Book을 중심으로, 시민의 말과 장소의 기억이 출판 기록으로 정리되는 과정을 다룰 예정입니다. 홈페이지에서는 일부 preview만 소개하고, 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Publicizing Bukseong-ro Story Book — A publication record composed of participants’ texts, drawings, and photographs.</p><p class="en">Letter / Issue 00 is coming soon. The first issue will focus on the Bukseong-ro Story Book and the process through which citizens’ words and memories of place become a publication record.</p></div></div></section>
+<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어지는 질문들이, 같은 방향 안에서 서로를 알아보는 관계의 가능성을 생각하고 있습니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a href="mailto:contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
+</main></div><footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>약칭: 로컬익스프레스<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Contact: contact@localexpressdaegu.org<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
+<script>
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.toggle');
+  if(!t) return;
+  const s=t.closest('.project');
+  const a=s.querySelector('.archive');
+  const o=s.querySelector('.short .toggle');
+  if(t.classList.contains('close')){
+    a.hidden=true;
+    if(o) o.textContent='Archive Note +';
+  }else{
+    a.hidden=!a.hidden;
+    if(o) o.textContent=a.hidden?'Archive Note +':'Archive Note −';
+  }
+});
+</script></body></html>
