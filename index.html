@@ -181,39 +181,439 @@ h1{font-size:clamp(56px,8vw,132px);line-height:.88;letter-spacing:-.078em;margin
   .book-frame{height:340px!important}
   #bukseong .ref-grid{grid-template-columns:1fr!important}
 }
+
+/* v03 mobile layout stabilization patch */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+}
+
+a, p, h1, h2, h3, h4, div, span, small, strong {
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 820px) {
+  body {
+    min-width: 0 !important;
+  }
+
+  .top {
+    height: auto !important;
+    min-height: 62px !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    align-items: start !important;
+    padding: 12px 18px 14px !important;
+    position: sticky !important;
+  }
+
+  .top .brand,
+  .top .brand-link {
+    max-width: 100% !important;
+    display: block !important;
+    line-height: 1.35 !important;
+    letter-spacing: .12em !important;
+  }
+
+  .top .nav {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px 13px !important;
+    justify-content: flex-start !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  .top .util {
+    display: none !important;
+  }
+
+  .layout,
+  main,
+  .hero,
+  .cover,
+  .section,
+  .project,
+  .summary,
+  .bridge,
+  .contact {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+    grid-template-columns: 1fr !important;
+    overflow-x: hidden !important;
+  }
+
+  .layout {
+    padding: 0 !important;
+  }
+
+  .side {
+    position: static !important;
+    top: auto !important;
+    height: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 18px 20px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    background: rgba(245,242,235,.72) !important;
+  }
+
+  .side .kicker {
+    grid-column: 1 / -1 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .side a {
+    min-width: 0 !important;
+    padding: 10px 0 !important;
+    border-bottom: 0 !important;
+  }
+
+  .side strong,
+  .side small {
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .hero,
+  .cover {
+    min-height: auto !important;
+    padding: 42px 20px 52px !important;
+    gap: 0 !important;
+  }
+
+  .hero-side,
+  .cover-note {
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 34px !important;
+    justify-self: auto !important;
+  }
+
+  .hero-led {
+    font-size: clamp(76px, 30vw, 116px) !important;
+    letter-spacing: -.075em !important;
+  }
+
+  .hero-archive {
+    font-size: 13px !important;
+    letter-spacing: .18em !important;
+  }
+
+  .hero-main {
+    max-width: 100% !important;
+    font-size: clamp(30px, 10vw, 44px) !important;
+    line-height: 1.12 !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+  h1, h2 {
+    max-width: 100% !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .actions {
+    width: 100% !important;
+    max-width: none !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+
+  .action {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .section,
+  .project,
+  .summary,
+  .contact {
+    padding: 44px 20px 54px !important;
+  }
+
+  .project > div:first-child,
+  .project > .frame,
+  .project > .text,
+  .project > .archive {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .frame,
+  .project > .frame {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 4 / 3 !important;
+    margin: 20px 0 18px !important;
+    overflow: hidden !important;
+  }
+
+  .book-frame,
+  .project > .book-frame {
+    aspect-ratio: 4 / 3 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .frame img,
+  .project > .frame img,
+  .book-frame img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .frame-note,
+  .side-card,
+  .image-card,
+  .caption-card {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 12px !important;
+    transform: none !important;
+  }
+
+  .short,
+  .text,
+  .archive,
+  .body {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .short p,
+  .body p,
+  .archive p {
+    max-width: 100% !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .reference-head,
+  .reference-inner,
+  .bridge,
+  .summary-grid,
+  .rhythm-grid,
+  .ref-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 14px !important;
+  }
+
+  .reference-plate {
+    margin: 32px 0 36px !important;
+    padding: 24px 0 28px !important;
+  }
+
+  .reference-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+
+  .reference-image img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+
+  .methodology-image-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .methodology-image-grid img {
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+
+  .rhythm-card {
+    min-width: 0 !important;
+  }
+
+  .fold button {
+    gap: 12px !important;
+  }
+
+  .fold-title {
+    font-size: 19px !important;
+    line-height: 1.35 !important;
+  }
+
+  .fold-meta {
+    font-size: 11px !important;
+  }
+
+  .footer {
+    padding: 28px 20px 36px !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .footer p,
+  .footer div,
+  .footer a,
+  .contact p,
+  .contact a {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: keep-all !important;
+  }
+
+  #contact,
+  #contact * {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .side {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-main {
+    font-size: clamp(28px, 11vw, 38px) !important;
+  }
+
+  .section,
+  .project,
+  .summary,
+  .contact,
+  .hero,
+  .cover {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+}
+
+
+
+/* v04 mobile image visibility correction
+   Keeps project photos visible on mobile and prevents the caption card from being clipped inside the image frame. */
+@media (max-width: 820px) {
+  .project > .frame,
+  .book-frame,
+  .project > .book-frame {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 4 / 3 !important;
+    margin: 20px 0 18px !important;
+    overflow: hidden !important;
+  }
+
+  .project > .frame img,
+  .book-frame img,
+  .project > .book-frame img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  .book-frame img,
+  .project > .book-frame img {
+    object-fit: contain !important;
+    background: var(--panel) !important;
+  }
+
+  .project > .frame .frame-note,
+  .book-frame .frame-note,
+  .project > .book-frame .frame-note {
+    position: absolute !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    top: auto !important;
+    width: auto !important;
+    max-width: calc(100% - 24px) !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 2 !important;
+  }
+}
+
 </style></head><body>
 <header class="top"><a class="brand brand-link" href="#home">LED
 Local Express Daegu</a><nav class="nav"><a href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="methodology.html">Methodology</a><a href="#letter">Letter</a><a href="#contact">Contact</a></nav><div class="util"></div></header>
-<section class="hero" id="home"><div><div class="hero-brandline">Local Express Daegu</div><div class="hero-led">LED</div><div class="hero-archive">Archive</div><div class="hero-main">지금-여기의 장소와 기억을<br/>공공적 기록으로 다시 읽는<br/>예술 실천</div><p class="en">An artistic practice that re-reads place and memory as public record, here and now.</p></div><div class="hero-side"><div><div class="kicker">ARCHIVE PREVIEW</div><p class="note">로컬익스프레스대구는 장소와 이미지, 시민의 기억과 도시의 변화를 시각예술의 방식으로 기록하고 다시 읽습니다. 이 페이지는 주요 프로젝트를 지나 달성공원 커뮤니티 아카이브로 이어지는 기록면입니다.</p><p class="en">Local Express Daegu re-reads places, images, citizens’ memories, and urban change through visual arts. This homepage is a quiet record surface that moves from earlier projects toward the Dalseong Park community archive.</p></div><div class="actions"><a class="action primary" href="#dalseong"><span>Dalseong Park Project 보기</span><span>→</span></a><a class="action" href="#projects"><span>Projects / Archive 보기</span><span>↓</span></a><a class="action" href="methodology.html"><span>Methodology 읽기</span><span>→</span></a><a class="action" href="#letter"><span>Letter / Issue 00 읽기</span><span>↓</span></a></div></div></section>
+<section class="hero" id="home"><div><div class="hero-brandline">Local Express Daegu</div><div class="hero-led">LED</div><div class="hero-archive">Archive</div><div class="hero-main">지금-여기의 장소와 기억을<br/>공공의 기록으로 다시 읽는<br/>예술 실천</div><p class="en">An artistic practice that re-reads place and memory as public record, here and now.</p></div><div class="hero-side"><div><div class="kicker">ARCHIVE PREVIEW</div><p class="note">로컬익스프레스대구는 장소와 이미지, 시민의 기억과 도시의 변화를 시각예술의 방식으로 기록하고 다시 읽습니다. 이 페이지는 주요 프로젝트를 지나 달성공원 커뮤니티 아카이브로 이어지는 기록면입니다.</p><p class="en">Local Express Daegu re-reads places, images, citizens’ memories, and urban change through visual arts. This homepage moves from earlier projects toward the Dalseong Park community archive, tracing the layers of each practice.</p></div><div class="actions"><a class="action primary" href="#dalseong"><span>Dalseong Park Project 보기</span><span>→</span></a><a class="action" href="#projects"><span>Projects / Archive 보기</span><span>↓</span></a><a class="action" href="methodology.html"><span>Methodology 읽기</span><span>→</span></a><a class="action" href="#letter"><span>Letter / Issue 00 읽기</span><span>↓</span></a></div></div></section>
 <div class="layout"><aside class="side"><div class="kicker">PROJECT INDEX</div><a href="#dalseong"><strong>Dalseong Park Project</strong><small>Place-based long-term record / Community archive, 2017–present</small></a><a href="#shinjang"><strong>신장동 아카이브</strong><small>Surface of place / Traces of movement / Urban change, 2021</small></a><a href="#regular"><strong>Regular Briefing, 14:00, 27 Days</strong><small>Same time / Dispersed places / Collective record, 2022</small></a><a href="#pan"><strong>PAN Series</strong><small>Portfolio Review / Lecture / Workshop / Exhibition / Locality, 2023</small></a><a href="#bukseong"><strong>공공하는 북성로</strong><small>Site-specific public art / Citizens’ record / Story Book, 2023</small></a><a href="#letter"><strong>Letter / Issue 00</strong><small>Preview / Publication / Coming soon</small></a></aside><main>
-<section class="intro" id="about"><div><div class="kicker">ABOUT</div><h2>로컬익스프레스대구는<br/>2017년 대구에서<br/>설립된 비영리 예술 단체입니다.</h2></div><div><p class="note">로컬익스프레스대구는 시각예술을 기반으로 전시, 공공예술, 리서치·아카이빙, 출판과 담론 생산을 이어가는 비영리 예술 단체입니다. 지역의 장소와 기억, 도시 변화와 생태, 아직 충분히 기록되지 않은 장면들을 차분히 살피고 공공의 기록으로 다시 놓습니다.</p><p class="en">Local Express Daegu is a nonprofit arts organization founded in Daegu in 2017. Based in visual arts, it develops exhibitions, public art projects, research and archiving, publishing, and discourse, working with places, memories, urban change, ecology, and voices that have not yet been sufficiently recorded. The organization re-reads local scenes and overlooked records through contemporary artistic practice, placing them again as public record.</p></div></section>
+<section class="intro" id="about"><div><div class="kicker">ABOUT</div><h2>로컬익스프레스대구는<br/>2017년 대구에서<br/>설립된 비영리 예술 단체입니다.</h2></div><div><p class="note">로컬익스프레스대구는 시각예술을 기반으로 전시, 공공예술, 리서치·아카이빙, 출판과 담론 생산을 이어가는 비영리 예술 단체입니다. 지역의 장소와 기억, 도시 변화와 생태, 아직 충분히 기록되지 않은 장면들을 차분히 살피고 공공의 기록으로 다시 씁니다.</p><p class="en">Local Express Daegu is a nonprofit arts organization founded in Daegu in 2017. Based in visual arts, it develops exhibitions, public art projects, research and archiving, publishing, and discourse, working with places, memories, urban change, ecology, and voices that have not yet been sufficiently recorded. The organization re-reads local scenes and overlooked records through contemporary artistic practice, rewriting them as public record.</p></div></section>
 <section class="intro" id="projects"><div><div class="kicker">PROJECTS / ARCHIVE</div><h2>지난 실천의 뿌리를<br/>다음 질문으로<br/>다시 읽습니다.</h2><div class="section-title-en">Re-reading earlier practices as they continue into the next questions.</div></div><div><p class="note">Projects / Archive는 로컬익스프레스대구의 실천들이 서로 다른 장소와 시간을 지나 어떻게 다음 질문으로 이어지는지 다시 읽는 공간입니다.</p><p class="en">Projects / Archive is a space for re-reading how the practices of Local Express Daegu have moved through different places and times, and how they continue into the next questions.</p></div></section>
 <section class="project" id="dalseong">
 <div><div class="kicker">2017–present / 장소 기반 장기 기록 / 커뮤니티 아카이브</div><h2>Dalseong Park Project</h2><div class="project-subtitle">Place-based long-term record / Community archive</div></div>
 <div class="frame"><img alt="공원, 동물원, 시민 기억의 시간이 겹쳐 있는 달성공원의 풍경" src="assets/index/dalseong_park/dalseong_hero_01.jpg"/><div class="frame-note"><strong>Dalseong Park Project</strong><span>하나의 장소에 겹쳐 있는 공원, 동물원, 시민 기억의 시간</span></div></div>
 <div class="text">
-<div class="short"><p>달성공원 프로젝트는 2017년부터 이어온 장소 기반 장기 기록 프로젝트입니다. 시민의 사진과 기억, 동물원의 시간, 도시 재편의 흐름을 함께 살피며 하나의 장소에 흩어진 시간을 다시 읽습니다.</p><p class="en">A place-based long-term record project that re-reads Dalseong Park through citizens’ photographs, memories, the history of the zoo, and urban change.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p><p>로컬익스프레스대구는 시민의 앨범 속 사진 한 장과 기억 한 줄을 통해, 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 천천히 모으고 다시 읽고자 합니다.</p><p>제출된 사진과 이야기는 동의와 확인을 거쳐 정리되며, 공개 여부와 선별은 사람의 판단을 통해 이루어집니다.</p><p class="en">The submitted photographs and stories are organized after consent and contextual review. Decisions about publication and selection remain a human judgment.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Dalseong Park Project
-시민의 사진과 기억을 통해 하나의 장소에 흩어진 시간을 다시 읽는 장기 기록 프로젝트
-A long-term record project re-reading the scattered times of one place through citizens’ photographs and memories.</p></div><div class="ref-grid"><figure><img alt="달성공원 동물원의 시간을 보여주는 장면" src="assets/index/dalseong_park/dalseong_ref_01.jpg"/><figcaption>01 · 동물원 구역의 풍경 / View of the zoo area</figcaption></figure><figure><img alt="시민의 산책과 공원의 표면" src="assets/index/dalseong_park/dalseong_ref_02.jpg"/><figcaption>02 · 공원 산책길과 훌라후프 / Park walkway and hula hoops</figcaption></figure><figure><img alt="장소 안에 남은 구조와 기억의 흔적" src="assets/index/dalseong_park/dalseong_ref_03.jpg"/><figcaption>03 · 달성공원 꽃마차 / Dalseong Park flower carriage</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+<div class="short"><p>달성공원 프로젝트는 2017년부터 이어온 장소 기반 장기 기록 프로젝트입니다. 시민의 사진과 기억, 동물원의 시간, 도시 재편의 흐름을 함께 살피며 하나의 장소에 쌓인 시간을 다시 읽습니다.</p><p class="en">A place-based long-term record project that re-reads Dalseong Park through citizens’ photographs, memories, the history of the zoo, and urban change.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p><p>로컬익스프레스대구는 시민의 앨범 속 사진 한 장과 기억 한 줄을 통해, 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 천천히 모으고 다시 읽고자 합니다.</p><p>제출된 사진과 이야기는 동의와 확인을 거쳐 정리되며, 공개 여부와 선별은 사람의 판단을 통해 이루어집니다.</p><p class="en">The submitted photographs and stories are organized after consent and contextual review. All decisions about publication and selection are made by people.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Dalseong Park Project
+시민의 사진과 기억을 통해 하나의 장소에 쌓인 시간을 다시 읽는 장기 기록 프로젝트
+A long-term record project re-reading the layered times of one place through citizens’ photographs and memories.</p></div><div class="ref-grid"><figure><img alt="달성공원 동물원의 시간을 보여주는 장면" src="assets/index/dalseong_park/dalseong_ref_01.jpg"/><figcaption>01 · 동물원 구역의 풍경 / View of the zoo area</figcaption></figure><figure><img alt="시민의 산책과 공원의 표면" src="assets/index/dalseong_park/dalseong_ref_02.jpg"/><figcaption>02 · 공원 산책길과 훌라후프 / Park walkway and hula hoops</figcaption></figure><figure><img alt="장소 안에 남은 구조와 기억의 흔적" src="assets/index/dalseong_park/dalseong_ref_03.jpg"/><figcaption>03 · 달성공원 꽃마차 / Dalseong Park flower carriage</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
 </section>
 <section class="project" id="shinjang">
 <div><div class="kicker">장소의 표면 / 이동의 흔적 / 도시 재편의 감각</div><h2>신장동 아카이브</h2><div class="project-subtitle">Shinjang-dong Archive</div></div>
 <div class="frame"><img alt="장소의 표면에 겹친 언어, 이동, 도시의 시간" src="assets/index/shinjang_dong/shinjang_hero_01.jpg"/><div class="frame-note"><strong>신장동 아카이브</strong><span>장소의 표면에 겹친 언어, 이동, 도시의 시간</span></div></div>
 <div class="text">
-<div class="short"><p>신장동 아카이브는 K-55 인근 신장동을 하나의 상징적 출발점으로 삼아, 전후 미군기지 주변의 생계와 외화, 언어와 문화, 상업과 밤의 문화, 그리고 오늘의 산업지형이 겹치는 장소의 표면을 사진, 영상, 설치의 방식으로 살핀 프로젝트입니다.</p><p class="en">Shinjang-dong Archive takes Shinjang-dong near K-55 as a symbolic point of departure, tracing the surfaces where livelihood, foreign currency, language, commerce, nightlife, and contemporary industrial landscapes overlap.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>신장동은 과거 송탄이라 불리던 기지촌의 시간과 미군기지 주변에서 형성된 생계, 외화, 언어와 문화의 혼종, 상업과 밤의 문화가 겹쳐진 장소입니다.</p><p>이 프로젝트는 신장동을 좁은 지명으로 고정하지 않고, 기지와 강, 도시 외곽의 산업지형 사이에서 반복되는 이동, 자본, 경계의 감각을 함께 보았습니다.</p><p>사진은 거리의 표면, 빛, 간판, 물리적 거리, 멀리 보이는 산업 시설의 풍경을 통해 그 관계를 은유적으로 배치합니다.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>신장동 아카이브
+<div class="short"><p>신장동 아카이브는 K-55 인근 신장동을 하나의 상징적 출발점으로 삼아, 전후 미군기지 주변의 생계와 외화, 언어와 문화, 상업과 밤의 문화가 오늘의 산업지형과 겹치는 장소의 표면을, 사진·영상·설치의 방식으로 살핀 프로젝트입니다.</p><p class="en">Shinjang-dong Archive takes Shinjang-dong near K-55 as a symbolic point of departure, tracing the surfaces where livelihood, foreign currency, language, commerce, nightlife, and contemporary industrial landscapes overlap.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>신장동은 과거 송탄이라 불리던 기지촌의 시간과 미군기지 주변에서 형성된 생계, 외화, 언어와 문화의 혼종, 상업과 밤의 문화가 겹쳐진 장소입니다.</p><p>이 프로젝트는 신장동을 좁은 지명으로 고정하지 않고, 기지와 강, 도시 외곽의 산업지형 사이에서 반복되는 이동, 자본, 경계의 감각을 함께 살폈습니다.</p><p>사진은 거리의 표면, 빛, 간판, 물리적 거리, 멀리 보이는 산업 시설의 풍경을 통해 그 관계를 은유적으로 배치합니다.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>신장동 아카이브
 장소의 표면, 이동의 흔적, 도시 재편의 감각을 함께 읽는 이미지
 Image records reading the surface of place, traces of movement, and urban change.</p></div><div class="ref-grid"><figure><img alt="과일가게, 신장동" src="assets/index/shinjang_dong/shinjang_ref_01.jpg"/><figcaption>01 · 과일가게, 신장동 / Fruit shop, Shinjang-dong</figcaption></figure><figure><img alt="강 건너의 경계 지형" src="assets/index/shinjang_dong/shinjang_ref_02.jpg"/><figcaption>02 · 강 건너의 경계 지형 / Boundary landscape across the river</figcaption></figure><figure><img alt="공장 주차장, 평택" src="assets/index/shinjang_dong/shinjang_ref_03.jpg"/><figcaption>03 · 공장 주차장, 평택 / Factory parking lot, Pyeongtaek</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
 </section>
 <section class="project" id="regular">
 <div><div class="kicker">같은 시간 / 흩어진 장소 / 공동 기록</div><h2>Regular Briefing, 14:00, 27 Days</h2></div>
-<div class="frame"><img alt="대구예술발전소 1층과 2층에 걸쳐 구성된 전시의 규모와 기록의 벽" src="assets/index/regular_briefing/regular_hero_01.jpg"/><div class="frame-note"><strong>Regular Briefing, 14:00, 27 Days</strong><span>대구예술발전소 1층과 2층에 걸쳐 구성된 전시의 규모와 기록의 벽</span></div></div>
+<div class="frame"><img alt="같은 시간, 다른 장소에서 도착한 기록 — 대구예술발전소 제1·2전시실" src="assets/index/regular_briefing/regular_hero_01.jpg"/><div class="frame-note"><strong>Regular Briefing, 14:00, 27 Days</strong><span>같은 시간, 다른 장소에서 도착한 기록 — 대구예술발전소 제1·2전시실</span></div></div>
 <div class="text">
-<div class="short"><p>Regular Briefing, 14:00, 27 Days는 팬데믹 시기 매일 오후 2시에 반복되던 공적 브리핑의 시간을 서로 다른 장소의 일상 기록과 작가들의 작업으로 다시 구성한 전시입니다. 대구예술발전소 1층과 2층에 걸쳐 구성되었으며, 참여자의 기록과 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업을 함께 놓았습니다.</p><p class="en">A collective exhibition that reconfigured the public time of daily briefings through everyday records and artists’ works from dispersed places. Presented across the first and second floors of Daegu Art Factory, it brought together participants’ records and works in painting, video, installation, and community art.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>전시는 Section 1 〈정례브리핑 14시, 27일 / 14.27〉, Section 2 〈On-팬데믹〉, Section 3 〈Off-팬데믹〉으로 구성되었고, 대구예술발전소 1층과 2층에 걸쳐 펼쳐졌습니다.</p><p>Section 1은 전 세계 60여 곳의 참여자들이 27컷 일회용 카메라로 27일 동안 매일 오후 2시의 장면을 남긴 기록입니다. 각자의 장소에서 도착한 사진과 메시지, 늦게 회수된 카메라와 비어 있는 자리까지 전시 안에 함께 놓이며, 기록이 발생하고 도착하고 배열되는 과정을 보여주었습니다.</p><p>Section 2와 Section 3은 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업으로 이어졌습니다. 전시는 참여자의 일상 기록과 작가들의 작업을 함께 놓으며, 팬데믹 시기의 시간과 그 이후의 감각을 여러 층위로 구성했습니다.</p><p class="en">The exhibition placed participants’ everyday records and artists’ works together, composing the time of the pandemic and its aftermath in multiple layers.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Regular Briefing, 14:00, 27 Days
+<div class="short"><p>Regular Briefing, 14:00, 27 Days는 팬데믹 시기 매일 오후 2시에 반복되던 공적 브리핑의 시간. 이 전시는 그 시간을 서로 다른 장소의 일상 기록과 작가들의 작업으로 다시 구성합니다. 대구예술발전소 1층과 2층에 걸쳐 구성되었으며, 참여자의 기록과 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업을 함께 놓았습니다.</p><p class="en">A collective exhibition that reconfigured the public time of daily briefings through everyday records and artists’ works from dispersed places. Presented across the first and second floors of Daegu Art Factory, it brought together participants’ records and works in painting, video, installation, and community art.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>전시는 Section 1 〈정례브리핑 14시, 27일 / 14.27〉, Section 2 〈On-팬데믹〉, Section 3 〈Off-팬데믹〉으로 구성되었고, 대구예술발전소 1층과 2층에 걸쳐 펼쳐졌습니다.</p><p>Section 1은 전 세계 60여 곳의 참여자들이 27컷 일회용 카메라로 27일 동안 매일 오후 2시의 장면을 남긴 기록입니다. 각자의 장소에서 도착한 사진과 메시지, 늦게 회수된 카메라와 끝내 도착하지 않은 기록의 자리까지 전시 안에 함께 놓이며, 기록이 발생하고 도착하고 배열되는 과정을 보여주었습니다.</p><p>Section 2와 Section 3은 국내외 작가들의 회화, 영상, 설치, 커뮤니티 아트 작업으로 이어졌습니다. 팬데믹의 시간과 그 이후의 감각을 여러 층위에서 펼쳐 보였습니다.</p><p class="en">The exhibition unfolded the time of the pandemic and its aftermath across multiple layers.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>Regular Briefing, 14:00, 27 Days
 전시의 구조와 시간의 배열을 보여주는 이미지
 Reference images showing the structure of the exhibition and the arrangement of time.</p></div><div class="ref-grid"><figure><img alt="전시 입구 구성, 1층" src="assets/index/regular_briefing/regular_ref_01.jpg"/><figcaption>01 · 전시 입구 구성, 1층 / Entrance installation, first floor</figcaption></figure><figure><img alt="설치와 공간 구조, 1전시실 앞" src="assets/index/regular_briefing/regular_ref_02.jpg"/><figcaption>02 · 설치와 공간 구조, 1전시실 앞 / Installation and spatial structure, near Exhibition Hall 1</figcaption></figure><figure><img alt="전시 전경, 2전시실" src="assets/index/regular_briefing/regular_ref_03.jpg"/><figcaption>03 · 전시 전경, 2전시실 / Exhibition view, Exhibition Hall 2</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
@@ -222,8 +622,8 @@ Reference images showing the structure of the exhibition and the arrangement of 
 <div><div class="kicker">포트폴리오 리뷰 / 강연 / 워크숍 / 전시 / 지역성</div><h2>PAN Series</h2><div class="project-subtitle">A process-based research series on locality</div></div>
 <div class="frame"><img alt="PAN Series 전시 장면" src="assets/index/pan_series/pan_hero_01.jpg"/><div class="frame-note"><strong>PAN Series</strong><span>포트폴리오 리뷰 / 강연 / 워크숍 / 전시 / 지역성</span></div></div>
 <div class="text">
-<div class="short"><p>PAN Series는 ‘판’이라는 말이 가진 장면, 무대, 자리의 감각에서 출발한 과정형 리서치 프로젝트입니다. 포트폴리오 리뷰, 강연, 워크숍, 전시를 거치며 작업과 말, 관계와 장소가 만나는 임시적인 장을 만들었습니다.</p><p class="en">A process-based research series that moved through portfolio review, lectures, workshops, and exhibition, creating a temporary field where work, language, relationships, and place could meet.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>PAN_1 Portfolio Review, PAN_2 Lecture Series, PAN_3 Exhibition — Me, Here, Us로 이어진 과정은 지역에서 작업한다는 질문을 서로의 작업과 조건을 함께 말하는 자리로 옮겼습니다.</p><p>리뷰는 작업을 다시 보는 자리로, 강연과 워크숍은 질문의 언어와 관계를 만드는 과정으로 놓였습니다. 전시는 그 흐름이 모여 형성된 장면입니다.</p><p class="en">The series moves from portfolio review to lectures, workshops, and exhibition, opening a temporary field where work, language, relationships, and place can meet.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>PAN Series
+<div class="short"><p>PAN Series는 ‘판’이라는 말 — 장면, 무대, 자리의 감각 — 에서 출발한 리서치 프로젝트입니다. 포트폴리오 리뷰, 강연, 워크숍, 전시를 거치며 작업과 말, 관계와 장소가 만나는 열린 자리를 만들었습니다.</p><p class="en">A research series that moved through portfolio review, lectures, workshops, and exhibition, opening a field where work, language, relationships, and place could meet.</p><button class="toggle">Archive Note +</button></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>PAN_1 Portfolio Review, PAN_2 Lecture Series, PAN_3 Exhibition — Me, Here, Us로 이어진 과정은 지역에서 작업한다는 질문을 서로의 작업과 조건을 함께 말하는 자리로 옮겼습니다.</p><p>리뷰는 작업을 다시 보는 자리로, 강연과 워크숍은 질문의 언어와 관계를 만드는 과정으로 놓였습니다. 전시는 그 흐름이 모여 형성된 장면입니다.</p><p class="en">The series opened a shared field — moving through portfolio review, lectures, workshops, and exhibition — where questions about working locally could be spoken together.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>PAN Series
 포트폴리오 리뷰, 강연, 워크숍, 전시로 이어지는 과정
 A process-based series moving through portfolio review, lectures, workshops, and exhibition.</p></div><div class="ref-grid"><figure><img alt="작업을 다시 보는 자리" src="assets/index/pan_series/pan_ref_01.jpg"/><figcaption>01 · 작업을 다시 보는 자리 / Portfolio Review</figcaption></figure><figure><img alt="질문의 언어가 오가는 자리" src="assets/index/pan_series/pan_ref_02.jpg"/><figcaption>02 · 질문의 언어가 오가는 자리 / Lecture · Workshop</figcaption></figure><figure><img alt="과정이 전시 장면으로 모이는 자리" src="assets/index/pan_series/pan_ref_03.jpg"/><figcaption>03 · 과정이 전시 장면으로 모이는 자리 / Exhibition</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
@@ -233,13 +633,13 @@ A process-based series moving through portfolio review, lectures, workshops, and
 <div class="frame"><img alt="북성로 현장 리서치의 전체 흐름" src="assets/index/bukseong_ro/bukseong_ref_01.jpg"/><div class="frame-note"><strong>공공하는 북성로</strong><span>북성로를 걷고, 보고, 쓰고, 그리는 현장 리서치</span></div></div>
 <div class="text">
 <div class="short"><p>공공하는 북성로는 대구 북성로 일대의 장소성과 시민의 기억을 워크숍, 현장 기록, 출판의 방식으로 다룬 장소 특정적 공공예술 프로젝트입니다.</p><p class="en">A site-specific public art project in Bukseong-ro, Daegu, developed through workshops, field records, participant materials, and a Story Book.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>공공하는 북성로는 북성로의 역사와 도시재생의 흐름, 공공예술과 지역성에 관한 질문을 함께 다룬 프로젝트입니다. 워크숍과 오픈 스터디, 현장 리서치를 거치며 참여자들은 각자의 시선으로 북성로를 걷고, 보고, 쓰고, 그렸습니다.</p><p>Story Book은 참여자의 텍스트, 드로잉, 사진으로 구성되어 책으로 출간된 기록입니다. 시민의 말과 장소의 기억, 예술적 형식이 한 권의 책 안에 놓이며, 북성로를 하나의 풍경보다 여러 사람의 경험이 겹친 장소로 다시 읽게 합니다.</p><p>홈페이지에서는 Story Book과 프로젝트 과정의 일부 preview만 소개합니다. 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Only a partial preview of the Story Book and project process is introduced on the website. The full material will be handled later after checking consent and the scope of publication.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>공공하는 북성로
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>공공하는 북성로는 북성로의 역사와 도시재생의 흐름, 공공예술과 지역성에 관한 질문을 함께 다룬 프로젝트입니다. 워크숍과 오픈 스터디, 현장 리서치를 거치며 참여자들은 각자의 시선으로 북성로를 걷고, 보고, 쓰고, 그렸습니다.</p><p>Story Book은 참여자의 텍스트, 드로잉, 사진으로 구성되어 책으로 출간된 기록입니다. 참여자 한 사람 한 사람의 말과 장소의 기억, 예술적 형식이 한 권의 책 안에 놓이며, 북성로를 켜켜이 겹친 장소로 다시 펼쳐 읽게 합니다.</p><p>홈페이지에서는 Story Book과 프로젝트 과정의 일부 preview만 소개합니다. 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Only a partial preview of the Story Book and project process is introduced on the website. The full material will be shared after confirming consent and the scope of publication.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>공공하는 북성로
 현장 리서치, 오픈 스터디, 스토리북 제작으로 이어지는 프로젝트 과정
-Image records from field research, open study, and Story Book production.</p></div><div class="ref-grid"><figure><img alt="현장 리서치" src="assets/index/bukseong_ro/bukseong_hero_01.jpg"/><figcaption>01 · 현장 리서치 / Field research</figcaption></figure><figure><img alt="오픈 스터디" src="assets/index/bukseong_ro/bukseong_ref_02.jpg"/><figcaption>02 · 오픈 스터디 / Open study</figcaption></figure><figure><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><figcaption>03 · 공공하는 북성로 Story Book / Story Book preview</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
+Image records from field research, open study, and Story Book production.</p></div><div class="ref-grid"><figure><img alt="현장 리서치" src="assets/index/bukseong_ro/bukseong_hero_01.jpg"/><figcaption>01 · 현장 리서치 / Field research</figcaption></figure><figure><img alt="오픈 스터디" src="assets/index/bukseong_ro/bukseong_ref_02.jpg"/><figcaption>02 · 오픈 스터디 / Open study</figcaption></figure><figure><img alt="공공하는 북성로 스토리북 제작" src="assets/index/bukseong_ro/bukseong_storybook_production.jpg"/><figcaption>03 · 공공하는 북성로 스토리북 제작 / Story Book Production</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
 </section>
-<section class="project" id="letter"><div><div class="kicker">COMING SOON</div><h2>Letter / Issue 00<br/><span class="project-subtitle">Coming soon</span></h2></div><div class="book-frame frame"><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><div class="frame-note"><strong>공공하는 북성로 Story Book</strong><span>참여자의 텍스트, 드로잉, 사진으로 구성된 출판 기록</span></div></div><div class="text"><div class="short"><p>Letter / Issue 00은 준비 중입니다. 첫 번째 Issue는 공공하는 북성로 Story Book을 중심으로, 시민의 말과 장소의 기억이 출판 기록으로 정리되는 과정을 다룰 예정입니다. 홈페이지에서는 일부 preview만 소개하고, 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Publicizing Bukseong-ro Story Book — A publication record composed of participants’ texts, drawings, and photographs.</p><p class="en">Letter / Issue 00 is coming soon. The first issue will focus on the Bukseong-ro Story Book and the process through which citizens’ words and memories of place become a publication record.</p></div></div></section>
-<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어지는 질문들이, 같은 방향 안에서 서로를 알아보는 관계의 가능성을 생각하고 있습니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a href="mailto:contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
+<section class="project" id="letter"><div><div class="kicker">COMING SOON</div><h2>Letter / Issue 00<br/><span class="project-subtitle">Coming soon</span></h2></div><div class="book-frame frame"><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><div class="frame-note"><strong>공공하는 북성로 Story Book</strong><span>참여자의 텍스트, 드로잉, 사진으로 구성된 출판 기록</span></div></div><div class="text"><div class="short"><p>Letter / Issue 00은 준비 중입니다. 첫 번째 Issue는 공공하는 북성로 Story Book을 중심으로, 시민의 말과 장소의 기억이 출판 기록으로 정리되는 과정을 다룰 예정입니다. 홈페이지에서는 일부 preview만 소개하고, 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Bukseong-ro Story Book — A publication record composed of participants’ texts, drawings, and photographs.</p><p class="en">Letter / Issue 00 is coming soon. The first issue will focus on the Bukseong-ro Story Book and the process through which citizens’ words and memories of place become a publication record.</p></div></div></section>
+<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a href="mailto:contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
 </main></div><footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>약칭: 로컬익스프레스<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Contact: contact@localexpressdaegu.org<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
 <script>
 document.addEventListener('click',e=>{
