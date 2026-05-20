@@ -21,3 +21,9 @@ Custom domain:
 
 Public wording note:
 - Organization status is described as `Nonprofit Arts Organization / 비영리 예술단체` for public-facing caution.
+
+
+v03 mobile stabilization:
+- Added mobile CSS patch for index.html and methodology.html.
+- Prevents horizontal overflow on small screens.
+- Stacks side cards, image cards, reference plates, footer, and contact sections vertically on mobile.
