@@ -720,17 +720,37 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 }
 
 
-/* v19 contact copy + footer refinement */
+/* v20 contact copy toast + footer tagline refinement */
 .copy-status{
-  display:inline-block;
-  margin:10px 0 0 0;
-  padding:8px 0;
+  position:fixed;
+  left:50%;
+  bottom:26px;
+  z-index:80;
+  transform:translateX(-50%);
+  display:block;
+  width:max-content;
+  max-width:calc(100vw - 36px);
+  padding:10px 14px 9px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(251,250,246,.94);
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
   font-size:12px;
   line-height:1.45;
-  color:var(--muted);
+  text-align:center;
+  color:var(--ink);
+  pointer-events:none;
 }
 .copy-status[hidden]{display:none!important}
 .copy-status small{font-size:11px;color:var(--muted)}
+.footer-tagline{display:block;margin-top:10px;color:var(--ink);font-size:12px;line-height:1.6}
+.footer-tagline-kr{display:block;margin-top:2px;color:var(--muted);font-size:11px;line-height:1.65;word-break:keep-all}
+
+/* v21 footer four-column alignment */
+.footer strong{font-weight:400;color:var(--ink)}
+.footer-primary{color:var(--ink);font-size:12px;line-height:1.7}
+.footer-secondary{color:var(--muted);font-size:11px;line-height:1.7;word-break:keep-all}
 </style></head><body>
 <header class="top"><a class="brand brand-link" href="#home">LED
 Local Express Daegu</a><nav class="nav"><a href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="methodology.html">Methodology</a><a href="#letter">Letter</a><a href="#contact">Contact</a></nav><div class="util"></div></header>
@@ -790,7 +810,7 @@ Image records from field research, open study, and Story Book production.</p></d
 </section>
 <section class="project" id="letter"><div><div class="kicker">COMING SOON</div><h2>Letter / Issue 00<br/><span class="project-subtitle">Coming soon</span></h2></div><div class="book-frame frame"><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><div class="frame-note"><strong>공공하는 북성로 Story Book</strong><span>참여자의 텍스트, 드로잉, 사진으로 구성된 출판 기록</span></div></div><div class="text"><div class="short"><p>Letter / Issue 00은 준비 중입니다. 첫 번째 Issue는 공공하는 북성로 Story Book을 중심으로, 참여자의 말과 장소의 기억이 출판 기록으로 정리되는 과정을 다룰 예정입니다. 홈페이지에서는 일부 preview만 소개하고, 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Bukseong-ro Story Book — A publication record composed of participants’ texts, drawings, and photographs.</p><p class="en">Letter / Issue 00 is coming soon. The first issue will focus on the Bukseong-ro Story Book and the process through which participants’ words and memories of place become a publication record.</p></div></div></section>
 <section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a class="copy-email" href="#" data-email="contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><span class="copy-status" role="status" aria-live="polite" hidden>이메일 주소가 복사되었습니다<br/><small>Email copied</small></span><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
-</main></div><footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
+</main></div><footer class="footer"><div><strong>LED</strong><br/><span class="footer-secondary">Local Express Daegu</span></div><div><span class="footer-primary">Places, memories, and public records.</span><br/><span class="footer-secondary">장소와 기억을 공공의 기록으로 다시 읽는 예술 실천</span></div><div><span class="footer-primary">Nonprofit Arts Organization / 비영리 예술단체</span><br/><span class="footer-secondary">고유번호: 415-82-83174</span></div><div><span class="footer-primary">© Local Express Daegu. All rights reserved.</span><br/><span class="footer-secondary">Daegu, South Korea · Instagram @_l.e._d</span></div></footer>
 <script>
 document.addEventListener('click',e=>{
   const t=e.target.closest('.toggle');
