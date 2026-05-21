@@ -601,6 +601,18 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
   }
 }
 
+
+/* v19 contact copy + footer refinement */
+.copy-status{
+  display:inline-block;
+  margin:10px 0 0 0;
+  padding:8px 0;
+  font-size:12px;
+  line-height:1.45;
+  color:var(--muted);
+}
+.copy-status[hidden]{display:none!important}
+.copy-status small{font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -830,10 +842,10 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <p class="small">그 단순한 이동 안에 로컬익스프레스대구가 장소와 이미지, 공공 기록을 다루는 방법론이 있습니다.</p><div class="en-support"><p>That simple act of movement holds the methodology through which Local Express Daegu works with site, image, and public record.</p></div>
 </div>
 </section>
-<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="small">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a href="mailto:contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
+<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="small">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a class="copy-email" href="#" data-email="contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><span class="copy-status" role="status" aria-live="polite" hidden>이메일 주소가 복사되었습니다<br/><small>Email copied</small></span><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
 </main>
 </div>
-<footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>약칭: 로컬익스프레스<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Contact: contact@localexpressdaegu.org<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
+<footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
 <script>
 document.addEventListener('click', function(e){
   var btn = e.target.closest('.fold button');
@@ -844,6 +856,47 @@ document.addEventListener('click', function(e){
   content.hidden = !content.hidden;
   icon.textContent = content.hidden ? '+' : '−';
 });
+</script>
+<script>
+(function(){
+  function copyEmailToClipboard(email){
+    if(navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(email);
+    }
+    return new Promise(function(resolve, reject){
+      try{
+        var textArea=document.createElement('textarea');
+        textArea.value=email;
+        textArea.setAttribute('readonly','');
+        textArea.style.position='fixed';
+        textArea.style.top='-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        var ok=document.execCommand('copy');
+        document.body.removeChild(textArea);
+        ok ? resolve() : reject(new Error('copy failed'));
+      }catch(err){reject(err);}
+    });
+  }
+
+  document.addEventListener('click', function(e){
+    var link=e.target.closest('.copy-email');
+    if(!link) return;
+    e.preventDefault();
+    var email=link.getAttribute('data-email') || link.textContent.trim();
+    var status=link.parentElement.querySelector('.copy-status');
+    copyEmailToClipboard(email).then(function(){
+      if(status){
+        status.hidden=false;
+        window.clearTimeout(status._timer);
+        status._timer=window.setTimeout(function(){ status.hidden=true; }, 2200);
+      }
+    }).catch(function(){
+      window.location.href='mailto:'+email;
+    });
+  });
+})();
 </script>
 </body>
 </html>

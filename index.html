@@ -669,6 +669,68 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
   }
 }
 
+
+
+/* v17 desktop terrain outline test
+   Desktop: keep dot terrain and add a very thin Daegu-shape outline that softly fades in/out.
+   Mobile: disable the terrain layer entirely for readability and performance. */
+.led-terrain-outline,
+.led-terrain-outline-soft{
+  transform-origin:center;
+  vector-effect:non-scaling-stroke;
+  animation:ledTerrainOutlineFade 8.8s ease-in-out infinite alternate;
+}
+.led-terrain-outline{
+  stroke:rgba(21,20,17,.26);
+  stroke-width:1.15;
+  fill:none;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+}
+.led-terrain-outline-soft{
+  stroke:rgba(201,169,75,.16);
+  stroke-width:3.2;
+  fill:none;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  filter:blur(.35px);
+  animation-delay:1.8s;
+}
+@keyframes ledTerrainOutlineFade{
+  0%{opacity:.03;stroke-dashoffset:18}
+  42%{opacity:.16}
+  100%{opacity:.30;stroke-dashoffset:0}
+}
+
+@media(max-width:820px){
+  .hero#home .led-terrain-layer,
+  .hero#home .led-hero-vignette{
+    display:none!important;
+  }
+  .hero#home{
+    min-height:auto!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .led-terrain-outline,
+  .led-terrain-outline-soft{
+    animation:none!important;
+    opacity:.12!important;
+  }
+}
+
+
+/* v19 contact copy + footer refinement */
+.copy-status{
+  display:inline-block;
+  margin:10px 0 0 0;
+  padding:8px 0;
+  font-size:12px;
+  line-height:1.45;
+  color:var(--muted);
+}
+.copy-status[hidden]{display:none!important}
+.copy-status small{font-size:11px;color:var(--muted)}
 </style></head><body>
 <header class="top"><a class="brand brand-link" href="#home">LED
 Local Express Daegu</a><nav class="nav"><a href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="methodology.html">Methodology</a><a href="#letter">Letter</a><a href="#contact">Contact</a></nav><div class="util"></div></header>
@@ -690,7 +752,7 @@ A long-term record project re-reading the layered times of one place through par
 <div><div class="kicker">장소의 표면 / 이동의 흔적 / 도시 재편의 감각</div><h2>신장동 아카이브</h2><div class="project-subtitle">Shinjang-dong Archive</div></div>
 <div class="frame"><img alt="장소의 표면에 겹친 언어, 이동, 도시의 시간" src="assets/index/shinjang_dong/shinjang_hero_01.jpg"/><div class="frame-note"><strong>신장동 아카이브</strong><span>장소의 표면에 겹친 언어, 이동, 도시의 시간</span></div></div>
 <div class="text">
-<div class="short"><p>신장동 아카이브는 K-55 인근 신장동을 하나의 상징적 출발점으로 삼아, 전후 미군기지 주변의 생계와 외화, 언어와 문화, 기지 주변 상권과 위락 문화가 오늘의 산업지형과 겹치는 장소의 표면을, 사진·영상·설치의 방식으로 살핀 프로젝트입니다.</p><p class="en">Shinjang-dong Archive takes Shinjang-dong near K-55 as a symbolic point of departure, tracing the surfaces where livelihood, foreign currency, language, commerce, nightlife, and contemporary industrial landscapes overlap.</p><button class="toggle">Archive Note +</button></div>
+<div class="short"><p>신장동 아카이브는 K-55 인근 신장동을 하나의 상징적 출발점으로 삼아, 전후 미군기지 주변의 생계와 외화, 언어와 문화, 기지 주변 상권과 위락 문화가 오늘의 산업지형과 겹치는 장소의 표면을, 사진·영상·설치의 방식으로 살핀 프로젝트입니다.</p><p class="en">Shinjang-dong Archive takes Shinjang-dong near K-55 as a symbolic point of departure, tracing the surfaces where livelihood, foreign currency, language, culture, and the commercial and entertainment culture around the military base overlap with today’s industrial landscape.</p><button class="toggle">Archive Note +</button></div>
 <div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>신장동은 과거 송탄이라 불리던 기지촌의 시간과 미군기지 주변에서 형성된 생계, 외화, 언어와 문화의 혼종, 기지 주변 상권과 위락 문화가 겹쳐진 장소입니다.</p><p>이 프로젝트는 신장동을 좁은 지명으로 고정하지 않고, 기지와 강, 도시 외곽의 산업지형 사이에서 반복되는 이동, 자본, 경계의 감각을 함께 살폈습니다.</p><p>사진은 거리의 표면, 빛, 간판, 물리적 거리, 멀리 보이는 산업 시설의 풍경을 통해 그 관계를 은유적으로 배치합니다.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>신장동 아카이브
 장소의 표면, 이동의 흔적, 도시 재편의 감각을 함께 읽는 이미지
 Image records reading the surface of place, traces of movement, and urban change.</p></div><div class="ref-grid"><figure><img alt="과일가게, 신장동" src="assets/index/shinjang_dong/shinjang_ref_01.jpg"/><figcaption>01 · 과일가게, 신장동 / Fruit shop, Shinjang-dong</figcaption></figure><figure><img alt="강 건너의 경계 지형" src="assets/index/shinjang_dong/shinjang_ref_02.jpg"/><figcaption>02 · 강 건너의 경계 지형 / Boundary landscape across the river</figcaption></figure><figure><img alt="공장 주차장, 평택" src="assets/index/shinjang_dong/shinjang_ref_03.jpg"/><figcaption>03 · 공장 주차장, 평택 / Factory parking lot, Pyeongtaek</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
@@ -727,8 +789,8 @@ Image records from field research, open study, and Story Book production.</p></d
 </div>
 </section>
 <section class="project" id="letter"><div><div class="kicker">COMING SOON</div><h2>Letter / Issue 00<br/><span class="project-subtitle">Coming soon</span></h2></div><div class="book-frame frame"><img alt="공공하는 북성로 Story Book preview" src="assets/index/bukseong_ro/bukseong_storybook_mockup_v027.png"/><div class="frame-note"><strong>공공하는 북성로 Story Book</strong><span>참여자의 텍스트, 드로잉, 사진으로 구성된 출판 기록</span></div></div><div class="text"><div class="short"><p>Letter / Issue 00은 준비 중입니다. 첫 번째 Issue는 공공하는 북성로 Story Book을 중심으로, 참여자의 말과 장소의 기억이 출판 기록으로 정리되는 과정을 다룰 예정입니다. 홈페이지에서는 일부 preview만 소개하고, 전체 자료는 공개 범위와 동의 여부를 확인한 뒤 선별해 다룰 예정입니다.</p><p class="en">Bukseong-ro Story Book — A publication record composed of participants’ texts, drawings, and photographs.</p><p class="en">Letter / Issue 00 is coming soon. The first issue will focus on the Bukseong-ro Story Book and the process through which participants’ words and memories of place become a publication record.</p></div></div></section>
-<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a href="mailto:contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
-</main></div><footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>약칭: 로컬익스프레스<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Contact: contact@localexpressdaegu.org<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
+<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="en">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a class="copy-email" href="#" data-email="contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><span class="copy-status" role="status" aria-live="polite" hidden>이메일 주소가 복사되었습니다<br/><small>Email copied</small></span><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
+</main></div><footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
 <script>
 document.addEventListener('click',e=>{
   const t=e.target.closest('.toggle');
@@ -815,9 +877,57 @@ document.addEventListener('click',e=>{
         index++;
       }
     }
-    terrainEl.innerHTML=`<svg viewBox="0 0 ${w} ${h}" aria-hidden="true"><g>${circles}</g></svg>`;
+    const outlinePoints=poly.map(([px,py])=>`${(px*w).toFixed(2)},${(py*h).toFixed(2)}`).join(' ');
+    terrainEl.innerHTML=`<svg viewBox="0 0 ${w} ${h}" aria-hidden="true">
+      <g>
+        <polygon class="led-terrain-outline-soft" points="${outlinePoints}" stroke-dasharray="24 18" stroke-dashoffset="18" />
+        <polygon class="led-terrain-outline" points="${outlinePoints}" stroke-dasharray="18 14" stroke-dashoffset="18" />
+        ${circles}
+      </g>
+    </svg>`;
   }
   makeTerrain();
+})();
+</script>
+<script>
+(function(){
+  function copyEmailToClipboard(email){
+    if(navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(email);
+    }
+    return new Promise(function(resolve, reject){
+      try{
+        var textArea=document.createElement('textarea');
+        textArea.value=email;
+        textArea.setAttribute('readonly','');
+        textArea.style.position='fixed';
+        textArea.style.top='-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        var ok=document.execCommand('copy');
+        document.body.removeChild(textArea);
+        ok ? resolve() : reject(new Error('copy failed'));
+      }catch(err){reject(err);}
+    });
+  }
+
+  document.addEventListener('click', function(e){
+    var link=e.target.closest('.copy-email');
+    if(!link) return;
+    e.preventDefault();
+    var email=link.getAttribute('data-email') || link.textContent.trim();
+    var status=link.parentElement.querySelector('.copy-status');
+    copyEmailToClipboard(email).then(function(){
+      if(status){
+        status.hidden=false;
+        window.clearTimeout(status._timer);
+        status._timer=window.setTimeout(function(){ status.hidden=true; }, 2200);
+      }
+    }).catch(function(){
+      window.location.href='mailto:'+email;
+    });
+  });
 })();
 </script>
 </body></html>
