@@ -8,6 +8,7 @@ Root files:
 - index.html
 - methodology.html
 - assets/
+- over39/
 - .nojekyll
 
 GitHub Pages setting:
@@ -16,7 +17,15 @@ GitHub Pages setting:
 - Folder: /root
 
 Custom domain:
-- Add a CNAME file later only when the domain is ready to connect.
+- `localexpressdaegu.org`
+
+## 〈만 39세 이상〉 research survey
+
+- Public path: `/over39/`
+- Static survey assets live in `over39/`.
+- The homepage links to the survey from the hero, navigation, project index, and project section.
+- `over39/config.js` contains the response webhook setting.
+- Do not merge the survey to the public branch until a production webhook has been configured and tested. An empty webhook keeps drafts in the participant's browser but does not collect completed responses centrally.
 
 
 Public wording note:
