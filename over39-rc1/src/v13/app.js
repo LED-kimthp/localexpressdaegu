@@ -21,7 +21,7 @@ const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const query = new URLSearchParams(window.location.search);
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
-const sampleType = institutionCode ? "institution_review" : query.get("sample") === "test" ? "test" : "research";
+const sampleType = institutionCode ? "institution_review" : query.get("sample") === "research" ? "research" : "test";
 
 let schema;
 let depthBank;
