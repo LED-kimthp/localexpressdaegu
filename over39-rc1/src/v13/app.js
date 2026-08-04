@@ -18,6 +18,7 @@ const submitFunctionUrl = String(window.OVER39_SUPABASE_SUBMIT_URL || "").trim()
 const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
 const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
+const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
 const query = new URLSearchParams(window.location.search);
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
@@ -97,7 +98,7 @@ function progressMeta(id) {
   const depthStage = { DEPTH_M: 1, DEPTH_S: 2, DEPTH_D: 3 }[id];
   if (depthStage) {
     return {
-      label: state.answers.depth_source === "openai" ? "DEPTH INTERVIEW · API" : "DEPTH INTERVIEW · APPROVED BANK",
+      label: isApiDepthSource(state.answers.depth_source) ? "DEPTH INTERVIEW · API" : "DEPTH INTERVIEW · APPROVED BANK",
       count: `${String(depthStage).padStart(2, "0")} / 03`,
       progress: Math.round(((fixedIds.length + depthStage) / (fixedIds.length + 3)) * 100),
     };
@@ -360,7 +361,7 @@ function renderReflectionReview() {
   const summary = state.answers.depth_summary?.summary || "응답을 한 문장으로 정리하지 않았습니다.";
   const action = state.answers.reflection_action;
   return `${screenHeading("지금까지의 응답을 이렇게 읽었습니다.", "이 문장은 결과를 확정하는 판단이 아니라, 당신이 확인하고 고칠 수 있는 임시 정리입니다.")}
-    <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "openai" ? "API가 정리한 임시 문장" : "규칙으로 정리한 임시 문장"}</span><p>${esc(summary)}</p></div>
+    <div class="reflection-summary"><span>${isApiDepthSource(state.answers.depth_summary?.source) ? "API가 정리한 임시 문장" : "규칙으로 정리한 임시 문장"}</span><p>${esc(summary)}</p></div>
     ${renderChoices("reflection_action", [["ACCEPT", "이 뜻과 가까워요"], ["EDIT", "일부를 수정할게요"], ["OTHER_DIRECTION", "다른 방향에 가까워요"], ["DROP", "이 요약은 남기지 않을게요"]])}
     ${action === "EDIT" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: "당신의 말로 고쳐 적어주세요.", label: "참여자가 수정한 문장" }) : ""}
     ${action === "OTHER_DIRECTION" ? `<div class="axis-correction"><label class="field-label">중요하게 남은 의미</label>${renderChoices("participant_m", DEPTH_AXIS_OPTIONS.M.slice(0, 4))}<label class="field-label">현재의 움직임</label>${renderChoices("participant_s", DEPTH_AXIS_OPTIONS.S.slice(0, 4))}<label class="field-label">변화가 필요한 자리</label>${renderChoices("participant_d", DEPTH_AXIS_OPTIONS.D.slice(0, 4))}</div>` : ""}
@@ -468,7 +469,8 @@ function createResponse(submissionPhase = "final") {
       participant_action: cleanedAnswers.reflection_action || null,
       participant_revision: cleanedAnswers.participant_revision?.trim() || null,
       participant_approved_text: approvedText,
-      public_approved: Boolean(approvedText && cleanedAnswers.reflection_action !== "DROP"),
+      // Accuracy confirmation is not consent for public use.
+      public_approved: false,
     },
     coordinate_snapshots: snapshots,
     consent: {
@@ -487,7 +489,10 @@ async function requestResearchStorage(response) {
       anonKey: supabaseAnonKey,
     });
   }
-  if (!googleAppsScriptUrl) return sendEnvelope(createEnvelope("research_submission", response), {});
+  if (!googleAppsScriptUrl) {
+    const kind = response.submission_phase === "fixed_complete" ? "fixed_snapshot" : "research_submission";
+    return sendEnvelope(createEnvelope(kind, response), {});
+  }
   try {
     await fetch(googleAppsScriptUrl, {
       method: "POST",
@@ -842,10 +847,9 @@ document.addEventListener("click", (event) => {
       const fixedResponse = createResponse("fixed_complete");
       savePending(fixedResponse);
       const context = buildMinimalDepthContext(fixedResponse);
-      Promise.all([
-        requestResearchStorage(fixedResponse),
-        createDepthPlan({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, bank: depthBank }),
-      ]).then(([, plan]) => {
+      requestResearchStorage(fixedResponse)
+        .then(() => createDepthPlan({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, bank: depthBank }))
+        .then((plan) => {
         state.answers.depth_plan = plan.questions;
         state.answers.depth_source = plan.source;
         state.answers.depth_ai_runs = [plan.run];

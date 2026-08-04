@@ -1,8 +1,15 @@
 const AXES = ["M", "S", "D"];
+const API_SOURCES = new Set(["openai", "motif"]);
 const VALID_AXIS_VALUES = {
   M: new Set(["M1", "M2", "M3", "M4", "MIXED", "UNKNOWN", "SKIP"]),
   S: new Set(["S1", "S2", "S3", "S4", "MIXED", "UNKNOWN", "SKIP"]),
   D: new Set(["D1", "D2", "D3", "D4", "MIXED", "UNKNOWN", "SKIP"]),
+};
+
+const AXIS_LABELS = {
+  M1: "감각과 정서", M2: "삶과 기억과 정체성", M3: "탐구와 창작과 성취", M4: "관계와 공공세계",
+  S1: "확장", S2: "지속", S3: "전환", S4: "거리와 한계",
+  D1: "접근과 참여", D2: "개인의 기반", D3: "관계와 매개", D4: "제도와 구조",
 };
 
 export const DEPTH_PUBLIC_INTENTS = {
@@ -80,7 +87,11 @@ export function buildMinimalDepthContext(response) {
   const allowed = new Set(["P05", "P06", "P07", "M01", "M04", "M05", "D01", "D02", "D03", "R01"]);
   const selectedAnswers = (response.fixed_questions || [])
     .filter((item) => allowed.has(item.id) && item.answer !== null && item.answer !== "")
-    .map((item) => ({ question_id: item.id, answer: item.answer }));
+    .map((item) => ({
+      question_id: item.id,
+      answer: item.answer,
+      answer_label: AXIS_LABELS[item.answer] || null,
+    }));
   return {
     response_id: response.response_id,
     route: response.route,
@@ -97,6 +108,11 @@ export function buildMinimalDepthContext(response) {
       s: response.coordinate_snapshots?.fixed?.s_primary || null,
       d: response.coordinate_snapshots?.fixed?.d_primary || null,
     },
+    temporary_axis_labels: {
+      m: AXIS_LABELS[response.coordinate_snapshots?.fixed?.m_primary] || null,
+      s: AXIS_LABELS[response.coordinate_snapshots?.fixed?.s_primary] || null,
+      d: AXIS_LABELS[response.coordinate_snapshots?.fixed?.d_primary] || null,
+    },
     candidate_axes: {},
     prompt_version: DEPTH_PROMPT_VERSION,
   };
@@ -112,6 +128,7 @@ export function buildMinimalSummaryContext({ responseId, route, coordinateScope,
     depth_answers: AXES.map((axis) => ({
       axis,
       selected_value: answers[`depth_${axis.toLowerCase()}`] || null,
+      selected_label: AXIS_LABELS[answers[`depth_${axis.toLowerCase()}`]] || null,
     })),
   };
 }
@@ -139,12 +156,13 @@ export async function createDepthPlan({ endpoint, anonKey, mode = "fallback", co
     if (!Array.isArray(body.questions) || body.questions.length !== 3 || !AXES.every((axis, index) => body.questions[index]?.axis === axis)) {
       throw new Error("AI_INVALID_QUESTION_ORDER");
     }
-    const questions = AXES.map((axis, index) => decorateDepthQuestion(body.questions?.[index] || {}, axis, context, "openai"));
+    const provider = API_SOURCES.has(body.provider) ? body.provider : "api";
+    const questions = AXES.map((axis, index) => decorateDepthQuestion(body.questions?.[index] || {}, axis, context, provider));
     if (!validateDepthPlan(questions)) throw new Error("AI_INVALID_QUESTION_PLAN");
-    return { questions, source: "openai", run: { status: "success", provider: "openai", model: body.model || null, prompt_version: DEPTH_PROMPT_VERSION, latency_ms: Math.round(performance.now() - started), usage: body.usage || null } };
+    return { questions, source: provider, run: { status: "success", provider, model: body.model || null, prompt_version: DEPTH_PROMPT_VERSION, latency_ms: Math.round(performance.now() - started), usage: body.usage || null } };
   } catch (error) {
     const result = fallback();
-    result.run = { status: "fallback", provider: "openai", error_code: error.message, latency_ms: Math.round(performance.now() - started) };
+    result.run = { status: "fallback", provider: "api", error_code: error.message, latency_ms: Math.round(performance.now() - started) };
     return result;
   }
 }
@@ -185,10 +203,11 @@ export async function createDepthSummary({ endpoint, anonKey, mode = "fallback",
     if (!response.ok) throw new Error(`AI_HTTP_${response.status}`);
     const body = await response.json();
     if (!body.summary || !body.axes) throw new Error("AI_INVALID_SUMMARY");
-    return { summary: body.summary, axes: body.axes, evidence: body.evidence || {}, source: "openai", run: { status: "success", provider: "openai", model: body.model || null, latency_ms: Math.round(performance.now() - started), usage: body.usage || null } };
+    const provider = API_SOURCES.has(body.provider) ? body.provider : "api";
+    return { summary: body.summary, axes: body.axes, evidence: body.evidence || {}, source: provider, run: { status: "success", provider, model: body.model || null, latency_ms: Math.round(performance.now() - started), usage: body.usage || null } };
   } catch (error) {
     const result = fallback();
-    result.run = { status: "fallback", provider: "openai", error_code: error.message, latency_ms: Math.round(performance.now() - started) };
+    result.run = { status: "fallback", provider: "api", error_code: error.message, latency_ms: Math.round(performance.now() - started) };
     return result;
   }
 }

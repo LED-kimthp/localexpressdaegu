@@ -1,4 +1,4 @@
-// 테스트 설문 제출값을 Make.com의 비식별 응답 저장 시나리오로 전송합니다.
+// Legacy Make.com receiver. RC1 uses Supabase and leaves this disabled.
 window.OVER39_WEBHOOK_URL = "";
 
 // v1.3 파일럿은 Google Apps Script 수신기를 사용합니다.
@@ -13,10 +13,10 @@ window.OVER39_S_INTERVIEW_API_URL = "";
 window.OVER39_DASHBOARD_DATA_URL = "";
 
 // RC1 remote services. Public anon keys may be used here; service-role and OpenAI keys must never be added.
-window.OVER39_SUPABASE_URL = "";
-window.OVER39_SUPABASE_ANON_KEY = "";
-window.OVER39_SUPABASE_SUBMIT_URL = "";
-window.OVER39_SUPABASE_AI_URL = "";
+window.OVER39_SUPABASE_URL = "https://alluyuuliogbkvrwagrl.supabase.co";
+window.OVER39_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsbHV5dXVsaW9nYmt2cndhZ3JsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyMjc3NDUsImV4cCI6MjA5NTgwMzc0NX0.EM5u52B6BxWTDJ8gDeg-PU5bCCMKEJaNJAv_4XP_Zzs";
+window.OVER39_SUPABASE_SUBMIT_URL = "https://alluyuuliogbkvrwagrl.supabase.co/functions/v1/over39-submit";
+window.OVER39_SUPABASE_AI_URL = "https://alluyuuliogbkvrwagrl.supabase.co/functions/v1/over39-ai";
 
-// fallback | mock | live. Use live only after the Edge Function has OPENAI_API_KEY.
-window.OVER39_AI_MODE = "fallback";
+// fallback | mock | live. Live calls the configured provider through the Edge Function.
+window.OVER39_AI_MODE = "live";
