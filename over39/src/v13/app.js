@@ -2067,14 +2067,14 @@ function renderIntro() {
         </div>
         <section class="entry-route-grid" aria-label="참여 경로">
           <article class="entry-route-card interactive-tilt">
-            <div class="route-object route-logo route-logo-led" aria-hidden="true">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</div><span>RESEARCH</span>
+            <div class="route-object route-logo route-logo-led" aria-hidden="true"><span class="route-logo-shadow">${ledWordmark({ className: "route-led-wordmark", decorative: true, fill: "#777873" })}</span><span class="route-logo-body">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</span></div><span>RESEARCH</span>
             <h2>${esc(t("문화예술 경험 기록"))}</h2>
             <p>${esc(t("작가·창작자·비평가·기획자·교육자·관객·시민의 경험을 기억·현재·조건의 세 구간을 따라 듣습니다."))}</p>
             <div class="entry-route-meta">${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건 · 참여 기록"))}</div>
             <div class="entry-route-actions"><button class="primary-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button>${draft ? `<button class="secondary-button" type="button" data-action="resume">${esc(t("작성 이어가기"))}</button>` : ""}</div>
           </article>
           <article class="entry-route-card entry-route-call interactive-tilt">
-            <div class="route-object route-logo route-logo-moho" aria-hidden="true">${mohoHouseMark({ className: "route-moho-mark" })}</div><span>2026 OPEN CALL</span>
+            <div class="route-object route-logo route-logo-moho" aria-hidden="true"><span class="route-logo-shadow"></span><span class="route-logo-body">${mohoHouseMark({ className: "route-moho-mark" })}</span></div><span>2026 OPEN CALL</span>
             <h2>${esc(t("공모"))}</h2>
             <p>${esc(t("2026년 12월 · 모호주택에서 함께할 작업을 기다립니다."))}</p>
             <div class="entry-route-meta">${esc(t("설문 참여와 독립된 공모입니다"))}</div>
@@ -2111,16 +2111,17 @@ function bindInteractiveMotion() {
       const rect = card.getBoundingClientRect();
       const px = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
       const py = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-      card.style.setProperty("--tilt-x", `${(0.5 - py) * 5}deg`);
-      card.style.setProperty("--tilt-y", `${(px - 0.5) * 7}deg`);
-      card.style.setProperty("--object-x", `${(0.5 - py) * 44}deg`);
-      card.style.setProperty("--object-y", `${(px - 0.5) * 56}deg`);
+      const dx = px - 0.5;
+      const dy = py - 0.5;
+      const length = Math.hypot(dx, dy);
+      const shadowX = length > 0.04 ? (dx / length) * 2.25 : 1.6;
+      const shadowY = length > 0.04 ? (dy / length) * 2.25 : 1.6;
+      card.style.setProperty("--logo-shadow-x", `${shadowX.toFixed(2)}px`);
+      card.style.setProperty("--logo-shadow-y", `${shadowY.toFixed(2)}px`);
     };
     const reset = () => {
-      card.style.setProperty("--tilt-x", "0deg");
-      card.style.setProperty("--tilt-y", "0deg");
-      card.style.setProperty("--object-x", "22deg");
-      card.style.setProperty("--object-y", "-28deg");
+      card.style.setProperty("--logo-shadow-x", "2px");
+      card.style.setProperty("--logo-shadow-y", "2px");
     };
     card.addEventListener("pointermove", move, { passive: true });
     card.addEventListener("pointerleave", reset, { passive: true });

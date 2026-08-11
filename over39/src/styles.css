@@ -3724,7 +3724,7 @@ body,
   position: relative;
   overflow: hidden;
   perspective: 900px;
-  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--lift, 0));
+  transform: translateY(var(--lift, 0));
   transition: transform .2s ease, border-color .2s ease;
 }
 .entry-route-card:hover { --lift: -4px; border-color: #000; }
@@ -3743,24 +3743,49 @@ body,
   height: 54px;
   display: grid;
   place-items: center;
-  transform-origin: 72% 50%;
+  transform: none;
+}
+.route-logo-body,
+.route-logo-shadow {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.route-logo-body {
+  position: relative;
+  z-index: 2;
+  transform: none;
+}
+.route-logo-shadow {
+  z-index: 1;
+  opacity: .28;
+  transform: translate(var(--logo-shadow-x, 2px), var(--logo-shadow-y, 2px));
+  transition: transform .16s ease-out;
+  will-change: transform;
 }
 .route-led-wordmark {
   display: block;
-  width: 72px;
+  width: 73px;
   height: auto;
   overflow: visible;
 }
 .route-moho-mark {
   display: grid;
-  width: 62px;
+  width: 63px;
   place-items: center;
 }
 .route-moho-mark img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(3px 3px 0 rgba(23, 24, 22, .28));
+  filter: none;
+}
+.route-logo-moho .route-logo-shadow {
+  width: 63px;
+  aspect-ratio: 580 / 239;
+  background: #777873;
+  -webkit-mask: url("../moho-house-logo-vector.svg") center / contain no-repeat;
+  mask: url("../moho-house-logo-vector.svg") center / contain no-repeat;
 }
 .route-object::before,
 .route-object::after {
@@ -3889,14 +3914,18 @@ body,
   .response-document-metadata { grid-template-columns: 1fr; }
   .route-object { width: 42px; height: 42px; top: 20px; right: 20px; }
   .route-object.route-logo { width: 64px; height: 42px; }
-  .route-led-wordmark { width: 60px; }
-  .route-moho-mark { width: 52px; }
+  .entry-route-card { --logo-shadow-x: 2px !important; --logo-shadow-y: 2px !important; }
+  .route-led-wordmark { width: 57px; }
+  .route-moho-mark { width: 50px; }
+  .route-logo-moho .route-logo-shadow { width: 50px; }
+  .route-logo-shadow { transform: translate(2px, 2px); transition: none; }
 }
 
 @media (hover: none), (pointer: coarse) {
   .entry-route-card { transform: none; }
   .entry-route-card:active { transform: scale(.992); }
-  .route-object { animation: route-object-float 5s ease-in-out infinite; }
+  .route-object:not(.route-logo) { animation: route-object-float 5s ease-in-out infinite; }
+  .route-logo-shadow { transform: translate(2px, 2px); transition: none; }
 }
 
 @keyframes route-object-float {
@@ -3907,6 +3936,7 @@ body,
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
   .entry-route-card, .route-object, .choice { transform: none !important; }
+  .route-logo-shadow { transform: translate(2px, 2px) !important; transition: none !important; }
 }
 
 @media print {
