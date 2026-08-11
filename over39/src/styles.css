@@ -3154,34 +3154,13 @@ h2:focus {
   }
 }
 
-/* Production partnership branding · official Moho asset + readable LED wordmark */
+/* Production identity · compact header and card marks */
 .led-wordmark { display: block; width: 96px; height: auto; overflow: visible; }
 .led-wordmark-header { width: 52px; }
-.production-brand-lockup {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(18px, 4vw, 52px);
-  width: min(720px, 100%);
-  margin: 50px auto 0;
-  padding: 28px clamp(18px, 4vw, 42px);
-  border: 1px solid var(--line-dark);
-  background: rgba(255, 255, 255, .42);
-}
-.production-brand-item { display: grid; justify-items: center; gap: 11px; min-width: 0; }
-.production-brand-item > span { color: var(--muted); font-size: 11px; font-weight: 650; }
-.production-brand-divider { color: var(--muted); font-size: 15px; }
-.production-brand-lockup .led-wordmark { width: min(150px, 76%); }
-.moho-brand-item picture { display: grid; place-items: center; width: 100%; }
-.moho-brand-item img { display: block; width: min(186px, 80%); height: auto; object-fit: contain; }
 .project-brand .led-wordmark-header { flex: 0 0 auto; }
 .project-brand > span:last-child { white-space: nowrap; }
 
 @media (max-width: 620px) {
-  .production-brand-lockup { gap: 12px; padding: 22px 14px; }
-  .production-brand-item > span { font-size: 9px; }
-  .production-brand-lockup .led-wordmark { width: min(112px, 82%); }
-  .moho-brand-item img { width: min(136px, 82%); }
   .led-wordmark-header { width: 45px; }
 }
 
@@ -3759,6 +3738,30 @@ body,
   transform: rotateX(var(--object-x, 22deg)) rotateY(var(--object-y, -28deg));
   pointer-events: none;
 }
+.route-object.route-logo {
+  width: 76px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  transform-origin: 72% 50%;
+}
+.route-led-wordmark {
+  display: block;
+  width: 72px;
+  height: auto;
+  overflow: visible;
+}
+.route-moho-mark {
+  display: grid;
+  width: 62px;
+  place-items: center;
+}
+.route-moho-mark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(3px 3px 0 rgba(23, 24, 22, .28));
+}
 .route-object::before,
 .route-object::after {
   content: "";
@@ -3774,6 +3777,8 @@ body,
 .entry-route-call .route-object::before,
 .entry-route-call .route-object::after { border-radius: 50%; transform: translateZ(10px); }
 .entry-route-call .route-object::after { transform: translateZ(-10px) scale(.68); }
+.route-object.route-logo::before,
+.route-object.route-logo::after { content: none; }
 
 .coordinate-feedback {
   margin: 34px 0 0;
@@ -3883,6 +3888,9 @@ body,
   .response-document-section { grid-template-columns: 1fr; }
   .response-document-metadata { grid-template-columns: 1fr; }
   .route-object { width: 42px; height: 42px; top: 20px; right: 20px; }
+  .route-object.route-logo { width: 64px; height: 42px; }
+  .route-led-wordmark { width: 60px; }
+  .route-moho-mark { width: 52px; }
 }
 
 @media (hover: none), (pointer: coarse) {

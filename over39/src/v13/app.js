@@ -9,7 +9,7 @@ import { QUESTION_METADATA } from "./question-map.js";
 import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js";
 import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, renderResponseDocument } from "./response-document.js";
 import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js";
-import { productionBrandLockup, ledWordmark } from "../brand-lockup.js";
+import { ledWordmark, mohoHouseMark } from "../brand-lockup.js";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -1667,7 +1667,7 @@ async function verifyResearchStorage(responseId) {
 function creditBlock(variant = "default") {
   const className = variant === "intro" ? "intro-credit-grid" : "credit-block";
   const rowClass = variant === "intro" ? "intro-credit-item" : "credit-row";
-  return `${variant === "intro" ? productionBrandLockup() : ""}<section class="${className}" aria-label="프로젝트 크레디트">${creditRows.map(([role, name]) => `<div class="${rowClass}"><span>${esc(t(role))}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
+  return `<section class="${className}" aria-label="프로젝트 크레디트">${creditRows.map(([role, name]) => `<div class="${rowClass}"><span>${esc(t(role))}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
 }
 
 function header() {
@@ -2067,14 +2067,14 @@ function renderIntro() {
         </div>
         <section class="entry-route-grid" aria-label="참여 경로">
           <article class="entry-route-card interactive-tilt">
-            <div class="route-object" aria-hidden="true"></div><span>RESEARCH</span>
+            <div class="route-object route-logo route-logo-led" aria-hidden="true">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</div><span>RESEARCH</span>
             <h2>${esc(t("문화예술 경험 기록"))}</h2>
             <p>${esc(t("작가·창작자·비평가·기획자·교육자·관객·시민의 경험을 기억·현재·조건의 세 구간을 따라 듣습니다."))}</p>
             <div class="entry-route-meta">${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건 · 참여 기록"))}</div>
             <div class="entry-route-actions"><button class="primary-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button>${draft ? `<button class="secondary-button" type="button" data-action="resume">${esc(t("작성 이어가기"))}</button>` : ""}</div>
           </article>
           <article class="entry-route-card entry-route-call interactive-tilt">
-            <div class="route-object" aria-hidden="true"></div><span>2026 OPEN CALL</span>
+            <div class="route-object route-logo route-logo-moho" aria-hidden="true">${mohoHouseMark({ className: "route-moho-mark" })}</div><span>2026 OPEN CALL</span>
             <h2>${esc(t("공모"))}</h2>
             <p>${esc(t("2026년 12월 · 모호주택에서 함께할 작업을 기다립니다."))}</p>
             <div class="entry-route-meta">${esc(t("설문 참여와 독립된 공모입니다"))}</div>

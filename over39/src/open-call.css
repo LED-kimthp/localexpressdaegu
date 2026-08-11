@@ -52,13 +52,6 @@ main { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
 .button-secondary { background: var(--surface); }
 .button:hover { transform: translateY(-2px); }
 
-.production-brand-lockup { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 26px; width: min(600px, 100%); margin: 46px auto 0; padding: 24px 30px; border: 1px solid var(--line); background: rgba(255,255,255,.45); }
-.production-brand-item { display: grid; justify-items: center; gap: 8px; min-width: 0; }
-.production-brand-item > span { color: var(--muted); font-size: 10px; font-weight: 700; }
-.production-brand-divider { color: var(--muted); }
-.led-wordmark { display: block; width: min(134px, 78%); height: auto; overflow: visible; }
-.moho-brand-item picture { display: grid; place-items: center; width: 100%; }
-.moho-brand-item img { display: block; width: min(166px, 80%); height: auto; object-fit: contain; }
 
 .call-summary { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); background: var(--surface); }
 .call-summary div { min-height: 132px; padding: 26px 22px; border-right: 1px solid var(--line); }
@@ -170,10 +163,6 @@ label > small, .counter { display: block; margin-top: 8px; color: var(--muted); 
   .hero-lead { font-size: 19px; text-align: left; }
   .hero-separation { text-align: left; }
   .hero-actions { display: grid; width: 100%; }
-  .production-brand-lockup { gap: 12px; padding: 19px 12px; }
-  .production-brand-item > span { font-size: 9px; }
-  .led-wordmark { width: min(104px, 84%); }
-  .moho-brand-item img { width: min(126px, 82%); }
   .button { width: 100%; }
   .call-summary { grid-template-columns: 1fr; }
   .call-summary div { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line); }

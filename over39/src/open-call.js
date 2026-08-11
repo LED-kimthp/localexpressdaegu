@@ -1,4 +1,3 @@
-import { productionBrandLockup } from "./brand-lockup.js";
 import { hasPdfSignature, validatePortfolioSelection } from "./open-call-validation.js";
 
 const form = document.querySelector("#open-call-form");
@@ -9,8 +8,6 @@ const endpoint = String(window.OVER39_SUPABASE_OPEN_CALL_URL || "").trim();
 const anonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const submissionsEnabled = window.OVER39_OPEN_CALL_SUBMISSIONS_ENABLED === true;
 const draftKey = "over39-open-call-v1-draft";
-
-document.querySelectorAll("[data-production-brand]").forEach((node) => { node.innerHTML = productionBrandLockup({ compact: true }); });
 
 function saveDraft() {
   const draft = {};
