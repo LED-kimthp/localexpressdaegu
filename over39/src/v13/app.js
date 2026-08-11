@@ -9,6 +9,7 @@ import { QUESTION_METADATA } from "./question-map.js";
 import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js";
 import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, renderResponseDocument } from "./response-document.js";
 import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js";
+import { productionBrandLockup, ledWordmark } from "../brand-lockup.js";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -25,6 +26,7 @@ const googleAppsScriptUrl = String(window.OVER39_GOOGLE_APPS_SCRIPT_URL || "").t
 const submitFunctionUrl = String(window.OVER39_SUPABASE_SUBMIT_URL || "").trim();
 const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
 const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
+const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
 const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
@@ -89,7 +91,7 @@ const languages = [
   ["ms", "Bahasa Melayu"],
 ];
 const researchContactEmail = "over39@localexpressdaegu.org";
-const greetingSenderName = "〈만 39세 이상〉 안부우편함";
+const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
 const creditRows = [["주최·주관", "북성로사진관(대안공간 모호주택)"], ["총괄기획", "이생강"], ["연구 협력", "Local Express Daegu"], ["후원", "한국문화예술위원회"]];
 const t = (text) => translate(state.language, text);
@@ -455,11 +457,14 @@ function savePending(response) { localStorage.setItem(pendingKey, JSON.stringify
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
 function defaultConnection() {
   return {
+    greeting_id: crypto.randomUUID(),
     opt_in: "",
     message_audience: "",
     message_text: "",
     receive_opt_in: "",
     receive_scopes: [],
+    greeting_connection_preference: "",
+    translation_allowed: "YES",
     needs: [],
     offers: [],
     reply_modes: [],
@@ -1662,14 +1667,14 @@ async function verifyResearchStorage(responseId) {
 function creditBlock(variant = "default") {
   const className = variant === "intro" ? "intro-credit-grid" : "credit-block";
   const rowClass = variant === "intro" ? "intro-credit-item" : "credit-row";
-  return `<section class="${className}" aria-label="프로젝트 크레디트">${creditRows.map(([role, name]) => `<div class="${rowClass}"><span>${esc(t(role))}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
+  return `${variant === "intro" ? productionBrandLockup() : ""}<section class="${className}" aria-label="프로젝트 크레디트">${creditRows.map(([role, name]) => `<div class="${rowClass}"><span>${esc(t(role))}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
 }
 
 function header() {
-  const projectMeta = isRc2 ? t("리서치 · 정책연구 · 전시 참여 공모") : "PUBLIC MEMORY RESEARCH · RC1";
+  const projectMeta = isRc2 ? t("리서치 · 참여 기록 · 공모") : "PUBLIC MEMORY RESEARCH · RC1";
   const currentLanguage = languages.find(([code]) => code === state.language)?.[1] || "한국어";
   return `<header class="topbar" aria-label="Site header">
-    <div class="brand project-brand"><span class="brand-mark">39+</span><span>〈만 39세 이상〉</span></div>
+    <div class="brand project-brand">${ledWordmark({ className: "led-wordmark led-wordmark-header" })}<span>〈만 39세 이상〉</span></div>
     <div class="topbar-project"><span>${esc(projectMeta)}</span><strong>RESEARCH & OPEN CALL</strong></div>
     <details class="language-menu">
       <summary aria-label="${esc(t("언어 선택"))}"><span>${esc(currentLanguage)}</span><i aria-hidden="true">⌄</i></summary>
@@ -1681,7 +1686,7 @@ function header() {
 }
 
 function footer() {
-  const footerMeta = isRc2 ? t("기억 · 현재 · 조건 · 참여 기록 · 전시 참여 공모 · 안부") : "PUBLIC MEMORY RESEARCH · INSTITUTION RC1";
+  const footerMeta = isRc2 ? t("기억 · 현재 · 조건 · 참여 기록 · 공모 · 안부의 좌표") : "PUBLIC MEMORY RESEARCH · INSTITUTION RC1";
   return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(footerMeta)}</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
 }
 
@@ -1742,6 +1747,7 @@ function connectionCanSave() {
   const wantsToReceive = connection.receive_opt_in === "YES";
   if (!hasOutgoingMessage && !wantsToReceive) return false;
   if (wantsToReceive) {
+    if (!connection.greeting_connection_preference) return false;
     if (!values(connection.reply_modes).includes("EMAIL_NOTICE")) return false;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(connection.contact_email || "").trim()) && connection.contact_permission === "YES";
   }
@@ -1759,10 +1765,14 @@ function createConnectionUpdate() {
     submitted_at: new Date().toISOString(),
     connection_profile: profile,
     message_exchange: {
+      greeting_id: connection.greeting_id || `${research.response_id}-greeting`,
       message_audience: connection.message_audience || null,
       message_text: String(connection.message_text || connection.introduction || "").trim() || null,
       receive_opt_in: connection.receive_opt_in === "YES",
       receive_scopes: values(connection.receive_scopes).length ? values(connection.receive_scopes) : (connection.receive_opt_in === "YES" ? ["OPEN"] : []),
+      greeting_connection_preference: connection.greeting_connection_preference || null,
+      translation_allowed: connection.translation_allowed === "YES",
+      original_language: research.source_language || state.language || "ko",
       delivery_modes: values(connection.reply_modes),
       status: connection.opt_in === "YES" ? "stored_waiting_receiver" : "not_requested",
       mailbox_delivery: {
@@ -1808,7 +1818,40 @@ function renderConnection() {
   return `<main class="connection-layout"><section class="connection-main"><div class="archive-label">CONNECTION LAYER · OPTIONAL</div><h1 tabindex="-1">이 응답에서 시작할 수 있는 대화를 열어둘까요?</h1><p class="connection-lead">AI는 누군가의 가치나 적합성을 판정하지 않습니다. 응답의 맥락과 연결 의향을 정리해 연구자에게 후보를 제안하고, 실제 연결은 양쪽의 선택과 연구팀의 검토 뒤에만 이루어집니다.</p>${renderAnalysisCard(response)}<section class="connection-section"><h2>다른 참여자와의 연결을 검토해도 될까요?</h2>${renderConnectionChoices("opt_in", [["YES", "네, 연구팀의 연결 제안을 받아보고 싶습니다"], ["NO", "아니요, 이번에는 연구 응답만 남기겠습니다"]])}</section>${connection.opt_in === "YES" ? `<section class="connection-section"><h2>지금 필요한 대화나 연결은 무엇인가요?</h2><p>최대 세 가지까지 고를 수 있습니다. 이 선택은 매칭 후보를 찾기 위한 단서일 뿐, 자동 연결을 뜻하지는 않습니다.</p>${renderConnectionChoices("needs", topicOptions, { multi: true, max: 3 })}</section><section class="connection-section"><h2>다른 참여자에게 나눌 수 있는 경험이나 관점이 있나요?</h2><p>전문 서비스나 약속이 아니라, 대화에서 나눌 수 있는 관심과 경험의 범위입니다.</p>${renderConnectionChoices("offers", topicOptions, { multi: true, max: 3 })}</section><section class="connection-section"><h2>어떤 방식이 편한가요?</h2>${renderConnectionChoices("reply_modes", modeOptions, { multi: true, max: 2 })}${values(connection.reply_modes).includes("EMAIL_NOTICE") ? `<label class="field-label" for="connection-email">후속 안내를 받을 이메일</label><input id="connection-email" class="text-input text-input-single" type="email" data-connection-input="contact_email" value="${esc(connection.contact_email)}" placeholder="name@example.com" /><div class="connection-consent">${renderConnectionChoices("contact_permission", [["YES", "이 이메일을 연구팀의 매칭 안내용으로 별도 보관하는 데 동의합니다"], ["NO", "이메일을 남기지 않겠습니다"]])}</div>` : ""}</section><section class="connection-section"><h2>연결 카드에 남길 한 줄이 있나요?</h2><p>활동명, 실명, 세부 연락처, 제3자 정보는 적지 않아도 됩니다. 연구팀 검토용이며, 다른 참여자에게 자동 공개되지 않습니다.</p><textarea class="text-input" data-connection-input="introduction" maxlength="400" placeholder="지금 나누고 싶은 질문, 현장, 작업의 조건을 짧게 적어주세요.">${esc(connection.introduction)}</textarea></section><section class="connection-section connection-safety"><h2>연결은 어떻게 이루어지나요?</h2><p>동의한 응답만 검토합니다. 연구팀은 매칭 이유와 공개 범위를 먼저 확인하고, 양쪽이 수락한 뒤에만 안부나 질문을 중계합니다. 자동으로 이메일이나 연락처를 서로 공개하지 않습니다.</p></section>` : ""}</section><aside class="connection-side"><div class="panel-title">CONNECTION STATUS</div><strong>${connectionStatusLabel}</strong><p>${profile.coordinate ? `${esc(profile.coordinate.shortTitle)} 위치를 출발점으로, 필요와 제안이 맞닿는 다른 응답을 연구자가 검토합니다.` : "분석 위치가 정리된 뒤 연결 후보를 검토할 수 있습니다."}</p><button class="primary-button wide-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>연결 의향 저장 <span aria-hidden="true">→</span></button><button class="secondary-button wide-button" type="button" data-action="back-to-result">결과로 돌아가기</button><p class="connection-local-status">${state.connectionStatus === "confirmed" ? "연구용 저장소에 연결 의향을 저장했습니다." : submitFunctionUrl ? "저장 뒤 연구팀 검토 상태로 전환됩니다." : "원격 저장소 설정 전에는 이 기기의 재전송 대기열에 보관됩니다."}</p></aside></main>`;
 }
 
+function renderGlobalGreetingsConnection(connection) {
+  const directionOptions = [
+    ["SIMILAR_CONDITIONS", "나와 비슷한 조건을 지나온 사람"],
+    ["ROLE_BRIDGE", "다른 역할에서 나의 기록을 읽는 사람"],
+    ["CONTINUING_OR_RESTARTING", "작업을 이어가거나 다시 시작한 사람"],
+    ["ACROSS_REGION_LANGUAGE", "다른 지역·언어권에서 비슷한 질문을 가진 사람"],
+  ];
+  const audienceOptions = [
+    ["SIMILAR_TIME", "비슷한 변화와 조건을 지나고 있는 사람에게"],
+    ["CONTINUING", "작업을 이어가거나 다시 시작한 사람에게"],
+    ["DIFFERENT_ROLE", "다른 역할에서 이 기록을 읽는 사람에게"],
+    ["ACROSS_PLACE", "다른 지역·언어권의 사람에게"],
+    ["OPEN", "방향을 정하지 않고 맡기기"],
+  ];
+  const emailSelected = values(connection.reply_modes).includes("EMAIL_NOTICE");
+  const messageValue = connection.message_text || connection.introduction || "";
+  return `<main class="connection-layout rc2-connection-layout greeting-connection">
+    <section class="connection-main">
+      <div class="greeting-intro"><div class="greeting-object greeting-object-small" aria-hidden="true"><i></i><b></b><span></span></div><div>
+        <div class="archive-label">GLOBAL GREETINGS · ACROSS 64 COORDINATES</div>
+        <h1 tabindex="-1">안부의 좌표</h1>
+        <p class="connection-lead">64개의 좌표를 따라 이어지는 안부입니다. 사람을 평가하거나 완벽한 짝을 찾지 않고, 기록의 세 방향과 역할, 참여자가 고른 방향을 함께 읽어 작은 후보군에서 한 번의 만남을 큐레이션합니다.</p>
+      </div></div>
+      <section class="connection-section"><h2>이번에는 어떻게 이어둘까요?</h2>${renderConnectionChoices("opt_in", [["YES", "안부를 남기거나 다른 참여자의 안부를 받아볼게요"], ["NO", "이번에는 참여 기록으로 마칠게요"]])}</section>
+      ${connection.opt_in === "YES" ? `<section class="connection-section message-first"><h2>한 문장을 맡길까요? <small>선택</small></h2><p>짧은 인사나 질문을 편하게 남길 수 있습니다. 안부 원문은 설문 응답과 분리해 보존하고 번역문으로 덮어쓰지 않습니다.</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="한 문장이나 짧은 안부를 적어주세요.">${esc(messageValue)}</textarea></section>
+      <section class="connection-section receive-mail"><h2>어떤 방향의 안부를 기다릴까요?</h2>${renderConnectionChoices("receive_opt_in", [["YES", "안부를 기다릴게요"], ["NO", "이번에는 받지 않을게요"]])}${connection.receive_opt_in === "YES" ? `<p>이 선택은 연구 문항이 아니며 안부 연결에만 사용합니다.</p>${renderConnectionChoices("greeting_connection_preference", directionOptions)}${renderConnectionChoices("translation_allowed", [["YES", "다른 언어의 안부는 원문과 번역을 함께 받아볼게요"], ["NO", "내가 읽을 수 있는 언어의 원문만 받을게요"]])}<h3>도착 사실을 알려드릴 방법</h3>${renderConnectionChoices("reply_modes", [["EMAIL_NOTICE", "이메일로 도착 알림 받기", "상대에게 이메일 주소가 보이지 않습니다"], ["MEDIATED_WEB", "이 기기에서 다시 확인하기", "같은 기기로 돌아와 확인하는 보조 방식입니다"]], { multi: true, max: 2 })}${emailSelected ? `<div class="email-delivery-card"><span>안부 알림 메일</span><strong>${esc(greetingSenderName)}</strong><code>${esc(greetingSenderEmail)}</code><p>안부 본문 전체를 메일에 싣지 않고 안전한 편지 링크를 안내합니다.</p></div><label class="field-label" for="connection-email">알림을 받을 이메일</label><input id="connection-email" class="text-input text-input-single" type="email" data-connection-input="contact_email" value="${esc(connection.contact_email)}" placeholder="name@example.com" />${renderConnectionChoices("contact_permission", [["YES", "이 이메일을 안부 도착과 답장 안내에 사용해도 좋아요"], ["NO", "이메일을 남기지 않을게요"]])}` : `<p class="connection-email-required">안부가 도착했을 때 알 수 있도록 이메일 알림을 선택해주세요.</p>`}` : ""}</section>
+      <section class="connection-section connection-safety"><h2>안부가 이동하는 방식</h2><ol class="message-route"><li><b>1</b><span>안부와 연결 방향을 연구 응답·연락처와 분리해 저장합니다.</span></li><li><b>2</b><span>동의, 철회, 차단, 언어 호환과 반복 연결을 먼저 확인합니다.</span></li><li><b>3</b><span>좌표·역할·선택 방향을 함께 읽은 작은 후보군에서 한 사람에게 전합니다.</span></li><li><b>4</b><span>받는 사람은 원문과 번역, 이 안부가 닿은 이유를 읽고 답장하거나 지나갈 수 있습니다.</span></li></ol><p>이름·이메일·전화번호는 상대에게 공개하지 않습니다.</p></section>` : ""}
+      <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">참여 기록으로 돌아가기</button><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>안부 선택 저장하기 <span aria-hidden="true">→</span></button></div>
+    </section>
+  </main>`;
+}
+
 function renderRc2Connection(connection, response) {
+  return renderGlobalGreetingsConnection(connection, response);
   const audienceOptions = [
     ["SIMILAR_TIME", "비슷한 변화와 조건을 지나고 있는 사람에게", "지속, 전환, 거리두기처럼 가까운 경험을 가진 사람"],
     ["REMEMBERED_PERSON", "예전에 기억했던 작가나 동료에게", "이름이 정확하지 않아도 메시지의 방향만 남길 수 있어요"],
@@ -1899,13 +1942,13 @@ function renderRc2Complete(response) {
     confirmedAt: response.document_confirmation?.confirmed_at || response.submitted_at,
     final: true,
   });
-  const openCallSection = `<section class="rc2-open-call-next"><div class="open-call-badge">${esc(english ? "Planned for December 2026 · Moho House" : "2026년 12월 예정 · 모호주택")}</div><h2>${esc(english ? "Exhibition open call" : "전시 참여 공모")}</h2><p>${esc(english ? "You can review the guidelines and application items together, then apply from one screen." : "공모요강과 신청 항목을 한 화면에서 확인하고 바로 접수할 수 있습니다.")}</p><p class="open-call-separation">${esc(english ? "You may apply with only your name and contact details, adding one PDF or link if you have a portfolio ready. The open-call page is available whether or not you took this survey." : "이름과 연락처만으로 신청할 수 있으며, 정리된 포트폴리오가 있다면 PDF 한 파일이나 링크 하나를 덧붙입니다. 설문 참여 여부와 관계없이 공모 페이지를 열 수 있습니다.")}</p><button class="primary-button" type="button" data-action="open-call">${esc(english ? "Open guidelines and application" : "공모요강과 신청 열기")} <span aria-hidden="true">↗</span></button></section>`;
+  const openCallSection = `<section class="rc2-open-call-next"><div class="open-call-badge">${esc(english ? "December 2026 · Moho House" : "2026년 12월 · 모호주택")}</div><h2>${esc(english ? "Open call" : "공모")}</h2><p>${esc(english ? "We are waiting for work to share at Moho House in December 2026." : "2026년 12월 · 모호주택에서 함께할 작업을 기다립니다.")}</p><button class="primary-button" type="button" data-action="open-call">${esc(english ? "View open call" : "공모 보기")} <span aria-hidden="true">↗</span></button></section>`;
   const audienceLead = isAudienceContext()
     ? (english ? "This document holds an audience member’s memories, their wish to return, and the conditions for taking part." : "이 문서에는 관객의 기억과 판단, 다시 찾고 싶은 마음과 참여 조건이 함께 담겼어요.")
     : (english ? "This document becomes part of a record of the present in arts and culture." : "이 문서는 문화예술의 현재를 기록하는 자료로 이어집니다.");
   const greetingSystemCopy = submitFunctionUrl
-    ? (english ? "A greeting entrusted by a participant is kept separately from the survey response. If there is no recipient yet, it waits; when another participant chooses to receive a greeting, one is passed on. Names and email addresses are not shared with one another." : "참여자가 맡긴 안부는 설문 응답과 분리해 안부우편함에 보관합니다. 받을 사람이 아직 없다면 기다렸다가, 안부를 받기로 한 다음 참여자에게 한 통씩 전달합니다. 이름과 이메일은 서로에게 공개하지 않습니다.")
-    : (english ? "The greeting exchange is being prepared as a core way of connecting in this project. In the live service, messages will be held separately from survey responses and passed on one at a time when a recipient is available. Names and email addresses are not shared with one another." : "안부는 이 프로젝트의 핵심 연결 장치로 준비하고 있습니다. 운영 서버에서는 설문 응답과 분리된 안부우편함에 메시지를 맡기고, 받을 사람이 생기면 한 통씩 이어서 전달합니다. 이름과 이메일은 서로에게 공개하지 않습니다.");
+    ? (english ? "A greeting is kept separately from the survey response and curated across 64 coordinates. Names and email addresses are never shared between participants." : "참여자가 맡긴 안부는 설문 응답과 분리해 보관하고 64개의 좌표를 따라 큐레이션합니다. 이름과 이메일은 서로에게 공개하지 않습니다.")
+    : (english ? "Global Greetings is being prepared as a curated encounter across 64 coordinates. Names and email addresses are never shared between participants." : "안부의 좌표는 64개의 좌표를 따라 한 번의 만남을 큐레이션하는 방식으로 준비하고 있습니다. 이름과 이메일은 서로에게 공개하지 않습니다.");
   const greetingMailCopy = submitFunctionUrl
     ? (english ? `If a new greeting or reply arrives, we will send a notice from <b>〈Over 39〉 Greeting Mailbox &lt;${esc(greetingSenderEmail)}&gt;</b>. The opening explains that it is a project greeting and why you received it; the message itself opens on a letter page.` : `새 안부나 답장이 도착하면 <b>${esc(greetingSenderName)} &lt;${esc(greetingSenderEmail)}&gt;</b> 이름으로 알림을 보냅니다. 메일 첫 문단에서 프로젝트 안부라는 점과 수신 이유를 설명하고, 메시지는 편지 화면에서 열어봅니다.`)
     : (english ? `In the live service, a notice will be sent from <b>〈Over 39〉 Greeting Mailbox &lt;${esc(greetingSenderEmail)}&gt;</b> when a greeting or reply arrives. This pilot does not send email; that begins only after the sender account and server mail queue are connected.` : `온라인 운영판에서는 새 안부나 답장이 도착할 때 <b>${esc(greetingSenderName)} &lt;${esc(greetingSenderEmail)}&gt;</b> 이름으로 알림을 보낼 예정입니다. 현재 시험판은 실제 이메일을 발송하지 않으며, 발신 계정과 서버 메일 큐가 연결된 뒤 작동합니다.`);
@@ -2032,11 +2075,10 @@ function renderIntro() {
           </article>
           <article class="entry-route-card entry-route-call interactive-tilt">
             <div class="route-object" aria-hidden="true"></div><span>2026 OPEN CALL</span>
-            <h2>${esc(t("전시 참여 공모"))}</h2>
-            <p class="entry-route-call-line">${esc(t("똑, 똑, 똑, 거기 아직 작업하고 계신가요?"))}</p>
-            <p>${esc(t("지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다."))}</p>
-            <div class="entry-route-meta">${esc(t("2026년 12월 예정 · 모호주택"))}</div>
-            <div class="entry-route-actions"><button class="primary-button" type="button" data-action="open-call">${esc(t("공모요강과 신청 열기"))} <span aria-hidden="true">↗</span></button></div>
+            <h2>${esc(t("공모"))}</h2>
+            <p>${esc(t("2026년 12월 · 모호주택에서 함께할 작업을 기다립니다."))}</p>
+            <div class="entry-route-meta">${esc(t("설문 참여와 독립된 공모입니다"))}</div>
+            <div class="entry-route-actions"><button class="primary-button" type="button" data-action="open-call">${esc(t("공모 보기"))} <span aria-hidden="true">↗</span></button></div>
           </article>
         </section>
         <p class="entry-route-note">${esc(t("설문과 공모는 각각 독립적으로 참여합니다. 설문에서 만든 참여 기록은 본인이 선택한 경우에만 공모 자료와 연결됩니다."))}</p>
@@ -2128,6 +2170,19 @@ function render(focusHeading = false) {
   document.documentElement.lang = state.language;
   const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
   root.innerHTML = `<div class="site-shell phase-${esc(state.phase)}">${header()}${content}${footer()}</div>`;
+  if (isRc2 && state.phase === "complete") {
+    const greetingHub = root.querySelector(".rc2-greeting-hub");
+    if (greetingHub) {
+      const label = greetingHub.querySelector(".archive-label");
+      const title = greetingHub.querySelector("h2");
+      if (label) label.textContent = "GLOBAL GREETINGS · ACROSS 64 COORDINATES";
+      if (title) title.textContent = state.language === "en" ? "Greetings across 64 coordinates" : "안부의 좌표";
+      if (!globalGreetingsEnabled) {
+        const button = greetingHub.querySelector("button[data-action='connection']");
+        if (button) { button.disabled = true; button.textContent = state.language === "en" ? "Opens after operating conditions are confirmed" : "운영 조건 확정 후 시작합니다"; }
+      }
+    }
+  }
   traceCurrentAnchorDom();
   bindInteractiveMotion();
   requestAnimationFrame(() => {
@@ -2329,6 +2384,7 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "connection") {
+    if (isRc2 && !globalGreetingsEnabled) return;
     getConnection();
     state.phase = "connection";
     render(true);

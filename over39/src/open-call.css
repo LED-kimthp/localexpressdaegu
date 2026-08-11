@@ -52,6 +52,14 @@ main { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
 .button-secondary { background: var(--surface); }
 .button:hover { transform: translateY(-2px); }
 
+.production-brand-lockup { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 26px; width: min(600px, 100%); margin: 46px auto 0; padding: 24px 30px; border: 1px solid var(--line); background: rgba(255,255,255,.45); }
+.production-brand-item { display: grid; justify-items: center; gap: 8px; min-width: 0; }
+.production-brand-item > span { color: var(--muted); font-size: 10px; font-weight: 700; }
+.production-brand-divider { color: var(--muted); }
+.led-wordmark { display: block; width: min(134px, 78%); height: auto; overflow: visible; }
+.moho-brand-item picture { display: grid; place-items: center; width: 100%; }
+.moho-brand-item img { display: block; width: min(166px, 80%); height: auto; object-fit: contain; }
+
 .call-summary { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); background: var(--surface); }
 .call-summary div { min-height: 132px; padding: 26px 22px; border-right: 1px solid var(--line); }
 .call-summary div:last-child { border-right: 0; }
@@ -69,6 +77,16 @@ main { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
 .guideline-list article > span { color: var(--red); font-size: 12px; font-weight: 800; }
 .guideline-list h3 { margin: 0 0 10px; font-size: 21px; }
 .guideline-list p { max-width: 820px; margin: 0; color: #373934; font-size: 16px; line-height: 1.78; word-break: keep-all; }
+.guideline-list a { text-underline-offset: 4px; }
+
+.jury-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); }
+.jury-grid article { display: grid; gap: 14px; min-height: 190px; align-content: end; padding: 28px; border-right: 1px solid var(--line); background: var(--surface); }
+.jury-grid article:last-child { border-right: 0; }
+.jury-grid strong { font-size: clamp(28px, 4vw, 48px); letter-spacing: -.04em; }
+.jury-grid span { color: var(--muted); font-size: 13px; }
+
+.application-gate { margin: 0 0 28px; padding: 18px 20px; border-left: 4px solid var(--red); background: var(--surface-soft); font-size: 14px; line-height: 1.65; }
+.submit-button:disabled { cursor: not-allowed; opacity: .5; transform: none; }
 
 #open-call-form { border-top: 1px solid var(--line-dark); background: var(--surface); }
 .form-section { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 30px; padding: clamp(46px, 7vw, 76px); border-bottom: 1px solid var(--line-dark); }
@@ -138,6 +156,9 @@ label > small, .counter { display: block; margin-top: 8px; color: var(--muted); 
   .section-heading p { grid-column: 1; margin-top: -16px; }
   .form-section { grid-template-columns: 58px minmax(0, 1fr); gap: 18px; padding: 46px 28px; }
   .two-columns, .material-grid { grid-template-columns: 1fr; }
+  .jury-grid { grid-template-columns: 1fr; }
+  .jury-grid article { min-height: 130px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .jury-grid article:last-child { border-bottom: 0; }
 }
 
 @media (max-width: 560px) {
@@ -149,6 +170,10 @@ label > small, .counter { display: block; margin-top: 8px; color: var(--muted); 
   .hero-lead { font-size: 19px; text-align: left; }
   .hero-separation { text-align: left; }
   .hero-actions { display: grid; width: 100%; }
+  .production-brand-lockup { gap: 12px; padding: 19px 12px; }
+  .production-brand-item > span { font-size: 9px; }
+  .led-wordmark { width: min(104px, 84%); }
+  .moho-brand-item img { width: min(126px, 82%); }
   .button { width: 100%; }
   .call-summary { grid-template-columns: 1fr; }
   .call-summary div { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line); }

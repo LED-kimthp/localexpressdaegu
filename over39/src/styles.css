@@ -3154,6 +3154,37 @@ h2:focus {
   }
 }
 
+/* Production partnership branding · official Moho asset + readable LED wordmark */
+.led-wordmark { display: block; width: 96px; height: auto; overflow: visible; }
+.led-wordmark-header { width: 52px; }
+.production-brand-lockup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 4vw, 52px);
+  width: min(720px, 100%);
+  margin: 50px auto 0;
+  padding: 28px clamp(18px, 4vw, 42px);
+  border: 1px solid var(--line-dark);
+  background: rgba(255, 255, 255, .42);
+}
+.production-brand-item { display: grid; justify-items: center; gap: 11px; min-width: 0; }
+.production-brand-item > span { color: var(--muted); font-size: 11px; font-weight: 650; }
+.production-brand-divider { color: var(--muted); font-size: 15px; }
+.production-brand-lockup .led-wordmark { width: min(150px, 76%); }
+.moho-brand-item picture { display: grid; place-items: center; width: 100%; }
+.moho-brand-item img { display: block; width: min(186px, 80%); height: auto; object-fit: contain; }
+.project-brand .led-wordmark-header { flex: 0 0 auto; }
+.project-brand > span:last-child { white-space: nowrap; }
+
+@media (max-width: 620px) {
+  .production-brand-lockup { gap: 12px; padding: 22px 14px; }
+  .production-brand-item > span { font-size: 9px; }
+  .production-brand-lockup .led-wordmark { width: min(112px, 82%); }
+  .moho-brand-item img { width: min(136px, 82%); }
+  .led-wordmark-header { width: 45px; }
+}
+
 /* RC2 v0.3.2: research-separated exhibition open call */
 .intro-open-call {
   display: grid;
@@ -4390,6 +4421,29 @@ body,
 .relay-trust strong { font-size:13px; }
 .relay-trust span { color:var(--red); font-size:13px; }
 .relay-trust p { max-width:560px; margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.65; }
+.relay-reason > small { display: block; margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.greeting-coordinate-map { display: grid; grid-template-columns: minmax(180px, 260px) minmax(140px, 1fr); gap: 20px; align-items: center; margin-top: 20px; }
+.coordinate-grid { display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: #fff; }
+.coordinate-grid > span { position: relative; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.coordinate-grid > span i { position: absolute; inset: 50% auto auto 50%; width: 0; height: 0; border-radius: 50%; transform: translate(-50%, -50%); }
+.coordinate-grid > span.is-sender i { width: 9px; height: 9px; background: var(--red); }
+.coordinate-grid > span.is-mine i { width: 11px; height: 11px; border: 2px solid var(--ink); background: #fff; }
+.coordinate-grid > span.is-sender.is-mine i { width: 13px; height: 13px; border: 3px double var(--ink); background: var(--red); }
+.coordinate-legend { display: grid; gap: 10px; }
+.coordinate-legend span { display: flex; align-items: center; gap: 9px; font-size: 12px; }
+.coordinate-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.mine-dot { border: 2px solid var(--ink); background: #fff; }
+.sender-dot { background: var(--red); }
+.translation-toggle, .relay-withdraw { border: 0; border-bottom: 1px solid currentColor; background: transparent; padding: 4px 0; color: var(--red); cursor: pointer; font-size: 13px; }
+.relay-translation { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.relay-translation > span { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.relay-translation p { margin-bottom: 0; font-size: 16px; }
+.relay-withdraw { margin-top: 24px; color: var(--muted); }
+
+@media (max-width: 620px) {
+  .greeting-coordinate-map { grid-template-columns: 1fr; }
+  .coordinate-grid { width: min(100%, 280px); }
+}
 
 @media (max-width: 760px) {
   .coordinate-model { grid-template-columns: 1fr; }

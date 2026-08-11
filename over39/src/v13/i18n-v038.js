@@ -570,3 +570,14 @@ const v045EnglishPolish = {
   },
 };
 Object.entries(v045EnglishPolish).forEach(([lang, entries]) => Object.assign(extraCopy[lang] || (extraCopy[lang] = {}), entries));
+
+// Production closeout: project-first landing copy. Languages without a reviewed
+// translation use the English fallback instead of leaking Korean UI strings.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "공모": "Open call",
+  "2026년 12월 · 모호주택에서 함께할 작업을 기다립니다.": "We are waiting for work to share at Moho House in December 2026.",
+  "설문 참여와 독립된 공모입니다": "This open call is independent of survey participation.",
+  "공모 보기": "View open call",
+  "리서치 · 참여 기록 · 공모": "Research · participation record · open call",
+  "기억 · 현재 · 조건 · 참여 기록 · 공모 · 안부의 좌표": "Memory · present · conditions · participation record · open call · Global Greetings",
+});
