@@ -4,13 +4,12 @@ export const EXHIBITION_OPEN_CALL = Object.freeze({
   venue: "모호주택",
   plannedPeriod: "2026년 12월 예정",
   applicationType: "간소 접수 · 이름과 연락처 중심",
-  eligibility: "만 39세 이상으로 시각예술 분야에서 작업해 온 작가·창작자",
+  eligibility: "작업이 지나온 시간과 지금의 지속·중단·전환을 함께 이야기하고 싶은 시각예술 작가·창작자",
 });
 
 export function createDefaultExhibitionApplication() {
   return {
     decision: "",
-    eligibility_ack: "",
     applicant_name: "",
     email: "",
     work_field: "",
@@ -39,7 +38,6 @@ export function validateExhibitionApplication(application = {}) {
   if (!["YES", "NO"].includes(application.decision)) errors.decision = "신청 여부를 선택해 주세요.";
   if (application.decision !== "YES") return { valid: Object.keys(errors).length === 0, errors };
 
-  if (application.eligibility_ack !== "YES") errors.eligibility_ack = "공모 대상 안내를 확인해 주세요.";
   if (!String(application.applicant_name || "").trim()) errors.applicant_name = "이름 또는 활동명을 적어 주세요.";
   if (!isEmail(application.email)) errors.email = "연락받을 이메일을 확인해 주세요.";
   if (!String(application.work_field || "").trim()) errors.work_field = "작업 분야를 적어 주세요.";
@@ -70,7 +68,8 @@ export function buildExhibitionApplicationPayload({ response, application, relea
       planned_period: EXHIBITION_OPEN_CALL.plannedPeriod,
       application_type: EXHIBITION_OPEN_CALL.applicationType,
       applied,
-      eligibility_acknowledged: applied && application.eligibility_ack === "YES",
+      eligibility_acknowledged: null,
+      project_context_acknowledged: true,
       work_field: applied ? String(application.work_field || "").trim() : null,
       portfolio_url: applied ? String(application.portfolio_url || "").trim() : null,
       proposal_text: applied ? String(application.proposal_text || "").trim() : null,

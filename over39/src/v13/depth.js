@@ -1,4 +1,5 @@
 import { safeFinalSummaryFailure } from "./integration-r2-helpers.js";
+import { compactParticipantContext } from "./participant-context.js";
 
 const AXES = ["M", "S", "D"];
 const API_SOURCES = new Set(["openai", "motif"]);
@@ -313,6 +314,7 @@ export function buildMinimalDepthContext(response) {
     memory_type: response.answers?.memory_type || null,
     response_position: response.answers?.response_position || null,
     d_scope: response.answers?.d_scope || null,
+    participant_context: response.participant_context || compactParticipantContext(response.answers || {}),
     referenced_answers: selectedAnswers.map((item) => item.question_id),
     selected_answers: selectedAnswers,
     fixed_responses: fixedResponsesForAI(response),
@@ -903,14 +905,19 @@ export function buildAdaptiveRuleSummary({ answers = {}, turns = [] } = {}) {
     return "";
   };
   const memory = firstInformative(answers.memory_meaning_text, answers.memory_clue_text);
-  const present = firstInformative(answers.pause_context_text, answers.transition_text, answers.invisible_continuity_text);
+  // NO_RECALL is not an absent answer: it can contain the participant's present
+  // relationship to culture and the arts, without inventing a recalled work.
+  const present = firstInformative(answers.no_recall_relation_text, answers.pause_context_text, answers.transition_text, answers.invisible_continuity_text);
   const condition = firstInformative(answers.desired_change_text, answers.support_conditions_text, answers.d_context_evidence_text, answers.d_context_impact_text);
   const parts = [];
-  if (memory) parts.push(`기억에서는 “${memory}”라는 응답이 중요한 단서로 남아 있습니다.`);
-  if (present) parts.push(isAudience
-    ? `현재에는 “${present}”라는 응답에서 문화예술과 맺고 있는 관계와 변화를 확인할 수 있습니다.`
-    : `현재에는 “${present}”라는 응답에서 활동과 역할의 흐름을 확인할 수 있습니다.`);
-  if (condition) parts.push(`이어가기 위한 조건에서는 “${condition}”라는 응답이 중요하게 나타납니다.`);
+  if (memory && present) parts.push(isAudience
+    ? `“${memory}”로 남은 기억은 지금 “${present}”라고 표현한 문화예술과의 관계 변화로 이어져 있습니다.`
+    : `“${memory}”로 남은 기억은 지금 “${present}”라고 표현한 활동과 역할의 변화로 이어져 있습니다.`);
+  else if (memory) parts.push(`“${memory}”로 남은 장면이 이번 기록의 출발점입니다.`);
+  else if (present) parts.push(isAudience
+    ? `현재에는 “${present}”라고 표현한 문화예술과의 관계 변화가 중심에 있습니다.`
+    : `현재에는 “${present}”라고 표현한 활동과 역할의 변화가 중심에 있습니다.`);
+  if (condition) parts.push(`이 흐름을 앞으로 이어가기 위해서는 “${condition}”라고 적은 조건이 중요합니다.`);
   if (!parts.length && [m, s, d].some(Boolean)) {
     const axisText = [m && AXIS_LABELS[m], s && AXIS_LABELS[s], d && AXIS_LABELS[d]].filter(Boolean).join(", ");
     parts.push(`이번 응답에서는 ${axisText}에 가까운 판단이 함께 나타났습니다.`);
@@ -923,7 +930,7 @@ export function buildAdaptiveRuleSummary({ answers = {}, turns = [] } = {}) {
     secondary_axes: { m: null, s: null, d: null },
     evidence: {
       m: ["M02", "M04_TEXT", ...turns.filter((turn) => turn.axis === "M").map((turn) => turn.id)],
-      s: ["P14", "P15", "P17", "P18", "P13_TEXT", "P19_TEXT", ...turns.filter((turn) => turn.axis === "S").map((turn) => turn.id)],
+      s: ["NO_RECALL_RELATION", "P14", "P15", "P17", "P18", "P13_TEXT", "P19_TEXT", ...turns.filter((turn) => turn.axis === "S").map((turn) => turn.id)],
       d: ["D02_TEXT", "D04", ...turns.filter((turn) => turn.axis === "D").map((turn) => turn.id)],
     },
     uncertainty: [m, s, d].some((value) => !value) ? "일부 방향은 참여자의 추가 확인이 필요해요." : null,
@@ -936,6 +943,7 @@ export function buildAdaptiveSummaryContext({ response, turns = [], answers = {}
   const narratives = [
     ["memory_scene", answers.memory_clue_text],
     ["memory_meaning", answers.memory_meaning_text],
+    ["current_cultural_relation", answers.no_recall_relation_text],
     ["state_background", answers.pause_context_text],
     ["transition", answers.transition_text],
     ["invisible_continuity", answers.invisible_continuity_text],
@@ -959,6 +967,7 @@ export function buildAdaptiveSummaryContext({ response, turns = [], answers = {}
     roles_parallel_labels: Array.isArray(response.answers?.roles_parallel) ? response.answers.roles_parallel.slice(0, 3).map((value) => roleLabel(value, response.answers || {}, { parallel: true })).filter(Boolean) : [],
     response_position: response.answers?.response_position || null,
     d_scope: response.answers?.d_scope || null,
+    participant_context: response.participant_context || compactParticipantContext(response.answers || {}),
     // Preserve every fixed-question ID for strict evidence validation without
     // sending the same narrative again as question, answer, and display text.
     evidence_ids: fixedResponses.map((item) => item.id),
@@ -1096,7 +1105,22 @@ export async function translateResponseSummary({ endpoint, anonKey, mode = "fall
     const body = await response.json();
     const translation = String(body.translation_ko || body.korean_translation || body.summary_ko || "").trim();
     if (!translation) throw new Error("AI_INVALID_TRANSLATION");
-    return { translation_ko: translation, run: { status: "success", provider: body.provider || "api", model: body.model || null, prompt_version: body.prompt_version || ADAPTIVE_PROMPT_VERSION, latency_ms: Math.round(performance.now() - started), usage: body.usage || null, operation: "translate_summary" } };
+    const provider = String(body.provider || "api").toLowerCase();
+    const serverSource = String(body.source || provider || "api").toLowerCase();
+    const verifiedMotif = provider === "motif" && serverSource === "motif";
+    return {
+      translation_ko: translation,
+      run: {
+        status: "success",
+        source: verifiedMotif ? "motif" : serverSource,
+        provider,
+        model: body.model || null,
+        prompt_version: body.prompt_version || ADAPTIVE_PROMPT_VERSION,
+        latency_ms: Math.round(performance.now() - started),
+        usage: body.usage || null,
+        operation: "translate_summary",
+      },
+    };
   } catch (error) {
     return { translation_ko: "", run: { status: "fallback", provider: "api", error_code: error.message, latency_ms: Math.round(performance.now() - started), operation: "translate_summary" } };
   }

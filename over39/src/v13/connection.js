@@ -57,6 +57,7 @@ export function buildConnectionProfile(response, connection = {}) {
     route: response.route || "",
     role: answers.role_primary || "",
     role_group: answers.role_group_primary || "",
+    participant_context: response.participant_context || answers.participant_context || null,
     languages: [response.source_language].filter(Boolean),
     locations: values(answers.activity_locations).map((item) => item.label || item).filter(Boolean),
     coordinate: insight,
