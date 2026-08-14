@@ -1,5 +1,11 @@
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 
+// The original five anchors remain the strict, comparable Motif pilot set.
+// These two are separately recorded, optional follow-ups introduced from pilot
+// findings; they must never be counted as a replacement for the five anchors.
+export const CONDITIONAL_ANCHOR_ORDER = ["NO_RECALL_RELATION", "D04_CONDITIONS"];
+export const ALL_ADAPTIVE_ANCHOR_ORDER = [...ANCHOR_ORDER, ...CONDITIONAL_ANCHOR_ORDER];
+
 export const ANCHOR_SCREEN_MAP = {
   AI_ANCHOR_M04_TEXT: "M04_TEXT",
   AI_ANCHOR_P12: "P12",
@@ -8,12 +14,21 @@ export const ANCHOR_SCREEN_MAP = {
   AI_ANCHOR_D02_TEXT: "D02_TEXT",
 };
 
+export const CONDITIONAL_ANCHOR_SCREEN_MAP = {
+  AI_CONDITIONAL_NO_RECALL_RELATION: "NO_RECALL_RELATION",
+  AI_CONDITIONAL_D04_CONDITIONS: "D04_CONDITIONS",
+};
+
+export const ALL_ADAPTIVE_SCREEN_MAP = { ...ANCHOR_SCREEN_MAP, ...CONDITIONAL_ANCHOR_SCREEN_MAP };
+
 export const ANCHOR_SOURCE_FIELDS = {
   M04_TEXT: "memory_meaning_text",
   P12: "transition_text",
   P13_TEXT: "invisible_continuity_text",
   P19_TEXT: "support_conditions_text",
   D02_TEXT: "desired_change_text",
+  NO_RECALL_RELATION: "no_recall_relation_text",
+  D04_CONDITIONS: "d_context_evidence_text",
 };
 
 export const ANCHOR_AXES = {
@@ -22,6 +37,8 @@ export const ANCHOR_AXES = {
   P13_TEXT: "S",
   P19_TEXT: "S",
   D02_TEXT: "D",
+  NO_RECALL_RELATION: "S",
+  D04_CONDITIONS: "D",
 };
 
 export const ANCHOR_CONTEXT_DEPENDENCIES = {
@@ -30,10 +47,13 @@ export const ANCHOR_CONTEXT_DEPENDENCIES = {
   P13_TEXT: ["P13_TEXT", "P13", "P12"],
   P19_TEXT: ["P19_TEXT", "P19", "P13_TEXT"],
   D02_TEXT: ["D02_TEXT", "D02", "P19_TEXT"],
+  NO_RECALL_RELATION: ["NO_RECALL_RELATION", "M01"],
+  D04_CONDITIONS: ["D04_CONDITIONS", "D04", "D03", "D02_TEXT"],
 };
 
 const GLOBAL_ANCHOR_CONTEXT_QUESTION_IDS = new Set([
   "P01", "P01_CONTEXT", "P02G", "P02", "P03", "D_FOCUS",
+  "CTX_FIELD", "CTX_MODE", "CTX_FORM", "CTX_UNIT",
 ]);
 
 export function anchorsAffectedByChangedQuestion(questionId) {
@@ -41,6 +61,13 @@ export function anchorsAffectedByChangedQuestion(questionId) {
   if (!id) return [];
   if (GLOBAL_ANCHOR_CONTEXT_QUESTION_IDS.has(id)) return [...ANCHOR_ORDER];
   return ANCHOR_ORDER.filter((anchorId) => ANCHOR_CONTEXT_DEPENDENCIES[anchorId]?.includes(id));
+}
+
+export function conditionalAnchorsAffectedByChangedQuestion(questionId) {
+  const id = String(questionId || "").trim();
+  if (!id) return [];
+  if (GLOBAL_ANCHOR_CONTEXT_QUESTION_IDS.has(id)) return [...CONDITIONAL_ANCHOR_ORDER];
+  return CONDITIONAL_ANCHOR_ORDER.filter((anchorId) => ANCHOR_CONTEXT_DEPENDENCIES[anchorId]?.includes(id));
 }
 
 const STANDALONE_NO_RECALL_PATTERNS = [
@@ -81,6 +108,35 @@ export function lowInformationReason(value) {
 
 export function isLowInformationText(value) {
   return Boolean(lowInformationReason(value));
+}
+
+const D04_CONDITION_PATTERNS = {
+  personal: /돌봄|육아|가족|생계|생활비|수입|건강|회복|부업|일자리|생활\s*리듬|작업\s*시간|care|child(?:care)?|family|livelihood|income|health|recovery|day\s*job|work\s*time/i,
+  institutional: /지원(?:금|사업|제도)?|신청|정산|행정|기관|제도|사업\s*단위|공모|심사|보조금|정책|운영\s*과정|보상\s*체계|grant|funding|application|settlement|administration|institution|system|programme|program|policy|review/i,
+  relation: /관계|동료|작가|기획자|협업|관객|다음\s*해|이어(?:가|질)|지속|relationship|peer|artist|curator|collaborat|audience|next\s*year|continu/i,
+  space_cost: /공간|대관|임대|작업실|비용|제작비|운송|장소|space|rent|studio|cost|production\s*budget|shipping|venue/i,
+};
+
+export function d04ConditionLayers(value) {
+  const text = normalizedAnchorText(value);
+  if (!text) return [];
+  return Object.entries(D04_CONDITION_PATTERNS)
+    .filter(([, pattern]) => pattern.test(text))
+    .map(([layer]) => layer);
+}
+
+export function shouldAskD04ConditionsFollowup(answers = {}) {
+  const text = anchorSourceText(answers, "D04_CONDITIONS");
+  if (isLowInformationText(text)) return false;
+  const layers = new Set(d04ConditionLayers(text));
+  if (layers.size < 2) return false;
+  return layers.has("institutional") || (layers.has("personal") && layers.has("relation"));
+}
+
+export function shouldAskNoRecallRelationFollowup(answers = {}) {
+  return answers?.route === "AUDIENCE"
+    && answers?.memory_type === "NO_RECALL"
+    && !isLowInformationText(anchorSourceText(answers, "NO_RECALL_RELATION"));
 }
 
 export function anchorSourceText(answers = {}, anchorId) {
@@ -126,6 +182,7 @@ export function anchorContextFingerprint(anchorId, context = {}) {
     d_scope: context.d_scope || null,
     response_language: context.response_language || "ko",
     route: context.route || null,
+    participant_context: context.participant_context || null,
   };
   return `${anchorId}:ctx:${semanticHash(semantic)}`;
 }
@@ -137,6 +194,8 @@ const FALLBACKS = {
     P13_TEXT: "겉으로 잘 보이지 않았던 때에도 이어지고 있던 것을 한 장면으로 들려주세요.",
     P19_TEXT: "그 조건이 실제로 도움이 되었던 장면을 한 가지 들려주세요.",
     D02_TEXT: "그 변화가 시작되었다고 느낄 수 있는 가장 작은 장면은 무엇인가요?",
+    NO_RECALL_RELATION: "그 순간에 문화예술이 조금 더 가깝게, 또는 멀게 느껴진 이유를 한 가지만 들려주세요.",
+    D04_CONDITIONS: "그 두 조건이 실제로 함께 작동했던 한 장면을 조금 더 들려주세요.",
   },
   en: {
     M04_TEXT: "What is one part of that reason that still feels especially vivid to you?",
@@ -144,6 +203,8 @@ const FALLBACKS = {
     P13_TEXT: "Can you describe one thing that continued even when it was not very visible from outside?",
     P19_TEXT: "Can you describe one moment when that condition actually helped?",
     D02_TEXT: "What would be the smallest sign that this change had begun?",
+    NO_RECALL_RELATION: "What made arts and culture feel a little closer to you, or more distant, in that moment?",
+    D04_CONDITIONS: "Could you describe one moment when those two conditions were working together in practice?",
   },
   ja: {
     M04_TEXT: "今書いた理由の中で、今も特に鮮明に残っていることを一つだけもう少し教えてください。",
@@ -151,6 +212,8 @@ const FALLBACKS = {
     P13_TEXT: "外からは見えにくい時期にも続いていたことを、一つの場面として教えてください。",
     P19_TEXT: "その条件が実際に助けになった場面を一つ教えてください。",
     D02_TEXT: "その変化が始まったと感じられる最も小さな兆しは何でしょうか。",
+    NO_RECALL_RELATION: "その時、文化芸術が少し身近に、または遠く感じられた理由を一つだけ教えてください。",
+    D04_CONDITIONS: "その二つの条件が実際に一緒に働いた場面を、もう少し教えてください。",
   },
   "zh-Hans": {
     M04_TEXT: "在你刚写下的原因中，能再说一个至今仍最清晰的部分吗？",
@@ -158,6 +221,8 @@ const FALLBACKS = {
     P13_TEXT: "即使外界不太看得见，当时仍在继续的事情是什么？请说一个场景。",
     P19_TEXT: "能说一个这个条件实际发挥作用的场景吗？",
     D02_TEXT: "什么最小的迹象会让你觉得这种变化已经开始？",
+    NO_RECALL_RELATION: "在那个时刻，是什么让文化艺术对你感觉更接近或更遥远了一些？",
+    D04_CONDITIONS: "能再说一个这两个条件在实际中一起起作用的场景吗？",
   },
   "zh-Hant": {
     M04_TEXT: "在你剛寫下的原因中，能再說一個至今仍最清晰的部分嗎？",
@@ -165,6 +230,8 @@ const FALLBACKS = {
     P13_TEXT: "即使外界不太看得見，當時仍在繼續的事情是什麼？請說一個場景。",
     P19_TEXT: "能說一個這個條件實際發揮作用的場景嗎？",
     D02_TEXT: "什麼最小的跡象會讓你覺得這種變化已經開始？",
+    NO_RECALL_RELATION: "在那個時刻，是什麼讓文化藝術對你感覺更接近或更遙遠了一些？",
+    D04_CONDITIONS: "能再說一個這兩個條件在實際中一起起作用的場景嗎？",
   },
   fr: {
     M04_TEXT: "Parmi les raisons que vous venez d'écrire, quel élément reste aujourd'hui le plus vif ?",
@@ -172,6 +239,8 @@ const FALLBACKS = {
     P13_TEXT: "Pouvez-vous décrire une chose qui a continué même lorsqu'elle était peu visible de l'extérieur ?",
     P19_TEXT: "Pouvez-vous décrire un moment où cette condition a réellement aidé ?",
     D02_TEXT: "Quel serait le plus petit signe indiquant que ce changement a commencé ?",
+    NO_RECALL_RELATION: "À ce moment-là, qu'est-ce qui vous a fait sentir que l'art et la culture étaient un peu plus proches, ou plus lointains ?",
+    D04_CONDITIONS: "Pouvez-vous décrire une scène où ces deux conditions ont agi ensemble concrètement ?",
   },
   es: {
     M04_TEXT: "De la razón que acabas de escribir, ¿qué parte sigue siendo hoy la más nítida para ti?",
@@ -179,6 +248,8 @@ const FALLBACKS = {
     P13_TEXT: "¿Puedes describir algo que siguiera presente aunque fuera poco visible desde fuera?",
     P19_TEXT: "¿Puedes describir un momento en que esa condición realmente ayudó?",
     D02_TEXT: "¿Cuál sería la señal más pequeña de que ese cambio ha empezado?",
+    NO_RECALL_RELATION: "En ese momento, ¿qué hizo que el arte y la cultura se sintieran un poco más cercanos o más lejanos?",
+    D04_CONDITIONS: "¿Puedes describir una escena en la que esas dos condiciones actuaran juntas en la práctica?",
   },
   nl: {
     M04_TEXT: "Welk deel van de reden die je net noemde is je nu nog het duidelijkst bijgebleven?",
@@ -186,6 +257,8 @@ const FALLBACKS = {
     P13_TEXT: "Kun je iets noemen dat doorging, ook toen het van buitenaf nauwelijks zichtbaar was?",
     P19_TEXT: "Kun je één moment beschrijven waarop die voorwaarde daadwerkelijk hielp?",
     D02_TEXT: "Wat zou het kleinste teken zijn dat deze verandering is begonnen?",
+    NO_RECALL_RELATION: "Waardoor voelde kunst en cultuur op dat moment iets dichterbij, of juist verder weg?",
+    D04_CONDITIONS: "Kun je één moment beschrijven waarop die twee voorwaarden in de praktijk samenwerkten?",
   },
   ms: {
     M04_TEXT: "Daripada sebab yang baru anda tulis, apakah satu perkara yang masih paling jelas dalam ingatan anda?",
@@ -193,6 +266,8 @@ const FALLBACKS = {
     P13_TEXT: "Boleh ceritakan satu perkara yang terus berjalan walaupun tidak begitu kelihatan dari luar?",
     P19_TEXT: "Boleh ceritakan satu saat apabila keadaan itu benar-benar membantu?",
     D02_TEXT: "Apakah tanda paling kecil yang membuat anda rasa perubahan itu sudah bermula?",
+    NO_RECALL_RELATION: "Apakah yang membuat seni dan budaya terasa sedikit lebih dekat, atau lebih jauh, pada saat itu?",
+    D04_CONDITIONS: "Boleh ceritakan satu saat apabila dua keadaan itu benar-benar berfungsi bersama?",
   },
 };
 
@@ -230,6 +305,13 @@ function makeTurn({ anchorId, questionText, source, language, run, context, serv
     answer_field: `anchor_answer_${anchorId}`,
     self_check_field: null,
     source,
+    provenance: {
+      kind: source === "motif" ? "ai-generated" : "fixed",
+      original_language: language,
+      displayed_language: language,
+      original_question_text: serverQuestionText || questionText,
+      displayed_question_text: questionText,
+    },
     provider: run?.provider || null,
     model: run?.model || null,
     request_id: run?.request_id || null,
@@ -256,6 +338,7 @@ export function buildAnchorContext({
   dScope = null,
   responseLanguage = "ko",
   route = null,
+  participantContext = null,
   sessionId = null,
   responseId = null,
 }) {
@@ -283,6 +366,11 @@ export function buildAnchorContext({
     addAdjacent("D02", answers.d_desired_change_primary);
     addAdjacent("P19_TEXT", answers.support_conditions_text);
   }
+  if (anchorId === "NO_RECALL_RELATION") addAdjacent("M01", answers.memory_type);
+  if (anchorId === "D04_CONDITIONS") {
+    addAdjacent("D03", answers.d_context_tags);
+    addAdjacent("D02_TEXT", answers.desired_change_text);
+  }
   return {
     anchor_id: anchorId,
     question_id: anchorId,
@@ -295,10 +383,12 @@ export function buildAnchorContext({
     d_scope: dScope || null,
     response_language: responseLanguage || "ko",
     route: route || null,
+    participant_context: participantContext || null,
     session_id: sessionId || null,
     response_id: responseId || null,
     adjacent_responses: adjacent.slice(0, 3),
     adjacent_response_ids: adjacent.map((item) => item.id),
+    condition_layers: anchorId === "D04_CONDITIONS" ? d04ConditionLayers(answer) : [],
   };
 }
 

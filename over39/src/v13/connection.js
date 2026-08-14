@@ -57,6 +57,7 @@ export function buildConnectionProfile(response, connection = {}) {
     route: response.route || "",
     role: answers.role_primary || "",
     role_group: answers.role_group_primary || "",
+    participant_context: response.participant_context || answers.participant_context || null,
     languages: [response.source_language].filter(Boolean),
     locations: values(answers.activity_locations).map((item) => item.label || item).filter(Boolean),
     coordinate: insight,
@@ -73,7 +74,8 @@ export function buildConnectionProfile(response, connection = {}) {
     offers: values(connection.offers),
     reply_modes: values(connection.reply_modes),
     introduction: String(connection.message_text || connection.introduction || "").trim(),
-    visibility: connection.visibility || "RESEARCHER_ONLY",
+    visibility: connection.sender_visibility || connection.visibility || "CONTEXTUAL",
+    greeting_origin: connection.origin === "core_seed" ? "core_seed" : "participant",
     matching_mode: "mailbox_store_and_forward",
     status: connection.opt_in === "YES" ? "stored_waiting_receiver" : "not_requested",
   };

@@ -19,13 +19,17 @@ export function normalizeIntegratedRoleRecord(code, answers = {}, { parallel = f
   return { code: value, label: String(item?.label || value) };
 }
 
-export function translationReuseDecision({ action, sourceLanguage, approvedText, summary, summaryKo } = {}) {
+export function translationReuseDecision({ action, sourceLanguage, approvedText, summary, summaryKo, summaryTranslationKind = "fixed" } = {}) {
   const source = String(sourceLanguage || "ko").trim();
   const approved = String(approvedText || "").trim();
   const originalSummary = String(summary || "").trim();
   const korean = String(summaryKo || "").trim();
   if (source === "ko") return { reuse: true, translation: approved, reason: "korean_identity" };
-  if (action === "ACCEPT" && approved && approved === originalSummary && korean) {
+  // A Korean field alone is not proof that AI translated it. Reuse it only
+  // when the summary provenance says that the displayed Korean text came from
+  // the actual translation path; otherwise keep the original or request a
+  // fresh translation below.
+  if (action === "ACCEPT" && approved && approved === originalSummary && korean && summaryTranslationKind === "ai-translated") {
     return { reuse: true, translation: korean, reason: "accepted_existing_summary_ko" };
   }
   return { reuse: false, translation: "", reason: "translation_required" };

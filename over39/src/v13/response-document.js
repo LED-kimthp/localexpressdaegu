@@ -1,4 +1,6 @@
-export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.4.6-2026-08-11";
+import { responseDocumentFrame } from "./response-document-i18n.js";
+
+export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.6.0-cultural-arts-context-2026-08-13";
 
 const ROLE_LABELS = {
   R01: "시각예술가", R02: "사진·영상·미디어 작가", R03: "공예·디자인 창작자",
@@ -163,11 +165,12 @@ const esc = (value) => String(value ?? "")
 const array = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
-function dateLabel(value, english = false) {
+function dateLabel(value, language = "ko") {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return clean(value) || "—";
-  return new Intl.DateTimeFormat(english ? "en-GB" : "ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+  const locale = { ko: "ko-KR", en: "en-GB", ja: "ja-JP", "zh-Hans": "zh-CN", "zh-Hant": "zh-TW", fr: "fr-FR", es: "es-ES", nl: "nl-NL", ms: "ms-MY" }[language] || "en-GB";
+  return new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 
 function documentLabel(labels, value, english = false) {
@@ -187,9 +190,9 @@ function sentenceList(items) {
   return values.join(" · ");
 }
 
-function displayName(answers = {}, english = false) {
-  if (answers.display_name_mode === "ANONYMOUS") return english ? "Anonymous participant" : "익명 참여자";
-  return clean(answers.display_name) || (english ? "Participant" : "참여자");
+function displayName(answers = {}, frame = responseDocumentFrame("ko")) {
+  if (answers.display_name_mode === "ANONYMOUS") return frame.anonymous;
+  return clean(answers.display_name) || frame.unnamed;
 }
 
 function roleText(answers = {}, english = false) {
@@ -200,7 +203,7 @@ function roleText(answers = {}, english = false) {
   return [primary, ...parallel].filter(Boolean).join(" · ");
 }
 
-function locationText(answers = {}, english = false) {
+function locationText(answers = {}, frame = responseDocumentFrame("ko")) {
   const places = [];
   const residence = [clean(answers.residence_country_code), clean(answers.residence_city)].filter(Boolean).join(" · ");
   if (residence) places.push(residence);
@@ -208,7 +211,7 @@ function locationText(answers = {}, english = false) {
     const label = clean(item?.label || item);
     if (label) places.push(label);
   }
-  return [...new Set(places)].join(" · ") || (english ? "Not specified" : "응답하지 않음");
+  return [...new Set(places)].join(" · ") || frame.unspecified;
 }
 
 function originSection(answers = {}, english = false) {
@@ -268,8 +271,8 @@ function supportSection(answers = {}, english = false) {
   const supports = array(answers.support_conditions).map((value) => documentLabel(SUPPORT_LABELS, value, english)).filter(Boolean);
   if (array(answers.support_conditions).includes("OTHER") && clean(answers.support_conditions_other)) supports.push(clean(answers.support_conditions_other));
   if (supports.length) lines.push(isAudience(answers)
-    ? (english ? `Conditions that have made it easier to seek out and remember arts and culture include ${sentenceList(supports)}.` : `문화예술을 찾아보고 기억하게 한 조건으로 ${sentenceList(supports)}을/를 들었다.`)
-    : (english ? `Conditions that have supported activity and participation include ${sentenceList(supports)}.` : `활동과 참여를 지지해 온 조건으로 ${sentenceList(supports)}을/를 들었다.`));
+    ? (english ? `Conditions that have made it easier to seek out and remember arts and culture include ${sentenceList(supports)}.` : `문화예술을 찾아보고 기억하는 데 중요했던 조건은 ${sentenceList(supports)}이다.`)
+    : (english ? `Conditions that have supported activity and participation include ${sentenceList(supports)}.` : `활동과 참여를 지지해 온 조건은 ${sentenceList(supports)}이다.`));
   if (clean(answers.support_conditions_text)) lines.push(clean(answers.support_conditions_text));
   return lines;
 }
@@ -314,6 +317,7 @@ export function buildResponseDocument({
   responseId,
   answers = {},
   sourceLanguage = "ko",
+  displayLanguage = sourceLanguage,
   releaseVersion = "",
   approvedOriginal = "",
   approvedKorean = "",
@@ -321,14 +325,18 @@ export function buildResponseDocument({
   confirmedAt = null,
   final = false,
 } = {}) {
-  const english = sourceLanguage === "en";
+  // The answer's original language and the visible document frame are
+  // intentionally separate: switching interface language must not rewrite
+  // original text, but must localize document labels and guidance.
+  const frameLanguage = displayLanguage || sourceLanguage || "ko";
+  const english = frameLanguage === "en";
   const copy = english ? {
     title: "〈Over 39〉 Participation Record",
     subtitle: "A record of remembering and continuing with arts and culture",
     descriptionAudience: "This record brings together a remembered scene, ways of encountering arts and culture now, and the conditions that make participation possible.",
     descriptionOther: "This record brings together experiences of remembering and continuing with arts and culture, the current flow, and the conditions that matter for continuing.",
     confirmation: "This record gathers what you have shared in an order that is easy to revisit. You may revise the words that need changing.",
-    original: "Original · ", koreanTranslation: "Korean translation", translationReady: "Prepared from the original", translationPending: "Translation in preparation", selectedWords: "Words selected by the participant",
+    original: "Original · ", koreanTranslation: "Korean translation", translationReady: "Prepared from the original", translationPending: "Translation in preparation",
     coordinateTitle: "The three directions your record reaches", coordinatePending: "The three directions are being gathered", coordinateText: "We brought together the meaning of the memory, the current flow, and the conditions for continuing to mark the position closest to this record.",
     summary: "Response summary", promiseTitle: "We keep your record", promise: ["We will stay with the memories and the stories of the present gathered here.", "As different records accumulate, what we remember and which conditions we need can become clearer.", "We will carry these records into conversations about cultural institutions and policy wherever that is possible.", "We will remember the story you have left here."],
   } : {
@@ -337,28 +345,49 @@ export function buildResponseDocument({
     descriptionAudience: "관객으로서 기억한 장면과 문화예술을 만난 방식, 참여를 이어가게 한 조건을 한곳에 모았습니다.",
     descriptionOther: "문화예술을 기억하고 이어온 경험, 현재의 흐름과 필요한 조건을 한곳에 모았습니다.",
     confirmation: "이 기록은 지금까지 적은 내용을 참여자가 읽기 쉬운 순서로 정리한 문서입니다. 필요한 문장은 다시 고칠 수 있습니다.",
-    original: "원문 · ", koreanTranslation: "한국어 번역", translationReady: "원문을 기준으로 작성", translationPending: "번역 대기", selectedWords: "참여자가 고른 문장",
+    original: "원문 · ", koreanTranslation: "한국어 번역", translationReady: "원문을 기준으로 작성", translationPending: "번역 대기",
     coordinateTitle: "당신의 기록이 닿은 세 방향", coordinatePending: "세 방향을 정리하는 중", coordinateText: "기억의 의미, 현재의 흐름, 이어가기 위한 조건을 함께 확인해 이번 기록과 가까운 위치를 정리했습니다.",
     summary: "응답 정리", promiseTitle: "당신의 기록을 남깁니다", promise: ["여기 적힌 기억과 지금의 이야기를 오래 살펴보겠습니다.", "서로 다른 기록들이 쌓이면 우리가 무엇을 기억하고, 어떤 조건을 필요로 하는지도 조금씩 선명해집니다.", "이 기록들이 앞으로 문화예술의 제도와 정책을 이야기하는 자리까지 이어질 수 있도록 계속 가져가겠습니다.", "당신이 남긴 이야기를 기억하겠습니다."],
   };
+  const frame = responseDocumentFrame(frameLanguage);
+  if (frameLanguage !== "ko" && frameLanguage !== "en") Object.assign(copy, frame);
   const original = clean(approvedOriginal);
   const korean = clean(approvedKorean) || (sourceLanguage === "ko" ? original : "");
-  const participantName = displayName(answers, english);
-  const sourceLabel = LANGUAGE_LABELS[sourceLanguage] || sourceLanguage || "응답 언어 미상";
+  const participantName = displayName(answers, frame);
+  const sourceLabel = LANGUAGE_LABELS[sourceLanguage] || sourceLanguage || frame.unspecified;
   const isKoreanSource = sourceLanguage === "ko";
   const audience = isAudience(answers);
   const documentDescription = audience ? copy.descriptionAudience : copy.descriptionOther;
   const confirmationText = copy.confirmation;
   const summaryParagraphs = [];
-  if (original) summaryParagraphs.push({ label: `${copy.original}${sourceLabel}`, text: original, status: copy.selectedWords });
-  if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation in preparation" : "한국어 번역 준비 중"), status: korean ? copy.translationReady : copy.translationPending });
+  // The final document shows the confirmed text itself, not the editing process
+  // that led to it. Draft/approved provenance remains in the response snapshot.
+  if (original) summaryParagraphs.push({ label: `${copy.original}${sourceLabel}`, text: original, status: "" });
+  if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation in preparation" : copy.translationPending), status: korean ? copy.translationReady : copy.translationPending });
   const coordinate = recordCoordinate(answers);
-  const axisText = english ? AXIS_TEXT_EN : AXIS_TEXT;
+  const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
   const coordinateAxes = [axisText[coordinate.m], axisText[coordinate.s], axisText[coordinate.d]].filter(Boolean).join(" × ");
   const coordinateLine = [coordinateAxes || copy.coordinatePending, copy.coordinateText];
   const sectionTitles = english
     ? { origin: audience ? "A remembered encounter" : "Where this record begins", present: audience ? "Arts and culture in the present" : "Current practice and arts and culture", background: "Conditions in the background", continuity: "What has continued", support: "What has supported it", needs: "Conditions for continuing" }
     : { origin: audience ? "관객의 기억과 판단" : "이번 응답의 출발점", present: audience ? "현재의 관람과 문화예술의 관계" : "현재의 활동과 문화예술의 관계", background: audience ? "관람과 참여의 흐름에 함께 있던 조건" : "현재 상태가 형성된 배경", continuity: audience ? "전시장 밖에서도 이어진 관심" : "밖으로 드러나지 않아도 이어진 활동", support: audience ? "관심과 참여를 이어가게 한 조건" : "활동과 참여를 지지하는 조건", needs: "이어가기 위한 조건" };
+  if (frameLanguage !== "ko" && frameLanguage !== "en") Object.assign(sectionTitles, {
+    origin: audience ? frame.audienceOrigin : frame.origin,
+    present: audience ? frame.audiencePresent : frame.present,
+    background: audience ? frame.audienceBackground : frame.background,
+    continuity: audience ? frame.audienceContinuity : frame.continuity,
+    support: audience ? frame.audienceSupport : frame.support,
+    needs: frame.needs,
+  });
+  const localizedFallback = (index) => frameLanguage !== "ko" && frameLanguage !== "en" ? frame.fallback[index] : null;
+  const foreignLines = (id) => ({
+    origin: [answers.memory_clue_text, answers.memory_meaning_text],
+    present: [],
+    background: [answers.transition_text, answers.pause_context_text],
+    continuity: [answers.invisible_continuity_text],
+    support: [answers.support_conditions_text],
+    needs: [answers.desired_change_text, answers.d_context_impact_text],
+  }[id] || []);
 
   return {
     document_version: RESPONSE_DOCUMENT_VERSION,
@@ -368,8 +397,8 @@ export function buildResponseDocument({
     subtitle: copy.subtitle,
     description: documentDescription,
     status: final ? "confirmed" : "draft",
-    status_label: final ? (english ? "Saved record" : "저장한 기록") : (english ? "Preview" : "미리보기"),
-    brand_label: english ? "〈Over 39〉 · PARTICIPATION RECORD" : "〈만 39세 이상〉 · 참여 기록",
+    status_label: final ? (frameLanguage === "ko" ? "저장한 기록" : frameLanguage === "en" ? "Saved record" : frame.statusSaved) : (frameLanguage === "ko" ? "미리보기" : frameLanguage === "en" ? "Preview" : frame.statusDraft),
+    brand_label: frameLanguage === "ko" ? "〈만 39세 이상〉 · 참여 기록" : frameLanguage === "en" ? "〈Over 39〉 · PARTICIPATION RECORD" : frame.brand,
     created_at: createdAt,
     confirmed_at: confirmedAt,
     participant: {
@@ -377,40 +406,34 @@ export function buildResponseDocument({
       display_name: participantName,
     },
     metadata: [
-      [english ? "Date" : "작성일", dateLabel(createdAt, english)],
-      [english ? "Participant" : "참여자 표기", participantName],
-      [english ? "Place of activity or participation" : "활동 또는 참여 지역", locationText(answers, english)],
-      [english ? "Record language" : "기록 언어", sourceLabel],
+      [frameLanguage === "ko" ? "작성일" : frameLanguage === "en" ? "Date" : frame.date, dateLabel(createdAt, frameLanguage)],
+      [frameLanguage === "ko" ? "참여자 표기" : frameLanguage === "en" ? "Participant" : frame.participant, participantName],
+      [frameLanguage === "ko" ? "활동 또는 참여 지역" : frameLanguage === "en" ? "Place of activity or participation" : frame.place, locationText(answers, frame)],
+      [frameLanguage === "ko" ? "기록 언어" : frameLanguage === "en" ? "Record language" : frame.language, sourceLabel],
     ],
     coordinate: { m: coordinate.m || null, s: coordinate.s || null, d: coordinate.d || null },
     sections: [
-      safeSection("origin", "1", sectionTitles.origin, originSection(answers, english), english ? "The starting point of this record is gathered from the choices and words shared earlier." : "이번 응답의 출발점은 앞선 선택과 기록을 중심으로 남겼습니다."),
-      safeSection("present", "2", sectionTitles.present, presentSection(answers, english), english ? "The current state is gathered from the choices shared earlier." : "현재의 활동과 참여 상태는 앞선 선택을 중심으로 기록했습니다."),
-      safeSection("background", "3", sectionTitles.background, backgroundSection(answers, english), english ? "The background is gathered from the conditions selected earlier." : "현재 상태의 배경은 선택한 조건을 중심으로 기록했습니다."),
-      safeSection("continuity", "4", sectionTitles.continuity, continuitySection(answers, english), english ? "Continuing interests and activities are gathered from the responses shared earlier." : "이어진 활동과 관심은 선택한 응답을 중심으로 남겼습니다."),
-      safeSection("support", "5", sectionTitles.support, supportSection(answers, english), english ? "The conditions that supported participation are gathered from the choices shared earlier." : "활동과 참여를 지지한 조건은 선택한 응답을 중심으로 남겼습니다."),
-      safeSection("needs", "6", sectionTitles.needs, needSection(answers, english), english ? "The conditions for continuing are gathered from the choices shared earlier." : "이어가기 위한 조건은 선택한 항목을 중심으로 기록했습니다."),
+      safeSection("origin", "1", sectionTitles.origin, localizedFallback(0) ? foreignLines("origin") : originSection(answers, english), localizedFallback(0) || (english ? "The starting point of this record is gathered from the choices and words shared earlier." : "이번 응답의 출발점은 앞선 선택과 기록을 중심으로 남겼습니다.")),
+      safeSection("present", "2", sectionTitles.present, localizedFallback(1) ? foreignLines("present") : presentSection(answers, english), localizedFallback(1) || (english ? "The current state is gathered from the choices shared earlier." : "현재의 활동과 참여 상태는 앞선 선택을 중심으로 기록했습니다.")),
+      safeSection("background", "3", sectionTitles.background, localizedFallback(2) ? foreignLines("background") : backgroundSection(answers, english), localizedFallback(2) || (english ? "The background is gathered from the conditions selected earlier." : "현재 상태의 배경은 선택한 조건을 중심으로 기록했습니다.")),
+      safeSection("continuity", "4", sectionTitles.continuity, localizedFallback(3) ? foreignLines("continuity") : continuitySection(answers, english), localizedFallback(3) || (english ? "Continuing interests and activities are gathered from the responses shared earlier." : "이어진 활동과 관심은 선택한 응답을 중심으로 남겼습니다.")),
+      safeSection("support", "5", sectionTitles.support, localizedFallback(4) ? foreignLines("support") : supportSection(answers, english), localizedFallback(4) || (english ? "The conditions that supported participation are gathered from the choices shared earlier." : "활동과 참여를 지지한 조건은 선택한 응답을 중심으로 남겼습니다.")),
+      safeSection("needs", "6", sectionTitles.needs, localizedFallback(5) ? foreignLines("needs") : needSection(answers, english), localizedFallback(5) || (english ? "The conditions for continuing are gathered from the choices shared earlier." : "이어가기 위한 조건은 선택한 항목을 중심으로 기록했습니다.")),
       safeSection("coordinate", "7", copy.coordinateTitle, coordinateLine, copy.coordinatePending),
       { id: "summary", number: "8", title: copy.summary, paragraphs: summaryParagraphs },
       safeSection("promise", "9", copy.promiseTitle, copy.promise, copy.promise.at(-1)),
     ],
     confirmation: confirmationText,
     source_language: sourceLanguage,
+    display_language: frameLanguage,
   };
 }
 
 export function renderResponseDocument(document = {}) {
-  const coordinate = document.coordinate || {};
-  const mIndex = Number(String(coordinate.m || "").replace("M", ""));
-  const sIndex = Number(String(coordinate.s || "").replace("S", ""));
-  const dIndex = Number(String(coordinate.d || "").replace("D", ""));
-  const coordinateGraphic = [mIndex, sIndex, dIndex].every((value) => value >= 1 && value <= 4)
-    ? `<div class="response-document-coordinate-graphic" role="img" aria-label="${esc(document.source_language === "en" ? "A visual marker for the three directions in this record" : "이번 기록의 세 방향을 나타낸 시각 표시")}"><div class="response-document-coordinate-stack">${[1, 2, 3, 4].map((layer) => `<div class="response-document-coordinate-layer ${layer === mIndex ? "active" : ""}" style="--document-layer:${layer - 1}" aria-hidden="true">${Array.from({ length: 16 }, (_, cell) => { const row = Math.floor(cell / 4) + 1; const column = (cell % 4) + 1; return `<i class="${layer === mIndex && row === sIndex && column === dIndex ? "selected" : ""}"></i>`; }).join("")}</div>`).join("")}</div></div>`
-    : "";
   const sections = array(document.sections).map((section) => {
     const body = section.id === "summary"
-      ? array(section.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p><small>${esc(item.status)}</small></div>`).join("") || `<p class="response-document-empty">${esc(document.source_language === "en" ? "The response summary will appear here after it is ready." : "정리된 문장을 확인한 뒤 이곳에 표시됩니다.")}</p>`
-      : `${section.id === "coordinate" ? coordinateGraphic : ""}${array(section.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("")}`;
+      ? array(section.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(responseDocumentFrame(document.display_language || document.source_language).summaryEmpty)}</p>`
+      : array(section.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
     return `<section class="response-document-section response-document-section-${esc(section.id)}"><div class="response-document-section-head"><span>${esc(section.number)}</span><h3>${esc(section.title)}</h3></div><div class="response-document-section-body">${body}</div></section>`;
   }).join("");
   const metadata = array(document.metadata).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");

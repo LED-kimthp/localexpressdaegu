@@ -1,4 +1,4 @@
-import { extraCopy } from "./i18n-v038.js";
+import { extraCopy } from "./i18n-v038.js?v=rc2-preproduction-20260813-landing-r2";
 
 const copy = {
   en: {
@@ -169,9 +169,62 @@ Object.entries(extraCopy).forEach(([language, entries]) => {
   copy[language] = { ...(copy[language] || {}), ...entries };
 });
 
+// RC2 exposes Simplified and Traditional Chinese as separate language choices.
+// The legacy bank predates those codes and only stored a reviewed zh set.
+// Construct explicit dictionaries so neither choice falls through to Korean.
+const simplifyChinese = (value) => {
+  if (typeof value === "string") {
+    return value
+      .replaceAll("選", "选").replaceAll("擇", "择").replaceAll("與", "与").replaceAll("這", "这")
+      .replaceAll("個", "个").replaceAll("會", "会").replaceAll("後", "后").replaceAll("開", "开")
+      .replaceAll("關", "关").replaceAll("從", "从").replaceAll("當", "当").replaceAll("現", "现")
+      .replaceAll("實", "实").replaceAll("際", "际").replaceAll("藝", "艺").replaceAll("術", "术")
+      .replaceAll("觀", "观").replaceAll("覽", "览").replaceAll("參", "参").replaceAll("錄", "录")
+      .replaceAll("記", "记").replaceAll("憶", "忆").replaceAll("說", "说").replaceAll("話", "话")
+      .replaceAll("問", "问").replaceAll("題", "题").replaceAll("調", "调").replaceAll("應", "应")
+      .replaceAll("聯", "联").replaceAll("絡", "络").replaceAll("體", "体").replaceAll("驗", "验")
+      .replaceAll("場", "场").replaceAll("國", "国").replaceAll("畫", "画").replaceAll("書", "书")
+      .replaceAll("寫", "写").replaceAll("讀", "读").replaceAll("聽", "听").replaceAll("見", "见")
+      .replaceAll("覺", "觉").replaceAll("點", "点").replaceAll("讓", "让").replaceAll("還", "还")
+      .replaceAll("過", "过").replaceAll("進", "进").replaceAll("發", "发").replaceAll("變", "变")
+      .replaceAll("長", "长").replaceAll("時", "时").replaceAll("間", "间").replaceAll("學", "学")
+      .replaceAll("習", "习").replaceAll("業", "业").replaceAll("專", "专").replaceAll("係", "系")
+      .replaceAll("經", "经").replaceAll("濟", "济").replaceAll("標", "标").replaceAll("準", "准")
+      .replaceAll("無", "无").replaceAll("沒", "没").replaceAll("請", "请").replaceAll("較", "较")
+      .replaceAll("處", "处").replaceAll("續", "续").replaceAll("轉", "转").replaceAll("離", "离")
+      .replaceAll("複", "复").replaceAll("雜", "杂").replaceAll("簡", "简").replaceAll("運", "运")
+      .replaceAll("動", "动").replaceAll("務", "务").replaceAll("導", "导").replaceAll("師", "师")
+      .replaceAll("館", "馆").replaceAll("檔", "档").replaceAll("報", "报").replaceAll("顯", "显")
+      .replaceAll("廣", "广").replaceAll("萬", "万").replaceAll("總", "总").replaceAll("結", "结")
+      .replaceAll("構", "构").replaceAll("網", "网").replaceAll("節", "节").replaceAll("該", "该")
+      .replaceAll("價", "价").replaceAll("費", "费").replaceAll("護", "护").replaceAll("權", "权")
+      .replaceAll("創", "创").replaceAll("傳", "传").replaceAll("統", "统").replaceAll("戲", "戏")
+      .replaceAll("劇", "剧").replaceAll("風", "风").replaceAll("華", "华").replaceAll("聞", "闻")
+      .replaceAll("難", "难").replaceAll("總", "总").replaceAll("綜", "综").replaceAll("幫", "帮")
+      .replaceAll("稱", "称").replaceAll("繫", "系").replaceAll("邏", "逻").replaceAll("輯", "辑")
+      .replaceAll("礎", "础").replaceAll("擴", "扩").replaceAll("換", "换").replaceAll("級", "级")
+      .replaceAll("別", "别").replaceAll("認", "认").replaceAll("證", "证").replaceAll("歲", "岁")
+      .replaceAll("彙", "汇").replaceAll("漸", "渐").replaceAll("尋", "寻").replaceAll("啟", "启")
+      .replaceAll("備", "备").replaceAll("屆", "届").replaceAll("項", "项").replaceAll("壓", "压")
+      .replaceAll("碼", "码").replaceAll("頁", "页").replaceAll("設", "设").replaceAll("計", "计")
+      .replaceAll("減", "减").replaceAll("靜", "静").replaceAll("狀", "状").replaceAll("態", "态")
+      .replaceAll("繼", "继").replaceAll("歸", "归").replaceAll("納", "纳").replaceAll("圖", "图")
+      .replaceAll("徑", "径").replaceAll("懸", "悬").replaceAll("掛", "挂").replaceAll("製", "制")
+      .replaceAll("彈", "弹").replaceAll("臺", "台").replaceAll("灣", "湾").replaceAll("來", "来")
+      .replaceAll("著", "着").replaceAll("辦", "办").replaceAll("舉", "举").replaceAll("脈", "脉")
+      .replaceAll("載", "载").replaceAll("擔", "担").replaceAll("農", "农").replaceAll("詳", "详")
+      .replaceAll("類", "类").replaceAll("橫", "横").replaceAll("徵", "征").replaceAll("刪", "删")
+      .replaceAll("錢", "钱").replaceAll("產", "产").replaceAll("維", "维").replaceAll("爭", "争")
+      .replaceAll("獨", "独").replaceAll("壽", "寿").replaceAll("臨", "临");
+  }
+  if (Array.isArray(value)) return value.map(simplifyChinese);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, simplifyChinese(item)]));
+  return value;
+};
+copy["zh-Hant"] = { ...copy.zh, ...(copy["zh-Hant"] || {}) };
+copy["zh-Hans"] = simplifyChinese({ ...copy["zh-Hant"], ...(copy["zh-Hans"] || {}) });
+
 function normalizedLanguage(language) {
-  if (language === "zh-Hant") return "zh";
-  if (language === "zh-Hans") return "zh";
   return language || "ko";
 }
 
@@ -185,7 +238,7 @@ function deepTranslate(language, value) {
 export function translate(language, text) {
   const key = normalizedLanguage(language);
   if (!text || key === "ko") return text;
-  return copy[key]?.[text] || (key !== "en" ? copy.en?.[text] : null) || text;
+  return copy[key]?.[text] || text;
 }
 
 const questions = {
@@ -236,11 +289,17 @@ const questions = {
   }
 };
 
+// Keep the two user-selectable Chinese variants separate at lookup time.
+// `zh` remains the legacy reviewed Traditional source for backward
+// compatibility; RC2 itself never needs to collapse its language value to it.
+questions["zh-Hant"] = questions.zh;
+questions["zh-Hans"] = simplifyChinese(questions.zh);
+
 export function localizeQuestion(language, item) {
   const key = normalizedLanguage(language);
   if (!item || key === "ko") return item;
   const base = deepTranslate(key, item);
-  const localized = questions[key]?.[item.id] || (key !== "en" ? questions.en?.[item.id] : null);
+  const localized = questions[key]?.[item.id] || null;
   if (!localized) return base;
   const result = { ...base, ...localized };
   if (Array.isArray(item.options) && localized.options) {

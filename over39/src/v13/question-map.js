@@ -14,6 +14,7 @@ export const QUESTION_METADATA = {
   P13: { purpose: "공개된 자리 밖의 지속", axis: "S", evidence: "support", intent: "발표·관람·프로그램 밖에서도 이어진 작업, 관심, 기억과 관계를 확인합니다." },
   P13_TEXT: { purpose: "비가시적 지속 원문", axis: "S", evidence: "primary", intent: "이어짐, 멈춤, 거리두기 또는 휴식의 실제 모습을 참여자의 말로 남깁니다." },
   M01: { purpose: "기억 또는 활동의 출발점", axis: "M", evidence: "context", intent: "오늘 이야기를 시작할 사람, 작업, 공간, 장면 또는 감각을 고릅니다." },
+  NO_RECALL_RELATION: { purpose: "현재 문화예술 관계의 장면", axis: "S", evidence: "primary", intent: "특정 기억을 요구하지 않고 현재 문화예술과 가까워지거나 멀어지는 생활의 장면을 기록합니다." },
   M02: { purpose: "남아 있는 장면 원문", axis: "M", evidence: "primary", intent: "정확한 이름보다 먼저 남아 있는 장면과 표현을 기록합니다." },
   M03: { purpose: "대상별 기억의 초점", axis: "M", evidence: "support", intent: "선택한 대상에서 무엇이 먼저 떠오르는지 살핍니다." },
   M04: { purpose: "기억의 주된 의미 자기확인", axis: "M", evidence: "support", intent: "자신의 문장을 남긴 뒤 가까운 의미의 방향을 확인합니다." },

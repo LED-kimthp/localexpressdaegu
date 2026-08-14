@@ -1,13 +1,21 @@
-import { localizeQuestion, translate } from "./i18n.js";
+import { localizeQuestion, translate } from "./i18n.js?v=rc2-preproduction-20260813-landing-r2";
 import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js";
 import { buildConnectionProfile, connectionTopics } from "./connection.js";
 import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute } from "./flow.js";
-import { ANCHOR_AXES, ANCHOR_ORDER, ANCHOR_SCREEN_MAP, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, buildAnchorContext, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
+import { ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
 import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js";
 import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, translateResponseSummary } from "./depth.js";
 import { QUESTION_METADATA } from "./question-map.js";
 import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js";
 import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, renderResponseDocument } from "./response-document.js";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
+import { greetingUiCopy } from "./greetings-ui-i18n.js";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=rc2-preproduction-20260813-landing-r3";
+import { completionCopy } from "./completion-i18n.js";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js";
 import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js";
 import { ledWordmark, mohoHouseMark } from "../brand-lockup.js";
 
@@ -16,7 +24,7 @@ const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
 const depthBankUrl = "./src/v13/approved-depth-question-bank.json";
 const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
-const releaseVersion = isRc2 ? "rc2-v0.4.5-5anchor-realapi-integrated-r2-2026-08-09" : "rc1-2026-08-03";
+const releaseVersion = isRc2 ? "rc2-v0.5.0-stage1-contract-candidate-2026-08-14" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
 const connectionKey = (responseId) => `over39-v13-connection-${responseId}`;
@@ -25,19 +33,24 @@ const referralKey = (responseId) => `over39-v13-referral-${responseId}`;
 const googleAppsScriptUrl = String(window.OVER39_GOOGLE_APPS_SCRIPT_URL || "").trim();
 const submitFunctionUrl = String(window.OVER39_SUPABASE_SUBMIT_URL || "").trim();
 const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
+const relayFunctionUrl = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
+const estimatedDurationMinutes = Number(window.OVER39_ESTIMATED_DURATION_MINUTES || 0);
 const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
 const query = new URLSearchParams(window.location.search);
+const interfaceLanguageKey = "over39-interface-language";
+const requestedLanguage = String(query.get("lang") || localStorage.getItem(interfaceLanguageKey) || "ko");
+const initialLanguage = ["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"].includes(requestedLanguage) ? requestedLanguage : "ko";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
 const sampleType = institutionCode ? "institution_review" : query.get("sample") === "research" ? "research" : "test";
 
 let schema;
 let depthBank;
-let state = { phase: "loading", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: "ko", feedback: {}, referralStatus: null };
+let state = { phase: "loading", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: initialLanguage, feedback: {}, referralStatus: null };
 
 const esc = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
@@ -52,10 +65,10 @@ const answerFor = (id) => state.answers[storedField(question(id)) || id];
 const setAnswer = (id, value) => { state.answers[storedField(question(id)) || id] = value; saveDraft(); };
 const optionLabel = (option) => Array.isArray(option) ? option[1] : option?.label || option;
 const optionValue = (option) => Array.isArray(option) ? option[0] : option?.value || option;
-const depthOutcomeFields = ["depth_plan", "depth_source", "depth_m", "depth_m_text", "depth_s", "depth_s_text", "depth_d", "depth_d_text", "depth_summary", "depth_ai_runs", "adaptive_turns", "adaptive_checkpoint_status", "adaptive_ai_runs", "adaptive_detected_language", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"];
+const depthOutcomeFields = ["depth_plan", "depth_source", "depth_m", "depth_m_text", "depth_s", "depth_s_text", "depth_d", "depth_d_text", "depth_summary", "depth_ai_runs", "adaptive_turns", "adaptive_checkpoint_status", "adaptive_ai_runs", "adaptive_detected_language", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"];
 function clearDepthOutcome() { depthOutcomeFields.forEach((field) => delete state.answers[field]); }
 function clearReflectionOutcome() {
-  ["depth_summary", "depth_ai_runs", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
+  ["depth_summary", "depth_ai_runs", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
 }
 function clearAdaptiveAnchor(checkpoint, { clearReflection = true } = {}) {
   if (!isRc2) { clearDepthOutcome(); return; }
@@ -94,7 +107,35 @@ const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
 const creditRows = [["주최·주관", "북성로사진관(대안공간 모호주택)"], ["총괄기획", "이생강"], ["연구 협력", "Local Express Daegu"], ["후원", "한국문화예술위원회"]];
-const t = (text) => translate(state.language, text);
+const t = (text) => rc2UiPhrase(state.language, text) || translate(state.language, text);
+const ui = () => rc2UiCopy(state.language);
+const stage = () => stage1Copy(state.language);
+
+function localizeRenderedCopy(container) {
+  if (state.language === "ko") return;
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      return node.parentElement?.closest("script,style") || !node.nodeValue.trim() ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    const source = node.nodeValue.trim();
+    const localized = t(source);
+    if (localized !== source) node.nodeValue = node.nodeValue.replace(source, localized);
+  });
+  container.querySelectorAll("[placeholder]").forEach((input) => { input.placeholder = t(input.placeholder); });
+}
+
+function openCallUrl() {
+  const url = new URL("./over39-open-call.html", window.location.href);
+  url.searchParams.set("lang", state.language);
+  url.searchParams.set("source", "participation-record");
+  const recordId = state.submitted?.response_id || state.responseId;
+  if (recordId) url.searchParams.set("record_id", recordId);
+  return `${url.pathname.split("/").at(-1)}${url.search}`;
+}
 
 
 // Conceptual choices use a short heading followed by one complete sentence.
@@ -303,6 +344,9 @@ function choiceDisplayLabel(id, value, rawLabel) {
 // API에는 내부 코드만 보내지 않고, 참여자가 실제로 본 질문과 선택 문장을 함께 보냅니다.
 function apiQuestionText(id, q) {
   if (!q) return id;
+  const contextual = contextAwareCopy(state.answers, state.language);
+  const contextualKey = { P12: "p12", P13: "p13", P14: "p14", P15: "p15", P16: "p16", P19: "p19" }[id];
+  if (contextualKey) return t(contextual[contextualKey]);
   if (id === "M02" && noRecall()) return q.text_no_recall || q.text;
   if (id === "M04" && noRecall()) return q.text_no_recall || q.text;
   if (["M05", "M06", "M07", "M08", "M09", "M10"].includes(id) && noRecall()) return q.text_no_recall || q.text_audience || q.text;
@@ -343,8 +387,11 @@ const rc2QuestionPurposes = {
   ROLE_GROUP: "지금의 경험을 어떤 역할과 위치에서 말하고 있는지 기록합니다.",
   ROLE_PRIMARY: "이번 답변의 중심이 되는 역할을 함께 남깁니다.",
   ROLE_PARALLEL: "한 사람 안에 함께 이어지는 역할과 경험의 폭을 살핍니다.",
+  PARTICIPANT_CONTEXT: "기존 역할과 별도로, 이번 답변이 닿는 문화예술 분야와 활동 형태를 함께 기록합니다.",
   PROFILE: "응답이 놓인 생활과 지역의 맥락을 함께 기록합니다.",
   M01: "오늘 이야기의 출발점이 될 사람, 작업, 공간, 장면 또는 감각을 고릅니다.",
+  NO_RECALL_RELATION: "특정 작품을 떠올리지 않아도 지금 문화예술과 만나는 생활의 한 장면을 남길 수 있습니다.",
+  AI_CONDITIONAL_NO_RECALL_RELATION: "방금 적은 현재의 관계에서 직접 이어지는 한 가지를 조금 더 듣습니다.",
   M02: "정확한 이름보다 먼저 남아 있는 장면을 참여자의 언어로 기록합니다.",
   M03: "선택한 대상에서 무엇이 먼저 떠오르는지 조금 더 구체화합니다.",
   M04: "선택지를 고르기 전에, 이 기억이 오래 남은 이유를 자신의 말로 먼저 남깁니다.",
@@ -366,6 +413,7 @@ const rc2QuestionPurposes = {
   D02: "현재 조건과 구분해, 앞으로 먼저 달라지기를 바라는 변화를 기록합니다.",
   D03: "선택한 변화가 어떤 현실에서 비롯되는지 살핍니다.",
   D04: "그 조건이 실제 활동과 기억, 관계에 남긴 영향을 듣습니다.",
+  AI_CONDITIONAL_D04_CONDITIONS: "개인 경험과 구조적 조건이 함께 작동한 관계를 한 가지 더 구체화합니다.",
   AI_ANCHOR_D02_TEXT: "바라는 변화의 문장에서 직접 이어지는 한 가지를 조금 더 듣습니다.",
   R01: "이 기억과 경험이 연구 이후 어떤 모습으로 이어지면 좋을지 살핍니다.",
   COMMUNITY: "이번 응답에서 함께 남기고 싶은 다른 이름이나 장면이 있는지 선택해서 기록합니다.",
@@ -376,12 +424,12 @@ const rc2QuestionPurposes = {
 
 const rc2QuestionTopics = {
   CONSENT: "참여 안내", P01: "시작 위치", DOCUMENT_IDENTITY: "참여자 표기", P01_CONTEXT: "기억의 위치",
-  ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", PROFILE: "생활과 지역",
-  M01: "기억", M02: "장면", M03: "초점", M04: "이유", AI_ANCHOR_M04_TEXT: "한 걸음 더", M05: "남은 단서",
+  ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", PARTICIPANT_CONTEXT: "활동의 맥락", PROFILE: "생활과 지역",
+  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "한 걸음 더", M02: "장면", M03: "초점", M04: "이유", AI_ANCHOR_M04_TEXT: "한 걸음 더", M05: "남은 단서",
   MEMORY_TIME: "시간", MEMORY_EVIDENCE: "경험 방식", MEMORY_TO_PRESENT: "현재",
   ACTIVITY: "현재의 연결", PRACTICE_PUBLIC_STATE: "현재 상태", STATE_BACKGROUND: "현재에 작용한 현실",
   TRANSITION: "변화", AI_ANCHOR_P12: "한 걸음 더", CONTINUITY: "보이지 않는 지속", AI_ANCHOR_P13_TEXT: "한 걸음 더", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "한 걸음 더", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "한 걸음 더",
-  D03: "현실 경험", D04: "영향", R01: "이어갈 방식", COMMUNITY: "다른 이름",
+  D03: "현실 경험", D04: "영향", AI_CONDITIONAL_D04_CONDITIONS: "한 걸음 더", R01: "이어갈 방식", COMMUNITY: "다른 이름",
   REFLECTION_REVIEW: "응답 정리", SUBMIT: "세 방향 확인", USE_SCOPE: "활용 범위",
 };
 
@@ -392,9 +440,11 @@ const rc2Phases = {
   P01_CONTEXT: "기억을 말하는 자리",
   ROLE_GROUP: "현재 역할의 범위",
   ROLE_PRIMARY: "이번 응답의 중심 역할",
-  ROLE_PARALLEL: "함께 이어지는 역할",
+  ROLE_PARALLEL: "함께 이어지는 역할", PARTICIPANT_CONTEXT: "분야와 활동 형태",
   PROFILE: "생활과 지역의 배경",
   M01: "기억의 출발점",
+  NO_RECALL_RELATION: "지금 문화예술과 만나는 한 순간",
+  AI_CONDITIONAL_NO_RECALL_RELATION: "현재의 관계에서 이어진 질문",
   AI_ANCHOR_M04_TEXT: "기억의 이유에서 이어진 질문",
   M02: "남아 있는 한 장면",
   M03: "장면의 초점",
@@ -417,6 +467,7 @@ const rc2Phases = {
   AI_ANCHOR_D02_TEXT: "바라는 변화에서 이어진 질문",
   D03: "변화가 필요한 현실의 맥락",
   D04: "그 조건이 남긴 영향",
+  AI_CONDITIONAL_D04_CONDITIONS: "개인과 구조의 조건에서 이어진 질문",
   R01: "다음에 이어질 모습",
   COMMUNITY: "다른 이름이나 장면을 더 남길지 선택",
   REFLECTION_REVIEW: "응답 요지 확인과 수정",
@@ -455,6 +506,22 @@ function loadDraft() {
 function clearDraft() { localStorage.removeItem(draftKey); }
 function savePending(response) { localStorage.setItem(pendingKey, JSON.stringify(response)); }
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
+function participantReferenceKey(responseId) { return `over39-v13-participant-reference-${responseId || "draft"}`; }
+function ensureParticipantReference(responseId = state.responseId) {
+  if (!responseId) return null;
+  if (state.participantReference?.code && state.participantReference?.access_token) return state.participantReference;
+  try {
+    const stored = JSON.parse(localStorage.getItem(participantReferenceKey(responseId)) || "null");
+    if (stored?.code && stored?.access_token) {
+      state.participantReference = stored;
+      return stored;
+    }
+  } catch { /* create a fresh local reference below */ }
+  const reference = createParticipantReference();
+  state.participantReference = reference;
+  localStorage.setItem(participantReferenceKey(responseId), JSON.stringify(reference));
+  return reference;
+}
 function defaultConnection() {
   return {
     greeting_id: crypto.randomUUID(),
@@ -471,7 +538,11 @@ function defaultConnection() {
     visibility: "RESEARCHER_ONLY",
     contact_permission: "",
     contact_email: "",
+    sender_visibility: "CONTEXTUAL",
+    origin: "participant",
     introduction: "",
+    stage: "direction",
+    preview_confirmed: false,
   };
 }
 
@@ -519,10 +590,10 @@ function activeScreens() {
 }
 
 function rc2StageIndex(id) {
-  const startScreens = new Set(["CONSENT", "P01", "DOCUMENT_IDENTITY", "P01_CONTEXT", "ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL", "PROFILE"]);
-  const memoryScreens = new Set(["M01", "M02", "M03", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE"]);
+  const startScreens = new Set(["CONSENT", "P01", "DOCUMENT_IDENTITY", "P01_CONTEXT", "ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL", "PARTICIPANT_CONTEXT", "PROFILE"]);
+  const memoryScreens = new Set(["M01", "NO_RECALL_RELATION", "AI_CONDITIONAL_NO_RECALL_RELATION", "M02", "M03", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE"]);
   const presentScreens = new Set(["MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION", "AI_ANCHOR_P12", "CONTINUITY", "AI_ANCHOR_P13_TEXT", "SUPPORT_CONDITIONS", "AI_ANCHOR_P19_TEXT"]);
-  const conditionScreens = new Set(["D01", "D02", "AI_ANCHOR_D02_TEXT", "D03", "D04", "R01", "COMMUNITY"]);
+  const conditionScreens = new Set(["D01", "D02", "AI_ANCHOR_D02_TEXT", "D03", "D04", "AI_CONDITIONAL_D04_CONDITIONS", "R01", "COMMUNITY"]);
   if (startScreens.has(id)) return 1;
   if (memoryScreens.has(id)) return 2;
   if (presentScreens.has(id)) return 3;
@@ -539,14 +610,12 @@ function progressMeta(id) {
     const currentFixed = fixedQuestionIdsForScreen(id, state.answers, { adaptive: true });
     const startNumber = priorFixed.length + 1;
     const endNumber = priorFixed.length + currentFixed.length;
-    const count = currentFixed.length
-      ? `${t("질문")} ${startNumber}${currentFixed.length > 1 ? `–${endNumber}` : ""} / ${fixedIds.length}`
-      : adaptiveScreenCheckpoint[id]
-        ? t("연결 질문")
-        : id === "REFLECTION_REVIEW" || id === "SUBMIT" || id === "USE_SCOPE" ? t("기록 정리") : "";
+    const count = adaptiveScreenCheckpoint[id]
+      ? t("이어지는 질문")
+      : id === "REFLECTION_REVIEW" || id === "SUBMIT" || id === "USE_SCOPE" ? t("기록 정리") : "";
     const progressBase = currentFixed.length ? endNumber : priorFixed.length;
     return {
-      label: rc2QuestionTopics[id] || rc2Phases[id] || "기록",
+      label: ui().topics[id] || (state.language === "ko" ? (rc2QuestionTopics[id] || rc2Phases[id] || "기록") : ""),
       count,
       progress: Math.min(100, Math.round((progressBase / Math.max(1, fixedIds.length)) * 100)),
       stageIndex: rc2StageIndex(id),
@@ -647,7 +716,7 @@ function responseSourceLanguage(answers = state.answers) {
 }
 
 function clearDocumentConfirmation() {
-  ["participant_approved_text", "participant_approved_text_ko", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
+  ["participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
 }
 
 function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}) {
@@ -657,6 +726,7 @@ function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}
     responseId: state.responseId,
     answers: sanitizeAnswersForRoute(state.answers),
     sourceLanguage,
+    displayLanguage: state.language,
     releaseVersion,
     approvedOriginal,
     approvedKorean: state.answers.participant_approved_text_ko || (sourceLanguage === "ko" ? approvedOriginal : ""),
@@ -681,9 +751,18 @@ async function prepareApprovedTranslation() {
     approvedText: original,
     summary: state.answers.depth_summary?.summary,
     summaryKo: state.answers.depth_summary?.summary_ko,
+    summaryTranslationKind: state.answers.depth_summary?.provenance?.translation_kind || "fixed",
   });
   if (reuse.reuse) {
     state.answers.participant_approved_text_ko = reuse.translation;
+    state.answers.participant_approved_translation_provenance = {
+      kind: sourceLanguage === "ko" ? "fixed" : "ai-translated",
+      original_language: sourceLanguage,
+      displayed_language: "ko",
+      original_text: original,
+      translated_text: reuse.translation,
+      source: sourceLanguage === "ko" ? "same_language" : "summary_ko_reuse",
+    };
     state.answers.response_document_created_at = state.answers.response_document_created_at || new Date().toISOString();
     saveDraft();
     return;
@@ -692,6 +771,14 @@ async function prepareApprovedTranslation() {
   render(false);
   const translated = await translateResponseSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, text: original, sourceLanguage });
   state.answers.participant_approved_text_ko = translated.translation_ko || "";
+  state.answers.participant_approved_translation_provenance = {
+    kind: translated.run?.source === "motif" ? "ai-translated" : "fixed",
+    original_language: sourceLanguage,
+    displayed_language: "ko",
+    original_text: original,
+    translated_text: translated.translation_ko || "",
+    source: translated.run?.source || "fallback",
+  };
   state.answers.depth_ai_runs = [...values(state.answers.depth_ai_runs), { ...translated.run, operation: "translate_summary" }];
   state.answers.response_document_created_at = state.answers.response_document_created_at || new Date().toISOString();
   state.translationGenerating = false;
@@ -704,7 +791,7 @@ function purposeForScreen(id = activeScreens()[state.step]) {
 
 function screenHeading(title, help = "", purpose = purposeForScreen()) {
   const id = activeScreens()[state.step];
-  const topic = isRc2 ? rc2QuestionTopics[id] : "";
+  const topic = isRc2 ? (ui().topics[id] || (state.language === "ko" ? (rc2QuestionTopics[id] || "") : "")) : "";
   const localizedTitle = t(title);
   const heading = topic && !String(title).includes("—") ? `${t(topic)} — ${localizedTitle}` : localizedTitle;
   const kicker = isRc2 ? "" : `<div class="interview-kicker">PUBLIC MEMORY INTERVIEW · INSTITUTION RC1</div>`;
@@ -714,9 +801,10 @@ function screenHeading(title, help = "", purpose = purposeForScreen()) {
 
 function renderConsent() {
   if (isRc2) {
-    const recordGuide = t("답변은 마지막에 〈만 39세 이상〉 참여 기록으로 정리됩니다. 정리된 문장은 직접 읽고 고칠 수 있습니다.");
+    const local = stage();
+    const recordGuide = local.introRecord;
     const policyGuide = t("정책연구 활용 범위는 마지막 화면에서 선택합니다. 전시 공모와 안부·연락은 별도의 경로로 이어집니다.");
-    return `${screenHeading("설문의 흐름과 기록 방식을 먼저 살펴봅니다.", "기억·현재·조건의 세 구간을 지나며, 앞선 답변에서 이어지는 질문이 함께 나타납니다.")}
+    return `${screenHeading(local.introTitle, local.introFlow)}
       <div class="participation-guide">
         <p>${esc(recordGuide)}</p>
         <p>${esc(policyGuide)}</p>
@@ -743,7 +831,9 @@ function renderDocumentIdentity() {
   const mode = state.answers.display_name_mode;
   const q1 = question("ID01");
   const q2 = question("ID02");
-  return `${screenHeading(q1.text, "실명, 닉네임, 이니셜, 익명 가운데 편한 방식을 골라주세요. 연락처와는 분리해 보관합니다.")}
+  const local = stage();
+  return `${screenHeading("이 기록에서 어떻게 불러드리면 좋을까요?", local.identityHelp)}
+    <p class="identity-privacy-note">${esc(local.identityPrivacy)}</p>
     ${renderChoices("ID01", q1.options)}
     ${mode && mode !== "ANONYMOUS" ? renderText("ID02", { multiline: false, field: "display_name", value: state.answers.display_name || "", label: q2.text, placeholder: mode === "INITIALS" ? "예: T.K." : "참여 기록에 표시할 표기" }) : ""}`;
 }
@@ -752,14 +842,15 @@ function renderPracticePublicState() {
   const creative = question("P14");
   const publicActivity = question("P15");
   const audience = isAudienceContext();
-  const title = audience ? "현재 문화예술과 이어지는 방식을 살펴볼게요." : "현재의 활동과 공개된 모습을 나누어 살펴볼게요.";
+  const kind = participantContextKind(state.answers);
+  const copy = contextAwareCopy(state.answers, state.language);
   const help = audience
-    ? "평소 찾아보는 관심과 전시·프로그램에 실제로 참여하는 흐름을 나누어 기록합니다."
-    : "작업이나 핵심 활동이 이어지는 상태와 전시·발표처럼 밖으로 드러나는 상태를 나누어 기록합니다.";
-  return `${screenHeading(title, help)}
-    <label class="field-label">${esc(audience ? creative.text_audience : creative.text_professional)}</label>
+    ? ui().practiceHelp.AUDIENCE
+    : ui().practiceHelp[kind] || ui().practiceHelp.PROFESSIONAL;
+  return `${screenHeading(copy.activityHeading, help)}
+    <label class="field-label">${esc(copy.p14)}</label>
     ${renderChoices("P14", audience ? creative.options_audience : creative.options_professional)}
-    <label class="field-label">${esc(audience ? publicActivity.text_audience : publicActivity.text_professional)}</label>
+    <label class="field-label">${esc(copy.p15)}</label>
     ${renderChoices("P15", audience ? publicActivity.options_audience : publicActivity.options_professional)}`;
 }
 
@@ -768,13 +859,14 @@ function renderStateBackground() {
   const p17 = question("P17");
   const p18 = question("P18");
   const audience = isAudienceContext();
+  const copy = contextAwareCopy(state.answers, state.language);
   const title = audience ? "지금의 관람과 관심 방식에 함께 작용한 조건을 살펴볼게요." : "현재의 활동 방식에 함께 작용한 조건을 살펴볼게요.";
   const help = audience
     ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요."
     : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요.";
   const axisBridge = audience ? (p17.help_audience || p17.help || "") : (p17.help || "");
   return `${screenHeading(title, help)}
-    <label class="field-label">${esc(audience ? p16.text_audience : p16.text_professional)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5 })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}
+    <label class="field-label">${esc(copy.p16)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5 })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}
     <label class="field-label">${esc(audience ? p17.text_audience : p17.text_professional)}</label><p class="axis-bridge-note">${esc(axisBridge)}</p>${renderChoices("P17", audience ? p17.options_audience : p17.options_professional)}
     ${renderText("P18", { field: "pause_context_text", value: state.answers.pause_context_text || "", label: audience ? p18.text_audience : p18.text_professional, placeholder: audience ? p18.help_audience : p18.help })}`;
 }
@@ -783,7 +875,7 @@ function renderSupportConditions() {
   const p19 = question("P19");
   const p19Text = question("P19_TEXT");
   const audience = isAudienceContext();
-  const title = audience ? p19.text_audience : p19.text_professional;
+  const title = contextAwareCopy(state.answers, state.language).p19;
   const help = audience
     ? "작품과 프로그램을 다시 찾게 한 사람, 기억, 정보와 환경을 기록해요. 최대 다섯 가지까지 고를 수 있어요."
     : "활동을 실제로 지탱한 사람, 공간, 소득, 기록과 관계를 남겨요. 최대 다섯 가지까지 고를 수 있어요.";
@@ -800,19 +892,65 @@ function renderResponsePosition() {
 
 function renderRoleGroup() {
   const q = question("P02G");
-  return `${screenHeading(q.text, "직군은 연구 결과를 해석하기 위한 맥락입니다. 한 가지만 먼저 골라주세요.")}${renderChoices("P02G", q.options)}`;
+  return `${screenHeading(q.text, "기존 역할은 이전 응답과의 비교를 위한 맥락입니다. 지금의 활동을 한 가지 역할로 한정하기 어렵다면 그 선택을 고르고 직접 적을 수 있어요.")}${renderChoices("P02G", q.options)}`;
 }
 
 function renderRolePrimary() {
   const group = state.answers.role_group_primary;
   const q = question("P02");
-  return `${screenHeading(q.text, "현재 답변의 중심이 되는 역할을 선택해 주세요.")}${renderChoices("P02", [...roleOptions(group), ["OTHER", "기타"]])}${renderOtherInput("P02", "역할을 직접 적어주세요.")}`;
+  const otherOnly = group === "G_OTHER";
+  const options = otherOnly ? [["OTHER", "현재 활동을 직접 적기"]] : [...roleOptions(group), ["OTHER", "기타"]];
+  const help = otherOnly
+    ? "기존 역할 코드는 그대로 보존합니다. 이번 활동을 가장 자연스럽게 설명하는 말을 직접 적어주세요."
+    : "현재 답변의 중심이 되는 역할을 선택해 주세요.";
+  return `${screenHeading(q.text, help)}${renderChoices("P02", options)}${renderOtherInput("P02", otherOnly ? "이번 활동을 직접 적어주세요." : "역할을 직접 적어주세요.")}`;
 }
 
 function renderRoleParallel() {
   const q = question("P03");
   const otherRoles = schema.roles.filter((role) => role.value !== state.answers.role_primary).map((role) => [role.value, role.label]);
-  return `${screenHeading(q.text, "겸하는 역할이 없으면 ‘없음’을 선택해 주세요.")}${renderChoices("P03", [...otherRoles, ["NON_ARTS", "문화예술 외 역할"], ["NONE", "없음"], ["OTHER", "기타"]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", "함께 적고 싶은 역할을 직접 적어주세요.")}`;
+  return `${screenHeading(q.text, "지금 여러 방식으로 활동하고 있다면 함께 골라도 좋아요. 해당하지 않으면 ‘없음’을 선택해 주세요.")}${renderChoices("P03", [...otherRoles, ["NON_ARTS", "문화예술 외 역할"], ["NONE", "없음"], ["OTHER", "기타"]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", "함께 이어지는 다른 문화예술 활동이나 역할을 직접 적어주세요.")}`;
+}
+
+const CONTEXT_OPTION_GROUPS = {
+  field: [
+    ["VISUAL_ARTS", "CRAFT_DESIGN", "INTERDISCIPLINARY"],
+    ["PHOTO_MEDIA", "FILM", "THEATRE_PERFORMANCE", "DANCE", "MUSIC", "TRADITIONAL_ARTS"],
+    ["LITERATURE_PUBLISHING", "HERITAGE_ARCHIVE"],
+    ["LOCAL_EVERYDAY_CULTURE", "OTHER"],
+  ],
+  mode: [
+    ["CREATION_PRODUCTION", "DIRECTION_CHOREOGRAPHY_COMPOSITION", "PERFORMANCE_LIVE"],
+    ["CURATION_PRODUCING", "SPACE_INSTITUTION_OPERATION", "DISTRIBUTION_PATRONAGE", "LOCAL_COMMUNITY_ACTIVITY"],
+    ["CRITICISM_RESEARCH", "DOCUMENTATION_ARCHIVE", "EDITING_PUBLISHING_MEDIA"],
+    ["EDUCATION_TRANSMISSION", "LEARNING_TRAINING", "HOBBY_CLUB_EVERYDAY_ARTS", "TECHNICAL_PRODUCTION_SUPPORT", "OTHER"],
+  ],
+};
+
+function renderGroupedContextChoices(id, options, groupKey, { multi = false, max = 0 } = {}) {
+  const labels = stage().groups[groupKey];
+  const selected = new Set(values(answerFor(id)));
+  const groups = CONTEXT_OPTION_GROUPS[groupKey].map((codes, index) => {
+    const groupOptions = options.filter(([code]) => codes.includes(code));
+    const open = index === 0 || groupOptions.some(([code]) => selected.has(code));
+    return `<details class="context-choice-group" ${open ? "open" : ""}><summary><span>${esc(labels[index])}</span><small>${esc(stage().addAnother)}</small></summary>${renderChoices(id, groupOptions, { multi, max })}</details>`;
+  }).join("");
+  return `<p class="context-selection-help">${esc(stage().oneOrMore)}</p><div class="context-choice-groups">${groups}</div>`;
+}
+
+function renderParticipantContext() {
+  const field = question("CTX_FIELD");
+  const mode = question("CTX_MODE");
+  const form = question("CTX_FORM");
+  const unit = question("CTX_UNIT");
+  const copy = participantContextCopy(state.language);
+  const options = participantContextOptions(state.language);
+  const local = stage();
+  return `${screenHeading(local.contextTitle, local.contextHelp)}
+    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
+    <section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>
+    <section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section>
+    <section class="participant-context-section participant-context-optional"><label class="field-label">${esc(copy.unit || unit.text)} <small>${esc(local.optional)}</small></label>${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</section>`;
 }
 
 function renderActivity() {
@@ -820,10 +958,11 @@ function renderActivity() {
   const p06 = question("P06");
   const p07 = question("P07");
   const audience = isAudienceContext();
-  const heading = audience ? "문화예술을 찾아보고 참여해 온 방식을 알려주세요." : "현재의 활동과 상태를 알려주세요.";
+  const copy = participantActivityScreenCopy(state.language);
+  const heading = audience ? copy.headingAudience : copy.headingOther;
   return `${screenHeading(heading)}
-    <label class="field-label">${esc(audience ? p05.text_audience : p05.text_professional)}</label>${renderChoices("P05", p05.options)}
-    ${state.answers.activity_duration_band ? renderText("P05_YEAR", { multiline: false, placeholder: "예: 2008", label: question("P05_YEAR").text }) : ""}
+    <label class="field-label">${esc(audience ? copy.p05Audience : copy.p05Other)}</label>${renderChoices("P05", p05.options)}
+    ${state.answers.activity_duration_band ? renderText("P05_YEAR", { multiline: false, placeholder: copy.yearPlaceholder, label: copy.yearLabel }) : ""}
     <label class="field-label">${esc(audience ? p06.text_audience : p06.text_professional)}</label>${renderChoices("P06", audience ? p06.options_audience : p06.options_professional)}
     ${!audience && state.answers.activity_state === "ROLE_CHANGED" ? `<label class="field-label">${esc(question("P04").text)}</label>${renderChoices("P04", [...schema.roles.map((role) => [role.value, role.label]), ["NON_ARTS", "문화예술 외 역할"], ["NONE", "없음"], ["OTHER", "기타"]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P04", "이전 역할을 직접 적어주세요.")}` : ""}
     <label class="field-label">${esc(audience ? p07.text_audience : p07.text_professional)}</label>${renderChoices("P07", audience ? p07.options_audience : p07.options_professional)}`;
@@ -835,36 +974,49 @@ function renderMemoryToPresent() {
   const help = audience
     ? "이제 그 경험이 현재의 관심과 선택에 어떻게 이어져 있는지 살펴볼게요."
     : "이제 그 기억이나 활동이 지금의 삶과 어떤 관계에 있는지 살펴볼게요.";
-  const body = audience
-    ? "당신이 남긴 기억이 지금의 관심과 선택에 어떻게 이어져 있는지 차분히 살펴볼게요."
-    : "앞에서 남긴 말을 출발점으로 지금의 활동과 삶에 이어진 내용을 살펴볼게요.";
+  const rawMemory = [state.answers.memory_clue_text, state.answers.memory_meaning_text, state.answers.memory_name_text]
+    .map((value) => String(value || "").trim()).find(Boolean);
+  const excerpt = rawMemory ? `${rawMemory.slice(0, 132)}${rawMemory.length > 132 ? "…" : ""}` : "";
+  const noRecall = values(state.answers.memory_type).includes("NO_RECALL");
+  const body = noRecall
+    ? t("특별히 떠오르는 대상을 고르지 않은 응답도 그대로 기록했습니다. 기억을 억지로 되짚지 않고 현재의 활동과 관람, 생활의 흐름으로 이동합니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.")
+    : excerpt
+      ? t("앞서 남긴 장면을 다음 질문의 출발점으로 두었습니다. 이제 그 기억이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.")
+      : t("앞에서 남긴 기억을 다음 질문의 출발점으로 두었습니다. 이제 그 경험이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.");
   return `${screenHeading(title, help, "앞에서 남긴 기억을 품고 있는 현재의 경험을 듣는 자리예요.")}
-    <div class="transition-card"><p>${esc(body)}</p></div>`;
+    <div class="transition-card">${excerpt && !noRecall ? `<blockquote>${esc(excerpt)}</blockquote>` : ""}<p>${esc(body)}</p></div>`;
 }
 
 function renderTransition() {
   const p11 = question("P11");
   const p12 = question("P12");
   const title = isProfessionalContext() ? p11.text_professional : p11.text_audience;
+  const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.transition_state;
   const showText = stateValue && !["SKIP", "UNSURE"].includes(stateValue);
   return `${screenHeading(title, "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록합니다.")}
     ${renderChoices("P11", p11.options)}
-    ${showText ? renderText("P12", { field: "transition_text", value: state.answers.transition_text || "", placeholder: "작업, 발표, 역할, 생계, 관계 또는 관람 방식에서 달라진 한 장면", label: p12.text }) : ""}`;
+    ${showText ? `<div class="transition-detail-field">${renderText("P12", { field: "transition_text", value: state.answers.transition_text || "", placeholder: ui().transitionPlaceholder, label: copy.p12 || p12.text })}</div>` : ""}`;
 }
 
 function renderContinuity() {
   const p13 = question("P13");
   const p13Text = question("P13_TEXT");
   const audience = isAudienceContext();
+  const kind = participantContextKind(state.answers);
+  const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.invisible_continuity_state;
   const placeholder = audience
     ? "계속 보거나 기억한 것, 다시 찾게 된 계기와 달라진 관계를 적어주세요."
-    : "작업, 기록, 공부, 돌봄, 관계, 거리두기, 휴식처럼 가까운 표현으로 적어주세요.";
+    : kind === "EVERYDAY"
+      ? "연습, 모임, 배움, 돌봄, 관계, 휴식처럼 가까운 표현으로 적어주세요."
+      : "작업, 기록, 공부, 돌봄, 관계, 거리두기, 휴식처럼 가까운 표현으로 적어주세요.";
   const help = audience
     ? "전시장에 자주 가지 않는 때에도 영화, 공연, 만화, 웹툰, 디자인, 온라인 이미지처럼 다른 경로로 관심이 이어질 수 있어요."
-    : "발표가 적었던 때에도 작업, 조사, 관계와 생각이 다른 모습으로 이어질 수 있어요.";
-  return `${screenHeading(audience ? p13.text_audience : p13.text_professional, help)}
+    : kind === "EVERYDAY"
+      ? "공연이나 발표가 적었던 때에도 연습, 모임, 배움과 관계가 다른 모습으로 이어질 수 있어요."
+      : "발표가 적었던 때에도 작업, 조사, 관계와 생각이 다른 모습으로 이어질 수 있어요.";
+  return `${screenHeading(copy.p13, help)}
     ${renderChoices("P13", p13.options)}
     ${shouldShowP13Text(stateValue) ? renderText("P13_TEXT", { field: "invisible_continuity_text", value: state.answers.invisible_continuity_text || "", placeholder, label: audience ? p13Text.text_audience : p13Text.text }) : ""}`;
 }
@@ -882,17 +1034,9 @@ function renderProfile() {
 function renderMemoryType() {
   const q = question("M01");
   const audience = isAudienceContext();
-  const routeQuestion = state.answers.route === "SELF"
-    ? "지금까지 해온 활동에서, 현재까지 남아 있는 작업이나 태도, 장면이 있나요?"
-    : audience
-      ? "문화예술을 경험하며 지금까지 남아 있는 작품이나 장면이 있나요?"
-      : state.answers.route === "BOTH"
-        ? "나의 활동과 다른 사람에 대한 기억 가운데, 오늘 먼저 이야기하고 싶은 것은 무엇인가요?"
-        : q.text;
-  const help = audience
-    ? "작가 이름이나 작품명이 흐릿해도, 남아 있는 장면에서 시작할 수 있어요."
-    : "이름이나 연도가 흐릿해도 괜찮아요. 지금 떠오르는 대상에서 시작합니다.";
-  return `${screenHeading(routeQuestion, help)}${renderChoices("M01", audience ? q.options_audience : q.options)}`;
+  const localized = ui().m01;
+  const options = (audience ? q.options_audience : q.options).map(([value, label]) => [value, localized.options[value] || label]);
+  return `${screenHeading(localized.title, localized.help)}${renderChoices("M01", options)}`;
 }
 
 function renderMemoryClue() {
@@ -903,6 +1047,12 @@ function renderMemoryClue() {
     ? "최근의 거리감, 여러 경험이 섞인 상태, 이름은 흐리지만 남은 느낌을 적어도 좋아요."
     : q.help;
   return `${screenHeading(title, help)}${renderText("M02", { placeholder: noRecall() ? "지금 문화예술을 떠올릴 때 남아 있는 느낌이나 상태" : "한 문장 또는 몇 개의 단어" })}`;
+}
+
+function renderNoRecallRelation() {
+  const q = question("NO_RECALL_RELATION");
+  return `${screenHeading(q.text, q.help || "특정 작품이나 전시를 다시 떠올릴 필요는 없어요.")}
+    ${renderText("NO_RECALL_RELATION", { field: "no_recall_relation_text", value: state.answers.no_recall_relation_text || "", placeholder: "요즘 가깝게 또는 멀게 느껴지는 한 순간", label: q.text })}`;
 }
 
 function renderBranch() {
@@ -965,7 +1115,9 @@ function renderD1() {
   const options = dOptions("gap");
   const scope = dScope();
   const title = scope === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d01 : scope === "MEMORY_RECONNECT" ? "지금 이 기억을 다시 만나기 위해, 가장 먼저 채워지면 좋겠다고 느끼는 것은 무엇인가요?" : scope === "AUDIENCE" ? "문화예술을 더 가까이 만나기 위해, 지금 가장 아쉽게 느껴지는 것은 무엇인가요?" : "지금 가장 먼저 살펴보고 싶은 조건은 무엇인가요?";
-  return `${screenHeading("현재 가장 비어 있다고 느끼는 조건을 골라주세요.")}${focusPart}${dScope() ? `<label class="field-label">${esc(t(title || d01.text))}</label>${renderChoices("D01", options)}` : `<p class="error">${esc(t("변화의 초점을 먼저 선택해 주세요."))}</p>`}`;
+  const hints = dContextHints(state.answers, state.language).join(" · ");
+  const copy = ui();
+  return `${screenHeading(copy.d1Title, copy.d1Help.replace("{hints}", hints))}${focusPart}${dScope() ? `<label class="field-label">${esc(t(title || d01.text))}</label>${renderChoices("D01", options)}` : `<p class="error">${esc(t("변화의 초점을 먼저 선택해 주세요."))}</p>`}`;
 }
 
 function renderD2() {
@@ -985,14 +1137,18 @@ function renderD3() {
   const scope = dScope();
   const options = realityOptions();
   const title = scope === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d03 : d03.text;
-  return `${screenHeading("그 변화가 필요한 현실의 맥락을 골라주세요.", "지금 답변의 위치에 맞는 조건을 최대 세 가지까지 남길 수 있습니다.")}
+  const hints = dContextHints(state.answers, state.language).join(" · ");
+  const copy = ui();
+  return `${screenHeading(copy.d3Title, copy.d3Help.replace("{hints}", hints))}
     <label class="field-label">${esc(title || d03.text)}</label>${renderChoices("D03", options, { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("D03", "현실의 맥락을 직접 적어주세요.")}`;
 }
 
 function renderD4() {
   const q = question("D04");
-  const title = hasDContext() ? q.text : "지금까지 적은 조건이 활동, 기억 또는 관계에 남긴 영향을 들려주세요.";
-  const help = hasDContext() ? q.help : "한두 문장으로 적어도 좋아요. 지금 떠오르는 영향이 없다면 비워둘 수 있어요.";
+  const copy = ui();
+  const title = copy.d4Title;
+  const contextHint = dContextHints(state.answers, state.language).join(" · ");
+  const help = (hasDContext() ? copy.d4HelpWithContext : copy.d4HelpWithoutContext).replace("{hints}", contextHint);
   return `${screenHeading(title, help)}${renderText("D04", { placeholder: isAudienceContext() ? "이 조건이 관람, 기억, 공유에 남긴 영향을 적어주세요." : "이 조건이 활동·기억·관계에 남긴 영향을 적어주세요." })}`;
 }
 
@@ -1079,7 +1235,7 @@ function renderQuestionIntent(item) {
   return `<section class="question-intent" aria-label="질문의 맥락"><span>질문의 맥락</span><p>${esc(intent)}</p></section>`;
 }
 
-const adaptiveScreenCheckpoint = ANCHOR_SCREEN_MAP;
+const adaptiveScreenCheckpoint = ALL_ADAPTIVE_SCREEN_MAP;
 
 function adaptiveTurns() {
   return values(state.answers.adaptive_turns);
@@ -1116,6 +1272,7 @@ function buildCurrentAnchorContext(anchorId) {
     dScope: normalizedDScope(state.answers),
     responseLanguage: responseSourceLanguage(),
     route: state.answers.route,
+    participantContext: compactParticipantContext(state.answers),
     sessionId: state.responseId,
     responseId: response.response_id,
   });
@@ -1123,7 +1280,10 @@ function buildCurrentAnchorContext(anchorId) {
 
 function reconcileAnchorsAfterResearchEdit(questionId) {
   if (!isRc2) return [];
-  const affectedAnchors = anchorsAffectedByChangedQuestion(questionId);
+  const affectedAnchors = [...new Set([
+    ...anchorsAffectedByChangedQuestion(questionId),
+    ...conditionalAnchorsAffectedByChangedQuestion(questionId),
+  ])];
   if (!affectedAnchors.length) return [];
   const beforeTurns = adaptiveTurns();
   const result = reconcileAnchorTurnsAfterQuestionEdit({
@@ -1190,6 +1350,9 @@ function recordSkippedLowInformation(anchorId) {
 }
 
 async function requestAdaptiveNext(checkpoint) {
+  if (state.adaptiveGenerating) return { decision: "deduplicated", question: currentAdaptiveTurn(checkpoint), source: "existing" };
+  const existing = currentAdaptiveTurn(checkpoint);
+  if (existing) return { decision: "deduplicated", question: existing, source: existing.source || "existing" };
   state.adaptiveGenerating = true;
   render(false);
   const context = buildCurrentAnchorContext(checkpoint);
@@ -1222,9 +1385,19 @@ function renderAdaptiveCheckpoint(checkpoint) {
       ${processingSignal("다음 질문을 준비하고 있어요")}`;
   }
   const answer = state.answers[turn.answer_field] || "";
-  return `${screenHeading(turn.prompt, "방금 적은 답변에서 이어진 한 질문", turn.intent || "")}
+  const sourceText = anchorSourceText(state.answers, checkpoint);
+  const excerpt = sourceText ? `${sourceText.slice(0, 220)}${sourceText.length > 220 ? "…" : ""}` : "";
+  const aiNotice = turn.provenance?.kind === "ai-generated"
+    ? `<p class="ai-use-note" role="note">${esc(stage().aiNotice)}</p>`
+    : "";
+  const retry = turn.source !== "motif" && aiFunctionUrl
+    ? `<button class="text-button adaptive-retry" type="button" data-action="retry-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("질문 다시 준비하기"))}</button>`
+    : "";
+  return `${screenHeading(stage().followingQuestion, "방금 적은 답변에서 한 가지를 골라 이어갑니다.", turn.intent || "")}
+    ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
+    <section class="adaptive-question"><h3>${esc(turn.prompt)}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
-    <p class="adaptive-turn-note">${esc(t("이 질문에 답하면 바로 고정 설문으로 이어집니다."))}</p>`;
+    <p class="adaptive-turn-note">${esc(t("이 질문에 답하면 바로 고정 설문으로 이어집니다."))}</p>${retry}`;
 }
 
 async function prepareAdaptiveSummary() {
@@ -1244,6 +1417,14 @@ async function prepareAdaptiveSummary() {
     source: summary.source,
     request_id: summary.request_id || summary.run?.request_id || null,
     provider: summary.run?.provider || null,
+    provenance: {
+      kind: summary.source === "motif" ? "ai-generated" : "fixed",
+      original_language: responseSourceLanguage(),
+      displayed_language: responseSourceLanguage(),
+      original_text: summary.summary,
+      translated_text: summary.summary_ko || null,
+      translation_kind: summary.source === "motif" && responseSourceLanguage() !== "ko" && summary.summary_ko ? "ai-translated" : "fixed",
+    },
   };
   if (summary.axes?.m) state.answers.depth_m = summary.axes.m;
   if (summary.axes?.s) state.answers.depth_s = summary.axes.s;
@@ -1300,7 +1481,7 @@ function renderReflectionReview() {
   }
   if (!isRc2) {
     return `${screenHeading("지금까지의 응답을 이렇게 읽었습니다.", "직접 읽고 필요한 부분을 고칠 수 있어요.")}
-      <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 임시 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>현재 비API 시험판에서는 작성한 문장을 중심으로 정리합니다. 운영판에서는 API 정리 결과를 다시 읽고 고칠 수 있습니다.</small>` : ""}</div>
+      <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>연결이 지연되면 작성한 문장을 중심으로 먼저 정리합니다. 정리 문장은 언제든 직접 읽고 고칠 수 있습니다.</small>` : ""}</div>
       ${renderChoices("reflection_action", [["ACCEPT", "전체적으로 가까워요"], ["EDIT", "일부를 고치고 싶어요"], ["DROP", "이 정리는 남기지 않을게요"]])}
       ${action === "EDIT" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: "빠진 내용이나 어긋난 부분을 고쳐주세요.", label: "고친 문장" }) : ""}`;
   }
@@ -1308,11 +1489,13 @@ function renderReflectionReview() {
   const revisionPlaceholder = action === "REWRITE"
     ? "기억, 현재의 흐름, 이어가기 위한 조건을 편한 문장으로 적어주세요."
     : "가까운 문장은 남기고, 빠지거나 어긋난 부분을 고쳐주세요.";
+  const summaryProvenance = state.answers.depth_summary?.provenance;
   const translatedPreview = responseSourceLanguage() !== "ko" && summaryKo
-    ? `<div class="response-document-translation reflection-translation"><span>한국어 번역 초안</span><p>${esc(summaryKo)}</p><small>원문을 기준으로 작성</small></div>`
+    ? `<div class="response-document-translation reflection-translation"><span>한국어 번역 초안</span><p>${esc(summaryKo)}</p>${summaryProvenance?.translation_kind === "ai-translated" ? `<small class="ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</small>` : ""}</div>`
     : "";
   return `${screenHeading("지금까지의 응답을 한곳에 모았습니다.", "겹치거나 반복되는 내용을 정리한 초안입니다. 읽어보고 뜻이 어긋난 문장은 직접 다듬어주세요.")}
-    <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 임시 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>현재 비API 시험판에서는 작성한 문장을 중심으로 정리합니다. 운영판에서는 API 정리 결과를 다시 읽고 고칠 수 있습니다.</small>` : ""}</div>
+    ${summaryProvenance?.kind === "ai-generated" ? `<p class="ai-use-note" role="note">${esc(t("앞서 남긴 응답을 바탕으로 AI가 정리한 초안입니다. 뜻이 다르게 느껴지는 문장은 직접 다듬을 수 있어요."))}</p>` : ""}
+    <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>연결이 지연되면 작성한 문장을 중심으로 먼저 정리합니다. 정리 문장은 언제든 직접 읽고 고칠 수 있습니다.</small>` : ""}</div>
     ${translatedPreview}
     ${renderChoices("reflection_action", [["ACCEPT", "이 내용이 가까워요"], ["EDIT", "일부 문장을 고칠게요"], ["REWRITE", "새 문장으로 적을게요"]])}
     ${["EDIT", "REWRITE"].includes(action) ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: revisionPlaceholder, label: revisionLabel }) : ""}
@@ -1378,18 +1561,21 @@ function renderCoordinateModel() {
 function renderSubmit() {
   const storageNotice = submitFunctionUrl
     ? t("다음 화면에서 정책연구에 활용할 범위를 직접 정한 뒤 저장합니다.")
-    : t("다음 화면에서 활용 범위를 정한 뒤 이번 시험판 기록을 이 기기에 보관합니다.");
+    : t("다음 화면에서 활용 범위를 정한 뒤 참여 기록을 이 기기에 보관합니다.");
   if (!isRc2) return `${screenHeading("연구 응답을 제출할 준비가 되었습니다.", storageNotice)}<div class="notice">연구 기록은 여기에서 먼저 마무리됩니다.</div>`;
   ensureParticipantAxes();
   const document = buildCurrentResponseDocument({ final: false });
+  const translationProvenance = state.answers.participant_approved_translation_provenance;
   const translationNotice = responseSourceLanguage() !== "ko" && !state.answers.participant_approved_text_ko
     ? `<div class="document-language-note">${esc(t("원문을 먼저 보관하며, 한국어 번역은 원문을 기준으로 정리합니다."))}</div>`
-    : "";
+    : translationProvenance?.kind === "ai-translated"
+      ? `<div class="document-language-note ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</div>`
+      : "";
   return `${screenHeading(t("당신의 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
     <section class="axis-review"><div class="axis-review-intro"><span>THREE DIRECTIONS · YOUR RECORD</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${renderAxisReview("participant_m", "기억의 의미")}${renderAxisReview("participant_s", "현재의 흐름")}${renderAxisReview("participant_d", "이어가기 위한 조건")}</section>
-    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("세 방향을 함께 살펴보기 위한 구조입니다. 사람의 유형이나 순위를 뜻하지 않으며, 이번 기록과 가까운 위치를 다시 확인할 수 있어요."))}</p>${renderCoordinateModel()}${renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]])}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
+    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]])}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
     <div class="response-document-preview">${renderResponseDocument(document)}</div>
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
@@ -1398,11 +1584,12 @@ function renderUseScope() {
   const researchUse = state.answers.policy_research_use || "";
   const quoteUse = state.answers.policy_quote_use || "";
   const archiveUse = state.answers.public_archive_interest || "";
-  const choice = (field, value, title, copy) => { const selected = state.answers[field] === value; return `<button type="button" class="use-scope-choice ${selected ? "selected" : ""}" data-use-field="${esc(field)}" data-use-value="${esc(value)}" aria-pressed="${selected}"><strong>${esc(t(title))}</strong><small>${esc(t(copy))}</small></button>`; };
-  return `${screenHeading("이 기록이 어디까지 이어지면 좋을까요?", "연구 분석, 문장 인용, 공개 제안의 범위를 각각 정합니다. 선택은 이후에도 별도로 확인할 수 있도록 기록합니다.")}
-    <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(t("정책연구에서 이 응답을 어떻게 사용할까요?"))}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", "익명 분석과 집계", "이름과 연락처를 제외한 응답을 통계와 주제 분석에 반영합니다.")}${choice("policy_research_use", "INTERNAL_ONLY", "프로젝트 내부 연구", "공개 통계와 인용에서 분리하고 내부 연구 검토에서만 살핍니다.")}</div></section>
-    <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(t("참여 기록의 문장을 연구자료에 인용해도 될까요?"))}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", "익명 문장 인용 가능", "개인을 식별하는 정보는 빼고 일부 문장을 보고서와 연구자료에 인용할 수 있습니다.")}${choice("policy_quote_use", "NO_QUOTE", "개별 문장 인용 제외", "집계와 주제 분석에는 반영하되 개별 문장은 공개 자료에 인용하지 않습니다.")}</div></section>
-    <section class="use-scope-section"><span>03 · ${esc(t("전시·출판·웹 기록"))}</span><h3>${esc(t("공개 활용은 별도로 다시 확인합니다."))}</h3><p>${esc(t("이번 선택만으로 전시·출판·웹 아카이브에 원문이나 이름을 공개하지 않습니다."))}</p><div class="use-scope-grid">${choice("public_archive_interest", "ASK_LATER", "필요할 때 다시 제안받기", "실제 사용 기회가 생기면 공개 범위와 문장을 다시 확인하는 방식입니다.")}${choice("public_archive_interest", "RESEARCH_ONLY", "이번 기록은 연구 범위에서 마무리", "전시·출판·웹 공개 제안 없이 연구 기록으로 보관합니다.")}</div></section>
+  const consent = stage1ConsentCopy(state.language);
+  const choice = (field, value, title, copy) => { const selected = state.answers[field] === value; return `<button type="button" class="use-scope-choice ${selected ? "selected" : ""}" data-use-field="${esc(field)}" data-use-value="${esc(value)}" aria-pressed="${selected}"><strong>${esc(t(title))}</strong>${copy ? `<small>${esc(t(copy))}</small>` : ""}</button>`; };
+  return `${screenHeading(consent.title, consent.help)}
+    <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(consent.researchQ)}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", consent.researchYes, "")}${choice("policy_research_use", "INTERNAL_ONLY", consent.researchNo, "")}</div></section>
+    <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(consent.quoteQ)}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", consent.quoteYes, "")}${choice("policy_quote_use", "NO_QUOTE", consent.quoteNo, "")}</div></section>
+    <section class="use-scope-section"><span>03 · ${esc(t("전시·출판·웹 기록"))}</span><h3>${esc(consent.publicQ)}</h3><div class="use-scope-grid">${choice("public_archive_interest", "ASK_LATER", consent.publicYes, "")}${choice("public_archive_interest", "RESEARCH_ONLY", consent.publicNo, "")}</div></section>
     <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse ? (archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리") : "공개 활용 범위 미선택"))}</p></div>`;
 }
 
@@ -1415,13 +1602,16 @@ function screenBody(id) {
     ROLE_GROUP: renderRoleGroup,
     ROLE_PRIMARY: renderRolePrimary,
     ROLE_PARALLEL: renderRoleParallel,
+    PARTICIPANT_CONTEXT: renderParticipantContext,
     PROFILE: renderProfile,
     M01: renderMemoryType,
+    NO_RECALL_RELATION: renderNoRecallRelation,
     M02: renderMemoryClue,
     M03: renderBranch,
     M04: renderMeaning,
     M05: renderMeaningTags,
     AI_ANCHOR_M04_TEXT: () => renderAdaptiveCheckpoint("M04_TEXT"),
+    AI_CONDITIONAL_NO_RECALL_RELATION: () => renderAdaptiveCheckpoint("NO_RECALL_RELATION"),
     MEMORY_TIME: renderMemoryTime,
     MEMORY_EVIDENCE: renderEvidence,
     MEMORY_TO_PRESENT: renderMemoryToPresent,
@@ -1439,6 +1629,7 @@ function screenBody(id) {
     D03: renderD3,
     D04: renderD4,
     AI_ANCHOR_D02_TEXT: () => renderAdaptiveCheckpoint("D02_TEXT"),
+    AI_CONDITIONAL_D04_CONDITIONS: () => renderAdaptiveCheckpoint("D04_CONDITIONS"),
     R01: renderReconnect,
     COMMUNITY: renderCommunity,
     FIXED_CHECKPOINT: renderFixedCheckpoint,
@@ -1458,6 +1649,7 @@ function canContinue(id) {
   if (id === "P01_CONTEXT") return Boolean(state.answers.response_position);
   if (id === "ROLE_GROUP") return Boolean(state.answers.role_group_primary);
   if (id === "ROLE_PRIMARY") return Boolean(state.answers.role_primary);
+  if (id === "PARTICIPANT_CONTEXT") return hasParticipantContext(state.answers);
   if (id === "M01") return Boolean(state.answers.memory_type);
   if (id === "M02") return Boolean(state.answers.memory_clue_text?.trim());
   if (id === "M04") return Boolean(state.answers.m_declared && state.answers.memory_meaning_text?.trim());
@@ -1492,6 +1684,7 @@ function canContinue(id) {
 
 function createResponse(submissionPhase = "final") {
   const responseId = state.responseId || `V13-${crypto.randomUUID()}`;
+  const participantReference = submissionPhase === "final" ? ensureParticipantReference(responseId) : null;
   const cleanedAnswers = sanitizeAnswersForRoute(state.answers);
   const rawAnswers = Object.entries(cleanedAnswers).map(([field, answer]) => ({ field, answer }));
   const snapshots = buildCoordinateSnapshots(cleanedAnswers);
@@ -1503,6 +1696,7 @@ function createResponse(submissionPhase = "final") {
     responseId,
     answers: cleanedAnswers,
     sourceLanguage,
+    displayLanguage: state.language,
     releaseVersion,
     approvedOriginal: approvedText || "",
     approvedKorean: cleanedAnswers.participant_approved_text_ko || (sourceLanguage === "ko" ? approvedText || "" : ""),
@@ -1515,7 +1709,7 @@ function createResponse(submissionPhase = "final") {
   const sContextTags = deriveSContextTags(cleanedAnswers);
   return {
     response_id: responseId,
-    payload_version: isRc2 ? "over39-rc2-5anchor-realapi-pilot-v0.4.5" : "over39-rc1-payload-1",
+    payload_version: isRc2 ? "over39-rc2-stage1-contract-candidate-v0.5.0" : "over39-rc1-payload-1",
     response_document_version: RESPONSE_DOCUMENT_VERSION,
     questionnaire_version: schema.questionnaire_version,
     schema_version: schema.schema_version,
@@ -1539,6 +1733,7 @@ function createResponse(submissionPhase = "final") {
     coordinate_status: finalSnapshot.status,
     coordinate_number: finalSnapshot.coordinate_number,
     coordinate_candidate: finalSnapshot.coordinate_candidate,
+    participant_context: compactParticipantContext(cleanedAnswers),
     axes: {
       m_declared: cleanedAnswers.m_declared || null,
       m_support_tags: values(cleanedAnswers.m_support_tags),
@@ -1559,6 +1754,13 @@ function createResponse(submissionPhase = "final") {
         id,
         ...QUESTION_METADATA[id],
         question_text: apiQuestionText(id, q),
+        provenance: {
+          kind: "fixed",
+          original_language: "ko",
+          displayed_language: state.language,
+          original_question_text: schema.questions.find((item) => item.id === id)?.text || q?.text || "",
+          displayed_question_text: apiQuestionText(id, q),
+        },
         answer,
         answer_display: apiAnswerDisplay(id, answer),
       };
@@ -1566,13 +1768,16 @@ function createResponse(submissionPhase = "final") {
     fixed_question_count: fixedQuestionIds.length,
     depth_question_count: isRc2 ? values(cleanedAnswers.adaptive_turns).length : 3,
     depth_interview: isRc2 ? {
-      mode: "five_anchor_realapi",
+      mode: "five_anchor_realapi_plus_conditional_followups",
       source: aggregateAnchorSource(values(cleanedAnswers.adaptive_ai_runs)) || cleanedAnswers.depth_source || "skipped_low_information",
       interaction_language: sourceLanguage,
       checkpoints: ANCHOR_ORDER,
+      conditional_checkpoints: values(cleanedAnswers.adaptive_turns)
+        .map((turn) => turn.checkpoint)
+        .filter((checkpoint) => !ANCHOR_ORDER.includes(checkpoint)),
       turns: values(cleanedAnswers.adaptive_turns).map((turn) => ({
         id: turn.id, checkpoint: turn.checkpoint, anchor_id: turn.anchor_id || turn.checkpoint, axis: turn.axis, focus: turn.focus, prompt: turn.prompt,
-        intent: turn.intent, source: turn.source, provider: turn.provider || null, model: turn.model || null, language: turn.language,
+        intent: turn.intent, source: turn.source, provider: turn.provider || null, model: turn.model || null, language: turn.language, provenance: turn.provenance || { kind: turn.source === "motif" ? "ai-generated" : "fixed" },
         request_id: turn.request_id || null, client_request_id: turn.client_request_id || null, client_request_id_sent: turn.client_request_id_sent || turn.client_request_id || null, client_request_id_returned: turn.client_request_id_returned || null, client_request_id_match: turn.client_request_id_match === true, context_fingerprint: turn.context_fingerprint || null, dom_match: turn.dom_match === true,
         answer_text: cleanedAnswers[turn.answer_field]?.trim() || null,
         self_check_value: turn.self_check_field ? (cleanedAnswers[turn.self_check_field] || null) : null,
@@ -1590,15 +1795,26 @@ function createResponse(submissionPhase = "final") {
       api_or_rule_summary: cleanedAnswers.depth_summary?.summary || null,
       api_or_rule_summary_ko: cleanedAnswers.depth_summary?.summary_ko || null,
       summary_source: cleanedAnswers.depth_summary?.source || null,
+      summary_provenance: cleanedAnswers.depth_summary?.provenance || null,
       participant_action: cleanedAnswers.reflection_action || null,
       participant_revision: cleanedAnswers.participant_revision?.trim() || null,
       participant_approved_text: approvedText,
       participant_approved_text_ko: cleanedAnswers.participant_approved_text_ko?.trim() || null,
+      participant_approved_provenance: cleanedAnswers.participant_approved_provenance || null,
+      participant_approved_translation_provenance: cleanedAnswers.participant_approved_translation_provenance || null,
       original_confirmation_status: approvedText ? "participant_confirmed" : "not_confirmed",
       translation_status: sourceLanguage === "ko" ? "same_as_original" : cleanedAnswers.participant_approved_text_ko ? "translated_from_original" : "translation_pending",
       public_approved: false,
     },
     response_document: finalDocument,
+    // `access_token` is transport-only. The submit Edge source hashes it and
+    // removes it before inserting a response snapshot or research payload.
+    participant_reference: participantReference ? publicParticipantReference(participantReference) : null,
+    participant_access: participantReference ? {
+      access_token: participantReference.access_token,
+      transport: "one_time_server_hash",
+      scope: ["record_read", "greeting_mailbox"],
+    } : null,
     document_confirmation: {
       acknowledged: submissionPhase === "final",
       confirmed_at: confirmedAt,
@@ -1645,6 +1861,26 @@ async function requestResearchStorage(response) {
   }
 }
 
+async function requestGreetingReservation(response) {
+  const reference = response?.participant_access || ensureParticipantReference(response?.response_id);
+  if (!globalGreetingsEnabled || !relayFunctionUrl || !reference?.access_token) return { status: "not_active" };
+  try {
+    const result = await fetch(relayFunctionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(supabaseAnonKey ? { Authorization: `Bearer ${supabaseAnonKey}`, apikey: supabaseAnonKey } : {}),
+      },
+      body: JSON.stringify({ action: "participant_reserve", response_id: response.response_id, participant_access_token: reference.access_token }),
+    });
+    const body = await result.json();
+    if (!result.ok || !body?.ok) return { status: "waiting", error: body?.error_code || "RESERVATION_UNAVAILABLE" };
+    return { status: body.status === "QUEUED" ? "reserved" : "waiting", receipt: body };
+  } catch (error) {
+    return { status: "waiting", error: error?.message || "RESERVATION_UNAVAILABLE" };
+  }
+}
+
 async function verifyResearchStorage(responseId) {
   if (submitFunctionUrl) {
     const queued = readOutbox().some((item) => item.payload?.response_id === responseId);
@@ -1674,7 +1910,7 @@ function header() {
   const projectMeta = isRc2 ? t("리서치 · 참여 기록 · 공모") : "PUBLIC MEMORY RESEARCH · RC1";
   const currentLanguage = languages.find(([code]) => code === state.language)?.[1] || "한국어";
   return `<header class="topbar" aria-label="Site header">
-    <div class="brand project-brand">${ledWordmark({ className: "led-wordmark led-wordmark-header" })}<span>〈만 39세 이상〉</span></div>
+    <div class="brand project-brand"><span class="brand-mark" aria-hidden="true">39+</span><span>〈만 39세 이상〉</span></div>
     <div class="topbar-project"><span>${esc(projectMeta)}</span><strong>RESEARCH & OPEN CALL</strong></div>
     <details class="language-menu">
       <summary aria-label="${esc(t("언어 선택"))}"><span>${esc(currentLanguage)}</span><i aria-hidden="true">⌄</i></summary>
@@ -1726,7 +1962,12 @@ function exhibitionError(field) {
   return state.exhibitionErrors?.[field] ? `<p class="field-error">${esc(state.exhibitionErrors[field])}</p>` : "";
 }
 
-function renderExhibitionApplication() {
+// Retired RC1-only exhibition draft. RC2 never calls this renderer: RC2
+// `phase === "exhibition"` deliberately returns `renderComplete()` and the
+// current public-facing open call is `over39-open-call.html`. Keep the code
+// isolated while older RC1 local drafts remain readable; it must not become a
+// route back into the removed age acknowledgement interface.
+function renderRetiredRc1ExhibitionApplication() {
   const application = getExhibitionApplication();
   const isApplying = application.decision === "YES";
   const statusText = state.exhibitionStatus === "sending"
@@ -1746,10 +1987,9 @@ function connectionCanSave() {
   const hasOutgoingMessage = Boolean(String(connection.message_text || connection.introduction || "").trim());
   const wantsToReceive = connection.receive_opt_in === "YES";
   if (!hasOutgoingMessage && !wantsToReceive) return false;
+  if (hasOutgoingMessage && connection.preview_confirmed !== true) return false;
   if (wantsToReceive) {
     if (!connection.greeting_connection_preference) return false;
-    if (!values(connection.reply_modes).includes("EMAIL_NOTICE")) return false;
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(connection.contact_email || "").trim()) && connection.contact_permission === "YES";
   }
   return true;
 }
@@ -1758,12 +1998,20 @@ function createConnectionUpdate() {
   const research = state.submitted || createResponse();
   const connection = getConnection();
   const profile = buildConnectionProfile(research, connection);
-  const emailAllowed = values(connection.reply_modes).includes("EMAIL_NOTICE") && connection.contact_permission === "YES" && connection.contact_email?.trim();
+  // A display label is intentionally a separate, narrowly scoped disclosure.
+  // It never turns a response ID, contact detail, or full profile into public
+  // greeting data.
+  const publicDisplayLabel = safeReferrerLabel(research.response_document?.participant?.display_name || "", "");
+  const senderPublicContext = {
+    display_label: connection.sender_visibility === "NAMED" && publicDisplayLabel ? publicDisplayLabel : null,
+    role: profile.role || null,
+    region: profile.region || null,
+  };
   return {
     ...research,
     submission_phase: "connection_update",
     submitted_at: new Date().toISOString(),
-    connection_profile: profile,
+    connection_profile: { ...profile, sender_public_context: senderPublicContext },
     message_exchange: {
       greeting_id: connection.greeting_id || `${research.response_id}-greeting`,
       message_audience: connection.message_audience || null,
@@ -1771,25 +2019,31 @@ function createConnectionUpdate() {
       receive_opt_in: connection.receive_opt_in === "YES",
       receive_scopes: values(connection.receive_scopes).length ? values(connection.receive_scopes) : (connection.receive_opt_in === "YES" ? ["OPEN"] : []),
       greeting_connection_preference: connection.greeting_connection_preference || null,
+      sender_visibility: connection.sender_visibility || "CONTEXTUAL",
+      sender_public_context: senderPublicContext,
+      origin: connection.origin === "core_seed" ? "core_seed" : "participant",
       translation_allowed: connection.translation_allowed === "YES",
       original_language: research.source_language || state.language || "ko",
-      delivery_modes: values(connection.reply_modes),
-      status: connection.opt_in === "YES" ? "stored_waiting_receiver" : "not_requested",
+      // Notification contact is deliberately collected only after a greeting
+      // has been received. It is not a condition of receiving the first one.
+      delivery_modes: ["MEDIATED_WEB"],
+      status: connection.opt_in === "YES" ? "WAITING_RECEIVER" : "not_requested",
       mailbox_delivery: {
         model: "store_and_forward",
         api_roles: ["translation", "safety_check", "letter_formatting", "soft_theme_tagging"],
         ranking_or_value_matching: false,
         human_review: "exception_only",
         expose_contact_between_participants: false,
-        state_machine: ["STORED", "WAITING_RECEIVER", "QUEUED", "EMAIL_PENDING", "DELIVERED", "OPENED", "REPLIED_OR_PASSED"],
+        state_machine: ["STORED", "WAITING_RECEIVER", "QUEUED", "EMAIL_PENDING", "DELIVERED", "OPENED", "REPLIED", "PASSED", "WITHDRAWN"],
       },
       email_delivery: {
         sender_name: greetingSenderName,
         sender_email: greetingSenderEmail,
         subject: "[〈만 39세 이상〉] 안부 한 통이 도착했습니다",
         template: "greeting_letter_v2_mailbox",
-        queue_policy: "transactional_retry_until_delivered_or_bounced",
+        queue_policy: "opt_in_after_first_greeting_then_transactional_retry_until_delivered_or_bounced",
         recipient_notice_only: true,
+        notification_opt_in: "deferred_until_greeting_read",
         return_reply_to_origin: {
           enabled_when_origin_opted_in: true,
           expose_contact_between_participants: false,
@@ -1797,13 +2051,7 @@ function createConnectionUpdate() {
         },
       },
     },
-    pii: emailAllowed ? {
-      email: connection.contact_email.trim(),
-      display_name: "",
-      role_label: profile.role,
-      contact_reason: "project_mailbox_greeting_notice",
-      consent_scope: ["greeting_arrival_notice", "greeting_reply_notice"],
-    } : null,
+    pii: null,
   };
 }
 
@@ -1819,66 +2067,51 @@ function renderConnection() {
 }
 
 function renderGlobalGreetingsConnection(connection) {
+  const copy = greetingUiCopy(state.language);
   const directionOptions = [
-    ["SIMILAR_CONDITIONS", "나와 비슷한 조건을 지나온 사람"],
-    ["ROLE_BRIDGE", "다른 역할에서 나의 기록을 읽는 사람"],
-    ["CONTINUING_OR_RESTARTING", "작업을 이어가거나 다시 시작한 사람"],
-    ["ACROSS_REGION_LANGUAGE", "다른 지역·언어권에서 비슷한 질문을 가진 사람"],
+    ["SIMILAR_CONDITIONS", copy.directions[0]],
+    ["ROLE_BRIDGE", copy.directions[1]],
+    ["CONTINUING_OR_RESTARTING", copy.directions[2]],
+    ["ACROSS_REGION_LANGUAGE", copy.directions[3]],
   ];
   const audienceOptions = [
-    ["SIMILAR_TIME", "비슷한 변화와 조건을 지나고 있는 사람에게"],
-    ["CONTINUING", "작업을 이어가거나 다시 시작한 사람에게"],
-    ["DIFFERENT_ROLE", "다른 역할에서 이 기록을 읽는 사람에게"],
-    ["ACROSS_PLACE", "다른 지역·언어권의 사람에게"],
-    ["OPEN", "방향을 정하지 않고 맡기기"],
+    ["SIMILAR_TIME", copy.audiences[0]],
+    ["CONTINUING", copy.audiences[1]],
+    ["DIFFERENT_ROLE", copy.audiences[2]],
+    ["ACROSS_PLACE", copy.audiences[3]],
+    ["OPEN", copy.audiences[4]],
   ];
-  const emailSelected = values(connection.reply_modes).includes("EMAIL_NOTICE");
   const messageValue = connection.message_text || connection.introduction || "";
+  const visibilityOptions = greetingVisibilityCopy(state.language);
+  const stage = connection.stage || "direction";
+  const hasMessage = Boolean(String(messageValue).trim());
+  const steps = [["direction", copy.steps[0]], ["message", copy.steps[1]], ["preview", copy.steps[2]]];
+  const stepNav = `<ol class="greeting-stage-nav" aria-label="${esc(copy.stageLabel)}">${steps.map(([id, label], index) => `<li class="${id === stage ? "current" : (steps.findIndex(([key]) => key === stage) > index ? "complete" : "")}"><span>${index + 1}</span>${esc(label)}</li>`).join("")}</ol>`;
+  const directionSection = `<section class="connection-section receive-mail"><h2>${esc(copy.directionTitle)}</h2>${renderConnectionChoices("receive_opt_in", [["YES", copy.receiveYes], ["NO", copy.receiveNo]])}${connection.receive_opt_in === "YES" ? `<p>${esc(copy.nonResearch)}</p>${renderConnectionChoices("greeting_connection_preference", directionOptions)}${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}<p class="greeting-privacy-note">${esc(stage().notificationHelp)}</p>` : ""}</section>`;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(copy.messageTitle)}</h2><p>${esc(copy.messageHelp)}</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><h3>${esc(copy.publicContext)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}</section>`;
+  const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
+  const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
+  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(copy.preview)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(state.submitted?.source_language || state.language)}</span><p>${esc(messageValue || copy.noMessage)}</p></div><dl><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(state.submitted?.source_language || state.language)}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div><div><dt>${esc(copy.reason)}</dt><dd>${esc(copy.reasonScope)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p>${hasMessage ? `<label class="final-check"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(copy.previewConfirm)}</span></label>` : ""}</section>`;
+  const stageContent = stage === "direction" ? directionSection : stage === "message" ? messageSection : previewSection;
+  const advance = stage === "direction" ? "message" : stage === "message" ? "preview" : "";
   return `<main class="connection-layout rc2-connection-layout greeting-connection">
     <section class="connection-main">
       <div class="greeting-intro"><div class="greeting-object greeting-object-small" aria-hidden="true"><i></i><b></b><span></span></div><div>
-        <div class="archive-label">GLOBAL GREETINGS · ACROSS 64 COORDINATES</div>
-        <h1 tabindex="-1">안부의 좌표</h1>
-        <p class="connection-lead">64개의 좌표를 따라 이어지는 안부입니다. 사람을 평가하거나 완벽한 짝을 찾지 않고, 기록의 세 방향과 역할, 참여자가 고른 방향을 함께 읽어 작은 후보군에서 한 번의 만남을 큐레이션합니다.</p>
+        <div class="archive-label">${esc(copy.introLabel)}</div>
+        <h1 tabindex="-1">${esc(copy.title)}</h1>
+        <p class="connection-lead">${esc(copy.lead)}</p>
+        <p class="greeting-privacy-note">${esc(copy.privacy)}</p>
       </div></div>
-      <section class="connection-section"><h2>이번에는 어떻게 이어둘까요?</h2>${renderConnectionChoices("opt_in", [["YES", "안부를 남기거나 다른 참여자의 안부를 받아볼게요"], ["NO", "이번에는 참여 기록으로 마칠게요"]])}</section>
-      ${connection.opt_in === "YES" ? `<section class="connection-section message-first"><h2>한 문장을 맡길까요? <small>선택</small></h2><p>짧은 인사나 질문을 편하게 남길 수 있습니다. 안부 원문은 설문 응답과 분리해 보존하고 번역문으로 덮어쓰지 않습니다.</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="한 문장이나 짧은 안부를 적어주세요.">${esc(messageValue)}</textarea></section>
-      <section class="connection-section receive-mail"><h2>어떤 방향의 안부를 기다릴까요?</h2>${renderConnectionChoices("receive_opt_in", [["YES", "안부를 기다릴게요"], ["NO", "이번에는 받지 않을게요"]])}${connection.receive_opt_in === "YES" ? `<p>이 선택은 연구 문항이 아니며 안부 연결에만 사용합니다.</p>${renderConnectionChoices("greeting_connection_preference", directionOptions)}${renderConnectionChoices("translation_allowed", [["YES", "다른 언어의 안부는 원문과 번역을 함께 받아볼게요"], ["NO", "내가 읽을 수 있는 언어의 원문만 받을게요"]])}<h3>도착 사실을 알려드릴 방법</h3>${renderConnectionChoices("reply_modes", [["EMAIL_NOTICE", "이메일로 도착 알림 받기", "상대에게 이메일 주소가 보이지 않습니다"], ["MEDIATED_WEB", "이 기기에서 다시 확인하기", "같은 기기로 돌아와 확인하는 보조 방식입니다"]], { multi: true, max: 2 })}${emailSelected ? `<div class="email-delivery-card"><span>안부 알림 메일</span><strong>${esc(greetingSenderName)}</strong><code>${esc(greetingSenderEmail)}</code><p>안부 본문 전체를 메일에 싣지 않고 안전한 편지 링크를 안내합니다.</p></div><label class="field-label" for="connection-email">알림을 받을 이메일</label><input id="connection-email" class="text-input text-input-single" type="email" data-connection-input="contact_email" value="${esc(connection.contact_email)}" placeholder="name@example.com" />${renderConnectionChoices("contact_permission", [["YES", "이 이메일을 안부 도착과 답장 안내에 사용해도 좋아요"], ["NO", "이메일을 남기지 않을게요"]])}` : `<p class="connection-email-required">안부가 도착했을 때 알 수 있도록 이메일 알림을 선택해주세요.</p>`}` : ""}</section>
-      <section class="connection-section connection-safety"><h2>안부가 이동하는 방식</h2><ol class="message-route"><li><b>1</b><span>안부와 연결 방향을 연구 응답·연락처와 분리해 저장합니다.</span></li><li><b>2</b><span>동의, 철회, 차단, 언어 호환과 반복 연결을 먼저 확인합니다.</span></li><li><b>3</b><span>좌표·역할·선택 방향을 함께 읽은 작은 후보군에서 한 사람에게 전합니다.</span></li><li><b>4</b><span>받는 사람은 원문과 번역, 이 안부가 닿은 이유를 읽고 답장하거나 지나갈 수 있습니다.</span></li></ol><p>이름·이메일·전화번호는 상대에게 공개하지 않습니다.</p></section>` : ""}
-      <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">참여 기록으로 돌아가기</button><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>안부 선택 저장하기 <span aria-hidden="true">→</span></button></div>
+      <section class="connection-section"><h2>${esc(copy.optInTitle)}</h2>${renderConnectionChoices("opt_in", [["YES", copy.optInYes], ["NO", copy.optInNo]])}</section>
+      ${connection.opt_in === "YES" ? `${stepNav}${stageContent}<div class="greeting-stage-actions">${stage !== "direction" ? `<button class="secondary-button" type="button" data-connection-stage="${stage === "preview" ? "message" : "direction"}">${esc(copy.previous)}</button>` : ""}${advance ? `<button class="secondary-button" type="button" data-connection-stage="${advance}" ${stage === "message" && !hasMessage ? "disabled" : ""}>${esc(copy.next)} <span aria-hidden="true">→</span></button>` : ""}</div>` : ""}
+      <section class="connection-section connection-safety"><h2>${esc(copy.travelTitle)}</h2><ol class="message-route">${copy.travel.map((line, index) => `<li><b>${index + 1}</b><span>${esc(line)}</span></li>`).join("")}</ol><p>${esc(copy.privacy)}</p></section>
+      <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button></div>
     </section>
   </main>`;
 }
 
 function renderRc2Connection(connection, response) {
   return renderGlobalGreetingsConnection(connection, response);
-  const audienceOptions = [
-    ["SIMILAR_TIME", "비슷한 변화와 조건을 지나고 있는 사람에게", "지속, 전환, 거리두기처럼 가까운 경험을 가진 사람"],
-    ["REMEMBERED_PERSON", "예전에 기억했던 작가나 동료에게", "이름이 정확하지 않아도 메시지의 방향만 남길 수 있어요"],
-    ["CONTINUING", "활동을 이어가고 있는 누군가에게", "밖에서 잘 보이지 않아도 자신의 방식으로 계속해 온 사람"],
-    ["DISTANCED", "잠시 거리를 두고 있는 누군가에게", "멈춤과 이동, 다른 역할을 지나고 있는 사람"],
-    ["AUDIENCE", "관객이나 시민에게", "작품을 보고 기억하는 사람에게"],
-    ["OPEN", "특정 대상을 정하지 않고 남기기", "이 문장과 연결되는 누군가에게"],
-  ];
-  const receiveOptions = [
-    ["RESONANCE", "비슷한 경험에서 온 안부"],
-    ["DIFFERENT_POSITION", "다른 위치에서 온 안부"],
-    ["QUESTION_LINK", "나의 질문과 이어지는 안부"],
-    ["SHARED_MEMORY", "같은 작가·공간·장면을 기억하는 안부"],
-    ["ACROSS_PLACE_TIME", "지역이나 세대를 건너온 안부"],
-    ["OPEN", "어떤 방향이든 열어두기"],
-  ];
-  const contactOptions = [
-    ["EMAIL_NOTICE", "이메일로 안부 도착 알림 받기", `보낸 사람의 연락처는 보이지 않으며 ${greetingSenderEmail}에서 편지 링크를 안내합니다`],
-    ["MEDIATED_WEB", "이 기기에서 다시 확인하기", "같은 기기로 돌아와 확인하는 보조 방식입니다"],
-  ];
-  const messageValue = connection.message_text || connection.introduction || "";
-  const emailSelected = values(connection.reply_modes).includes("EMAIL_NOTICE");
-  const messageStorageCopy = submitFunctionUrl
-    ? "이 문장은 설문 응답과 분리해 서버에 보관되며, 연결되는 상대가 생겼을 때 편지 형태로 전달됩니다."
-    : "이번 시험판에서는 이 문장을 현재 기기에 보관합니다. 운영 서버가 연결되면 설문 응답과 분리해 저장하고, 연결되는 상대가 생겼을 때 편지 형태로 전달합니다.";
-  const routeTitle = submitFunctionUrl ? "안부가 이동하는 방식" : "온라인 운영판에서 안부가 이동하는 방식";
-  return `<main class="connection-layout rc2-connection-layout greeting-connection"><section class="connection-main"><div class="greeting-intro"><div class="greeting-object greeting-object-small" aria-hidden="true"><i></i><b></b><span></span></div><div><div class="archive-label">안부 · 연결</div><h1 tabindex="-1">이 기록에서 시작된 안부를 남기거나 받아볼 수 있습니다</h1><p class="connection-lead">안부는 사람을 평가하거나 서로를 짝짓는 기능이 아닙니다. 한 참여자가 프로젝트에 맡긴 안부를 별도 우편함에 보관하고, 안부를 받기로 한 다음 참여자에게 한 통씩 이어서 전달합니다. 받을 사람이 아직 없다면 우편함에서 기다립니다.</p></div></div><section class="connection-section"><h2>이번에는 어떻게 이어둘까요?</h2>${renderConnectionChoices("opt_in", [["YES", "안부를 남기거나 다른 참여자의 안부를 받아볼게요"], ["NO", "이번에는 참여 기록으로 마칠게요"]])}</section>${connection.opt_in === "YES" ? `<section class="connection-section message-first"><h2>누군가에게 전하고 싶은 안부가 있나요? <small>선택</small></h2><p>짧은 인사, 질문, 떠오른 문장처럼 편하게 남길 수 있습니다. ${esc(messageStorageCopy)}</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="한 문장이나 짧은 안부를 적어주세요.">${esc(messageValue)}</textarea></section><section class="connection-section receive-mail"><h2>다른 참여자의 안부나 내가 보낸 안부의 답장을 받아볼까요?</h2>${renderConnectionChoices("receive_opt_in", [["YES", "받아볼게요"], ["NO", "이번에는 받지 않을게요"]])}${connection.receive_opt_in === "YES" ? `<p>받고 싶은 안부의 방향을 최대 세 가지까지 골라주세요.</p>${renderConnectionChoices("receive_scopes", receiveOptions, { multi: true, max: 3 })}<h3>도착 사실을 알려드릴 방법</h3>${renderConnectionChoices("reply_modes", contactOptions, { multi: true, max: 2 })}${emailSelected ? `<div class="email-delivery-card"><span>안부 알림 메일</span><strong>${esc(greetingSenderName)}</strong><code>${esc(greetingSenderEmail)}</code><p>제목에는 〈만 39세 이상〉 안부임을 표시하고, 왜 이 메일을 받았는지 첫 문단에서 설명합니다. 광고성 메일처럼 보이지 않도록 메시지 본문 전체를 메일에 싣지 않고 안전한 편지 링크로 안내합니다.</p></div><label class="field-label" for="connection-email">알림을 받을 이메일</label><input id="connection-email" class="text-input text-input-single" type="email" data-connection-input="contact_email" value="${esc(connection.contact_email)}" placeholder="name@example.com" />${renderConnectionChoices("contact_permission", [["YES", "이 이메일을 안부 도착과 답장 안내에 사용해도 좋아요"], ["NO", "이메일을 남기지 않을게요"]])}` : `<p class="connection-email-required">안부가 도착했을 때 다시 찾아올 수 있도록 이메일 알림을 남기는 방식을 기본으로 안내합니다.</p>`}` : (messageValue ? `<p class="connection-email-required">안부를 남긴 뒤 답장도 받아보고 싶다면 위에서 ‘받아볼게요’를 선택하고 이메일을 남겨주세요. 답장이 생기면 같은 안부우편함에서 도착 사실을 알려드립니다.</p>` : "")}</section><section class="connection-section connection-safety"><h2>${esc(routeTitle)}</h2><ol class="message-route"><li><b>1</b><span>안부와 수신 의향을 설문 응답과 분리해 안부우편함에 저장합니다.</span></li><li><b>2</b><span>받을 사람이 아직 없다면 메시지는 우편함에서 기다립니다.</span></li><li><b>3</b><span>안부를 받기로 한 참여자가 생기면 한 통을 전달 대기열에 올립니다. API는 번역과 안전 점검, 편지 형식 정돈을 돕습니다.</span></li><li><b>4</b><span>받는 사람에게 이메일 알림을 보내고, 편지 화면에서 메시지를 읽거나 답장할 수 있게 합니다.</span></li></ol><p>이름과 이메일은 상대에게 공개하지 않습니다. 전달 시점은 참여 순서와 수신 동의 상태에 따라 달라질 수 있으며, 평가나 선정과는 관계가 없습니다.</p></section>` : ""}<div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">참여 기록으로 돌아가기</button><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>안부 선택 저장하기 <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function renderComplete() {
@@ -1921,20 +2154,22 @@ function rc2AxisValue(response, axis) {
 }
 
 function renderRc2Complete(response) {
-  const english = state.language === "en";
+  const copy = completionCopy(state.language);
+  const local = stage();
   const status = state.submissionStatus || "local_only";
-  const statusCopy = status === "confirmed"
-    ? (english ? "Your record has been saved as research material." : "당신의 기록을 연구 자료로 저장했어요.")
-    : status === "sending"
-      ? (english ? "Saving your participation record as research material." : "참여 기록을 연구 자료로 저장하고 있어요.")
-      : status === "unverified"
-        ? (english ? "The save request has been sent." : "저장 요청을 마쳤어요.")
-        : (english ? "This pilot record has been saved." : "이번 시험 기록을 저장했어요.");
-  const retryButton = ["failed", "unverified"].includes(status) ? `<button class="secondary-button" type="button" data-action="resend">${esc(english ? "Check saving again" : "저장 다시 확인")}</button>` : "";
-  const document = response.response_document || buildResponseDocument({
+  const statusCopy = copy.status[status] || copy.status.local_only;
+  const retryButton = ["failed", "unverified"].includes(status) ? `<button class="secondary-button" type="button" data-action="resend">${esc(copy.retry)}</button>` : "";
+  // Older confirmed records store the document in the language used at the
+  // time of confirmation. Rebuild only the visible frame when the reader has
+  // since selected another interface language; original and approved text
+  // remain in the response payload and are not rewritten.
+  const document = response.response_document?.display_language === state.language
+    ? response.response_document
+    : buildResponseDocument({
     responseId: response.response_id,
     answers: response.answers,
     sourceLanguage: response.interaction_language || response.source_language,
+    displayLanguage: state.language,
     releaseVersion: response.release_version,
     approvedOriginal: response.reflection?.participant_approved_text || "",
     approvedKorean: response.reflection?.participant_approved_text_ko || "",
@@ -1942,27 +2177,37 @@ function renderRc2Complete(response) {
     confirmedAt: response.document_confirmation?.confirmed_at || response.submitted_at,
     final: true,
   });
-  const openCallSection = `<section class="rc2-open-call-next"><div class="open-call-badge">${esc(english ? "December 2026 · Moho House" : "2026년 12월 · 모호주택")}</div><h2>${esc(english ? "Open call" : "공모")}</h2><p>${esc(english ? "We are waiting for work to share at Moho House in December 2026." : "2026년 12월 · 모호주택에서 함께할 작업을 기다립니다.")}</p><button class="primary-button" type="button" data-action="open-call">${esc(english ? "View open call" : "공모 보기")} <span aria-hidden="true">↗</span></button></section>`;
+  const openCallSection = `<section class="rc2-open-call-next"><div class="open-call-badge">${esc(copy.openCallBadge)}</div><h2>${esc(copy.openCallTitle)}</h2><p>${esc(copy.openCallText)}</p><button class="primary-button" type="button" data-action="open-call">${esc(copy.openCallButton)} <span aria-hidden="true">↗</span></button></section>`;
   const audienceLead = isAudienceContext()
-    ? (english ? "This document holds an audience member’s memories, their wish to return, and the conditions for taking part." : "이 문서에는 관객의 기억과 판단, 다시 찾고 싶은 마음과 참여 조건이 함께 담겼어요.")
-    : (english ? "This document becomes part of a record of the present in arts and culture." : "이 문서는 문화예술의 현재를 기록하는 자료로 이어집니다.");
-  const greetingSystemCopy = submitFunctionUrl
-    ? (english ? "A greeting is kept separately from the survey response and curated across 64 coordinates. Names and email addresses are never shared between participants." : "참여자가 맡긴 안부는 설문 응답과 분리해 보관하고 64개의 좌표를 따라 큐레이션합니다. 이름과 이메일은 서로에게 공개하지 않습니다.")
-    : (english ? "Global Greetings is being prepared as a curated encounter across 64 coordinates. Names and email addresses are never shared between participants." : "안부의 좌표는 64개의 좌표를 따라 한 번의 만남을 큐레이션하는 방식으로 준비하고 있습니다. 이름과 이메일은 서로에게 공개하지 않습니다.");
-  const greetingMailCopy = submitFunctionUrl
-    ? (english ? `If a new greeting or reply arrives, we will send a notice from <b>〈Over 39〉 Greeting Mailbox &lt;${esc(greetingSenderEmail)}&gt;</b>. The opening explains that it is a project greeting and why you received it; the message itself opens on a letter page.` : `새 안부나 답장이 도착하면 <b>${esc(greetingSenderName)} &lt;${esc(greetingSenderEmail)}&gt;</b> 이름으로 알림을 보냅니다. 메일 첫 문단에서 프로젝트 안부라는 점과 수신 이유를 설명하고, 메시지는 편지 화면에서 열어봅니다.`)
-    : (english ? `In the live service, a notice will be sent from <b>〈Over 39〉 Greeting Mailbox &lt;${esc(greetingSenderEmail)}&gt;</b> when a greeting or reply arrives. This pilot does not send email; that begins only after the sender account and server mail queue are connected.` : `온라인 운영판에서는 새 안부나 답장이 도착할 때 <b>${esc(greetingSenderName)} &lt;${esc(greetingSenderEmail)}&gt;</b> 이름으로 알림을 보낼 예정입니다. 현재 시험판은 실제 이메일을 발송하지 않으며, 발신 계정과 서버 메일 큐가 연결된 뒤 작동합니다.`);
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(english ? "〈Over 39〉 · PARTICIPATION RECORD" : "〈만 39세 이상〉 · 참여 기록")}</div><h1 tabindex="-1">${esc(english ? "We keep your record" : "당신의 기록을 남깁니다")}</h1><p class="rc2-complete-lead">${esc(statusCopy)} ${esc(english ? "We will stay with the memories and the stories of the present gathered here." : "여기 적힌 기억과 지금의 이야기를 오래 살펴보겠습니다.")} ${esc(audienceLead)}</p><div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(english ? "Print or save as PDF" : "인쇄·PDF 저장")}</button>${retryButton}</div><section class="rc2-greeting-hub"><div class="greeting-object" aria-hidden="true"><i></i><b></b><span></span></div><div class="greeting-hub-copy"><div class="archive-label">${esc(english ? "GREETING · CONNECTION" : "안부 · 연결")}</div><h2>${esc(english ? "One greeting entrusted here can reach the next person" : "누군가가 맡긴 안부 한 통이 다음 사람에게 도착합니다")}</h2><p>${esc(greetingSystemCopy)}</p><p class="greeting-email-note"><strong>${esc(english ? "Leave an email address if you would like to receive a greeting." : "안부를 받고 싶다면 이메일을 남겨주세요.")}</strong> ${greetingMailCopy}</p><div class="export-actions"><button class="primary-button" type="button" data-action="connection">${esc(english ? "Leave a greeting or choose how to receive one" : "안부 남기고 받을 방법 정하기")} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="referral">${esc(english ? "Tell the next participant about the project" : "다음 참여자에게 프로젝트 전하기")} <span aria-hidden="true">→</span></button></div></div></section>${openCallSection}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(english ? "Start a new record" : "새 기록 시작하기")}</button></div></section></main>`;
+    ? copy.audienceLead
+    : copy.otherLead;
+  const greetingSystemCopy = globalGreetingsEnabled
+    ? local.receiveFirst
+    : local.waitingGreeting;
+  const greetingAction = globalGreetingsEnabled
+    ? `<button class="primary-button" type="button" data-action="connection">${esc(copy.greetingAction)} <span aria-hidden="true">→</span></button>`
+    : `<p class="feature-closed-status" role="status">${esc(copy.greetingClosed)}</p>`;
+  const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
+  const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(local.recordSavedTitle)}</h1><p class="rc2-complete-lead">${esc(local.recordSavedLead)} ${esc(local.recordSavedNext)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div><section class="rc2-greeting-hub"><div class="greeting-object" aria-hidden="true"><i></i><b></b><span></span></div><div class="greeting-hub-copy"><div class="archive-label">${esc(copy.greetingBrand)}</div><h2>${esc(copy.greetingTitle)}</h2><p>${esc(greetingSystemCopy)}</p><p class="greeting-coordinate-explainer">${esc(copy.greetingReason)}</p><div class="export-actions">${greetingAction}<button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>${openCallSection}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
   const responseId = state.responseId || state.submitted?.response_id || "draft";
   try {
-    return JSON.parse(localStorage.getItem(referralKey(responseId)) || "null") || {
-      name: "", email: "", reason: "", show_referrer: "NO", consent: "NO", sent_at: null,
+    const saved = JSON.parse(localStorage.getItem(referralKey(responseId)) || "null");
+    if (saved) return {
+      addresses: saved.addresses || saved.email || "",
+      message: saved.message || saved.reason || "",
+      show_referrer: saved.show_referrer || "NO",
+      consent: saved.consent || "NO",
+      batch_id: saved.batch_id || crypto.randomUUID(),
+      parsed: saved.parsed || null,
+      sent_at: saved.sent_at || null,
     };
+    return { addresses: "", message: "", show_referrer: "NO", consent: "NO", batch_id: crypto.randomUUID(), parsed: null, sent_at: null };
   } catch {
-    return { name: "", email: "", reason: "", show_referrer: "NO", consent: "NO", sent_at: null };
+    return { addresses: "", message: "", show_referrer: "NO", consent: "NO", batch_id: crypto.randomUUID(), parsed: null, sent_at: null };
   }
 }
 
@@ -1972,19 +2217,26 @@ function saveReferralDraft(referral) {
 }
 
 function referralCanSave(referral = getReferral()) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(referral.email || "").trim()) && referral.consent === "YES";
+  return !referral.sent_at && Array.isArray(referral.parsed?.valid) && referral.parsed.valid.length > 0 && referral.consent === "YES";
 }
 
 function renderReferral() {
   const referral = getReferral();
-  const referrer = state.submitted?.response_document?.participant?.display_name || "참여자";
-  const status = state.referralStatus;
+  const local = stage();
+  const uiExtra = stage1UiExtraCopy(state.language);
+  const referrer = safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || "참여자");
+  const status = state.referralStatus || (referral.sent_at ? "confirmed" : null);
   const statusCopy = status === "confirmed"
-    ? "추천 안내 요청을 저장했어요."
+    ? uiExtra.referralStored
     : status === "queued" || status === "local_only"
-      ? "이번 시험판에서는 추천 정보를 이 기기에 보관해요. 실제 이메일 발송은 서버 연결 뒤 작동합니다."
-      : status === "sending" ? "추천 안내 요청을 저장하고 있어요." : "";
-  return `<main class="referral-layout"><section class="referral-main"><div class="archive-label">다음 참여자 추천</div><h1 tabindex="-1">이 프로젝트를 함께 떠올리고 싶은 사람이 있나요?</h1><p class="connection-lead">추천받은 사람에게 〈만 39세 이상〉 프로젝트와 참여 링크를 이메일로 안내합니다. 추천은 안부 중계와 분리되며, 참여 여부는 추천받은 사람이 직접 정합니다.</p><div class="referral-fields"><label><span>이름 또는 활동명 <small>선택</small></span><input type="text" data-referral-input="name" value="${esc(referral.name)}" /></label><label><span>이메일 주소 <b>필수</b></span><input type="email" data-referral-input="email" value="${esc(referral.email)}" placeholder="name@example.com" /></label><label><span>추천한 이유 <small>선택</small></span><textarea data-referral-input="reason" maxlength="500" placeholder="함께 나누고 싶은 이유를 짧게 적어주세요.">${esc(referral.reason)}</textarea></label></div><div class="referral-options"><label class="final-check"><input type="checkbox" data-referral-check="show_referrer" ${referral.show_referrer === "YES" ? "checked" : ""} /><span>안내 메일에 추천자 표기 ‘${esc(referrer)}’를 함께 전합니다.</span></label><label class="final-check"><input type="checkbox" data-referral-check="consent" ${referral.consent === "YES" ? "checked" : ""} /><span>입력한 이메일을 프로젝트 참여 안내에 사용하는 내용을 확인했어요.</span></label></div>${statusCopy ? `<p class="referral-status">${esc(statusCopy)}</p>` : ""}<div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">참여 기록으로 돌아가기</button><button class="primary-button" type="button" data-action="save-referral" ${referralCanSave(referral) && status !== "sending" ? "" : "disabled"}>추천 안내 요청하기 <span aria-hidden="true">→</span></button></div></section></main>`;
+      ? uiExtra.referralQueued
+      : status === "sending" ? uiExtra.referralSaving : "";
+  const completed = ["confirmed", "queued", "local_only"].includes(status);
+  const parsed = referral.parsed;
+  const parsedPreview = parsed ? `<section class="referral-parse-preview" aria-live="polite"><dl><div><dt>${esc(local.parsedAddresses)}</dt><dd>${parsed.valid.length}</dd></div><div><dt>${esc(local.duplicatesRemoved)}</dt><dd>${parsed.duplicates.length}</dd></div><div><dt>${esc(local.invalidAddresses)}</dt><dd>${parsed.invalid.length}</dd></div></dl>${parsed.valid.length ? `<ul>${parsed.valid.map((email) => `<li>${esc(email)}</li>`).join("")}</ul>` : ""}${parsed.invalid.length ? `<p class="field-error">${esc(parsed.invalid.join(", "))}</p>` : ""}</section>` : "";
+  const actionLabel = completed ? uiExtra.referralDone : status === "sending" ? "…" : local.sendInvitation.replace("{count}", String(parsed?.valid?.length || 0));
+  const referrerCopy = uiExtra.showReferrer.replace("{name}", referrer);
+  return `<main class="referral-layout"><section class="referral-main"><div class="archive-label">${esc(local.referralTitle)}</div><h1 tabindex="-1">${esc(local.referralTitle)}</h1><p class="connection-lead">${esc(local.referralHelp)}</p><div class="referral-fields"><label><span>${esc(uiExtra.emailAddress)} <b>${esc(uiExtra.required)}</b></span><textarea data-referral-input="addresses" maxlength="8000" placeholder="aaa@example.com\nbbb@example.com, ccc@example.com\nName &lt;ddd@example.com&gt;" ${completed ? "disabled" : ""}>${esc(referral.addresses)}</textarea></label><button class="secondary-button referral-parse-button" type="button" data-action="parse-referral" ${completed ? "disabled" : ""}>${esc(local.parseAddresses)}</button><label><span>${esc(uiExtra.optionalMessage)} <small>${esc(local.optional)}</small></span><textarea data-referral-input="message" maxlength="500" placeholder="${esc(uiExtra.messagePlaceholder)}" ${completed ? "disabled" : ""}>${esc(referral.message)}</textarea></label></div>${parsedPreview}<div class="referral-options"><label class="final-check"><input type="checkbox" data-referral-check="show_referrer" ${referral.show_referrer === "YES" ? "checked" : ""} ${completed ? "disabled" : ""} /><span>${esc(referrerCopy)}</span></label><label class="final-check"><input type="checkbox" data-referral-check="consent" ${referral.consent === "YES" ? "checked" : ""} ${completed ? "disabled" : ""} /><span>${esc(uiExtra.referralConsent)}</span></label></div>${statusCopy ? `<p class="referral-status" role="status">${esc(statusCopy)}</p>` : ""}<div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(uiExtra.backToRecord)}</button><button class="primary-button" type="button" data-action="save-referral" ${referralCanSave(referral) && status !== "sending" ? "" : "disabled"}>${esc(actionLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function renderFeedbackChoices(field, options) {
@@ -2036,14 +2288,15 @@ function renderSurvey() {
 }
 
 function researchJourney() {
-  return `<section class="research-journey research-axes" aria-label="설문 구조">
-    <div class="journey-heading"><span>THREE DIRECTIONS · YOUR RECORD</span><strong>기억에서 현재로, 현재에서 이어가기 위한 조건으로 이동합니다.</strong></div>
+  const landing = ui().landing || {};
+  return `<section class="research-journey research-axes" aria-label="${esc(t("설문 구조"))}">
+    <div class="journey-heading"><span>THREE DIRECTIONS · YOUR RECORD</span><strong>${esc(t("기억에서 현재로, 현재에서 이어가기 위한 조건으로 이동합니다."))}</strong></div>
     <div class="journey-steps journey-steps-three">
-      <div><span>01</span><strong>기억</strong><p>사람, 작품, 공간, 장면과 오래 남은 이유</p></div>
-      <div><span>02</span><strong>현재</strong><p>지금 이어지는 활동, 관람, 역할과 변화</p></div>
-      <div><span>03</span><strong>조건</strong><p>시간, 공간, 관계, 매개와 제도</p></div>
+      <div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("사람, 작품, 공간, 장면과 오래 남은 이유"))}</p></div>
+      <div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div>
+      <div><span>03</span><strong>${esc(landing.condition || t("조건"))}</strong><p>${esc(t("시간, 공간, 관계, 매개와 제도"))}</p></div>
     </div>
-    <div class="journey-result"><strong>마지막 기록</strong><p>답변을 한 편의 <b>참여 기록</b>으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다.</p></div>
+    <div class="journey-result"><strong>${esc(t("마지막 기록"))}</strong><div class="journey-result-copy"><p>${esc(t("답변을 한 편의 참여 기록으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다."))}</p><p class="journey-coordinate-explainer">${esc(t("세 방향의 네 상태가 만나 64개의 현재 위치를 만듭니다. 이는 사람의 고정된 유형이 아니라, 시간과 상황에 따라 달라질 수 있는 이번 기록의 위치입니다. 이후에는 기록 사이의 관계를 읽고 안부가 닿은 이유를 설명하는 데 사용합니다."))}</p></div></div>
   </section>`;
 }
 
@@ -2051,21 +2304,28 @@ function renderIntro() {
   const draft = loadDraft();
   const pending = loadPending();
   if (isRc2) {
+    const landing = ui().landing || {};
+    const local = stage();
+    const duration = estimatedDurationMinutes > 0
+      ? `${t("예상 소요시간")} · ${estimatedDurationMinutes}${t("분 안팎")}`
+      : local.durationPending;
     const questionNote = liveAiEnabled
-      ? `<section class="ai-role-note"><span>${esc(t("연결 질문"))}</span><p>${esc(t("일부 구간에서는 앞선 답변을 구체화하는 질문이 이어집니다."))}</p></section>`
+      ? `<section class="ai-role-note"><span>${esc(t("연결 질문"))}</span><p>${esc(landing.followup || t("일부 구간에서는 앞선 응답을 구체화하는 질문이 이어집니다."))}</p></section>`
       : `<section class="ai-role-note"><span>${esc(t("연결 질문"))}</span><p>${esc(t("앞선 답변에서 이어지는 질문이 세 구간에 나누어 나타납니다."))}</p></section>`;
     return `<main class="rc2-intro">
       <section class="rc2-intro-main">
         <div class="intro-hero">
           <div class="archive-label">〈만 39세 이상〉 · RESEARCH & OPEN CALL</div>
-          <h1 tabindex="-1">${esc(t("기억에서 시작해, 지금의 문화예술 생태계를 함께 읽습니다."))}</h1>
+          <h1 tabindex="-1">${esc(local.introTitle)}</h1>
           <div class="intro-copy">
-            <p>${esc(t("〈만 39세 이상〉은 작가와 창작자, 기획자, 비평가, 교육자, 관객·시민이 문화예술을 기억하고 이어온 시간을 기록하는 조사입니다."))}</p>
-            <p>${esc(t("답변의 흐름은 마지막에 세 방향으로 이어집니다. 기억에 남은 의미, 지금의 흐름, 이어가기 위한 조건을 따라 이번 기록이 어디에 놓이는지 함께 살펴봅니다."))}</p>
+            <p>${esc(local.introLead)}</p>
+            <p>${esc(local.introFlow)}</p>
+            <p>${esc(local.introRecord)}</p>
           </div>
+          <div class="intro-ready-note"><strong>${esc(local.ready)}</strong><span>${esc(duration)}</span></div>
           ${creditBlock("intro")}
         </div>
-        <section class="entry-route-grid" aria-label="참여 경로">
+        <section class="entry-route-grid" aria-label="${esc(t("참여 경로"))}">
           <article class="entry-route-card interactive-tilt">
             <div class="route-object route-logo route-logo-led" aria-hidden="true"><span class="route-logo-shadow">${ledWordmark({ className: "route-led-wordmark", decorative: true, fill: "#777873" })}</span><span class="route-logo-body">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</span></div><span>RESEARCH</span>
             <h2>${esc(t("문화예술 경험 기록"))}</h2>
@@ -2095,7 +2355,7 @@ function renderIntro() {
 function renderNotice() {
   const deliveryNotice = submitFunctionUrl
     ? "원문과 참여자가 확인한 설명을 연구 기록으로 보존해요."
-    : "이번 파일럿의 응답은 이 기기에 보관해요.";
+    : "응답은 현재 이 기기에 보관해요.";
   if (isRc2) {
     return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">${esc(t("참여 안내"))}</div><h1 tabindex="-1">${esc(t("기억·현재·조건의 세 구간으로 이어집니다."))}</h1><div class="notice-list"><div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("오래 남아 있는 사람, 작품, 공간과 장면"))}</p></div><div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div><div><span>03</span><strong>${esc(t("조건"))}</strong><p>${esc(t("앞으로 이어가기 위한 시간, 공간, 관계와 제도"))}</p></div></div><p class="notice-assurance">${esc(t("일부 답변 뒤에는 앞선 응답을 조금 더 구체화하는 연결 질문이 나타납니다. 마지막 참여 기록은 직접 읽고 다듬습니다."))}</p></section><aside class="notice-side"><div class="panel-title">RESEARCH</div><p class="notice-assurance">${esc(t("정책연구 활용 범위는 마지막에 정합니다. 전시 공모와 안부·연락은 별도의 선택으로 이어집니다."))}</p><p class="notice-assurance">${esc(t("문의"))} · <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p><button class="primary-button wide-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button></aside></main>`;
   }
@@ -2114,8 +2374,8 @@ function bindInteractiveMotion() {
       const dx = px - 0.5;
       const dy = py - 0.5;
       const length = Math.hypot(dx, dy);
-      const shadowX = length > 0.04 ? (dx / length) * 2.25 : 1.6;
-      const shadowY = length > 0.04 ? (dy / length) * 2.25 : 1.6;
+      const shadowX = length > 0.04 ? (dx / length) * 4 : 1.8;
+      const shadowY = length > 0.04 ? (dy / length) * 4 : 1.8;
       card.style.setProperty("--logo-shadow-x", `${shadowX.toFixed(2)}px`);
       card.style.setProperty("--logo-shadow-y", `${shadowY.toFixed(2)}px`);
     };
@@ -2135,7 +2395,9 @@ function traceCurrentAnchorDom() {
   if (!checkpoint) return;
   const turn = currentAdaptiveTurn(checkpoint);
   if (!turn) return;
-  const domText = document.querySelector("#question-title")?.textContent || "";
+  // The visible question lives below the preceding-answer card. Keep the
+  // trace bound to the question itself, not the generic section heading.
+  const domText = document.querySelector(".adaptive-question h3")?.textContent || document.querySelector("#question-title")?.textContent || "";
   const match = verifyDomQuestion(turn, domText);
   const changed = turn.dom_match !== match || turn.rendered_question !== domText;
   turn.dom_match = match;
@@ -2166,24 +2428,24 @@ function traceCurrentAnchorDom() {
   }
 }
 
+function renderSavePending() {
+  const local = stage1UiExtraCopy(state.language);
+  return `<main class="saving-layout"><section class="saving-card" aria-live="polite"><h1>${esc(local.savingTitle)}</h1><p>${esc(local.savingLead)}</p>${processingSignal(local.savingTitle)}</section></main>`;
+}
+
+function renderSaveFailed() {
+  const local = stage1UiExtraCopy(state.language);
+  return `<main class="saving-layout"><section class="saving-card save-failed" role="alert"><h1>${esc(local.saveFailedTitle)}</h1><p>${esc(local.saveFailedLead)}</p><div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-survey">${esc(local.backToResponses)}</button><button class="primary-button" type="button" data-action="resend">${esc(local.retrySave)} <span aria-hidden="true">→</span></button></div></section></main>`;
+}
+
 function render(focusHeading = false) {
   const scrollPosition = { x: window.scrollX, y: window.scrollY };
   document.documentElement.lang = state.language;
-  const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
+  const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "saving" ? renderSavePending() : state.phase === "save_failed" ? renderSaveFailed() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderRetiredRc1ExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
   root.innerHTML = `<div class="site-shell phase-${esc(state.phase)}">${header()}${content}${footer()}</div>`;
-  if (isRc2 && state.phase === "complete") {
-    const greetingHub = root.querySelector(".rc2-greeting-hub");
-    if (greetingHub) {
-      const label = greetingHub.querySelector(".archive-label");
-      const title = greetingHub.querySelector("h2");
-      if (label) label.textContent = "GLOBAL GREETINGS · ACROSS 64 COORDINATES";
-      if (title) title.textContent = state.language === "en" ? "Greetings across 64 coordinates" : "안부의 좌표";
-      if (!globalGreetingsEnabled) {
-        const button = greetingHub.querySelector("button[data-action='connection']");
-        if (button) { button.disabled = true; button.textContent = state.language === "en" ? "Opens after operating conditions are confirmed" : "운영 조건 확정 후 시작합니다"; }
-      }
-    }
-  }
+  const legacyAgeGate = root.querySelector('[data-exhibition-field="eligibility_ack"]')?.closest(".connection-section");
+  if (legacyAgeGate) legacyAgeGate.innerHTML = `<h2>${esc(t("프로젝트가 다루는 시간"))}</h2><p>${esc(t("〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다."))}</p>`;
+  localizeRenderedCopy(root);
   traceCurrentAnchorDom();
   bindInteractiveMotion();
   requestAnimationFrame(() => {
@@ -2202,8 +2464,9 @@ function changeChoice(id, value, multi, max, exclusive) {
   const field = storedField(item) || id;
   const researchEditIds = new Set([
     "P01_CONTEXT", "P02G", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09_COUNTRY", "P10",
+    "CTX_FIELD", "CTX_MODE", "CTX_FORM", "CTX_UNIT",
     "P14", "P15", "P16", "P17", "P18", "P11", "P12", "P13", "P13_TEXT", "P19", "P19_TEXT",
-    "M01", "M02", "M03", "M04", "M04_TEXT", "M05", "M06", "M06_YEAR", "M07", "M08", "M09", "M10",
+    "M01", "NO_RECALL_RELATION", "M02", "M03", "M04", "M04_TEXT", "M05", "M06", "M06_YEAR", "M07", "M08", "M09", "M10",
     "D_FOCUS", "D01", "D02", "D02_TEXT", "D03", "D04", "R01", "C00", "C01", "C02", "C03",
   ]);
   const reconcileIfResearchEdit = (questionId) => {
@@ -2225,6 +2488,10 @@ function changeChoice(id, value, multi, max, exclusive) {
     if (["P14", "P15"].includes(id) && !needsPauseContext(state.answers)) ["pause_context_tags", "pause_context_other", "pause_meaning", "pause_context_text"].forEach((key) => delete state.answers[key]);
     if (id === "P02G") { delete state.answers.role_primary; delete state.answers.role_primary_other; delete state.answers.roles_parallel; delete state.answers.roles_parallel_other; }
     if (id === "M01" && value === "NO_RECALL") ["memory_clue_text", "memory_branch_followup", "memory_meaning_text", "m_declared", "m_support_tags", "memory_time_band", "memory_year_optional", "memory_locations", "memory_experience_modes", "memory_experience_modes_other", "memory_relationship", "witness_role"].forEach((key) => delete state.answers[key]);
+    if (id === "M01" && value !== "NO_RECALL") {
+      delete state.answers.no_recall_relation_text;
+      clearAdaptiveAnchor("NO_RECALL_RELATION");
+    }
     if (id === "P11" && ["SKIP", "UNSURE"].includes(value)) delete state.answers.transition_text;
     if (id === "P13" && !["YES", "MIXED"].includes(value)) delete state.answers.invisible_continuity_text;
     if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => delete state.answers[key]);
@@ -2296,12 +2563,20 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
+  if (target.dataset.connectionStage) {
+    const connection = getConnection();
+    connection.stage = target.dataset.connectionStage;
+    if (connection.stage !== "preview") connection.preview_confirmed = false;
+    saveConnection();
+    render(true);
+    return;
+  }
   if (target.dataset.exhibitionField) {
     changeExhibitionChoice(target.dataset.exhibitionField, target.dataset.exhibitionValue);
     render(false);
     return;
   }
-  if (target.dataset.lang) { state.language = target.dataset.lang; target.closest("details")?.removeAttribute("open"); saveDraft(); render(false); return; }
+  if (target.dataset.lang) { state.language = target.dataset.lang; localStorage.setItem(interfaceLanguageKey, state.language); target.closest("details")?.removeAttribute("open"); saveDraft(); render(false); return; }
   if (target.dataset.axisField) {
     state.answers[target.dataset.axisField] = target.dataset.axisValue;
     delete state.answers.coordinate_snapshots;
@@ -2321,7 +2596,7 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
-  if (target.dataset.action === "open-call") { window.open("./over39-open-call.html", "_blank", "noopener,noreferrer"); return; }
+  if (target.dataset.action === "open-call") { window.open(openCallUrl(), "_blank", "noopener,noreferrer"); return; }
   if (target.dataset.action === "notice") { state.phase = "notice"; render(true); return; }
   if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: state.language, feedback: {}, referralStatus: null }; saveDraft(); render(true); return; }
   if (target.dataset.action === "resume") {
@@ -2381,7 +2656,7 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "exhibition") {
-    window.open("./over39-open-call.html", "_blank", "noopener,noreferrer");
+    window.open(openCallUrl(), "_blank", "noopener,noreferrer");
     return;
   }
   if (target.dataset.action === "connection") {
@@ -2418,6 +2693,10 @@ document.addEventListener("click", (event) => {
   if (target.dataset.action === "save-connection") {
     if (!connectionCanSave()) return;
     const update = createConnectionUpdate();
+    const participantAccess = state.submitted?.participant_access || ensureParticipantReference(update.response_id);
+    // `participant_access` is transport-only for the reservation endpoint.
+    // It must not travel in a relationship snapshot or outbox payload.
+    delete update.participant_access;
     saveConnection();
     state.connectionStatus = "sending";
     render(false);
@@ -2429,32 +2708,54 @@ document.addEventListener("click", (event) => {
       const result = results[0];
       state.connectionStatus = result.status;
       state.submitted = separated.research;
+      if (result.status === "confirmed") {
+        requestGreetingReservation({ response_id: update.response_id, participant_access: participantAccess }).then((reservation) => {
+          state.greetingReservation = reservation;
+          if (reservation.status === "reserved" && reservation.receipt?.relay_url) {
+            window.location.assign(reservation.receipt.relay_url);
+            return;
+          }
+          state.phase = "complete";
+          render(true);
+        });
+        return;
+      }
       state.phase = "complete";
       render(true);
     });
     return;
   }
   if (target.dataset.action === "referral") { state.phase = "referral"; state.referralStatus = null; render(true); return; }
+  if (target.dataset.action === "parse-referral") {
+    const referral = getReferral();
+    referral.parsed = parseReferralRecipients(referral.addresses);
+    saveReferralDraft(referral);
+    state.referralStatus = null;
+    render(false);
+    return;
+  }
   if (target.dataset.action === "save-referral") {
     const referral = getReferral();
     if (!referralCanSave(referral) || state.referralStatus === "sending") return;
-    const payload = {
-      response_id: state.responseId || state.submitted?.response_id || null,
-      recommended_name: String(referral.name || "").trim() || null,
-      recommended_email: String(referral.email || "").trim(),
-      recommendation_reason: String(referral.reason || "").trim() || null,
-      show_referrer: referral.show_referrer === "YES",
-      referrer_label: referral.show_referrer === "YES" ? (state.submitted?.response_document?.participant?.display_name || "참여자") : null,
-      project: "〈만 39세 이상〉",
-      contact_reason: "participant_referral_invitation",
-      created_at: new Date().toISOString(),
-    };
-    referral.sent_at = payload.created_at;
+    const payload = buildReferralBatch({
+      responseId: state.responseId || state.submitted?.response_id || null,
+      recipients: referral.parsed.valid,
+      message: referral.message,
+      showReferrer: referral.show_referrer === "YES",
+      referrerLabel: state.submitted?.response_document?.participant?.display_name || "참여자",
+      batchId: referral.batch_id,
+      requestedAt: referral.requested_at || new Date().toISOString(),
+    });
+    referral.requested_at = payload.requested_at;
     saveReferralDraft(referral);
     state.referralStatus = "sending";
     render(false);
-    sendEnvelope(createEnvelope("referral_invitation", payload, "contact"), { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }).then((result) => {
+    sendEnvelope(createEnvelope("referral_batch", payload, referral.batch_id), { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }).then((result) => {
       state.referralStatus = result.status || "local_only";
+      if (["confirmed", "queued", "local_only"].includes(result.status)) {
+        referral.sent_at = new Date().toISOString();
+        saveReferralDraft(referral);
+      }
       render(false);
     });
     return;
@@ -2473,13 +2774,31 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "back") { state.step = Math.max(0, state.step - 1); saveDraft(); render(!isRc2); return; }
+  if (target.dataset.action === "retry-adaptive") {
+    const checkpoint = String(target.dataset.checkpoint || "");
+    if (!checkpoint || state.adaptiveGenerating) return;
+    clearAdaptiveAnchor(checkpoint);
+    setAdaptiveStatus(checkpoint, "pending");
+    saveDraft();
+    render(false);
+    requestAdaptiveNext(checkpoint).then(() => render(false)).catch(() => { state.adaptiveGenerating = false; render(false); });
+    return;
+  }
   if (target.dataset.action === "next") {
     const screens = activeScreens();
     const id = screens[state.step];
     if (!canContinue(id) || state.submissionStatus === "sending") return;
 
     if (isRc2) {
-      const sourceAnchorByScreen = { M04: "M04_TEXT", TRANSITION: "P12", CONTINUITY: "P13_TEXT", SUPPORT_CONDITIONS: "P19_TEXT", D02: "D02_TEXT" };
+      const sourceAnchorByScreen = {
+        M04: "M04_TEXT",
+        NO_RECALL_RELATION: shouldAskNoRecallRelationFollowup(state.answers) ? "NO_RECALL_RELATION" : null,
+        TRANSITION: "P12",
+        CONTINUITY: "P13_TEXT",
+        SUPPORT_CONDITIONS: "P19_TEXT",
+        D02: "D02_TEXT",
+        D04: shouldAskD04ConditionsFollowup(state.answers) ? "D04_CONDITIONS" : null,
+      };
       const sourceAnchor = sourceAnchorByScreen[id];
       if (sourceAnchor) {
         if (recordSkippedLowInformation(sourceAnchor)) saveDraft();
@@ -2555,17 +2874,27 @@ document.addEventListener("click", (event) => {
     if (id === "USE_SCOPE") {
       state.answers.document_confirmation_ack = "YES";
       state.answers.participant_approved_text = state.answers.participant_approved_text || approvedReflectionText();
+      state.answers.participant_approved_provenance = {
+        kind: "participant-confirmed",
+        source_draft_kind: state.answers.depth_summary?.provenance?.kind || (state.answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
+        action: state.answers.reflection_action || "ACCEPT",
+        final_text: state.answers.participant_approved_text,
+      };
       state.answers.document_confirmed_at = state.answers.document_confirmed_at || new Date().toISOString();
       state.answers.response_document_draft = buildCurrentResponseDocument({ final: true, confirmedAt: state.answers.document_confirmed_at });
       state.submitted = createResponse();
       savePending(state.submitted);
       state.submissionStatus = "sending";
-      state.phase = "complete";
+      state.phase = "saving";
       render(true);
-      requestResearchStorage(state.submitted).then((result) => {
+      requestResearchStorage(state.submitted).then(async (result) => {
         state.submissionStatus = result.status;
-        if (result.status === "confirmed") clearDraft();
-        render(false);
+        if (["confirmed", "local_only"].includes(result.status)) {
+          if (result.status === "confirmed") clearDraft();
+          state.greetingReservation = await requestGreetingReservation(state.submitted);
+          state.phase = "complete";
+        } else state.phase = "save_failed";
+        render(true);
       });
       return;
     }
@@ -2609,16 +2938,40 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  if (target.dataset.action === "download") { const text = JSON.stringify(state.submitted, null, 2); const blob = new Blob([text], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `${state.submitted.response_id}.json`; link.click(); URL.revokeObjectURL(url); return; }
+  if (target.dataset.action === "download") {
+    // The participant can retain their record, but the opaque access secret is
+    // not part of a portable response export.
+    const download = structuredClone(state.submitted || {});
+    delete download.participant_access;
+    const text = JSON.stringify(download, null, 2);
+    const blob = new Blob([text], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${state.submitted.response_id}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+  if (target.dataset.action === "back-to-survey") {
+    state.phase = "survey";
+    render(true);
+    return;
+  }
   if (target.dataset.action === "resend") {
     const pending = loadPending();
     if (!pending || state.submissionStatus === "sending") return;
     state.submissionStatus = "sending";
-    render(false);
-    (submitFunctionUrl ? retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }) : requestResearchStorage(pending)).then((result) => {
+    state.phase = "saving";
+    render(true);
+    (submitFunctionUrl ? retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }) : requestResearchStorage(pending)).then(async (result) => {
       state.submissionStatus = Array.isArray(result) ? (readOutbox().length ? "unverified" : "confirmed") : result.status;
-      if (result.status === "confirmed") clearDraft();
-      render(false);
+      if (["confirmed", "local_only"].includes(state.submissionStatus)) {
+        if (state.submissionStatus === "confirmed") clearDraft();
+        state.greetingReservation = await requestGreetingReservation(state.submitted || pending);
+        state.phase = "complete";
+      } else state.phase = "save_failed";
+      render(true);
     });
     return;
   }
@@ -2630,6 +2983,7 @@ document.addEventListener("input", (event) => {
   if (input.matches("[data-referral-input]")) {
     const referral = getReferral();
     referral[input.dataset.referralInput] = input.value;
+    if (input.dataset.referralInput === "addresses") referral.parsed = null;
     saveReferralDraft(referral);
     state.referralStatus = null;
     const button = document.querySelector("button[data-action='save-referral']");
@@ -2665,8 +3019,8 @@ document.addEventListener("input", (event) => {
   const field = input.dataset.inputField || (item ? storedField(item) : id === "M06_YEAR" ? "memory_year_optional" : id === "P05_YEAR" ? "activity_start_year" : id === "M07" ? "memory_locations" : "activity_locations");
   state.answers[field] = id === "M07" ? locationValues(input.value, 2) : id === "P10" ? locationValues(input.value, 3) : input.value;
   if (isRc2 && /^depth_[ms]_text$/.test(field)) clearDepthAfter(field === "depth_m_text" ? "M" : "S");
-  if (isRc2 && ["M02", "M04_TEXT", "P18", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT", "D04", "M06_YEAR", "M07", "P09_COUNTRY", "P10"].includes(id)) reconcileAnchorsAfterResearchEdit(id);
-  else if (isRc2 && field === "d_context_impact_text") clearReflectionOutcome();
+  if (isRc2 && ["NO_RECALL_RELATION", "M02", "M04_TEXT", "P18", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT", "D04", "M06_YEAR", "M07", "P09_COUNTRY", "P10"].includes(id)) reconcileAnchorsAfterResearchEdit(id);
+  else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
   if (isRc2 && ["participant_revision", "display_name"].includes(field)) clearDocumentConfirmation();
   saveDraft();
   const nextButton = document.querySelector("button.primary-button[data-action='next']");
@@ -2675,6 +3029,14 @@ document.addEventListener("input", (event) => {
 
 document.addEventListener("change", (event) => {
   const input = event.target;
+  if (input.matches("[data-connection-preview-confirmed]")) {
+    const connection = getConnection();
+    connection.preview_confirmed = input.checked;
+    saveConnection();
+    const saveButton = document.querySelector("button[data-action='save-connection']");
+    if (saveButton) saveButton.disabled = !connectionCanSave();
+    return;
+  }
   if (input.matches("[data-referral-check]")) {
     const referral = getReferral();
     referral[input.dataset.referralCheck] = input.checked ? "YES" : "NO";

@@ -1,7 +1,7 @@
 {
-  "schema_version": "over39-schema-1.4.3-ai-live-pilot",
-  "questionnaire_version": "1.4.3-rc2-ai-live-pilot",
-  "content_revision": "2026-08-07-v0.4.3-ai-live",
+  "schema_version": "over39-schema-1.4.4-cultural-arts-context-preproduction",
+  "questionnaire_version": "1.4.4-rc2-cultural-arts-context-preproduction",
+  "content_revision": "2026-08-13-v0.4.4-context",
   "status": "implementation_draft_not_public_release",
   "previous_versions": [
     "v0.9",
@@ -513,23 +513,23 @@
       "module": "MEMORY",
       "type": "single",
       "required": true,
-      "text": "지금 떠오르는 사람, 작품, 공간 또는 장면은 무엇인가요?",
+      "text": "오늘 문화예술과 관련해 가장 먼저 떠오르는 것은 무엇인가요? 정확한 이름을 몰라도 괜찮습니다.",
       "options": [
         [
           "ARTIST",
-          "한 명의 작가"
+          "사람·예술가"
         ],
         [
           "WORK_OBJECT",
-          "한 작품·물건·이미지"
+          "작품·물건·이미지"
         ],
         [
           "SPACE",
-          "하나의 공간"
+          "공간"
         ],
         [
           "EXHIBITION",
-          "하나의 전시"
+          "전시·공연·행사"
         ],
         [
           "SCENE",
@@ -537,7 +537,7 @@
         ],
         [
           "PHRASE",
-          "남아 있는 문장"
+          "문장·이야기"
         ],
         [
           "SENSATION",
@@ -545,7 +545,7 @@
         ],
         [
           "PRACTICE",
-          "나의 작업이나 오래 남은 태도"
+          "나의 활동·연습·오래 남은 태도"
         ],
         [
           "NO_RECALL",
@@ -558,19 +558,19 @@
       "options_audience": [
         [
           "ARTIST",
-          "한 명의 작가나 창작자"
+          "사람·예술가"
         ],
         [
           "WORK_OBJECT",
-          "한 작품·이미지·공연"
+          "작품·물건·이미지"
         ],
         [
           "SPACE",
-          "하나의 공간"
+          "공간"
         ],
         [
           "EXHIBITION",
-          "하나의 전시·프로그램"
+          "전시·공연·행사"
         ],
         [
           "SCENE",
@@ -578,7 +578,7 @@
         ],
         [
           "PHRASE",
-          "남아 있는 문장"
+          "문장·이야기"
         ],
         [
           "SENSATION",
@@ -586,7 +586,7 @@
         ],
         [
           "PRACTICE",
-          "오래 이어진 관심이나 취향"
+          "나의 활동·연습·오래 남은 태도"
         ],
         [
           "NO_RECALL",
@@ -608,6 +608,19 @@
       ],
       "text_audience": "그 경험에서 지금도 떠오르는 장면은 무엇인가요?",
       "text_no_recall": "특별히 떠오르는 대상이 없다면, 지금 문화예술과의 관계에서 남아 있는 느낌을 들려주세요."
+    },
+    {
+      "id": "NO_RECALL_RELATION",
+      "module": "PRESENT",
+      "type": "text",
+      "required": false,
+      "show_if": "route = AUDIENCE and M01 = NO_RECALL",
+      "text": "특정한 작품이 떠오르지 않아도 괜찮아요. 요즘 문화예술을 가깝게 또는 멀게 느끼는 순간이 있다면 한 가지 들려주세요.",
+      "help": "특정 작품의 이름이나 전시를 다시 떠올릴 필요는 없어요.",
+      "max_chars": 480,
+      "store": [
+        "no_recall_relation_text"
+      ]
     },
     {
       "id": "M03",
@@ -956,7 +969,7 @@
       "module": "CONTEXT",
       "type": "single",
       "required": false,
-      "text_professional": "문화예술과 관련된 역할을 처음 맡아 활동하기 시작한 지 얼마나 되었나요?",
+      "text_professional": "지금 말한 문화예술 활동을 시작한 지 얼마나 되었나요?",
       "text_audience": "문화예술을 스스로 찾아보거나 전시·프로그램에 참여하기 시작한 지 얼마나 되었나요?",
       "options": [
         [
@@ -1147,7 +1160,7 @@
       "module": "PRESENT",
       "type": "single",
       "required": true,
-      "text_professional": "현재 작품 제작이나 핵심 활동은 어떤 상태에 가까운가요?",
+      "text_professional": "현재 가장 중요한 문화예술 활동은 어떤 상태에 가까운가요?",
       "text_audience": "현재 문화예술을 찾아보고 참여하는 상태는 무엇에 가까운가요?",
       "options_professional": [
         [
@@ -1214,7 +1227,7 @@
       "module": "PRESENT",
       "type": "single",
       "required": true,
-      "text_professional": "현재 전시·발표·공개 활동은 어떤 상태에 가까운가요?",
+      "text_professional": "현재 그 활동이 외부와 만나는 방식은 어떤 상태에 가까운가요?",
       "text_audience": "현재 전시·프로그램·문화예술 참여는 어떤 상태에 가까운가요?",
       "options_professional": [
         [
@@ -1474,7 +1487,7 @@
       "module": "PRESENT",
       "type": "single",
       "required": true,
-      "text_professional": "연령이나 지원, 역할의 구간이 달라졌다고 느낀 시점이 있었나요?",
+      "text_professional": "활동을 이어오는 동안 연령·지원·역할 등 조건의 구간이 달라졌다고 느낀 시점이 있었나요?",
       "text_audience": "문화예술을 만나고 참여하는 방식이 달라졌다고 느낀 시점이 있었나요?",
       "options": [
         [
@@ -1570,7 +1583,7 @@
         "support_conditions",
         "support_conditions_other"
       ],
-      "text_professional": "그럼에도 지금까지 활동을 이어오게 한 기반이나 계기는 무엇이었나요?",
+      "text_professional": "지금까지 활동을 이어오게 한 기반이나 계기는 무엇이었나요?",
       "text_audience": "그럼에도 문화예술을 다시 찾고 기억하게 한 기반이나 계기는 무엇이었나요?",
       "options_professional": [
         [
@@ -2055,6 +2068,10 @@
         [
           "G8",
           "제작·보존·유통"
+        ],
+        [
+          "G_OTHER",
+          "기존 역할로 한정하기 어려움"
         ]
       ],
       "store": [
@@ -2089,6 +2106,45 @@
         "roles_parallel",
         "roles_parallel_other"
       ]
+    },
+    {
+      "id": "CTX_FIELD",
+      "module": "PARTICIPANT_CONTEXT",
+      "type": "multi_or_other",
+      "required": true,
+      "text": "어떤 문화예술 분야와 가장 가까운가요?",
+      "options_ref": "participant_context.field",
+      "store": ["field", "field_other"],
+      "compatibility": "additive; preserves role_primary as legacy_role"
+    },
+    {
+      "id": "CTX_MODE",
+      "module": "PARTICIPANT_CONTEXT",
+      "type": "multi_or_other",
+      "required": true,
+      "text": "그 분야와 현재 어떤 방식으로 관계하고 있나요?",
+      "options_ref": "participant_context.participation_mode",
+      "store": ["participation_mode", "participation_mode_other"],
+      "compatibility": "additive; does not replace route or role"
+    },
+    {
+      "id": "CTX_FORM",
+      "module": "PARTICIPANT_CONTEXT",
+      "type": "single",
+      "required": true,
+      "text": "현재 이 활동은 생활 안에서 어떤 형태로 이어지고 있나요?",
+      "options_ref": "participant_context.activity_form",
+      "store": ["activity_form"]
+    },
+    {
+      "id": "CTX_UNIT",
+      "module": "PARTICIPANT_CONTEXT",
+      "type": "single_or_other",
+      "required": true,
+      "text": "이번 답변은 누구의 경험을 중심으로 하나요?",
+      "options_ref": "participant_context.participation_unit",
+      "store": ["participation_unit", "participation_unit_other"],
+      "privacy_note": "Team names never replace individual age, care, livelihood, or consent data."
     },
     {
       "id": "P05_YEAR",
@@ -3489,7 +3545,7 @@
     }
   ],
   "versioning": {
-    "questionnaire_version": "over39-v1.3.2-response-document-recovery",
+    "questionnaire_version": "1.4.4-rc2-cultural-arts-context-preproduction",
     "question_bank_version": "s-bank-v0.1-seed",
     "prompt_version": "over39-adaptive-response-document-v0.3.1-2026-08-06",
     "grid_version": "grid-v1.1-pilot",
