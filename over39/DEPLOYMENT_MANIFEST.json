@@ -1,8 +1,8 @@
 {
   "project": "over39-research-survey",
-  "version": "1.4.4-rc2-stage1-patch1",
+  "version": "1.4.4-rc2-stage1-patch2",
   "mode": "production",
   "source_commit": "cfffae8bb785",
   "source_state": "working_tree_uncommitted",
-  "built_at": "2026-08-14T05:42:57.751Z"
+  "built_at": "2026-08-14T05:49:51.607Z"
 }
