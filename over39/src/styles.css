@@ -3825,7 +3825,8 @@ body,
   border-bottom: 1px solid var(--line);
 }
 .journey-result strong { font-size: 13px; }
-.journey-result p { margin: 0; color: var(--muted); line-height: 1.7; }
+.journey-result-copy { display: grid; min-width: 0; gap: 12px; }
+.journey-result-copy p { margin: 0; color: var(--muted); line-height: 1.7; }
 
 .entry-route-card {
   position: relative;

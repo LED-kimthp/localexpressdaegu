@@ -2191,7 +2191,7 @@ function researchJourney() {
       <div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div>
       <div><span>03</span><strong>${esc(landing.condition || t("조건"))}</strong><p>${esc(t("시간, 공간, 관계, 매개와 제도"))}</p></div>
     </div>
-    <div class="journey-result"><strong>${esc(t("마지막 기록"))}</strong><p>${esc(t("답변을 한 편의 참여 기록으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다."))}</p><p class="journey-coordinate-explainer">${esc(t("세 방향의 네 상태가 만나 64개의 현재 위치를 만듭니다. 이는 사람의 고정된 유형이 아니라, 시간과 상황에 따라 달라질 수 있는 이번 기록의 위치입니다. 이후에는 기록 사이의 관계를 읽고 안부가 닿은 이유를 설명하는 데 사용합니다."))}</p></div>
+    <div class="journey-result"><strong>${esc(t("마지막 기록"))}</strong><div class="journey-result-copy"><p>${esc(t("답변을 한 편의 참여 기록으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다."))}</p><p class="journey-coordinate-explainer">${esc(t("세 방향의 네 상태가 만나 64개의 현재 위치를 만듭니다. 이는 사람의 고정된 유형이 아니라, 시간과 상황에 따라 달라질 수 있는 이번 기록의 위치입니다. 이후에는 기록 사이의 관계를 읽고 안부가 닿은 이유를 설명하는 데 사용합니다."))}</p></div></div>
   </section>`;
 }
 
