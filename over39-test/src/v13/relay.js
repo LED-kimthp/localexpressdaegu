@@ -33,6 +33,30 @@ const forwardingCopy = {
   ms: { title: "Selepas membacanya, tinggalkan satu ayat untuk orang seterusnya", help: "Teks asal anda disimpan dan maklumat hubungan tidak dipaparkan kepada sesiapa. Ayat ini menunggu sebagai salam baharu untuk peserta seterusnya.", send: "Amanahkan salam seterusnya", sent: "Salam seterusnya telah diamanahkan.", notificationTitle: "Mahukah anda menerima e-mel apabila salam seterusnya tiba?", notificationHelp: "E-mel anda hanya digunakan untuk menghantar pautan peti surat dan tidak pernah dipaparkan kepada peserta lain.", notificationLabel: "E-mel untuk notis", notificationConsent: "E-mel ini boleh digunakan hanya untuk notis salam seterusnya.", notificationSave: "Simpan permintaan notis", notificationStored: "Permintaan notis anda telah disimpan. E-mel hanya dihantar jika salam baharu tiba." },
 };
 
+const receiptCopy = {
+  ko: { senderContext: "이 안부를 남긴 사람", finishHere: "여기에서 마치기" },
+  en: { senderContext: "The person who left this greeting", finishHere: "Finish here" },
+  ja: { senderContext: "このあいさつを残した人", finishHere: "ここで終える" },
+  "zh-Hans": { senderContext: "留下这则问候的人", finishHere: "在这里结束" },
+  "zh-Hant": { senderContext: "留下這則問候的人", finishHere: "在這裡結束" },
+  fr: { senderContext: "La personne qui a laissé cette salutation", finishHere: "Terminer ici" },
+  es: { senderContext: "La persona que dejó este saludo", finishHere: "Terminar aquí" },
+  nl: { senderContext: "De persoon die deze groet achterliet", finishHere: "Hier afronden" },
+  ms: { senderContext: "Orang yang meninggalkan salam ini", finishHere: "Tamat di sini" },
+};
+
+const task10a4ReceiptCopy = {
+  ko: { receivedTitle: "안부 한 통이 도착했습니다.", receivedHelp: "먼저 이곳을 지나간 한 사람이 남긴 문장입니다. 천천히 읽어보세요.", reasonSummary: "두 기록에 함께 남은 현재의 흐름과 관계의 단서를 바탕으로 이어진 안부입니다. 이번 기록에서 읽힌 맥락이라 시간이 지나면 달라질 수 있습니다." },
+  en: { receivedTitle: "A greeting has arrived.", receivedHelp: "This sentence was left by someone who passed through here before you. Take your time reading it.", reasonSummary: "This greeting was connected through clues about the present flow and relationships that remained in both records. It is context read in these records and may change over time." },
+  ja: { receivedTitle: "あいさつが一通届きました。", receivedHelp: "先にここを通った一人が残した文章です。ゆっくり読んでみてください。", reasonSummary: "二つの記録にともに残った現在の流れと関係の手がかりをもとにつながったあいさつです。今回の記録から読まれた文脈なので、時間がたてば変わることがあります。" },
+  "zh-Hans": { receivedTitle: "一则问候已经抵达。", receivedHelp: "这是先前经过这里的一位参与者留下的句子。请慢慢阅读。", reasonSummary: "这则问候根据两份记录中共同留下的当下脉络与关系线索相连。这是从本次记录中读到的语境，日后可能发生变化。" },
+  "zh-Hant": { receivedTitle: "一則問候已經抵達。", receivedHelp: "這是先前經過這裡的一位參與者留下的句子。請慢慢閱讀。", reasonSummary: "這則問候根據兩份記錄中共同留下的當下脈絡與關係線索相連。這是從本次記錄中讀到的脈絡，日後可能發生變化。" },
+  fr: { receivedTitle: "Une salutation est arrivée.", receivedHelp: "Cette phrase a été laissée par une personne passée ici avant vous. Prenez le temps de la lire.", reasonSummary: "Cette salutation relie des indices du mouvement présent et des relations restés dans les deux récits. Ce contexte est lu dans ces récits et peut changer avec le temps." },
+  es: { receivedTitle: "Ha llegado un saludo.", receivedHelp: "Esta frase la dejó una persona que pasó por aquí antes. Léala con calma.", reasonSummary: "Este saludo se conectó a partir de pistas del curso actual y de las relaciones presentes en ambos registros. Es un contexto leído en estos registros y puede cambiar con el tiempo." },
+  nl: { receivedTitle: "Er is een groet aangekomen.", receivedHelp: "Deze zin is achtergelaten door iemand die hier eerder langskwam. Neem de tijd om hem te lezen.", reasonSummary: "Deze groet is verbonden via aanwijzingen over de huidige beweging en relaties die in beide records staan. Deze context is in de records gelezen en kan met de tijd veranderen." },
+  ms: { receivedTitle: "Satu salam telah tiba.", receivedHelp: "Ayat ini ditinggalkan oleh seseorang yang melalui tempat ini lebih awal. Bacalah dengan perlahan.", reasonSummary: "Salam ini dihubungkan melalui petunjuk tentang aliran semasa dan hubungan yang kekal dalam kedua-dua rekod. Konteks ini dibaca daripada rekod semasa dan boleh berubah mengikut masa." },
+};
+
 // Retire the older direct-reply wording at runtime while retaining the
 // non-public field names required by the existing relay contract.
 for (const [language, nextPerson] of Object.entries(forwardingCopy)) {
@@ -77,34 +101,37 @@ function c() { return copy[interfaceLanguageCode] || copy[String(interfaceLangua
 function forwarding() { return forwardingCopy[interfaceLanguageCode] || forwardingCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function compose() { return composeCopy[interfaceLanguageCode] || composeCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function reasonCopy() { return greetingReasonCopy[interfaceLanguageCode] || greetingReasonCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
-function pointIndex(point) {
-  const number = (key) => Number(String(point?.[key]?.code || point?.[key] || "").slice(1));
-  const [m, s, d] = [number("m"), number("s"), number("d")];
-  return m && s && d ? (m - 1) * 16 + (s - 1) * 4 + (d - 1) : -1;
-}
-function coordinateGraphic(thread) {
-  const sender = pointIndex(thread.sender_coordinate || thread.connection_reason?.sender_point);
-  const mine = pointIndex(thread.receiver_coordinate || thread.connection_reason?.receiver_point);
-  if (sender < 0 && mine < 0) return "";
-  return `<div class="greeting-coordinate-map"><div class="coordinate-grid" aria-label="${text(reasonCopy().map)}">${Array.from({ length: 64 }, (_, index) => `<span class="${index === sender ? "is-sender" : ""} ${index === mine ? "is-mine" : ""}"><i></i></span>`).join("")}</div><div class="coordinate-legend"><span><i class="mine-dot"></i>${text(c().mine)}</span><span><i class="sender-dot"></i>${text(c().sender)}</span></div></div>`;
-}
-function reasonSection(thread) {
+function receipt() { return receiptCopy[interfaceLanguageCode] || receiptCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
+function task10a4Receipt() { return task10a4ReceiptCopy[interfaceLanguageCode] || task10a4ReceiptCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
+function reasonDetails(thread) {
   const reason = thread.connection_reason;
-  if (!reason) return "";
+  if (!reason) return { sender: "", summary: "", evidence: [] };
   const structured = reason.version === "greeting-coordinate-reason-v3" && reason.summary_key === "CURATED_RECORD_CONNECTION";
   const localized = reasonCopy();
   const sender = structured
     ? (reason.sender_visibility === "ANONYMOUS" ? "" : (reason.sender_visibility === "NAMED" && reason.sender_display_label ? reason.sender_display_label : localized.sender[reason.sender_context_code]))
     : reason.sender_context;
-  const summary = structured ? localized.summary : reason.summary;
+  const summary = task10a4Receipt().reasonSummary;
   const evidence = structured
     ? (reason.evidence_codes || []).slice(0, 2).map((item) => localized[item?.type]).filter(Boolean)
-    : (reason.evidence || []).slice(0, 2);
-  return `<section class="relay-reason"><span>${text(c().reason)}</span>${sender ? `<strong>${text(sender)}</strong>` : ""}<p>${text(summary || "")}</p>${coordinateGraphic(thread)}${evidence.map((item) => `<small>${text(item)}</small>`).join("")}</section>`;
+    : [];
+  return { sender, summary, evidence };
+}
+function senderContextSection(thread) {
+  const { sender } = reasonDetails(thread);
+  return sender ? `<section class="relay-sender-context"><span>${text(receipt().senderContext)}</span><strong>${text(sender)}</strong></section>` : "";
+}
+function reasonSection(thread) {
+  const { summary, evidence } = reasonDetails(thread);
+  if (!summary && !evidence.length) return "";
+  return `<section class="relay-reason"><span>${text(c().reason)}</span><p>${text(summary || "")}</p>${evidence.map((item) => `<small>${text(item)}</small>`).join("")}</section>`;
 }
 function messageCard(message) {
+  return `<article class="relay-letter"><div class="relay-envelope" aria-hidden="true"><i></i><b></b><span></span></div><p lang="${text(message.source_language || "")}">${text(message.body_original)}</p></article>`;
+}
+function messageLanguage(message) {
   const open = state.translations.has(message.id);
-  return `<article class="relay-letter"><div class="relay-envelope" aria-hidden="true"><i></i><b></b><span></span></div><span>${text(c().original)} · ${text(message.source_language || "")}</span><p lang="${text(message.source_language || "")}">${text(message.body_original)}</p>${message.translated_body ? `<button class="translation-toggle" type="button" data-translation-id="${text(message.id)}" aria-expanded="${open}">${text(open ? c().hideTranslation : c().translation)}</button>${open ? `<div class="relay-translation" lang="${text(message.translation_language || "")}"><span>${text(message.translation_language || "")}</span><p>${text(message.translated_body)}</p></div>` : ""}` : ""}</article>`;
+  return `<section class="relay-message-language"><span>${text(c().original)} · ${text(message.source_language || "")}</span>${message.translated_body ? `<button class="translation-toggle" type="button" data-translation-id="${text(message.id)}" aria-expanded="${open}">${text(open ? c().hideTranslation : c().translation)}</button>${open ? `<div class="relay-translation" lang="${text(message.translation_language || "")}"><span>${text(message.translation_language || "")}</span><p>${text(message.translated_body)}</p></div>` : ""}` : ""}</section>`;
 }
 function render() {
   if (state.loading) { root.innerHTML = `<main class="relay-layout"><p>${text(c().loading)}</p></main>`; return; }
@@ -117,11 +144,22 @@ function render() {
   const identityChoices = [["NAMED", compose().named], ["CONTEXTUAL", compose().contextual], ["ANONYMOUS", compose().anonymous]];
   const choiceButtons = (field, options) => `<div class="choice-list">${options.map(([value, label]) => `<button type="button" class="choice ${draft[field] === value ? "selected" : ""}" data-relay-choice="${text(field)}" data-relay-choice-value="${text(value)}" aria-pressed="${draft[field] === value}"><span aria-hidden="true">${draft[field] === value ? "✓" : ""}</span><strong>${text(label)}</strong></button>`).join("")}</div>`;
   const composeFlow = state.composeStep === "read"
-    ? `<section class="relay-reply relay-read-actions"><div class="relay-actions"><button class="secondary-button" data-relay-action="pass">${text(c().pass)}</button><button class="primary-button" data-relay-action="begin">${text(compose().begin)} <span aria-hidden="true">→</span></button></div><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></section>`
+    ? `<section class="relay-reply relay-read-actions"><div class="relay-actions relay-next-actions"><button class="secondary-button" data-relay-action="pass">${text(receipt().finishHere)}</button><button class="secondary-button" data-relay-action="begin">${text(compose().begin)} <span aria-hidden="true">→</span></button></div><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></section>`
     : state.composeStep === "write"
       ? `<section class="relay-reply"><h2>${text(next.title)}</h2><p>${text(next.help)}</p><textarea class="text-input" data-relay-message maxlength="1400" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<h3>${text(compose().translation)}</h3>${choiceButtons("translation_allowed", [["YES", compose().translationYes], ["NO", compose().translationNo]])}<div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
       : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(interfaceLanguageCode)}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(draft.translation_allowed === "YES" ? compose().translationYes : compose().translationNo)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
-  root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="relay-project-mark" aria-hidden="true">39+</div><div class="archive-label">${text(c().label)}</div><h1>${text(c().title)}</h1><p class="relay-lead">${text(c().lead)}</p>${reasonSection(thread)}<section class="relay-messages">${messages.map(messageCard).join("")}</section>${thread.can_reply ? composeFlow : ""}</section></main>`;
+  const firstMessage = messages[0] || null;
+  const laterMessages = messages.slice(1);
+  const receivedGreeting = firstMessage
+    ? `<section class="relay-messages relay-received-message">${messageCard(firstMessage)}</section>${senderContextSection(thread)}${messageLanguage(firstMessage)}`
+    : "";
+  const laterThread = laterMessages.length
+    ? `<section class="relay-messages relay-later-messages">${laterMessages.map((message) => `${messageCard(message)}${messageLanguage(message)}`).join("")}</section>`
+    : "";
+  const receivedHeading = firstMessage
+    ? `<h1>${text(task10a4Receipt().receivedTitle)}</h1><p class="relay-lead">${text(task10a4Receipt().receivedHelp)}</p>`
+    : `<h1>${text(c().title)}</h1><p class="relay-lead">${text(c().lead)}</p>`;
+  root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="relay-project-mark" aria-hidden="true">39+</div><div class="archive-label">${text(c().label)}</div>${receivedHeading}${receivedGreeting}${reasonSection(thread)}${laterThread}${thread.can_reply ? composeFlow : ""}</section></main>`;
 }
 async function request(payload) {
   if (!endpoint || !token) throw new Error("RELAY_NOT_CONFIGURED");

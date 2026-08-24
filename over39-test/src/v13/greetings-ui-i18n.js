@@ -59,11 +59,29 @@ const receiptFirstNotification = {
   ms: { arrivalMethod: "Terima notis apabila salam seterusnya tiba", emailPermissionYes: "E-mel ini boleh digunakan hanya untuk notis salam seterusnya", emailNeeded: "Selepas membaca salam, anda boleh memilih notis e-mel jika mahu." },
 };
 
+// Task 10A-4 restores a sentence-first greeting experience without changing
+// stored matching data. Internal coordinates and connection preferences stay
+// available to the existing contract, but are not the participant-facing
+// introduction or explanation.
+const task10a4UxCopy = {
+  ko: { introLabel: "안부의 좌표", lead: "서로 다른 참여 기록 사이에 한 문장의 안부를 남깁니다. 안부는 연구 응답과 별도로 선택해 이어집니다.", reasonScope: "두 기록에 실제로 함께 남은 현재의 흐름과 관계의 단서", shortlist: "동의한 기록에서 실제로 확인되는 맥락을 바탕으로 작은 후보군을 만들고 한 사람에게 전합니다." },
+  en: { introLabel: "COORDINATES OF GREETING", lead: "One-sentence greetings travel between different participation records. Joining this greeting flow is a separate choice from the research response.", reasonScope: "Clues about the present flow and relationships that actually appear in both records", shortlist: "A small candidate group is formed from context actually present in records that opted in, and the greeting is entrusted to one person." },
+  ja: { introLabel: "便りの座標", lead: "異なる参加記録のあいだに、一文の便りを残します。便りへの参加は研究回答とは別に選びます。", reasonScope: "二つの記録に実際に共通して残った現在の流れと関係の手がかり", shortlist: "参加に同意した記録で実際に確認できる文脈から小さな候補群をつくり、一人に届けます。" },
+  "zh-Hans": { introLabel: "问候坐标", lead: "在不同参与记录之间留下一句话的问候。是否参与问候，与研究回答分开选择。", reasonScope: "两份记录中实际共同出现的当下脉络与关系线索", shortlist: "根据已同意参与的记录中实际出现的语境形成小范围候选，并将问候交给其中一人。" },
+  "zh-Hant": { introLabel: "問候座標", lead: "在不同參與記錄之間留下一句話的問候。是否參與問候，與研究回覆分開選擇。", reasonScope: "兩份記錄中實際共同出現的當下脈絡與關係線索", shortlist: "根據已同意參與的記錄中實際出現的脈絡形成小範圍候選，並將問候交給其中一人。" },
+  fr: { introLabel: "COORDONNÉES DES SALUTATIONS", lead: "Une salutation d’une phrase circule entre différents récits de participation. Y prendre part est un choix distinct de la réponse de recherche.", reasonScope: "Les indices du mouvement présent et des relations réellement communs aux deux récits", shortlist: "Un petit groupe de possibilités est formé à partir du contexte réellement présent dans les récits consentants, puis la salutation est confiée à une personne." },
+  es: { introLabel: "COORDENADAS DE SALUDO", lead: "Un saludo de una frase circula entre distintos registros de participación. Participar en los saludos se elige por separado de la respuesta de investigación.", reasonScope: "Las pistas del curso actual y de las relaciones que aparecen realmente en ambos registros", shortlist: "Se forma un pequeño grupo de posibilidades a partir del contexto real de los registros que aceptaron participar, y el saludo se confía a una persona." },
+  nl: { introLabel: "GROETCOÖRDINATEN", lead: "Een groet van één zin reist tussen verschillende deelnamerecords. Meedoen aan de groeten is een aparte keuze naast de onderzoeksreactie.", reasonScope: "Aanwijzingen over de huidige beweging en relaties die werkelijk in beide records staan", shortlist: "Uit de werkelijk aanwezige context in records die instemden wordt een kleine groep gevormd, waarna de groet aan één persoon wordt toevertrouwd." },
+  ms: { introLabel: "KOORDINAT SALAM", lead: "Salam satu ayat bergerak antara rekod penyertaan yang berbeza. Penyertaan dalam salam dipilih secara berasingan daripada respons penyelidikan.", reasonScope: "Petunjuk tentang aliran semasa dan hubungan yang benar-benar hadir dalam kedua-dua rekod", shortlist: "Kumpulan calon kecil dibentuk daripada konteks sebenar dalam rekod yang bersetuju, kemudian salam diamanahkan kepada seorang." },
+};
+
 export function greetingUiCopy(language = "ko") {
   const selected = copy[language] || copy.en;
+  const task10a4 = task10a4UxCopy[language] || task10a4UxCopy.en;
   return {
     ...selected,
     ...(receiptFirstNotification[language] || receiptFirstNotification.en),
-    travel: [...selected.travel.slice(0, -1), receiptFirstTravel[language] || receiptFirstTravel.en],
+    ...task10a4,
+    travel: [selected.travel[0], selected.travel[1], task10a4.shortlist, receiptFirstTravel[language] || receiptFirstTravel.en],
   };
 }

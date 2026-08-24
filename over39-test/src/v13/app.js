@@ -500,6 +500,7 @@ function saveDraft() {
     localStorage.setItem(draftKey, JSON.stringify({
       answers: state.answers,
       step: state.step,
+      contextStep: Number(state.contextStep || 0),
       screenId: activeScreens()[state.step] || null,
       releaseVersion,
       language: state.language,
@@ -987,7 +988,7 @@ function renderRoleBridge() {
   return `${screenHeading(local.roleBridgeTitle, local.roleBridgeHelp)}
     <section class="participant-context-section"><label class="field-label">${esc(groupQuestion.text)}</label>${renderChoices("P02G", groupQuestion.options)}</section>
     ${group ? `<section class="participant-context-section"><label class="field-label">${esc(primaryQuestion.text)}</label>${renderChoices("P02", primaryOptions)}${renderOtherInput("P02", local.roleBridgePrimaryOther)}</section>` : ""}
-    ${state.answers.role_primary ? `<section class="participant-context-section participant-context-optional"><label class="field-label">${esc(parallelQuestion.text)} <small>${esc(local.optional)}</small></label>${renderChoices("P03", [...otherRoles, ["NON_ARTS", t("문화예술 외 역할")], ["NONE", t("없음")], ["OTHER", t("기타")]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", local.roleBridgeParallelOther)}</section>` : ""}`;
+    ${state.answers.role_primary ? `<details class="participant-context-section participant-context-optional role-bridge-optional" ${values(state.answers.roles_parallel).length ? "open" : ""}><summary><span>${esc(parallelQuestion.text)}</span><small>${esc(local.optional)}</small></summary><div class="role-bridge-optional-body">${renderChoices("P03", [...otherRoles, ["NON_ARTS", t("문화예술 외 역할")], ["NONE", t("없음")], ["OTHER", t("기타")]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", local.roleBridgeParallelOther)}</div></details>` : ""}`;
 }
 
 const CONTEXT_OPTION_GROUPS = {
@@ -1010,8 +1011,8 @@ function renderGroupedContextChoices(id, options, groupKey, { multi = false, max
   const selected = new Set(values(answerFor(id)));
   const groups = CONTEXT_OPTION_GROUPS[groupKey].map((codes, index) => {
     const groupOptions = options.filter(([code]) => codes.includes(code));
-    const open = index === 0 || groupOptions.some(([code]) => selected.has(code));
-    return `<details class="context-choice-group" ${open ? "open" : ""}><summary><span>${esc(labels[index])}</span><small>${esc(stage().addAnother)}</small></summary>${renderChoices(id, groupOptions, { multi, max })}</details>`;
+    const open = groupOptions.some(([code]) => selected.has(code));
+    return `<details class="context-choice-group" ${open ? "open" : ""}><summary><span>${esc(labels[index])}</span>${open ? `<small>${esc(stage().addAnother)}</small>` : ""}</summary>${renderChoices(id, groupOptions, { multi, max })}</details>`;
   }).join("");
   return `<p class="context-selection-help">${esc(stage().oneOrMore)}</p><div class="context-choice-groups">${groups}</div>`;
 }
@@ -1024,11 +1025,14 @@ function renderParticipantContext() {
   const copy = participantContextCopy(state.language);
   const options = participantContextOptions(state.language);
   const local = stage();
-  return `${screenHeading(local.contextTitle, local.contextHelp)}
-    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
-    <section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>
-    <section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section>
-    <section class="participant-context-section participant-context-optional"><label class="field-label">${esc(copy.unit || unit.text)} <small>${esc(local.optional)}</small></label>${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</section>`;
+  const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
+  const titles = task7().contextSteps;
+  const sections = [
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>`,
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>`,
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section><details class="participant-context-section participant-context-optional context-unit-optional" ${state.answers.participation_unit ? "open" : ""}><summary><span>${esc(copy.unit || unit.text)}</span><small>${esc(local.optional)}</small></summary><div class="context-unit-optional-body">${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</div></details>`,
+  ];
+  return `<div class="context-internal-progress" aria-label="Context ${step + 1} / 3"><span>CONTEXT ${step + 1} / 3</span><ol aria-hidden="true">${[0, 1, 2].map((index) => `<li class="${index === step ? "current" : index < step ? "complete" : ""}">${index + 1}</li>`).join("")}</ol></div>${screenHeading(titles[step], local.contextHelp)}${sections[step]}`;
 }
 
 function renderActivity() {
@@ -1813,6 +1817,19 @@ function canContinue(id) {
   return true;
 }
 
+function canContinueContextStep(step = Number(state.contextStep || 0)) {
+  if (step === 0) {
+    const field = values(state.answers.field);
+    return field.length > 0 && (!field.includes("OTHER") || Boolean(String(state.answers.field_other || "").trim()));
+  }
+  if (step === 1) {
+    const mode = values(state.answers.participation_mode);
+    return mode.length > 0 && (!mode.includes("OTHER") || Boolean(String(state.answers.participation_mode_other || "").trim()));
+  }
+  return Boolean(state.answers.activity_form)
+    && (state.answers.participation_unit !== "OTHER" || Boolean(String(state.answers.participation_unit_other || "").trim()));
+}
+
 function createResponse(submissionPhase = "final") {
   const responseId = state.responseId || `V13-${crypto.randomUUID()}`;
   const participantReference = submissionPhase === "final" ? ensureParticipantReference(responseId) : null;
@@ -2154,9 +2171,10 @@ function connectionCanSave() {
   if (connection.opt_in !== "YES") return true;
   const hasOutgoingMessage = Boolean(String(connection.message_text || connection.introduction || "").trim());
   if ((connection.stage || "receive") === "receive") {
-    return connection.receive_opt_in === "YES"
-      && Boolean(connection.greeting_connection_preference)
-      && ["YES", "NO"].includes(connection.translation_allowed);
+    // Receiving the first greeting needs only an explicit receive choice.
+    // Direction and translation are choices for the later outgoing sentence,
+    // never prerequisites for seeing an already available greeting.
+    return connection.receive_opt_in === "YES";
   }
   if (connection.stage !== "preview") return false;
   return hasOutgoingMessage
@@ -2241,34 +2259,21 @@ function renderConnection() {
 function renderGlobalGreetingsConnection(connection) {
   const copy = greetingUiCopy(state.language);
   const local = task7();
-  const directionOptions = [
-    ["SIMILAR_CONDITIONS", copy.directions[0]],
-    ["ROLE_BRIDGE", copy.directions[1]],
-    ["CONTINUING_OR_RESTARTING", copy.directions[2]],
-    ["ACROSS_REGION_LANGUAGE", copy.directions[3]],
-  ];
-  const audienceOptions = [
-    ["SIMILAR_TIME", copy.audiences[0]],
-    ["CONTINUING", copy.audiences[1]],
-    ["DIFFERENT_ROLE", copy.audiences[2]],
-    ["ACROSS_PLACE", copy.audiences[3]],
-    ["OPEN", copy.audiences[4]],
-  ];
   const messageValue = connection.message_text || connection.introduction || "";
   const visibilityOptions = greetingVisibilityCopy(state.language);
   const currentStage = connection.stage || "receive";
   const hasMessage = Boolean(String(messageValue).trim());
   const steps = [["message", copy.steps[1]], ["preview", copy.steps[2]]];
   const stepNav = `<ol class="greeting-stage-nav" aria-label="${esc(copy.stageLabel)}">${steps.map(([id, label], index) => `<li class="${id === currentStage ? "current" : (steps.findIndex(([key]) => key === currentStage) > index ? "complete" : "")}"><span>${index + 1}</span>${esc(label)}</li>`).join("")}</ol>`;
-  const receiveSection = `<section class="connection-section receipt-first-choice"><h2>${esc(local.greetingOptInTitle)}</h2><p>${esc(local.greetingOptInHelp)}</p>${renderConnectionChoices("opt_in", [["YES", local.greetingOptInYes], ["NO", local.greetingOptInNo]])}${connection.opt_in === "YES" ? `<div class="receive-profile"><h3>${esc(copy.directionTitle)}</h3><p>${esc(copy.nonResearch)}</p>${renderConnectionChoices("greeting_connection_preference", directionOptions)}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</div>` : ""}</section>`;
+  const receiveSection = `<section class="connection-section receipt-first-choice" role="status"><h2>${esc(local.receiveProfileTitle)}</h2><p>${esc(local.receiveProfileHelp)}</p></section>`;
   const waitingSection = `<section class="connection-section greeting-waiting" role="status"><h2>${esc(local.waitingTitle)}</h2><p>${esc(local.waitingHelp)}</p><button class="primary-button" type="button" data-action="first-greeting">${esc(local.firstGreeting)} <span aria-hidden="true">→</span></button></section>`;
-  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p>${esc(local.nextSentenceHelp)}</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}</section>`;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p>${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
   const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(local.previewTitle)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(state.submitted?.source_language || state.language)}</span><p>${esc(messageValue || copy.noMessage)}</p></div><dl><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(state.submitted?.source_language || state.language)}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div><div><dt>${esc(copy.reason)}</dt><dd>${esc(copy.reasonScope)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p>${hasMessage ? `<label class="final-check"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
   const stageContent = currentStage === "receive" ? receiveSection : currentStage === "waiting" ? waitingSection : currentStage === "message" ? messageSection : previewSection;
   const writingFlow = ["message", "preview"].includes(currentStage);
-  const primaryAction = currentStage === "waiting" || currentStage === "message" ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(currentStage === "receive" && connection.opt_in === "YES" ? local.receivePrepare : currentStage === "receive" ? local.greetingOptInNo : copy.save)} <span aria-hidden="true">→</span></button>`;
+  const primaryAction = ["receive", "waiting", "message"].includes(currentStage) ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button>`;
   return `<main class="connection-layout rc2-connection-layout greeting-connection">
     <section class="connection-main">
       <div class="greeting-intro"><div class="greeting-object greeting-object-small" aria-hidden="true"><i></i><b></b><span></span></div><div>
@@ -2278,7 +2283,7 @@ function renderGlobalGreetingsConnection(connection) {
         <p class="greeting-privacy-note">${esc(copy.privacy)}</p>
       </div></div>
       ${writingFlow ? stepNav : ""}${stageContent}
-      ${currentStage === "message" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="waiting">${esc(copy.previous)}</button><button class="primary-button" type="button" data-connection-stage="preview" ${!hasMessage || !connection.message_audience || !connection.sender_visibility ? "disabled" : ""}>${esc(local.previewAction)} <span aria-hidden="true">→</span></button></div>` : currentStage === "preview" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="message">${esc(copy.previous)}</button></div>` : ""}
+      ${currentStage === "message" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="waiting">${esc(copy.previous)}</button><button class="primary-button" type="button" data-connection-stage="preview" ${!hasMessage || !connection.message_audience || !connection.sender_visibility || !["YES", "NO"].includes(connection.translation_allowed) ? "disabled" : ""}>${esc(local.previewAction)} <span aria-hidden="true">→</span></button></div>` : currentStage === "preview" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="message">${esc(copy.previous)}</button></div>` : ""}
       <section class="connection-section connection-safety"><h2>${esc(copy.travelTitle)}</h2><ol class="message-route">${copy.travel.map((line, index) => `<li><b>${index + 1}</b><span>${esc(line)}</span></li>`).join("")}</ol><p>${esc(copy.privacy)}</p></section>
       <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button>${primaryAction}</div>
     </section>
@@ -2357,15 +2362,16 @@ function renderRc2Complete(response) {
   const audienceLead = isAudienceContext()
     ? copy.audienceLead
     : copy.otherLead;
-  const greetingSystemCopy = globalGreetingsEnabled
-    ? task7Local.greetingOptInHelp
-    : task7Local.gateOff;
-  const greetingAction = globalGreetingsEnabled
-    ? `<button class="primary-button" type="button" data-action="connection">${esc(copy.greetingAction)} <span aria-hidden="true">→</span></button>`
-    : `<p class="feature-closed-status" role="status">${esc(copy.greetingClosed)}</p>`;
+  const connection = getConnection();
+  const greetingChoiceSaved = ["confirmed", "local_only", "unverified", "failed"].includes(state.connectionStatus);
+  const greetingChoice = globalGreetingsEnabled
+    ? greetingChoiceSaved
+      ? `<div class="greeting-choice-complete" role="status"><h2>${esc(connection.opt_in === "YES" ? task7Local.receiveProfileTitle : task7Local.greetingOptInNo)}</h2><p>${esc(connection.opt_in === "YES" ? task7Local.receiveProfileHelp : task7Local.greetingOptInHelp)}</p></div>`
+      : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p>${esc(task7Local.greetingOptInHelp)}</p><div class="greeting-opt-in-options">${renderConnectionChoices("opt_in", [["YES", task7Local.greetingOptInYes], ["NO", task7Local.greetingOptInNo]])}</div><div class="greeting-opt-in-action"><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() && state.connectionStatus !== "sending" ? "" : "disabled"}>${esc(connection.opt_in === "YES" ? task7Local.receivePrepare : connection.opt_in === "NO" ? task7Local.greetingOptInNo : task7Local.greetingStartAction)} <span aria-hidden="true">→</span></button></div>`
+    : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p>${esc(task7Local.gateOff)}</p><p class="feature-closed-status" role="status">${esc(copy.greetingClosed)}</p>`;
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(task7Local.completionLead)} ${esc(task7Local.completionNext)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div><section class="rc2-greeting-hub"><div class="greeting-object" aria-hidden="true"><i></i><b></b><span></span></div><div class="greeting-hub-copy"><div class="archive-label">${esc(copy.greetingBrand)}</div><h2>${esc(task7Local.greetingOptInTitle)}</h2><p>${esc(greetingSystemCopy)}</p><p class="greeting-coordinate-explainer">${esc(copy.greetingReason)}</p><div class="export-actions">${greetingAction}</div></div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid">${openCallSection}<div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(task7Local.completionLead)} ${esc(task7Local.completionNext)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div><section class="rc2-greeting-hub"><div class="greeting-object" aria-hidden="true"><i></i><b></b><span></span></div><div class="greeting-hub-copy"><div class="archive-label">${esc(copy.greetingBrand)}</div>${greetingChoice}</div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid">${openCallSection}<div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
@@ -2450,6 +2456,7 @@ function renderSurvey() {
   const id = screens[state.step];
   const meta = progressMeta(id);
   const adaptiveScreen = Boolean(adaptiveScreenCheckpoint[id]);
+  const contextInternalStep = id === "PARTICIPANT_CONTEXT" ? Math.max(0, Math.min(2, Number(state.contextStep || 0))) : null;
   const nextLabel = id === "USE_SCOPE"
     ? task7().useScopeSave
     : id === "SUBMIT"
@@ -2459,8 +2466,10 @@ function renderSurvey() {
       : adaptiveScreen
         ? state.adaptiveGenerating ? "답변을 읽고 있어요" : "이 답변에서 이어가기"
         : state.depthGenerating ? "질문을 준비하고 있습니다" : id === "DEPTH_D" && state.summaryGenerating ? "정리하고 있습니다" : state.summaryGenerating ? "기록을 정리하고 있습니다" : state.translationGenerating ? "번역을 준비하고 있습니다" : "다음";
-  const nextDisabled = !canContinue(id) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
-  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="back" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button><span></span><button class="primary-button" type="button" data-action="next" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
+  const nextDisabled = (contextInternalStep === null ? !canContinue(id) : !canContinueContextStep(contextInternalStep)) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
+  const backAction = contextInternalStep !== null && contextInternalStep > 0 ? "context-back" : "back";
+  const nextAction = contextInternalStep !== null && contextInternalStep < 2 ? "context-next" : "next";
+  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button><span></span><button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function researchJourney() {
@@ -2508,7 +2517,7 @@ function renderIntro() {
             <div class="route-object route-logo route-logo-led" aria-hidden="true"><span class="route-logo-shadow">${ledWordmark({ className: "route-led-wordmark", decorative: true, fill: "#777873" })}</span><span class="route-logo-body">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</span></div><span>RESEARCH</span>
             <h2>${esc(t("문화예술 경험 기록"))}</h2>
             <p>${esc(t("작가·창작자·비평가·기획자·교육자·관객·시민의 경험을 기억·현재·조건의 세 구간을 따라 듣습니다."))}</p>
-            <div class="entry-route-meta">${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건 · 참여 기록"))}</div>
+            <div class="entry-route-meta">${esc(task7().entryFlow)}</div>
             <div class="entry-route-actions"><button class="primary-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button>${draft ? `<button class="secondary-button" type="button" data-action="resume">${esc(t("작성 이어가기"))}</button>` : ""}</div>
           </article>
         </section>
@@ -2790,7 +2799,7 @@ document.addEventListener("click", (event) => {
       const mappedStep = draft.screenId && screens.includes(draft.screenId)
         ? screens.indexOf(draft.screenId)
         : Math.min(Number(draft.step || 0), Math.max(0, screens.length - 1));
-      state = { phase: "survey", step: mappedStep, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: draft.language || state.language, feedback: draft.feedback || {}, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
+      state = { phase: "survey", step: mappedStep, contextStep: Number(draft.contextStep || 0), answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: draft.language || state.language, feedback: draft.feedback || {}, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
     }
     render(true);
     return;
@@ -2860,6 +2869,7 @@ document.addEventListener("click", (event) => {
   if (target.dataset.action === "first-greeting") {
     const connection = getConnection();
     connection.stage = "message";
+    connection.message_audience = connection.message_audience || "OPEN";
     connection.preview_confirmed = false;
     saveConnection();
     render(true);
@@ -2969,6 +2979,20 @@ document.addEventListener("click", (event) => {
       state.phase = "complete";
       render(true);
     });
+    return;
+  }
+  if (target.dataset.action === "context-back") {
+    state.contextStep = Math.max(0, Number(state.contextStep || 0) - 1);
+    saveDraft();
+    render(true);
+    return;
+  }
+  if (target.dataset.action === "context-next") {
+    const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
+    if (!canContinueContextStep(step)) return;
+    state.contextStep = Math.min(2, step + 1);
+    saveDraft();
+    render(true);
     return;
   }
   if (target.dataset.action === "back") { state.step = Math.max(0, state.step - 1); saveDraft(); render(!isRc2); return; }
@@ -3224,8 +3248,9 @@ document.addEventListener("input", (event) => {
   else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
   if (isRc2 && ["participant_revision", "display_name"].includes(field)) clearDocumentConfirmation();
   saveDraft();
-  const nextButton = document.querySelector("button.primary-button[data-action='next']");
-  if (nextButton) nextButton.disabled = !canContinue(activeScreens()[state.step]);
+  const activeId = activeScreens()[state.step];
+  const nextButton = document.querySelector("button.primary-button[data-action='next'], button.primary-button[data-action='context-next']");
+  if (nextButton) nextButton.disabled = activeId === "PARTICIPANT_CONTEXT" ? !canContinueContextStep() : !canContinue(activeId);
 });
 
 document.addEventListener("change", (event) => {

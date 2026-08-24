@@ -1399,7 +1399,7 @@ h2:focus {
 
 .greeting-stage-nav {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 20px 0;
   padding: 0;
@@ -3783,6 +3783,7 @@ h2:focus {
 .research-contact-section .text-input-single { margin-top: 10px; }
 .research-contact-section .final-check { margin-top: 14px; }
 .receipt-first-choice .receive-profile { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+.receipt-first-choice .receive-profile p { max-width: 560px; margin-bottom: 0; }
 .greeting-waiting { text-align: center; }
 .greeting-waiting .primary-button { margin-top: 18px; }
 .completion-secondary { margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--line); }
@@ -3793,6 +3794,12 @@ h2:focus {
 .relay-preview dl > div { display: grid; grid-template-columns: minmax(120px, .45fr) minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .relay-preview dt { color: var(--muted); }
 .relay-preview dd { margin: 0; }
+.relay-sender-context { margin-top: 20px; padding: 14px 16px; border-left: 2px solid var(--line-dark); background: var(--surface-soft); }
+.relay-sender-context span, .relay-message-language > span { display: block; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.relay-sender-context strong { display: block; margin-top: 7px; font-size: 15px; line-height: 1.6; }
+.relay-message-language { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.relay-message-language .translation-toggle { margin-top: 10px; }
+.relay-next-actions .secondary-button { flex: 1; }
 
 @media (max-width: 640px) {
   .record-layer { padding: 18px; }
@@ -4937,6 +4944,90 @@ body,
 @media print {
   .participant-reference-card { break-inside: avoid; }
   .response-document-header { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Task 10A-4 · restore the locked context and greeting hierarchy. */
+.context-internal-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 24px 0 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.context-internal-progress > span {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .06em;
+}
+.context-internal-progress ol {
+  display: flex;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.context-internal-progress li {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line-dark);
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 10px;
+}
+.context-internal-progress li.current { border-color: var(--ink); background: var(--ink); color: #fff; }
+.context-internal-progress li.complete { border-color: var(--ink); color: var(--ink); }
+.context-unit-optional,
+.role-bridge-optional { margin-top: 24px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.context-unit-optional > summary,
+.role-bridge-optional > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 58px;
+  cursor: pointer;
+  list-style: none;
+}
+.context-unit-optional > summary::-webkit-details-marker,
+.role-bridge-optional > summary::-webkit-details-marker { display: none; }
+.context-unit-optional > summary span,
+.role-bridge-optional > summary span { font-weight: 730; line-height: 1.45; }
+.context-unit-optional > summary small,
+.role-bridge-optional > summary small { color: var(--muted); font-size: 12px; }
+.context-unit-optional-body,
+.role-bridge-optional-body { padding: 4px 0 18px; }
+
+.greeting-opt-in-options .connection-choice-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+.greeting-opt-in-options .choice { height: 100%; min-height: 82px; }
+.greeting-opt-in-action { display: flex; justify-content: flex-end; margin-top: 18px; }
+.greeting-choice-complete h2 { margin-bottom: 12px; }
+.message-first > .text-input { margin: 20px 0 28px; }
+.message-first > h3 { margin-top: 26px; }
+.relay-received-message { margin-top: 30px; }
+.relay-received-message .relay-letter p { font-size: clamp(19px, 2.5vw, 24px); line-height: 1.9; }
+.relay-next-actions > button { flex: 1 1 0; min-height: 52px; }
+
+@media (max-width: 640px) {
+  .context-internal-progress { margin-top: 18px; }
+  .context-choice-group summary,
+  .context-unit-optional > summary,
+  .role-bridge-optional > summary { min-width: 0; }
+  .context-choice-group summary span,
+  .context-unit-optional > summary span,
+  .role-bridge-optional > summary span { overflow-wrap: anywhere; }
+  .greeting-opt-in-options .connection-choice-list { grid-template-columns: 1fr; }
+  .greeting-opt-in-action { justify-content: stretch; }
+  .greeting-opt-in-action .primary-button { width: 100%; }
+  .relay-next-actions { grid-template-columns: 1fr; }
 }
 
 
