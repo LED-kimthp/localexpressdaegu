@@ -1,4 +1,8 @@
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
+export const ADAPTIVE_POLICY_VERSION = "adaptive-v2-2026-08-17";
+export const ACTIVE_ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "D02_TEXT"];
+export const MAX_TOTAL_AI_FOLLOWUPS = 2;
+export const MAX_AI_FOLLOWUPS_PER_AXIS = 1;
 
 // The original five anchors remain the strict, comparable Motif pilot set.
 // These two are separately recorded, optional follow-ups introduced from pilot
@@ -43,7 +47,7 @@ export const ANCHOR_AXES = {
 
 export const ANCHOR_CONTEXT_DEPENDENCIES = {
   M04_TEXT: ["M04_TEXT", "M02"],
-  P12: ["P12", "P11", "P18"],
+  P12: ["P12", "P11"],
   P13_TEXT: ["P13_TEXT", "P13", "P12"],
   P19_TEXT: ["P19_TEXT", "P19", "P13_TEXT"],
   D02_TEXT: ["D02_TEXT", "D02", "P19_TEXT"],
@@ -137,6 +141,55 @@ export function shouldAskNoRecallRelationFollowup(answers = {}) {
   return answers?.route === "AUDIENCE"
     && answers?.memory_type === "NO_RECALL"
     && !isLowInformationText(anchorSourceText(answers, "NO_RECALL_RELATION"));
+}
+
+const ADJACENT_EVIDENCE_FIELDS = {
+  M04_TEXT: ["memory_clue_text", "memory_branch_followup"],
+  P12: ["invisible_continuity_text", "pause_context_text"],
+  P13_TEXT: ["transition_text", "pause_context_text"],
+  D02_TEXT: ["d_context_evidence_text", "support_conditions_text"],
+};
+
+function evidenceTokens(value) {
+  return new Set(normalizedAnchorText(value).toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((token) => token.length >= 2));
+}
+
+export function hasRedundantAdjacentEvidence(anchorId, answers = {}) {
+  const source = evidenceTokens(anchorSourceText(answers, anchorId));
+  if (source.size < 5) return false;
+  for (const field of ADJACENT_EVIDENCE_FIELDS[anchorId] || []) {
+    const adjacent = evidenceTokens(answers?.[field]);
+    if (adjacent.size < 5) continue;
+    let overlap = 0;
+    source.forEach((token) => { if (adjacent.has(token)) overlap += 1; });
+    if (overlap / Math.min(source.size, adjacent.size) >= 0.72) return true;
+  }
+  return false;
+}
+
+export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
+  const id = String(anchorId || "");
+  const axis = ANCHOR_AXES[id] || null;
+  const base = { anchor_id: id, axis, adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
+  if (!ACTIVE_ANCHOR_ORDER.includes(id)) return { ...base, decision: "SKIP", reason: "not_active_in_policy" };
+  const source = anchorSourceText(answers, id);
+  const low = lowInformationReason(source);
+  if (low) return { ...base, decision: "SKIP", reason: "low_information:" + low };
+  if (id === "M04_TEXT" && (answers.memory_type === "NO_RECALL" || ["UNSURE"].includes(answers.m_declared))) return { ...base, decision: "SKIP", reason: "memory_uncertain_or_no_recall" };
+  if (id === "P12" && !["CLEAR", "GRADUAL", "MULTIPLE"].includes(answers.transition_state)) return { ...base, decision: "SKIP", reason: "no_substantive_transition" };
+  if (id === "P13_TEXT" && !["YES", "MIXED"].includes(answers.invisible_continuity_state)) return { ...base, decision: "SKIP", reason: "continuity_not_open" };
+  if (id === "D02_TEXT" && !/^D[1-4]$/.test(String(answers.d_desired_change_primary || ""))) return { ...base, decision: "SKIP", reason: "no_substantive_desired_change" };
+  if (hasRedundantAdjacentEvidence(id, answers)) return { ...base, decision: "SKIP", reason: "already_covered_by_adjacent_response" };
+
+  const validAskRuns = (runs || []).filter((run) => run?.operation === "anchor_followup" && run?.need_decision === "ASK" && !run?.invalidated_at);
+  if (validAskRuns.length >= MAX_TOTAL_AI_FOLLOWUPS) return { ...base, decision: "SKIP", reason: "survey_ai_cap_reached" };
+  if (axis && validAskRuns.some((run) => (run.axis || ANCHOR_AXES[run.anchor_id || run.checkpoint]) === axis)) return { ...base, decision: "SKIP", reason: "axis_ai_cap_reached" };
+
+  const normalized = normalizedAnchorText(source);
+  // A sufficiently developed answer is respected as complete. This is a conservative
+  // pilot heuristic, not a psychometric score; human pilot evidence can tune it later.
+  if (normalized.length >= 140) return { ...base, decision: "SKIP", reason: "source_sufficient" };
+  return { ...base, decision: "ASK", reason: "meaningful_but_brief" };
 }
 
 export function anchorSourceText(answers = {}, anchorId) {
@@ -587,7 +640,9 @@ export function reconcileAnchorTurnsAfterQuestionEdit({
   return {
     removed: [...removed],
     turns: turns.filter((item) => !removed.has(item?.checkpoint || item?.anchor_id)),
-    runs: runs.filter((item) => !removed.has(item?.checkpoint || item?.anchor_id)),
+    runs: runs.map((item) => removed.has(item?.checkpoint || item?.anchor_id)
+      ? { ...item, status: "invalidated", invalidated_at: item.invalidated_at || new Date().toISOString() }
+      : item),
     statuses: Object.fromEntries(Object.entries(statuses || {}).filter(([key]) => !removed.has(key))),
   };
 }
@@ -603,7 +658,7 @@ export function isStrictRealMotifPass(run, domMatch = run?.dom_match) {
 }
 
 export function aggregateAnchorSource(runs = []) {
-  const real = runs.filter((run) => run?.operation === "anchor_followup" && ["motif", "fallback"].includes(run?.source));
+  const real = runs.filter((run) => run?.operation === "anchor_followup" && !run?.invalidated_at && ["motif", "fallback"].includes(run?.source));
   if (!real.length) return runs.some((run) => run?.source === "skipped_low_information") ? "skipped_low_information" : null;
   const sources = new Set(real.map((run) => run.source));
   if (sources.size === 1) return [...sources][0];

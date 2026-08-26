@@ -182,14 +182,17 @@ export function snapshotCoordinate({ stage, mPrimary, sPrimary, dPrimary, source
 
 export function buildCoordinateSnapshots(answers = {}) {
   const scope = deriveCoordinateScope(answers);
+  const mBlocked = answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE", "UNKNOWN", "SKIP"].includes(answers.m_declared);
+  const dBlocked = ["NO_MAJOR_GAP", "NO_SPECIFIC_CHANGE", "UNSURE", "UNKNOWN", "SKIP"].includes(answers.d_current_gap)
+    || ["NO_SPECIFIC_CHANGE", "UNSURE", "UNKNOWN", "SKIP"].includes(answers.d_desired_change_primary);
   const subject = coordinateSubject(scope);
   const sContextTags = deriveSContextTags(answers);
   const fixedS = deriveProvisionalS(answers);
   const fixed = snapshotCoordinate({
     stage: "fixed",
-    mPrimary: answers.m_declared,
+    mPrimary: mBlocked ? null : answers.m_declared,
     sPrimary: fixedS.primary,
-    dPrimary: answers.d_desired_change_primary,
+    dPrimary: dBlocked ? null : answers.d_desired_change_primary,
     source: "fixed_answers",
     scope,
     subject,
@@ -199,9 +202,9 @@ export function buildCoordinateSnapshots(answers = {}) {
 
   const depth = snapshotCoordinate({
     stage: "depth",
-    mPrimary: answers.depth_m || answers.m_declared,
+    mPrimary: mBlocked ? null : (answers.depth_m || answers.m_declared),
     sPrimary: answers.depth_s || fixedS.primary,
-    dPrimary: answers.depth_d || answers.d_desired_change_primary,
+    dPrimary: dBlocked ? null : (answers.depth_d || answers.d_desired_change_primary),
     source: answers.depth_source || "approved_question_bank",
     scope,
     subject,
@@ -213,9 +216,9 @@ export function buildCoordinateSnapshots(answers = {}) {
   if (answers.reflection_action === "ACCEPT" || answers.reflection_action === "EDIT") {
     participantFinal = snapshotCoordinate({
       stage: "participant_final",
-      mPrimary: depth.m_primary,
+      mPrimary: mBlocked ? null : depth.m_primary,
       sPrimary: depth.s_primary,
-      dPrimary: depth.d_primary,
+      dPrimary: dBlocked ? null : depth.d_primary,
       source: answers.reflection_action === "EDIT" ? "participant_revision" : "participant_confirmation",
       scope,
       subject,

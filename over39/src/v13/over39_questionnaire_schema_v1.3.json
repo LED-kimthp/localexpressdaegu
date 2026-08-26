@@ -1,7 +1,7 @@
 {
-  "schema_version": "over39-schema-1.4.4-cultural-arts-context-preproduction",
-  "questionnaire_version": "1.4.4-rc2-cultural-arts-context-preproduction",
-  "content_revision": "2026-08-13-v0.4.4-context",
+  "schema_version": "over39-schema-1.4.5-msd-ai-policy-preproduction",
+  "questionnaire_version": "1.4.5-rc2-msd-ai-policy-preproduction",
+  "content_revision": "2026-08-17-task5-msd-ai-policy-v1",
   "status": "implementation_draft_not_public_release",
   "previous_versions": [
     "v0.9",
@@ -656,6 +656,14 @@
         [
           "M4",
           "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다."
+        ],
+        [
+          "MIXED",
+          "여러 이유가 함께 있음"
+        ],
+        [
+          "UNSURE",
+          "아직 한 가지 이유로 정하기 어려움"
         ]
       ],
       "store": [
@@ -1289,7 +1297,7 @@
       "id": "P16",
       "module": "PRESENT",
       "type": "multi",
-      "required": false,
+      "required": true,
       "max_select": 5,
       "help": "생활과 역할, 비용과 공간, 관계와 지역처럼 지금의 방식을 바꾸고 있는 현실을 골라주세요.",
       "store": [
@@ -1346,6 +1354,14 @@
         [
           "OTHER",
           "기타"
+        ],
+        [
+          "NONE",
+          "현재 특별히 영향을 주는 조건이 없음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ],
       "options_audience": [
@@ -1392,6 +1408,14 @@
         [
           "OTHER",
           "기타"
+        ],
+        [
+          "NONE",
+          "현재 특별히 영향을 주는 조건이 없음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ]
     },
@@ -1710,7 +1734,8 @@
         "support_conditions_text"
       ],
       "text_audience": "그 조건이 실제로 작동한 장면을 들려주세요.",
-      "help_audience": "누구와 함께했는지, 무엇을 보고 다시 찾았는지, 어떤 정보가 도움이 되었는지 적어주세요."
+      "help_audience": "누구와 함께했는지, 무엇을 보고 다시 찾았는지, 어떤 정보가 도움이 되었는지 적어주세요.",
+      "notes": "RC2 fixed optional narrative; adaptive-v2 does not attach an AI follow-up."
     },
     {
       "id": "D01",
@@ -1773,7 +1798,7 @@
         "d_context_evidence_text",
         "d_context_evidence_audio_ref"
       ],
-      "notes": "D01과 D02의 선택값을 자동으로 바꾸지 않는 해석 근거입니다."
+      "notes": "D01과 D02의 선택값을 자동으로 바꾸지 않는 해석 근거입니다. RC2 adaptive-v2 standard flow: AI follow-up disabled."
     },
     {
       "id": "R01",
@@ -2114,7 +2139,10 @@
       "required": true,
       "text": "어떤 문화예술 분야와 가장 가까운가요?",
       "options_ref": "participant_context.field",
-      "store": ["field", "field_other"],
+      "store": [
+        "field",
+        "field_other"
+      ],
       "compatibility": "additive; preserves role_primary as legacy_role"
     },
     {
@@ -2124,7 +2152,10 @@
       "required": true,
       "text": "그 분야와 현재 어떤 방식으로 관계하고 있나요?",
       "options_ref": "participant_context.participation_mode",
-      "store": ["participation_mode", "participation_mode_other"],
+      "store": [
+        "participation_mode",
+        "participation_mode_other"
+      ],
       "compatibility": "additive; does not replace route or role"
     },
     {
@@ -2134,7 +2165,9 @@
       "required": true,
       "text": "현재 이 활동은 생활 안에서 어떤 형태로 이어지고 있나요?",
       "options_ref": "participant_context.activity_form",
-      "store": ["activity_form"]
+      "store": [
+        "activity_form"
+      ]
     },
     {
       "id": "CTX_UNIT",
@@ -2143,7 +2176,10 @@
       "required": true,
       "text": "이번 답변은 누구의 경험을 중심으로 하나요?",
       "options_ref": "participant_context.participation_unit",
-      "store": ["participation_unit", "participation_unit_other"],
+      "store": [
+        "participation_unit",
+        "participation_unit_other"
+      ],
       "privacy_note": "Team names never replace individual age, care, livelihood, or consent data."
     },
     {
@@ -2769,6 +2805,14 @@
         [
           "D4",
           "기관·지역·지원·아카이브가 장기적으로 이어지는 구조"
+        ],
+        [
+          "NO_MAJOR_GAP",
+          "현재 특별히 큰 간극은 없음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ],
       "desired": [
@@ -2787,6 +2831,14 @@
         [
           "D4",
           "기억과 활동을 장기적으로 보존·지원하는 구조가 생기는 것"
+        ],
+        [
+          "NO_SPECIFIC_CHANGE",
+          "지금 특정한 변화가 필요하다고 느끼지 않음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ]
     },
@@ -2807,6 +2859,14 @@
         [
           "D4",
           "지역 문화공간·프로그램·공공정책의 지속성"
+        ],
+        [
+          "NO_MAJOR_GAP",
+          "현재 특별히 큰 간극은 없음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ],
       "desired": [
@@ -2825,6 +2885,14 @@
         [
           "D4",
           "지역의 문화공간과 프로그램이 꾸준히 이어지는 것"
+        ],
+        [
+          "NO_SPECIFIC_CHANGE",
+          "지금 특정한 변화가 필요하다고 느끼지 않음"
+        ],
+        [
+          "UNSURE",
+          "아직 잘 모르겠음"
         ]
       ]
     }
@@ -3545,13 +3613,15 @@
     }
   ],
   "versioning": {
-    "questionnaire_version": "1.4.4-rc2-cultural-arts-context-preproduction",
+    "questionnaire_version": "1.4.5-rc2-msd-ai-policy-preproduction",
     "question_bank_version": "s-bank-v0.1-seed",
     "prompt_version": "over39-adaptive-response-document-v0.3.1-2026-08-06",
     "grid_version": "grid-v1.1-pilot",
     "consent_version": "consent-v1.3.2-response-document",
     "community_list_version": "community-memory-v1",
-    "curation_map_version": null
+    "curation_map_version": null,
+    "adaptive_policy_version": "adaptive-v2-2026-08-17",
+    "legacy_mapping_version": "context_to_legacy_v1"
   },
   "deployment_blockers": [
     "OD01",

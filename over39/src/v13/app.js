@@ -1,33 +1,37 @@
 import { localizeQuestion, translate } from "./i18n.js?v=rc2-preproduction-20260813-landing-r2";
 import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js";
 import { buildConnectionProfile, connectionTopics } from "./connection.js";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute } from "./flow.js";
-import { ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute } from "./flow.js";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
 import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js";
 import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, translateResponseSummary } from "./depth.js";
 import { QUESTION_METADATA } from "./question-map.js";
 import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, renderResponseDocument } from "./response-document.js";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js";
+import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
 import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=rc2-preproduction-20260813-landing-r3";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
+import { greetingFirstCopy } from "./greeting-first-i18n.js";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js";
+import { task7Copy } from "./task7-i18n.js";
 import { createParticipantReference, publicParticipantReference } from "./participant-reference.js";
 import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js";
 import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js";
-import { ledWordmark, mohoHouseMark } from "../brand-lockup.js";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
 const depthBankUrl = "./src/v13/approved-depth-question-bank.json";
 const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
-const releaseVersion = isRc2 ? "rc2-v0.5.0-stage1-contract-candidate-2026-08-14" : "rc1-2026-08-03";
+const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
 const connectionKey = (responseId) => `over39-v13-connection-${responseId}`;
+const firstGreetingKey = (responseId) => `over39-v13-first-greeting-${responseId}`;
 const exhibitionKey = (responseId) => `over39-v13-exhibition-${responseId}`;
 const referralKey = (responseId) => `over39-v13-referral-${responseId}`;
 const googleAppsScriptUrl = String(window.OVER39_GOOGLE_APPS_SCRIPT_URL || "").trim();
@@ -38,7 +42,6 @@ const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
-const estimatedDurationMinutes = Number(window.OVER39_ESTIMATED_DURATION_MINUTES || 0);
 const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
 const query = new URLSearchParams(window.location.search);
 const interfaceLanguageKey = "over39-interface-language";
@@ -50,7 +53,7 @@ const sampleType = institutionCode ? "institution_review" : query.get("sample") 
 
 let schema;
 let depthBank;
-let state = { phase: "loading", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: initialLanguage, feedback: {}, referralStatus: null };
+let state = { phase: "loading", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: initialLanguage, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } };
 
 const esc = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
@@ -65,10 +68,10 @@ const answerFor = (id) => state.answers[storedField(question(id)) || id];
 const setAnswer = (id, value) => { state.answers[storedField(question(id)) || id] = value; saveDraft(); };
 const optionLabel = (option) => Array.isArray(option) ? option[1] : option?.label || option;
 const optionValue = (option) => Array.isArray(option) ? option[0] : option?.value || option;
-const depthOutcomeFields = ["depth_plan", "depth_source", "depth_m", "depth_m_text", "depth_s", "depth_s_text", "depth_d", "depth_d_text", "depth_summary", "depth_ai_runs", "adaptive_turns", "adaptive_checkpoint_status", "adaptive_ai_runs", "adaptive_detected_language", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"];
+const depthOutcomeFields = ["depth_plan", "depth_source", "depth_m", "depth_m_text", "depth_s", "depth_s_text", "depth_d", "depth_d_text", "depth_summary", "depth_ai_runs", "adaptive_turns", "adaptive_checkpoint_status", "adaptive_ai_runs", "adaptive_detected_language", "reflection_action", "participant_revision", "synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"];
 function clearDepthOutcome() { depthOutcomeFields.forEach((field) => delete state.answers[field]); }
 function clearReflectionOutcome() {
-  ["depth_summary", "depth_ai_runs", "reflection_action", "participant_revision", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
+  ["depth_summary", "depth_ai_runs", "reflection_action", "participant_revision", "synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
 }
 function clearAdaptiveAnchor(checkpoint, { clearReflection = true } = {}) {
   if (!isRc2) { clearDepthOutcome(); return; }
@@ -106,10 +109,13 @@ const languages = [
 const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
-const creditRows = [["주최·주관", "북성로사진관(대안공간 모호주택)"], ["총괄기획", "이생강"], ["연구 협력", "Local Express Daegu"], ["후원", "한국문화예술위원회"]];
+const creditRows = [["주최·주관", "북성로사진관 · 대안공간 모호주택"], ["총괄기획", "이생강"], ["연구 협력", "Local Express Daegu"], ["후원", "한국문화예술위원회"]];
 const t = (text) => rc2UiPhrase(state.language, text) || translate(state.language, text);
 const ui = () => rc2UiCopy(state.language);
 const stage = () => stage1Copy(state.language);
+const task7 = () => task7Copy(state.language);
+const greetingFirst = () => greetingFirstCopy(state.language);
+const greetingSimple = () => greetingSimplificationCopy(state.language);
 
 function localizeRenderedCopy(container) {
   if (state.language === "ko") return;
@@ -327,6 +333,14 @@ const CONDITION_AXIS_TITLES = {
 };
 
 function choiceDisplayLabel(id, value, rawLabel) {
+  const task5 = stage().task5 || {};
+  const task5Overrides = {
+    M04: { MIXED: task5.mMixed, UNSURE: task5.mUnsure },
+    P16: { NONE: task5.p16None, UNSURE: task5.p16Unsure },
+    D01: { NO_MAJOR_GAP: task5.dNoGap, UNSURE: task5.dUnsure },
+    D02: { NO_SPECIFIC_CHANGE: task5.dNoChange, UNSURE: task5.dUnsure },
+  };
+  if (task5Overrides[id]?.[value]) return task5Overrides[id][value];
   if (state.language !== "ko") return String(t(rawLabel) || "");
   const override = CHOICE_COPY_KO[id]?.[value];
   if (override) return override;
@@ -387,7 +401,8 @@ const rc2QuestionPurposes = {
   ROLE_GROUP: "지금의 경험을 어떤 역할과 위치에서 말하고 있는지 기록합니다.",
   ROLE_PRIMARY: "이번 답변의 중심이 되는 역할을 함께 남깁니다.",
   ROLE_PARALLEL: "한 사람 안에 함께 이어지는 역할과 경험의 폭을 살핍니다.",
-  PARTICIPANT_CONTEXT: "기존 역할과 별도로, 이번 답변이 닿는 문화예술 분야와 활동 형태를 함께 기록합니다.",
+  ROLE_BRIDGE: "앞에서 남긴 활동 맥락과 과거 응답의 역할 분류를 한 번만 연결해 기록합니다.",
+  PARTICIPANT_CONTEXT: "이번 답변이 닿는 문화예술 분야와 활동 형태를 먼저 기록합니다.",
   PROFILE: "응답이 놓인 생활과 지역의 맥락을 함께 기록합니다.",
   M01: "오늘 이야기의 출발점이 될 사람, 작업, 공간, 장면 또는 감각을 고릅니다.",
   NO_RECALL_RELATION: "특정 작품을 떠올리지 않아도 지금 문화예술과 만나는 생활의 한 장면을 남길 수 있습니다.",
@@ -424,8 +439,8 @@ const rc2QuestionPurposes = {
 
 const rc2QuestionTopics = {
   CONSENT: "참여 안내", P01: "시작 위치", DOCUMENT_IDENTITY: "참여자 표기", P01_CONTEXT: "기억의 위치",
-  ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", PARTICIPANT_CONTEXT: "활동의 맥락", PROFILE: "생활과 지역",
-  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "한 걸음 더", M02: "장면", M03: "초점", M04: "이유", AI_ANCHOR_M04_TEXT: "한 걸음 더", M05: "남은 단서",
+  ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", ROLE_BRIDGE: "역할 확인", PARTICIPANT_CONTEXT: "활동의 맥락", PROFILE: "생활과 지역",
+  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "한 걸음 더", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "이유", AI_ANCHOR_M04_TEXT: "한 걸음 더", M05: "남은 단서",
   MEMORY_TIME: "시간", MEMORY_EVIDENCE: "경험 방식", MEMORY_TO_PRESENT: "현재",
   ACTIVITY: "현재의 연결", PRACTICE_PUBLIC_STATE: "현재 상태", STATE_BACKGROUND: "현재에 작용한 현실",
   TRANSITION: "변화", AI_ANCHOR_P12: "한 걸음 더", CONTINUITY: "보이지 않는 지속", AI_ANCHOR_P13_TEXT: "한 걸음 더", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "한 걸음 더", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "한 걸음 더",
@@ -440,7 +455,7 @@ const rc2Phases = {
   P01_CONTEXT: "기억을 말하는 자리",
   ROLE_GROUP: "현재 역할의 범위",
   ROLE_PRIMARY: "이번 응답의 중심 역할",
-  ROLE_PARALLEL: "함께 이어지는 역할", PARTICIPANT_CONTEXT: "분야와 활동 형태",
+  ROLE_PARALLEL: "함께 이어지는 역할", ROLE_BRIDGE: "과거 역할 분류와 연결", PARTICIPANT_CONTEXT: "분야와 활동 형태",
   PROFILE: "생활과 지역의 배경",
   M01: "기억의 출발점",
   NO_RECALL_RELATION: "지금 문화예술과 만나는 한 순간",
@@ -485,15 +500,19 @@ const RC2_STAGES = [
 
 
 function saveDraft() {
-  if (state.phase === "survey") {
+  if (["survey", "greeting-choice", "greeting-first"].includes(state.phase)) {
     localStorage.setItem(draftKey, JSON.stringify({
+      phase: state.phase,
       answers: state.answers,
       step: state.step,
+      contextStep: Number(state.contextStep || 0),
       screenId: activeScreens()[state.step] || null,
       releaseVersion,
       language: state.language,
       responseId: state.responseId,
       feedback: state.feedback,
+      firstGreeting: state.firstGreeting || null,
+      researchContact: state.researchContact || null,
       savedAt: new Date().toISOString(),
     }));
   }
@@ -506,6 +525,35 @@ function loadDraft() {
 function clearDraft() { localStorage.removeItem(draftKey); }
 function savePending(response) { localStorage.setItem(pendingKey, JSON.stringify(response)); }
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
+function clearPending() { localStorage.removeItem(pendingKey); }
+function loadFirstGreeting(responseId = state.responseId) {
+  if (!responseId) return null;
+  try { return JSON.parse(localStorage.getItem(firstGreetingKey(responseId)) || "null"); } catch { return null; }
+}
+function saveFirstGreeting() {
+  if (state.responseId && state.firstGreeting) localStorage.setItem(firstGreetingKey(state.responseId), JSON.stringify(state.firstGreeting));
+}
+function clearFirstGreeting(responseId = state.responseId) {
+  if (responseId) localStorage.removeItem(firstGreetingKey(responseId));
+}
+function restoreLegacySynthesisConfirmation(answers = {}) {
+  const approvedText = String(answers.participant_approved_text || "").trim();
+  if (answers.synthesis_confirmation_ack === "YES" || !approvedText || answers.document_confirmation_ack !== "YES") return answers;
+  const priorScope = answers.participant_approved_provenance?.approval_scope;
+  if (priorScope && priorScope !== "participant_synthesis_text_only") return answers;
+  const confirmedAt = answers.document_confirmed_at || answers.participant_approved_provenance?.confirmed_at || null;
+  const migrated = {
+    kind: "participant-confirmed",
+    approval_scope: "participant_synthesis_text_only",
+    excludes: ["system_derived_axes", "coordinate", "project_explanatory_text", "raw_answers"],
+    source_draft_kind: answers.participant_approved_provenance?.source_draft_kind || answers.depth_summary?.provenance?.kind || (answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
+    action: answers.reflection_action || "ACCEPT",
+    final_text: approvedText,
+    confirmed_at: confirmedAt,
+    compatibility_source: "legacy_document_confirmation",
+  };
+  return { ...answers, synthesis_confirmation_ack: "YES", synthesis_confirmation: answers.synthesis_confirmation || migrated };
+}
 function participantReferenceKey(responseId) { return `over39-v13-participant-reference-${responseId || "draft"}`; }
 function ensureParticipantReference(responseId = state.responseId) {
   if (!responseId) return null;
@@ -531,17 +579,17 @@ function defaultConnection() {
     receive_opt_in: "",
     receive_scopes: [],
     greeting_connection_preference: "",
-    translation_allowed: "YES",
+    translation_allowed: "",
     needs: [],
     offers: [],
     reply_modes: [],
     visibility: "RESEARCHER_ONLY",
     contact_permission: "",
     contact_email: "",
-    sender_visibility: "CONTEXTUAL",
+    sender_visibility: "",
     origin: "participant",
     introduction: "",
-    stage: "direction",
+    stage: "receive",
     preview_confirmed: false,
   };
 }
@@ -590,9 +638,9 @@ function activeScreens() {
 }
 
 function rc2StageIndex(id) {
-  const startScreens = new Set(["CONSENT", "P01", "DOCUMENT_IDENTITY", "P01_CONTEXT", "ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL", "PARTICIPANT_CONTEXT", "PROFILE"]);
-  const memoryScreens = new Set(["M01", "NO_RECALL_RELATION", "AI_CONDITIONAL_NO_RECALL_RELATION", "M02", "M03", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE"]);
-  const presentScreens = new Set(["MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION", "AI_ANCHOR_P12", "CONTINUITY", "AI_ANCHOR_P13_TEXT", "SUPPORT_CONDITIONS", "AI_ANCHOR_P19_TEXT"]);
+  const startScreens = new Set(["CONSENT", "P01", "P01_CONTEXT", "ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL", "ROLE_BRIDGE", "PARTICIPANT_CONTEXT"]);
+  const memoryScreens = new Set(["M01", "NO_RECALL_RELATION", "M02", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE", "M03_RECONNECT", "M10_VERIFY"]);
+  const presentScreens = new Set(["MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION", "AI_ANCHOR_P12", "CONTINUITY", "AI_ANCHOR_P13_TEXT", "SUPPORT_CONDITIONS"]);
   const conditionScreens = new Set(["D01", "D02", "AI_ANCHOR_D02_TEXT", "D03", "D04", "AI_CONDITIONAL_D04_CONDITIONS", "R01", "COMMUNITY"]);
   if (startScreens.has(id)) return 1;
   if (memoryScreens.has(id)) return 2;
@@ -651,7 +699,11 @@ function dOptions(kind) {
     const role = state.answers.role_primary;
     const bank = schema.role_question_bank?.[role];
     const labels = bank?.[kind === "gap" ? "d01_options" : "d02_options"];
-    return (labels || []).map((label, index) => [`D${index + 1}`, label]);
+    const coded = (labels || []).slice(0, 4).map((label, index) => [`D${index + 1}`, label]);
+    const local = stage().task5;
+    return kind === "gap"
+      ? coded.concat([["NO_MAJOR_GAP", local.dNoGap], ["UNSURE", local.dUnsure]])
+      : coded.concat([["NO_SPECIFIC_CHANGE", local.dNoChange], ["UNSURE", local.dUnsure]]);
   }
   return schema.d_scope_bank?.[scope]?.[kind] || [];
 }
@@ -716,7 +768,28 @@ function responseSourceLanguage(answers = state.answers) {
 }
 
 function clearDocumentConfirmation() {
-  ["participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
+  ["synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
+}
+
+function confirmParticipantSynthesis() {
+  const finalText = approvedReflectionText();
+  if (!finalText || state.answers.synthesis_confirmation_ack !== "YES") return false;
+  const confirmedAt = new Date().toISOString();
+  const provenance = {
+    kind: "participant-confirmed",
+    approval_scope: "participant_synthesis_text_only",
+    excludes: ["system_derived_axes", "coordinate", "project_explanatory_text", "raw_answers"],
+    source_draft_kind: state.answers.depth_summary?.provenance?.kind || (state.answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
+    action: state.answers.reflection_action || "ACCEPT",
+    final_text: finalText,
+    confirmed_at: confirmedAt,
+  };
+  state.answers.participant_approved_text = finalText;
+  state.answers.participant_approved_provenance = provenance;
+  state.answers.synthesis_confirmation = provenance;
+  state.answers.document_confirmation_ack = "YES";
+  state.answers.document_confirmed_at = confirmedAt;
+  return true;
 }
 
 function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}) {
@@ -802,14 +875,18 @@ function screenHeading(title, help = "", purpose = purposeForScreen()) {
 function renderConsent() {
   if (isRc2) {
     const local = stage();
-    const recordGuide = local.introRecord;
-    const policyGuide = t("정책연구 활용 범위는 마지막 화면에서 선택합니다. 전시 공모와 안부·연락은 별도의 경로로 이어집니다.");
-    return `${screenHeading(local.introTitle, local.introFlow)}
-      <div class="participation-guide">
-        <p>${esc(recordGuide)}</p>
-        <p>${esc(policyGuide)}</p>
+    return `${screenHeading(local.consentTitle, local.consentHelp)}
+      <div class="participation-guide consent-guide">
+        <p>${esc(local.consentVoluntary)}</p>
       </div>
-      ${renderChoices("RC01", [["YES", "안내 내용을 확인했습니다. 이 설문에 참여합니다."]])}`;
+      <section class="consent-choice-block">
+        <h3>${esc(t("연구 참여"))}</h3>
+        ${renderChoices("RC01", [["YES", local.consentResearch]])}
+      </section>
+      <section class="consent-choice-block">
+        <h3>${esc(t("AI 사용"))}</h3>
+        ${renderChoices("RC02", [["YES", local.consentAi]])}
+      </section>`;
   }
   return `${screenHeading("이 조사의 목적과 참여 방식을 확인해 주세요.", "기억은 사라진 이름과 장면을 다시 불러오는 시작입니다.")}
     ${renderChoices("RC01", [["YES", question("RC01").text]])}
@@ -856,19 +933,14 @@ function renderPracticePublicState() {
 
 function renderStateBackground() {
   const p16 = question("P16");
-  const p17 = question("P17");
-  const p18 = question("P18");
   const audience = isAudienceContext();
   const copy = contextAwareCopy(state.answers, state.language);
   const title = audience ? "지금의 관람과 관심 방식에 함께 작용한 조건을 살펴볼게요." : "현재의 활동 방식에 함께 작용한 조건을 살펴볼게요.";
   const help = audience
-    ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요."
-    : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요.";
-  const axisBridge = audience ? (p17.help_audience || p17.help || "") : (p17.help || "");
+    ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요."
+    : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.";
   return `${screenHeading(title, help)}
-    <label class="field-label">${esc(copy.p16)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5 })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}
-    <label class="field-label">${esc(audience ? p17.text_audience : p17.text_professional)}</label><p class="axis-bridge-note">${esc(axisBridge)}</p>${renderChoices("P17", audience ? p17.options_audience : p17.options_professional)}
-    ${renderText("P18", { field: "pause_context_text", value: state.answers.pause_context_text || "", label: audience ? p18.text_audience : p18.text_professional, placeholder: audience ? p18.help_audience : p18.help })}`;
+    <label class="field-label">${esc(copy.p16)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5, exclusive: ["NONE", "UNSURE"] })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}`;
 }
 
 function renderSupportConditions() {
@@ -912,6 +984,27 @@ function renderRoleParallel() {
   return `${screenHeading(q.text, "지금 여러 방식으로 활동하고 있다면 함께 골라도 좋아요. 해당하지 않으면 ‘없음’을 선택해 주세요.")}${renderChoices("P03", [...otherRoles, ["NON_ARTS", "문화예술 외 역할"], ["NONE", "없음"], ["OTHER", "기타"]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", "함께 이어지는 다른 문화예술 활동이나 역할을 직접 적어주세요.")}`;
 }
 
+function renderRoleBridge() {
+  const groupQuestion = question("P02G");
+  const primaryQuestion = question("P02");
+  const parallelQuestion = question("P03");
+  const group = state.answers.role_group_primary;
+  const otherOnly = group === "G_OTHER";
+  const primaryOptions = !group
+    ? []
+    : otherOnly
+      ? [["OTHER", t("현재 활동을 직접 적기")]]
+      : [...roleOptions(group), ["OTHER", t("기타")]];
+  const otherRoles = schema.roles
+    .filter((role) => role.value !== state.answers.role_primary)
+    .map((role) => [role.value, role.label]);
+  const local = stage();
+  return `${screenHeading(local.roleBridgeTitle, local.roleBridgeHelp)}
+    <section class="participant-context-section"><label class="field-label">${esc(groupQuestion.text)}</label>${renderChoices("P02G", groupQuestion.options)}</section>
+    ${group ? `<section class="participant-context-section"><label class="field-label">${esc(primaryQuestion.text)}</label>${renderChoices("P02", primaryOptions)}${renderOtherInput("P02", local.roleBridgePrimaryOther)}</section>` : ""}
+    ${state.answers.role_primary ? `<details class="participant-context-section participant-context-optional role-bridge-optional" ${values(state.answers.roles_parallel).length ? "open" : ""}><summary><span>${esc(parallelQuestion.text)}</span><small>${esc(local.optional)}</small></summary><div class="role-bridge-optional-body">${renderChoices("P03", [...otherRoles, ["NON_ARTS", t("문화예술 외 역할")], ["NONE", t("없음")], ["OTHER", t("기타")]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", local.roleBridgeParallelOther)}</div></details>` : ""}`;
+}
+
 const CONTEXT_OPTION_GROUPS = {
   field: [
     ["VISUAL_ARTS", "CRAFT_DESIGN", "INTERDISCIPLINARY"],
@@ -932,8 +1025,8 @@ function renderGroupedContextChoices(id, options, groupKey, { multi = false, max
   const selected = new Set(values(answerFor(id)));
   const groups = CONTEXT_OPTION_GROUPS[groupKey].map((codes, index) => {
     const groupOptions = options.filter(([code]) => codes.includes(code));
-    const open = index === 0 || groupOptions.some(([code]) => selected.has(code));
-    return `<details class="context-choice-group" ${open ? "open" : ""}><summary><span>${esc(labels[index])}</span><small>${esc(stage().addAnother)}</small></summary>${renderChoices(id, groupOptions, { multi, max })}</details>`;
+    const open = groupOptions.some(([code]) => selected.has(code));
+    return `<details class="context-choice-group" ${open ? "open" : ""}><summary><span>${esc(labels[index])}</span>${open ? `<small>${esc(stage().addAnother)}</small>` : ""}</summary>${renderChoices(id, groupOptions, { multi, max })}</details>`;
   }).join("");
   return `<p class="context-selection-help">${esc(stage().oneOrMore)}</p><div class="context-choice-groups">${groups}</div>`;
 }
@@ -946,11 +1039,14 @@ function renderParticipantContext() {
   const copy = participantContextCopy(state.language);
   const options = participantContextOptions(state.language);
   const local = stage();
-  return `${screenHeading(local.contextTitle, local.contextHelp)}
-    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
-    <section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>
-    <section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section>
-    <section class="participant-context-section participant-context-optional"><label class="field-label">${esc(copy.unit || unit.text)} <small>${esc(local.optional)}</small></label>${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</section>`;
+  const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
+  const titles = task7().contextSteps;
+  const sections = [
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>`,
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>`,
+    `<section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section><details class="participant-context-section participant-context-optional context-unit-optional" ${state.answers.participation_unit ? "open" : ""}><summary><span>${esc(copy.unit || unit.text)}</span><small>${esc(local.optional)}</small></summary><div class="context-unit-optional-body">${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</div></details>`,
+  ];
+  return `<div class="context-internal-progress" aria-label="Context ${step + 1} / 3"><span>CONTEXT ${step + 1} / 3</span><ol aria-hidden="true">${[0, 1, 2].map((index) => `<li class="${index === step ? "current" : index < step ? "complete" : ""}">${index + 1}</li>`).join("")}</ol></div>${screenHeading(titles[step], local.contextHelp)}${sections[step]}`;
 }
 
 function renderActivity() {
@@ -960,6 +1056,9 @@ function renderActivity() {
   const audience = isAudienceContext();
   const copy = participantActivityScreenCopy(state.language);
   const heading = audience ? copy.headingAudience : copy.headingOther;
+  if (isRc2) return `${screenHeading(heading)}
+    <label class="field-label">${esc(audience ? copy.p05Audience : copy.p05Other)}</label>${renderChoices("P05", p05.options)}
+    ${state.answers.activity_duration_band ? renderText("P05_YEAR", { multiline: false, placeholder: copy.yearPlaceholder, label: copy.yearLabel }) : ""}`;
   return `${screenHeading(heading)}
     <label class="field-label">${esc(audience ? copy.p05Audience : copy.p05Other)}</label>${renderChoices("P05", p05.options)}
     ${state.answers.activity_duration_band ? renderText("P05_YEAR", { multiline: false, placeholder: copy.yearPlaceholder, label: copy.yearLabel }) : ""}
@@ -1095,16 +1194,21 @@ function renderMemoryTime() {
 function renderEvidence() {
   const m08 = question("M08");
   const m09 = question("M09");
-  const m10 = question("M10");
   const audience = isAudienceContext();
   const title = audience ? "그 경험이 당신에게 닿은 방식과 관계를 알려주세요." : "이 기억의 경험과 관계를 알려주세요.";
-  const m08Text = noRecall() ? m08.text_no_recall : audience ? m08.text_audience : m08.text;
-  const m09Text = noRecall() ? m09.text_no_recall : audience ? m09.text_audience : m09.text;
-  const m10Text = noRecall() ? m10.text_no_recall : audience ? m10.text_audience : m10.text;
+  const m08Text = audience ? m08.text_audience : m08.text;
+  const m09Text = audience ? m09.text_audience : m09.text;
   return `${screenHeading(title)}
     <label class="field-label">${esc(m08Text)}</label>${renderChoices("M08", m08.options, { multi: true, max: 2 })}
-    <label class="field-label">${esc(m09Text)}</label>${renderChoices("M09", m09.options)}
-    <label class="field-label">${esc(m10Text)}</label>${renderChoices("M10", m10.options)}${renderOtherInput("M10", "관계를 직접 적어주세요.")}`;
+    <label class="field-label">${esc(m09Text)}</label>${renderChoices("M09", m09.options)}`;
+}
+
+function renderMemoryVerify() {
+  const m10 = question("M10");
+  const audience = isAudienceContext();
+  const text = audience ? m10.text_audience : m10.text;
+  return `${screenHeading(t("기억을 다음 기록과 연결하기 전에 한 가지를 더 확인할게요."), t("이 질문은 선택 사항입니다. 기억과의 관계를 지금의 말로 남기고 싶을 때만 골라주세요."))}
+    <label class="field-label">${esc(t(text))}</label>${renderChoices("M10", m10.options)}${renderOtherInput("M10", "관계를 직접 적어주세요.")}`;
 }
 
 function renderD1() {
@@ -1126,10 +1230,11 @@ function renderD2() {
   const options = dOptions("desired");
   const title = options.length && dScope() === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d02 : d02.text;
   if (!isRc2) return `${screenHeading("가장 먼저 바라는 변화를 골라주세요.")}<label class="field-label">${esc(title || d02.text)}</label>${renderChoices("D02", options)}`;
-  return `${screenHeading("지금 이 흐름을 이어가거나 다시 움직이기 위해, 가장 먼저 달라졌으면 하는 장면은 무엇인가요?", "무엇이 부족한지와 함께, 지금까지 이어갈 수 있게 해준 조건을 적어도 괜찮아요.")}
-    ${renderText("D02_TEXT", { field: "desired_change_text", value: state.answers.desired_change_text || "", placeholder: "가장 먼저 달라졌으면 하는 실제 장면을 적어주세요.", label: d02Text.text })}
-    <label class="field-label">${esc(t("방금 적은 내용과 가까운 변화의 방향을 골라주세요."))}</label>
-    ${renderChoices("D02", options)}`;
+  const substantive = hasSubstantiveDChange(state.answers);
+  return `${screenHeading("지금 이 흐름을 이어가거나 다시 움직이기 위해, 가장 먼저 달라졌으면 하는 장면은 무엇인가요?", "특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.")}
+    <label class="field-label">${esc(t("지금과 가까운 변화의 방향을 골라주세요."))}</label>
+    ${renderChoices("D02", options)}
+    ${substantive ? renderText("D02_TEXT", { field: "desired_change_text", value: state.answers.desired_change_text || "", placeholder: "가장 먼저 달라졌으면 하는 실제 장면을 적어주세요.", label: d02Text.text }) : ""}`;
 }
 
 function renderD3() {
@@ -1353,26 +1458,34 @@ async function requestAdaptiveNext(checkpoint) {
   if (state.adaptiveGenerating) return { decision: "deduplicated", question: currentAdaptiveTurn(checkpoint), source: "existing" };
   const existing = currentAdaptiveTurn(checkpoint);
   if (existing) return { decision: "deduplicated", question: existing, source: existing.source || "existing" };
+  const context = buildCurrentAnchorContext(checkpoint);
+  const need = assessAnchorNeed({ anchorId: checkpoint, answers: state.answers, runs: values(state.answers.adaptive_ai_runs) });
+  const answerRevision = anchorAnswerFingerprint(checkpoint, anchorSourceText(state.answers, checkpoint));
+  if (need.decision !== "ASK") {
+    const now = new Date().toISOString();
+    const run = { status: "skipped", operation: "anchor_followup", checkpoint, anchor_id: checkpoint, axis: need.axis,
+      source: "policy_skip", provider: null, model: null, request_id: null, client_request_id: null, started_at: now, created_at: now,
+      latency_ms: 0, http_status: null, error_code: null, fallback_reason: need.reason, answer_fingerprint: answerRevision,
+      context_fingerprint: anchorContextFingerprint(checkpoint, context), network_calls: 0, need_decision: "SKIP", need_reason: need.reason,
+      source_question_id: checkpoint, source_response_revision: answerRevision, generation_provenance: "not_generated", adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
+    state.answers.adaptive_ai_runs = [...values(state.answers.adaptive_ai_runs), run];
+    setAdaptiveStatus(checkpoint, "skipped_policy");
+    saveDraft();
+    return { decision: "skip", question: null, source: "policy_skip", run };
+  }
   state.adaptiveGenerating = true;
   render(false);
-  const context = buildCurrentAnchorContext(checkpoint);
-  const result = await createAnchorFollowup({
-    endpoint: aiFunctionUrl,
-    anonKey: supabaseAnonKey,
-    anchorId: checkpoint,
-    context,
-    responseLanguage: responseSourceLanguage(),
-    timeoutMs: 23000,
-  });
-  state.answers.adaptive_ai_runs = [...values(state.answers.adaptive_ai_runs), { ...result.run, checkpoint }];
+  const result = await createAnchorFollowup({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, anchorId: checkpoint, context, responseLanguage: responseSourceLanguage(), timeoutMs: 15000 });
+  const enrichedRun = { ...result.run, checkpoint, axis: need.axis, need_decision: "ASK", need_reason: need.reason,
+    source_question_id: checkpoint, source_response_revision: answerRevision, generation_provenance: result.source || "unknown",
+    adaptive_policy_version: ADAPTIVE_POLICY_VERSION, created_at: result.run?.started_at || new Date().toISOString() };
+  state.answers.adaptive_ai_runs = [...values(state.answers.adaptive_ai_runs), enrichedRun];
   state.answers.depth_source = aggregateAnchorSource(values(state.answers.adaptive_ai_runs)) || result.source || state.answers.depth_source;
   if (result.question) {
     state.answers.adaptive_turns = upsertAnchorTurn(adaptiveTurns(), result.question);
     state.answers.adaptive_detected_language = result.question.language || state.answers.adaptive_detected_language || state.language;
     setAdaptiveStatus(checkpoint, result.source === "motif" ? "active_motif" : "active_fallback");
-  } else {
-    setAdaptiveStatus(checkpoint, result.source || "complete");
-  }
+  } else setAdaptiveStatus(checkpoint, result.source || "complete");
   state.adaptiveGenerating = false;
   saveDraft();
   return result;
@@ -1405,7 +1518,7 @@ async function prepareAdaptiveSummary() {
   render(false);
   const response = createResponse("adaptive_complete");
   const turns = adaptiveTurns();
-  const context = { ...buildAdaptiveSummaryContext({ response, turns, answers: state.answers }), interview_mode: "five_anchor_realapi", anchor_ids: ANCHOR_ORDER };
+  const context = { ...buildAdaptiveSummaryContext({ response, turns, answers: state.answers }), interview_mode: "adaptive_v2", anchor_ids: ACTIVE_ANCHOR_ORDER, adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
   const summary = await createAdaptiveSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, answers: state.answers, turns, timeoutMs: 45000 });
   state.answers.depth_summary = {
     summary: summary.summary,
@@ -1426,9 +1539,11 @@ async function prepareAdaptiveSummary() {
       translation_kind: summary.source === "motif" && responseSourceLanguage() !== "ko" && summary.summary_ko ? "ai-translated" : "fixed",
     },
   };
-  if (summary.axes?.m) state.answers.depth_m = summary.axes.m;
+  const mBlocked = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
+  const dBlocked = ["NO_MAJOR_GAP", "UNSURE"].includes(state.answers.d_current_gap) || ["NO_SPECIFIC_CHANGE", "UNSURE"].includes(state.answers.d_desired_change_primary);
+  if (summary.axes?.m && !mBlocked) state.answers.depth_m = summary.axes.m; else if (mBlocked) delete state.answers.depth_m;
   if (summary.axes?.s) state.answers.depth_s = summary.axes.s;
-  if (summary.axes?.d) state.answers.depth_d = summary.axes.d;
+  if (summary.axes?.d && !dBlocked) state.answers.depth_d = summary.axes.d; else if (dBlocked) delete state.answers.depth_d;
   state.answers.depth_ai_runs = [...values(state.answers.depth_ai_runs), summary.run];
   console.info("OVER39_SUMMARY_TRACE", JSON.stringify({
     source: summary.source,
@@ -1471,13 +1586,19 @@ function renderReflectionReview() {
   const summary = summaryValue || "응답 정리를 불러오는 동안 연결이 원활하지 않았습니다.";
   const summaryKo = state.answers.depth_summary?.summary_ko || "";
   const action = state.answers.reflection_action;
+  const local = task7();
+  const rawWords = rawParticipantWords(state.answers);
+  const rawSection = `<section class="record-layer record-layer-raw"><div class="record-layer-heading"><span>01</span><div><h3>${esc(local.rawTitle)}</h3><p>${esc(local.rawHelp)}</p></div></div><div class="raw-words-list">${rawWords.length ? rawWords.map((entry) => `<blockquote>${esc(entry.text)}</blockquote>`).join("") : `<p>${esc(local.rawEmpty)}</p>`}</div></section>`;
   if (isRc2 && !summaryValue) {
-    return `${screenHeading("작성한 원문은 그대로 보존되어 있습니다.", "응답 정리를 불러오지 못했습니다. 직접 정리문을 작성할 수 있어요.")}
-      <div class="notice">${esc(t("응답 정리를 불러오는 동안 연결이 원활하지 않았습니다. 작성한 원문은 그대로 보존되어 있습니다. 직접 정리문을 작성할 수 있습니다."))}</div>
-      ${renderChoices("reflection_action", [["REWRITE", "직접 정리문을 작성할게요"]])}
-      ${action === "REWRITE" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: "기억, 현재의 흐름, 이어가기 위한 조건을 편한 문장으로 적어주세요.", label: "새로 적은 문장" }) : ""}
-      <div class="reflection-tools"><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(t("다시 정리하기"))}</button></div>
-      ${state.summaryGenerating ? processingSignal("응답을 다시 정리하고 있어요") : ""}`;
+    return `${screenHeading(local.fallbackTitle, local.fallbackHelp)}
+      ${rawSection}
+      <section class="record-layer record-layer-synthesis"><div class="record-layer-heading"><span>02</span><div><h3>${esc(local.synthesisTitle)}</h3><p>${esc(local.synthesisHelp)}</p></div></div>
+      <div class="notice">${esc(local.fallbackNotice)}</div>
+      ${renderChoices("reflection_action", [["REWRITE", local.rewriteAction]])}
+      ${action === "REWRITE" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: local.rewritePlaceholder, label: local.rewriteLabel }) : ""}
+      ${action === "REWRITE" && state.answers.participant_revision?.trim() ? renderChoices("synthesis_confirmation_ack", [["YES", local.synthesisConfirm]]) : ""}</section>
+      <div class="reflection-tools"><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(local.regenerateSummary)}</button></div>
+      ${state.summaryGenerating ? processingSignal(local.regenerating) : ""}`;
   }
   if (!isRc2) {
     return `${screenHeading("지금까지의 응답을 이렇게 읽었습니다.", "직접 읽고 필요한 부분을 고칠 수 있어요.")}
@@ -1485,22 +1606,25 @@ function renderReflectionReview() {
       ${renderChoices("reflection_action", [["ACCEPT", "전체적으로 가까워요"], ["EDIT", "일부를 고치고 싶어요"], ["DROP", "이 정리는 남기지 않을게요"]])}
       ${action === "EDIT" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: "빠진 내용이나 어긋난 부분을 고쳐주세요.", label: "고친 문장" }) : ""}`;
   }
-  const revisionLabel = action === "REWRITE" ? "새로 적은 문장" : "고친 문장";
+  const revisionLabel = action === "REWRITE" ? local.rewriteLabel : local.editLabel;
   const revisionPlaceholder = action === "REWRITE"
-    ? "기억, 현재의 흐름, 이어가기 위한 조건을 편한 문장으로 적어주세요."
-    : "가까운 문장은 남기고, 빠지거나 어긋난 부분을 고쳐주세요.";
+    ? local.rewritePlaceholder
+    : local.editPlaceholder;
   const summaryProvenance = state.answers.depth_summary?.provenance;
   const translatedPreview = responseSourceLanguage() !== "ko" && summaryKo
-    ? `<div class="response-document-translation reflection-translation"><span>한국어 번역 초안</span><p>${esc(summaryKo)}</p>${summaryProvenance?.translation_kind === "ai-translated" ? `<small class="ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</small>` : ""}</div>`
+    ? `<div class="response-document-translation reflection-translation"><span>${esc(local.koreanDraftLabel)}</span><p>${esc(summaryKo)}</p>${summaryProvenance?.translation_kind === "ai-translated" ? `<small class="ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</small>` : ""}</div>`
     : "";
-  return `${screenHeading("지금까지의 응답을 한곳에 모았습니다.", "겹치거나 반복되는 내용을 정리한 초안입니다. 읽어보고 뜻이 어긋난 문장은 직접 다듬어주세요.")}
+  return `${screenHeading(local.synthesisTitle, local.synthesisHelp)}
+    ${rawSection}
+    <section class="record-layer record-layer-synthesis"><div class="record-layer-heading"><span>02</span><div><h3>${esc(local.synthesisTitle)}</h3><p>${esc(local.synthesisHelp)}</p></div></div>
     ${summaryProvenance?.kind === "ai-generated" ? `<p class="ai-use-note" role="note">${esc(t("앞서 남긴 응답을 바탕으로 AI가 정리한 초안입니다. 뜻이 다르게 느껴지는 문장은 직접 다듬을 수 있어요."))}</p>` : ""}
-    <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>연결이 지연되면 작성한 문장을 중심으로 먼저 정리합니다. 정리 문장은 언제든 직접 읽고 고칠 수 있습니다.</small>` : ""}</div>
+    <div class="reflection-summary"><span>${esc(state.answers.depth_summary?.source === "rules" ? local.ruleDraftLabel : local.summaryDraftLabel)}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>${esc(local.ruleDraftHelp)}</small>` : ""}</div>
     ${translatedPreview}
-    ${renderChoices("reflection_action", [["ACCEPT", "이 내용이 가까워요"], ["EDIT", "일부 문장을 고칠게요"], ["REWRITE", "새 문장으로 적을게요"]])}
+    ${renderChoices("reflection_action", [["ACCEPT", local.acceptAction], ["EDIT", local.editAction], ["REWRITE", local.rewriteNewAction]])}
     ${["EDIT", "REWRITE"].includes(action) ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: revisionPlaceholder, label: revisionLabel }) : ""}
-    <div class="reflection-tools"><button class="text-button" type="button" data-action="review-answers">${esc(t("앞선 답변 보기"))}</button><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(t("다시 정리하기"))}</button></div>
-    ${state.summaryGenerating ? processingSignal("응답을 다시 정리하고 있어요") : ""}`;
+    ${action && (action === "ACCEPT" || state.answers.participant_revision?.trim()) ? renderChoices("synthesis_confirmation_ack", [["YES", local.synthesisConfirm]]) : ""}</section>
+    <div class="reflection-tools"><button class="text-button" type="button" data-action="review-answers">${esc(local.reviewAnswers)}</button><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(local.regenerateSummary)}</button></div>
+    ${state.summaryGenerating ? processingSignal(local.regenerating) : ""}`;
 }
 
 function responseCoordinatePosition(answers = state.answers) {
@@ -1523,9 +1647,13 @@ const AXIS_REVIEW_OPTIONS = {
 
 function ensureParticipantAxes() {
   const snapshot = state.answers.coordinate_snapshots?.participant_final || state.answers.coordinate_snapshots?.research_derived || state.answers.coordinate_snapshots?.fixed || {};
-  if (!state.answers.participant_m) state.answers.participant_m = snapshot.m_primary || state.answers.depth_m || state.answers.m_declared || "";
+  const mBlocked = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
+  const dBlocked = ["NO_MAJOR_GAP", "UNSURE"].includes(state.answers.d_current_gap) || ["NO_SPECIFIC_CHANGE", "UNSURE"].includes(state.answers.d_desired_change_primary);
+  if (!state.answers.participant_m && !mBlocked) state.answers.participant_m = snapshot.m_primary || state.answers.depth_m || (/^M[1-4]$/.test(state.answers.m_declared || "") ? state.answers.m_declared : "");
+  if (mBlocked) delete state.answers.participant_m;
   if (!state.answers.participant_s) state.answers.participant_s = snapshot.s_primary || state.answers.depth_s || "";
-  if (!state.answers.participant_d) state.answers.participant_d = snapshot.d_primary || state.answers.depth_d || state.answers.d_desired_change_primary || "";
+  if (!state.answers.participant_d && !dBlocked) state.answers.participant_d = snapshot.d_primary || state.answers.depth_d || (/^D[1-4]$/.test(state.answers.d_desired_change_primary || "") ? state.answers.d_desired_change_primary : "");
+  if (dBlocked) delete state.answers.participant_d;
 }
 
 function renderAxisReview(field, title) {
@@ -1564,19 +1692,21 @@ function renderSubmit() {
     : t("다음 화면에서 활용 범위를 정한 뒤 참여 기록을 이 기기에 보관합니다.");
   if (!isRc2) return `${screenHeading("연구 응답을 제출할 준비가 되었습니다.", storageNotice)}<div class="notice">연구 기록은 여기에서 먼저 마무리됩니다.</div>`;
   ensureParticipantAxes();
-  const document = buildCurrentResponseDocument({ final: false });
   const translationProvenance = state.answers.participant_approved_translation_provenance;
   const translationNotice = responseSourceLanguage() !== "ko" && !state.answers.participant_approved_text_ko
     ? `<div class="document-language-note">${esc(t("원문을 먼저 보관하며, 한국어 번역은 원문을 기준으로 정리합니다."))}</div>`
     : translationProvenance?.kind === "ai-translated"
       ? `<div class="document-language-note ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</div>`
       : "";
+  const mOpen = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
+  const dOpen = ["NO_MAJOR_GAP", "UNSURE"].includes(state.answers.d_current_gap) || ["NO_SPECIFIC_CHANGE", "UNSURE"].includes(state.answers.d_desired_change_primary);
+  const mReview = mOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("기억의 의미"))}</span><strong>${esc(stage().task5.noAxisMemory)}</strong></div></section>` : renderAxisReview("participant_m", "기억의 의미");
+  const dReview = dOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("이어가기 위한 조건"))}</span><strong>${esc(stage().task5.noAxisCondition)}</strong></div></section>` : renderAxisReview("participant_d", "이어가기 위한 조건");
   return `${screenHeading(t("당신의 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
-    <section class="axis-review"><div class="axis-review-intro"><span>THREE DIRECTIONS · YOUR RECORD</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${renderAxisReview("participant_m", "기억의 의미")}${renderAxisReview("participant_s", "현재의 흐름")}${renderAxisReview("participant_d", "이어가기 위한 조건")}</section>
+    <section class="axis-review"><div class="axis-review-intro"><span>THREE DIRECTIONS · YOUR RECORD</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>
     <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]])}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
-    <div class="response-document-preview">${renderResponseDocument(document)}</div>
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
 
@@ -1585,11 +1715,15 @@ function renderUseScope() {
   const quoteUse = state.answers.policy_quote_use || "";
   const archiveUse = state.answers.public_archive_interest || "";
   const consent = stage1ConsentCopy(state.language);
+  const local = task7();
+  const researchContact = state.researchContact || { email: "", consent: false, status: null };
   const choice = (field, value, title, copy) => { const selected = state.answers[field] === value; return `<button type="button" class="use-scope-choice ${selected ? "selected" : ""}" data-use-field="${esc(field)}" data-use-value="${esc(value)}" aria-pressed="${selected}"><strong>${esc(t(title))}</strong>${copy ? `<small>${esc(t(copy))}</small>` : ""}</button>`; };
-  return `${screenHeading(consent.title, consent.help)}
+  const contactSection = archiveUse === "ASK_LATER" ? `<section class="use-scope-section research-contact-section"><span>04 · ${esc(local.researchContactLabel)}</span><h3>${esc(local.researchContactTitle)}</h3><p>${esc(local.researchContactHelp)}</p><label class="field-label" for="research-contact-email">${esc(local.researchContactLabel)}</label><input id="research-contact-email" class="text-input text-input-single" type="email" inputmode="email" autocomplete="email" data-research-contact="email" value="${esc(researchContact.email || "")}" placeholder="name@example.com" /><label class="final-check"><input type="checkbox" data-research-contact-consent ${researchContact.consent ? "checked" : ""} /><span>${esc(local.researchContactConsent)}</span></label></section>` : "";
+  return `${screenHeading(consent.title, local.useScopeHelp)}
     <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(consent.researchQ)}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", consent.researchYes, "")}${choice("policy_research_use", "INTERNAL_ONLY", consent.researchNo, "")}</div></section>
     <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(consent.quoteQ)}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", consent.quoteYes, "")}${choice("policy_quote_use", "NO_QUOTE", consent.quoteNo, "")}</div></section>
     <section class="use-scope-section"><span>03 · ${esc(t("전시·출판·웹 기록"))}</span><h3>${esc(consent.publicQ)}</h3><div class="use-scope-grid">${choice("public_archive_interest", "ASK_LATER", consent.publicYes, "")}${choice("public_archive_interest", "RESEARCH_ONLY", consent.publicNo, "")}</div></section>
+    ${contactSection}
     <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse ? (archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리") : "공개 활용 범위 미선택"))}</p></div>`;
 }
 
@@ -1602,12 +1736,15 @@ function screenBody(id) {
     ROLE_GROUP: renderRoleGroup,
     ROLE_PRIMARY: renderRolePrimary,
     ROLE_PARALLEL: renderRoleParallel,
+    ROLE_BRIDGE: renderRoleBridge,
     PARTICIPANT_CONTEXT: renderParticipantContext,
     PROFILE: renderProfile,
     M01: renderMemoryType,
     NO_RECALL_RELATION: renderNoRecallRelation,
     M02: renderMemoryClue,
     M03: renderBranch,
+    M03_RECONNECT: renderBranch,
+    M10_VERIFY: renderMemoryVerify,
     M04: renderMeaning,
     M05: renderMeaningTags,
     AI_ANCHOR_M04_TEXT: () => renderAdaptiveCheckpoint("M04_TEXT"),
@@ -1643,21 +1780,22 @@ function screenBody(id) {
 }
 
 function canContinue(id) {
-  if (id === "CONSENT") return Boolean(answerFor("RC01"));
+  if (id === "CONSENT") return Boolean(answerFor("RC01") && answerFor("RC02"));
   if (id === "P01") return Boolean(state.answers.route);
   if (id === "DOCUMENT_IDENTITY") return Boolean(state.answers.display_name_mode && (state.answers.display_name_mode === "ANONYMOUS" || state.answers.display_name?.trim()));
   if (id === "P01_CONTEXT") return Boolean(state.answers.response_position);
   if (id === "ROLE_GROUP") return Boolean(state.answers.role_group_primary);
   if (id === "ROLE_PRIMARY") return Boolean(state.answers.role_primary);
+  if (id === "ROLE_BRIDGE") return Boolean(state.answers.role_group_primary && state.answers.role_primary);
   if (id === "PARTICIPANT_CONTEXT") return hasParticipantContext(state.answers);
   if (id === "M01") return Boolean(state.answers.memory_type);
   if (id === "M02") return Boolean(state.answers.memory_clue_text?.trim());
   if (id === "M04") return Boolean(state.answers.m_declared && state.answers.memory_meaning_text?.trim());
   if (id === "PRACTICE_PUBLIC_STATE") return Boolean(state.answers.creative_work_state && state.answers.public_activity_state);
-  if (id === "STATE_BACKGROUND") return Boolean(values(state.answers.pause_context_tags).length && state.answers.pause_meaning);
+  if (id === "STATE_BACKGROUND") return Boolean(values(state.answers.pause_context_tags).length);
   if (id === "TRANSITION") {
     if (!state.answers.transition_state) return false;
-    return ["SKIP", "UNSURE"].includes(state.answers.transition_state) || Boolean(state.answers.transition_text?.trim());
+    return !hasSubstantiveTransition(state.answers) || Boolean(state.answers.transition_text?.trim());
   }
   if (id === "CONTINUITY") {
     if (!state.answers.invisible_continuity_state) return false;
@@ -1669,17 +1807,41 @@ function canContinue(id) {
     return Boolean(turn && state.answers[turn.answer_field]?.trim() && !state.adaptiveGenerating);
   }
   if (id === "D01") return Boolean(state.answers.d_current_gap);
-  if (id === "D02") return Boolean(state.answers.d_desired_change_primary && state.answers.desired_change_text?.trim());
+  if (id === "D02") return Boolean(state.answers.d_desired_change_primary) && (!hasSubstantiveDChange(state.answers) || Boolean(state.answers.desired_change_text?.trim()));
   if (id === "DEPTH_M") return Boolean(state.answers.depth_m);
   if (id === "DEPTH_S") return Boolean(state.answers.depth_s);
   if (id === "DEPTH_D") return Boolean(state.answers.depth_d);
   if (id === "REFLECTION_REVIEW") {
     if (!state.answers.reflection_action) return false;
-    if (["EDIT", "REWRITE"].includes(state.answers.reflection_action)) return Boolean(state.answers.participant_revision?.trim());
+    if (["EDIT", "REWRITE"].includes(state.answers.reflection_action) && !state.answers.participant_revision?.trim()) return false;
+    return state.answers.synthesis_confirmation_ack === "YES";
   }
-  if (id === "SUBMIT") return Boolean(state.answers.participant_m && state.answers.participant_s && state.answers.participant_d && state.answers.coordinate_feedback) && !state.translationGenerating;
-  if (id === "USE_SCOPE") return Boolean(state.answers.policy_research_use && state.answers.policy_quote_use && state.answers.public_archive_interest);
+  if (id === "SUBMIT") {
+    const mOptional = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
+    const dOptional = ["NO_MAJOR_GAP", "UNSURE"].includes(state.answers.d_current_gap) || ["NO_SPECIFIC_CHANGE", "UNSURE"].includes(state.answers.d_desired_change_primary);
+    return Boolean((mOptional || state.answers.participant_m) && state.answers.participant_s && (dOptional || state.answers.participant_d) && state.answers.coordinate_feedback) && !state.translationGenerating;
+  }
+  if (id === "USE_SCOPE") {
+    const useScopeComplete = Boolean(state.answers.policy_research_use && state.answers.policy_quote_use && state.answers.public_archive_interest);
+    if (!useScopeComplete) return false;
+    if (state.answers.public_archive_interest !== "ASK_LATER") return true;
+    const contact = state.researchContact || {};
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(contact.email || "").trim()) && contact.consent === true;
+  }
   return true;
+}
+
+function canContinueContextStep(step = Number(state.contextStep || 0)) {
+  if (step === 0) {
+    const field = values(state.answers.field);
+    return field.length > 0 && (!field.includes("OTHER") || Boolean(String(state.answers.field_other || "").trim()));
+  }
+  if (step === 1) {
+    const mode = values(state.answers.participation_mode);
+    return mode.length > 0 && (!mode.includes("OTHER") || Boolean(String(state.answers.participation_mode_other || "").trim()));
+  }
+  return Boolean(state.answers.activity_form)
+    && (state.answers.participation_unit !== "OTHER" || Boolean(String(state.answers.participation_unit_other || "").trim()));
 }
 
 function createResponse(submissionPhase = "final") {
@@ -1709,7 +1871,7 @@ function createResponse(submissionPhase = "final") {
   const sContextTags = deriveSContextTags(cleanedAnswers);
   return {
     response_id: responseId,
-    payload_version: isRc2 ? "over39-rc2-stage1-contract-candidate-v0.5.0" : "over39-rc1-payload-1",
+    payload_version: isRc2 ? "over39-rc2-task9-live-data-v0.6.1" : "over39-rc1-payload-1",
     response_document_version: RESPONSE_DOCUMENT_VERSION,
     questionnaire_version: schema.questionnaire_version,
     schema_version: schema.schema_version,
@@ -1768,10 +1930,13 @@ function createResponse(submissionPhase = "final") {
     fixed_question_count: fixedQuestionIds.length,
     depth_question_count: isRc2 ? values(cleanedAnswers.adaptive_turns).length : 3,
     depth_interview: isRc2 ? {
-      mode: "five_anchor_realapi_plus_conditional_followups",
+      mode: "adaptive_v2_need_gated",
+      adaptive_policy_version: ADAPTIVE_POLICY_VERSION,
+      historical_checkpoints: ANCHOR_ORDER,
+      active_checkpoints: ACTIVE_ANCHOR_ORDER,
       source: aggregateAnchorSource(values(cleanedAnswers.adaptive_ai_runs)) || cleanedAnswers.depth_source || "skipped_low_information",
       interaction_language: sourceLanguage,
-      checkpoints: ANCHOR_ORDER,
+      checkpoints: ACTIVE_ANCHOR_ORDER,
       conditional_checkpoints: values(cleanedAnswers.adaptive_turns)
         .map((turn) => turn.checkpoint)
         .filter((checkpoint) => !ANCHOR_ORDER.includes(checkpoint)),
@@ -1779,6 +1944,7 @@ function createResponse(submissionPhase = "final") {
         id: turn.id, checkpoint: turn.checkpoint, anchor_id: turn.anchor_id || turn.checkpoint, axis: turn.axis, focus: turn.focus, prompt: turn.prompt,
         intent: turn.intent, source: turn.source, provider: turn.provider || null, model: turn.model || null, language: turn.language, provenance: turn.provenance || { kind: turn.source === "motif" ? "ai-generated" : "fixed" },
         request_id: turn.request_id || null, client_request_id: turn.client_request_id || null, client_request_id_sent: turn.client_request_id_sent || turn.client_request_id || null, client_request_id_returned: turn.client_request_id_returned || null, client_request_id_match: turn.client_request_id_match === true, context_fingerprint: turn.context_fingerprint || null, dom_match: turn.dom_match === true,
+        need_decision: turn.need_decision || null, need_reason: turn.need_reason || null, adaptive_policy_version: turn.adaptive_policy_version || ADAPTIVE_POLICY_VERSION,
         answer_text: cleanedAnswers[turn.answer_field]?.trim() || null,
         self_check_value: turn.self_check_field ? (cleanedAnswers[turn.self_check_field] || null) : null,
       })),
@@ -1802,6 +1968,7 @@ function createResponse(submissionPhase = "final") {
       participant_approved_text_ko: cleanedAnswers.participant_approved_text_ko?.trim() || null,
       participant_approved_provenance: cleanedAnswers.participant_approved_provenance || null,
       participant_approved_translation_provenance: cleanedAnswers.participant_approved_translation_provenance || null,
+      synthesis_confirmation: cleanedAnswers.synthesis_confirmation || null,
       original_confirmation_status: approvedText ? "participant_confirmed" : "not_confirmed",
       translation_status: sourceLanguage === "ko" ? "same_as_original" : cleanedAnswers.participant_approved_text_ko ? "translated_from_original" : "translation_pending",
       public_approved: false,
@@ -1816,7 +1983,8 @@ function createResponse(submissionPhase = "final") {
       scope: ["record_read", "greeting_mailbox"],
     } : null,
     document_confirmation: {
-      acknowledged: submissionPhase === "final",
+      acknowledged: cleanedAnswers.synthesis_confirmation_ack === "YES" && Boolean(approvedText),
+      approval_scope: "participant_synthesis_text_only",
       confirmed_at: confirmedAt,
       original_confirmed: Boolean(approvedText),
       korean_translation_basis: sourceLanguage === "ko" ? "original" : "source_original",
@@ -1830,6 +1998,10 @@ function createResponse(submissionPhase = "final") {
     consent: {
       research: (cleanedAnswers["consent.research_participation"] || cleanedAnswers.research_consent) === "YES",
       data_processing: (cleanedAnswers["consent.ai_processing_ack"] || cleanedAnswers.data_processing_consent) === "YES",
+      research_analysis: cleanedAnswers.policy_research_use === "ANON_ANALYSIS",
+      anonymous_quotation: cleanedAnswers.policy_quote_use === "ANON_EXCERPT",
+      future_public_contact: cleanedAnswers.public_archive_interest === "ASK_LATER",
+      research_contact_storage: cleanedAnswers.public_archive_interest === "ASK_LATER" && state.researchContact?.consent === true,
       consent_version: schema.versioning.consent_version,
     },
     outbox_count: readOutbox().length,
@@ -1861,9 +2033,37 @@ async function requestResearchStorage(response) {
   }
 }
 
-async function requestGreetingReservation(response) {
+function createResearchContactUpdate(response) {
+  const contact = state.researchContact || {};
+  const email = String(contact.email || "").trim();
+  if (state.answers.public_archive_interest !== "ASK_LATER" || contact.consent !== true || !email) return null;
+  return {
+    response_id: response.response_id,
+    submission_phase: "research_contact_update",
+    email,
+    display_name: null,
+    role_label: null,
+    contact_reason: "future_public_use_reconfirmation",
+    consent_scope: ["research_future_public_use_reconfirmation"],
+    consent_version: schema.versioning.consent_version,
+  };
+}
+
+async function requestResearchContactStorage(response) {
+  const update = createResearchContactUpdate(response);
+  if (!update) return { status: "not_requested" };
+  const result = await sendEnvelope(createEnvelope("contact_update", update, "research-contact"), {
+    endpoint: submitFunctionUrl,
+    anonKey: supabaseAnonKey,
+  });
+  state.researchContact = { ...(state.researchContact || {}), status: result.status };
+  return result;
+}
+
+async function requestGreetingReservation(response, { inlineFirst = false } = {}) {
   const reference = response?.participant_access || ensureParticipantReference(response?.response_id);
   if (!globalGreetingsEnabled || !relayFunctionUrl || !reference?.access_token) return { status: "not_active" };
+  const publicCode = response?.participant_reference?.code || reference.code || ensureParticipantReference(response?.response_id)?.code;
   try {
     const result = await fetch(relayFunctionUrl, {
       method: "POST",
@@ -1871,14 +2071,78 @@ async function requestGreetingReservation(response) {
         "Content-Type": "application/json",
         ...(supabaseAnonKey ? { Authorization: `Bearer ${supabaseAnonKey}`, apikey: supabaseAnonKey } : {}),
       },
-      body: JSON.stringify({ action: "participant_reserve", response_id: response.response_id, participant_access_token: reference.access_token }),
+      body: JSON.stringify({
+        action: "participant_reserve",
+        response_id: response.response_id,
+        participant_access_token: reference.access_token,
+        participant_public_code: publicCode,
+        participant_scope: reference.scope || ["record_read", "greeting_mailbox"],
+        source_language: response.source_language || state.language || "ko",
+        sample_type: response.sample_type || sampleType,
+        release_version: response.release_version || releaseVersion,
+        delivery_surface: inlineFirst ? "inline_first" : "relay_mailbox",
+      }),
     });
     const body = await result.json();
     if (!result.ok || !body?.ok) return { status: "waiting", error: body?.error_code || "RESERVATION_UNAVAILABLE" };
-    return { status: body.status === "QUEUED" ? "reserved" : "waiting", receipt: body };
+    return { status: ["QUEUED", "OPENED"].includes(body.status) ? "reserved" : "waiting", receipt: body };
   } catch (error) {
     return { status: "waiting", error: error?.message || "RESERVATION_UNAVAILABLE" };
   }
+}
+
+async function beginFirstGreeting() {
+  state.phase = "greeting-first";
+  state.firstGreeting = { status: "loading", requested_at: new Date().toISOString() };
+  saveFirstGreeting();
+  saveDraft();
+  render(true);
+  if (!globalGreetingsEnabled) {
+    state.firstGreeting = { status: "unavailable", reason: "GLOBAL_GREETINGS_COLLECTION_DISABLED" };
+    saveFirstGreeting();
+    saveDraft();
+    render(true);
+    return;
+  }
+  const reference = ensureParticipantReference(state.responseId);
+  const reservation = await requestGreetingReservation({
+    response_id: state.responseId,
+    participant_reference: publicParticipantReference(reference),
+    participant_access: reference,
+    source_language: state.language,
+    sample_type: sampleType,
+    release_version: releaseVersion,
+  }, { inlineFirst: true });
+  state.greetingReservation = reservation;
+  if (reservation.status === "reserved" && reservation.receipt?.greeting?.original_text) {
+    state.firstGreeting = {
+      status: "received",
+      greeting_id: reservation.receipt.greeting.id,
+      original_language: reservation.receipt.greeting.original_language || "ko",
+      original_text: reservation.receipt.greeting.original_text,
+      origin: reservation.receipt.greeting.origin || "participant",
+      received_at: new Date().toISOString(),
+    };
+  } else if (reservation.status === "not_active" || reservation.error) {
+    state.firstGreeting = { status: "unavailable", reason: reservation.error || "GREETING_NOT_ACTIVE" };
+  } else {
+    state.firstGreeting = { status: "waiting", reason: reservation.receipt?.reason || "QUEUE_EMPTY" };
+  }
+  saveFirstGreeting();
+  saveDraft();
+  render(true);
+}
+
+function beginResearchStory(receiveGreeting = false) {
+  state.phase = "survey";
+  state.step = Math.max(1, state.step);
+  const connection = getConnection();
+  connection.opt_in = receiveGreeting ? "YES" : "NO";
+  connection.receive_opt_in = receiveGreeting ? "YES" : "NO";
+  connection.stage = receiveGreeting ? "waiting" : "skipped";
+  saveConnection();
+  saveDraft();
+  render(true);
 }
 
 async function verifyResearchStorage(responseId) {
@@ -1907,11 +2171,11 @@ function creditBlock(variant = "default") {
 }
 
 function header() {
-  const projectMeta = isRc2 ? t("리서치 · 참여 기록 · 공모") : "PUBLIC MEMORY RESEARCH · RC1";
+  const projectMeta = isRc2 ? greetingFirst().projectMeta : "PUBLIC MEMORY RESEARCH · RC1";
   const currentLanguage = languages.find(([code]) => code === state.language)?.[1] || "한국어";
   return `<header class="topbar" aria-label="Site header">
     <div class="brand project-brand"><span class="brand-mark" aria-hidden="true">39+</span><span>〈만 39세 이상〉</span></div>
-    <div class="topbar-project"><span>${esc(projectMeta)}</span><strong>RESEARCH & OPEN CALL</strong></div>
+    <div class="topbar-project"><span>${esc(projectMeta)}</span><strong>RESEARCH</strong></div>
     <details class="language-menu">
       <summary aria-label="${esc(t("언어 선택"))}"><span>${esc(currentLanguage)}</span><i aria-hidden="true">⌄</i></summary>
       <div class="language-menu-panel" role="group" aria-label="${esc(t("언어 선택"))}">
@@ -1922,8 +2186,8 @@ function header() {
 }
 
 function footer() {
-  const footerMeta = isRc2 ? t("기억 · 현재 · 조건 · 참여 기록 · 공모 · 안부의 좌표") : "PUBLIC MEMORY RESEARCH · INSTITUTION RC1";
-  return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(footerMeta)}</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
+  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span></div><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></footer>`;
+  return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>PUBLIC MEMORY RESEARCH · INSTITUTION RC1</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
 }
 
 function renderAnalysisCard(response) {
@@ -1985,13 +2249,18 @@ function connectionCanSave() {
   if (!["YES", "NO"].includes(connection.opt_in)) return false;
   if (connection.opt_in !== "YES") return true;
   const hasOutgoingMessage = Boolean(String(connection.message_text || connection.introduction || "").trim());
-  const wantsToReceive = connection.receive_opt_in === "YES";
-  if (!hasOutgoingMessage && !wantsToReceive) return false;
-  if (hasOutgoingMessage && connection.preview_confirmed !== true) return false;
-  if (wantsToReceive) {
-    if (!connection.greeting_connection_preference) return false;
+  if ((connection.stage || "receive") === "receive") {
+    // Receiving the first greeting needs only an explicit receive choice.
+    // Direction and translation are choices for the later outgoing sentence,
+    // never prerequisites for seeing an already available greeting.
+    return connection.receive_opt_in === "YES";
   }
-  return true;
+  if (connection.stage !== "preview") return false;
+  return hasOutgoingMessage
+    && Boolean(connection.message_audience)
+    && ["NAMED", "CONTEXTUAL", "ANONYMOUS"].includes(connection.sender_visibility)
+    && ["YES", "NO"].includes(connection.translation_allowed)
+    && connection.preview_confirmed === true;
 }
 
 function createConnectionUpdate() {
@@ -2019,7 +2288,7 @@ function createConnectionUpdate() {
       receive_opt_in: connection.receive_opt_in === "YES",
       receive_scopes: values(connection.receive_scopes).length ? values(connection.receive_scopes) : (connection.receive_opt_in === "YES" ? ["OPEN"] : []),
       greeting_connection_preference: connection.greeting_connection_preference || null,
-      sender_visibility: connection.sender_visibility || "CONTEXTUAL",
+      sender_visibility: connection.sender_visibility || null,
       sender_public_context: senderPublicContext,
       origin: connection.origin === "core_seed" ? "core_seed" : "participant",
       translation_allowed: connection.translation_allowed === "YES",
@@ -2068,44 +2337,28 @@ function renderConnection() {
 
 function renderGlobalGreetingsConnection(connection) {
   const copy = greetingUiCopy(state.language);
-  const directionOptions = [
-    ["SIMILAR_CONDITIONS", copy.directions[0]],
-    ["ROLE_BRIDGE", copy.directions[1]],
-    ["CONTINUING_OR_RESTARTING", copy.directions[2]],
-    ["ACROSS_REGION_LANGUAGE", copy.directions[3]],
-  ];
-  const audienceOptions = [
-    ["SIMILAR_TIME", copy.audiences[0]],
-    ["CONTINUING", copy.audiences[1]],
-    ["DIFFERENT_ROLE", copy.audiences[2]],
-    ["ACROSS_PLACE", copy.audiences[3]],
-    ["OPEN", copy.audiences[4]],
-  ];
+  const local = task7();
   const messageValue = connection.message_text || connection.introduction || "";
   const visibilityOptions = greetingVisibilityCopy(state.language);
-  const stage = connection.stage || "direction";
+  const currentStage = connection.stage || "receive";
   const hasMessage = Boolean(String(messageValue).trim());
-  const steps = [["direction", copy.steps[0]], ["message", copy.steps[1]], ["preview", copy.steps[2]]];
-  const stepNav = `<ol class="greeting-stage-nav" aria-label="${esc(copy.stageLabel)}">${steps.map(([id, label], index) => `<li class="${id === stage ? "current" : (steps.findIndex(([key]) => key === stage) > index ? "complete" : "")}"><span>${index + 1}</span>${esc(label)}</li>`).join("")}</ol>`;
-  const directionSection = `<section class="connection-section receive-mail"><h2>${esc(copy.directionTitle)}</h2>${renderConnectionChoices("receive_opt_in", [["YES", copy.receiveYes], ["NO", copy.receiveNo]])}${connection.receive_opt_in === "YES" ? `<p>${esc(copy.nonResearch)}</p>${renderConnectionChoices("greeting_connection_preference", directionOptions)}${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}<p class="greeting-privacy-note">${esc(stage().notificationHelp)}</p>` : ""}</section>`;
-  const messageSection = `<section class="connection-section message-first"><h2>${esc(copy.messageTitle)}</h2><p>${esc(copy.messageHelp)}</p>${renderConnectionChoices("message_audience", audienceOptions)}<textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><h3>${esc(copy.publicContext)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}</section>`;
+  const steps = [["message", copy.steps[1]], ["preview", copy.steps[2]]];
+  const stepNav = `<ol class="greeting-stage-nav" aria-label="${esc(copy.stageLabel)}">${steps.map(([id, label], index) => `<li class="${id === currentStage ? "current" : (steps.findIndex(([key]) => key === currentStage) > index ? "complete" : "")}"><span>${index + 1}</span>${esc(label)}</li>`).join("")}</ol>`;
+  const receiveSection = `<section class="connection-section receipt-first-choice" role="status"><h2>${esc(local.receiveProfileTitle)}</h2><p>${esc(local.receiveProfileHelp)}</p></section>`;
+  const waitingSection = `<section class="connection-section greeting-waiting" role="status"><h2>${esc(local.waitingTitle)}</h2><p>${esc(local.waitingHelp)}</p><button class="primary-button" type="button" data-action="first-greeting">${esc(local.firstGreeting)} <span aria-hidden="true">→</span></button></section>`;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><aside class="greeting-writing-example" aria-label="${esc(local.messageExampleLabel)}"><span>${esc(local.messageExampleLabel)}</span><p>${esc(local.messageExample)}</p></aside><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
-  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(copy.preview)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(state.submitted?.source_language || state.language)}</span><p>${esc(messageValue || copy.noMessage)}</p></div><dl><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(state.submitted?.source_language || state.language)}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div><div><dt>${esc(copy.reason)}</dt><dd>${esc(copy.reasonScope)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p>${hasMessage ? `<label class="final-check"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(copy.previewConfirm)}</span></label>` : ""}</section>`;
-  const stageContent = stage === "direction" ? directionSection : stage === "message" ? messageSection : previewSection;
-  const advance = stage === "direction" ? "message" : stage === "message" ? "preview" : "";
+  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(local.previewTitle)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(state.submitted?.source_language || state.language)}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(state.submitted?.source_language || state.language)}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
+  const stageContent = currentStage === "receive" ? receiveSection : currentStage === "waiting" ? waitingSection : currentStage === "message" ? messageSection : previewSection;
+  const writingFlow = ["message", "preview"].includes(currentStage);
+  const primaryAction = ["receive", "waiting", "message"].includes(currentStage) ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button>`;
   return `<main class="connection-layout rc2-connection-layout greeting-connection">
     <section class="connection-main">
-      <div class="greeting-intro"><div class="greeting-object greeting-object-small" aria-hidden="true"><i></i><b></b><span></span></div><div>
-        <div class="archive-label">${esc(copy.introLabel)}</div>
-        <h1 tabindex="-1">${esc(copy.title)}</h1>
-        <p class="connection-lead">${esc(copy.lead)}</p>
-        <p class="greeting-privacy-note">${esc(copy.privacy)}</p>
-      </div></div>
-      <section class="connection-section"><h2>${esc(copy.optInTitle)}</h2>${renderConnectionChoices("opt_in", [["YES", copy.optInYes], ["NO", copy.optInNo]])}</section>
-      ${connection.opt_in === "YES" ? `${stepNav}${stageContent}<div class="greeting-stage-actions">${stage !== "direction" ? `<button class="secondary-button" type="button" data-connection-stage="${stage === "preview" ? "message" : "direction"}">${esc(copy.previous)}</button>` : ""}${advance ? `<button class="secondary-button" type="button" data-connection-stage="${advance}" ${stage === "message" && !hasMessage ? "disabled" : ""}>${esc(copy.next)} <span aria-hidden="true">→</span></button>` : ""}</div>` : ""}
-      <section class="connection-section connection-safety"><h2>${esc(copy.travelTitle)}</h2><ol class="message-route">${copy.travel.map((line, index) => `<li><b>${index + 1}</b><span>${esc(line)}</span></li>`).join("")}</ol><p>${esc(copy.privacy)}</p></section>
-      <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button><button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button></div>
+      <div class="greeting-intro"><div><div class="archive-label">${esc(local.greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingFeatureName)}</h1><p class="greeting-privacy-note">${esc(copy.privacy)}</p></div></div>
+      ${writingFlow ? stepNav : ""}${stageContent}
+      ${currentStage === "message" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="waiting">${esc(copy.previous)}</button><button class="primary-button" type="button" data-connection-stage="preview" ${!hasMessage || !connection.message_audience || !connection.sender_visibility || !["YES", "NO"].includes(connection.translation_allowed) ? "disabled" : ""}>${esc(local.previewAction)} <span aria-hidden="true">→</span></button></div>` : currentStage === "preview" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="message">${esc(copy.previous)}</button></div>` : ""}
+      <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button>${primaryAction}</div>
     </section>
   </main>`;
 }
@@ -2145,17 +2398,22 @@ function renderComplete() {
 function rc2AxisValue(response, axis) {
   const profile = buildConnectionProfile(response, getConnection());
   const value = profile.coordinate?.axes?.[axis.toLowerCase()] || response.axes?.[`${axis.toLowerCase()}_primary`] || null;
-  const labels = {
-    M1: "느낌과 분위기", M2: "삶의 경험과 기억", M3: "창작의 생각과 새로운 시도", M4: "사람과 사회의 관계",
-    S1: "더 넓어지는 중", S2: "이어지는 중", S3: "다른 의미나 방식으로 바뀌는 중", S4: "잠시 거리를 두거나 한계를 살피는 중",
-    D1: "만날 기회와 접근", D2: "개인의 기반", D3: "관계와 매개", D4: "제도와 구조",
-  };
-  return labels[value] || "여러 방향이 함께 남아 있습니다.";
+  return responseDocumentFrame(state.language).axis[value] || greetingFirst().coordinateMixed;
+}
+
+function renderCompletionCoordinate(response) {
+  const local = greetingFirst();
+  const axes = ["M", "S", "D"].map((axis, index) => ({
+    label: local.coordinateAxes[index],
+    value: rc2AxisValue(response, axis),
+  }));
+  return `<section class="completion-coordinate" aria-labelledby="completion-coordinate-title"><div class="archive-label">${esc(local.coordinateLabel)}</div><h2 id="completion-coordinate-title">${esc(local.coordinateTitle)}</h2><p class="completion-coordinate-help">${esc(local.coordinateHelp)}</p><div class="completion-coordinate-axes">${axes.map((axis, index) => `<div><span>${String(index + 1).padStart(2, "0")} · ${esc(axis.label)}</span><strong>${esc(axis.value)}</strong><i aria-hidden="true"></i></div>`).join("")}</div><p class="completion-coordinate-disclaimer">${esc(local.coordinateDisclaimer)}</p></section>`;
 }
 
 function renderRc2Complete(response) {
   const copy = completionCopy(state.language);
   const local = stage();
+  const task7Local = task7();
   const status = state.submissionStatus || "local_only";
   const statusCopy = copy.status[status] || copy.status.local_only;
   const retryButton = ["failed", "unverified"].includes(status) ? `<button class="secondary-button" type="button" data-action="resend">${esc(copy.retry)}</button>` : "";
@@ -2181,15 +2439,19 @@ function renderRc2Complete(response) {
   const audienceLead = isAudienceContext()
     ? copy.audienceLead
     : copy.otherLead;
-  const greetingSystemCopy = globalGreetingsEnabled
-    ? local.receiveFirst
-    : local.waitingGreeting;
-  const greetingAction = globalGreetingsEnabled
-    ? `<button class="primary-button" type="button" data-action="connection">${esc(copy.greetingAction)} <span aria-hidden="true">→</span></button>`
-    : `<p class="feature-closed-status" role="status">${esc(copy.greetingClosed)}</p>`;
+  const connection = getConnection();
+  const greetingFirstLocal = greetingFirst();
+  const greetingChoiceSaved = ["confirmed", "local_only", "unverified", "failed"].includes(state.connectionStatus);
+  const greetingChoice = globalGreetingsEnabled
+    ? greetingChoiceSaved && Boolean(String(connection.message_text || "").trim())
+      ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.outgoingSaved)}</h2><p>${esc(greetingFirstLocal.outgoingSavedHelp)}</p></div>`
+      : connection.stage === "done" || state.connectionStatus === "finished"
+        ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.continuationSecondary)}</h2><p>${esc(greetingFirstLocal.continuationHelp)}</p></div>`
+        : `<h2>${esc(greetingFirstLocal.coordinateTransitionTitle)}</h2><p>${esc(greetingFirstLocal.coordinateTransitionHelp)}</p><div class="greeting-opt-in-actions"><button class="primary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="finish-greeting">${esc(greetingFirstLocal.continuationSecondary)}</button></div>`
+    : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p class="feature-closed-status" role="status">${esc(task7Local.gateOff)}</p>`;
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(local.recordSavedTitle)}</h1><p class="rc2-complete-lead">${esc(local.recordSavedLead)} ${esc(local.recordSavedNext)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div><section class="rc2-greeting-hub"><div class="greeting-object" aria-hidden="true"><i></i><b></b><span></span></div><div class="greeting-hub-copy"><div class="archive-label">${esc(copy.greetingBrand)}</div><h2>${esc(copy.greetingTitle)}</h2><p>${esc(greetingSystemCopy)}</p><p class="greeting-coordinate-explainer">${esc(copy.greetingReason)}</p><div class="export-actions">${greetingAction}<button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>${openCallSection}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid">${openCallSection}<div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
@@ -2274,8 +2536,11 @@ function renderSurvey() {
   const id = screens[state.step];
   const meta = progressMeta(id);
   const adaptiveScreen = Boolean(adaptiveScreenCheckpoint[id]);
-  const nextLabel = id === "USE_SCOPE"
-    ? "이 범위로 기록 저장하기"
+  const contextInternalStep = id === "PARTICIPANT_CONTEXT" ? Math.max(0, Math.min(2, Number(state.contextStep || 0))) : null;
+  const nextLabel = isRc2 && id === "CONSENT"
+    ? greetingFirst().consentContinue
+    : id === "USE_SCOPE"
+    ? task7().useScopeSave
     : id === "SUBMIT"
       ? "활용 범위 정하기"
     : id === "FIXED_CHECKPOINT"
@@ -2283,8 +2548,10 @@ function renderSurvey() {
       : adaptiveScreen
         ? state.adaptiveGenerating ? "답변을 읽고 있어요" : "이 답변에서 이어가기"
         : state.depthGenerating ? "질문을 준비하고 있습니다" : id === "DEPTH_D" && state.summaryGenerating ? "정리하고 있습니다" : state.summaryGenerating ? "기록을 정리하고 있습니다" : state.translationGenerating ? "번역을 준비하고 있습니다" : "다음";
-  const nextDisabled = !canContinue(id) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
-  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="back" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button><span></span><button class="primary-button" type="button" data-action="next" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
+  const nextDisabled = (contextInternalStep === null ? !canContinue(id) : !canContinueContextStep(contextInternalStep)) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
+  const backAction = contextInternalStep !== null && contextInternalStep > 0 ? "context-back" : "back";
+  const nextAction = contextInternalStep !== null && contextInternalStep < 2 ? "context-next" : "next";
+  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button><span></span><button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function researchJourney() {
@@ -2296,7 +2563,7 @@ function researchJourney() {
       <div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div>
       <div><span>03</span><strong>${esc(landing.condition || t("조건"))}</strong><p>${esc(t("시간, 공간, 관계, 매개와 제도"))}</p></div>
     </div>
-    <div class="journey-result"><strong>${esc(t("마지막 기록"))}</strong><div class="journey-result-copy"><p>${esc(t("답변을 한 편의 참여 기록으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다."))}</p><p class="journey-coordinate-explainer">${esc(t("세 방향의 네 상태가 만나 64개의 현재 위치를 만듭니다. 이는 사람의 고정된 유형이 아니라, 시간과 상황에 따라 달라질 수 있는 이번 기록의 위치입니다. 이후에는 기록 사이의 관계를 읽고 안부가 닿은 이유를 설명하는 데 사용합니다."))}</p></div></div>
+    <div class="journey-result"><strong>${esc(t("마지막 기록"))}</strong><div class="journey-result-copy"><p>${esc(t("답변을 한 편의 참여 기록으로 모아 직접 읽고 다듬습니다. 마지막에는 기억의 의미, 현재의 흐름, 이어가기 위한 조건을 직접 확인하고 이번 기록과 가까운 위치를 함께 살펴봅니다."))}</p>${isRc2 ? "" : `<p class="journey-coordinate-explainer">${esc(t("세 방향의 네 상태가 만나 64개의 현재 위치를 만듭니다. 이는 사람의 고정된 유형이 아니라, 시간과 상황에 따라 달라질 수 있는 이번 기록의 위치입니다. 이후에는 기록 사이의 관계를 읽고 안부가 닿은 이유를 설명하는 데 사용합니다."))}</p>`}</div></div>
   </section>`;
 }
 
@@ -2304,47 +2571,40 @@ function renderIntro() {
   const draft = loadDraft();
   const pending = loadPending();
   if (isRc2) {
-    const landing = ui().landing || {};
-    const local = stage();
-    const duration = estimatedDurationMinutes > 0
-      ? `${t("예상 소요시간")} · ${estimatedDurationMinutes}${t("분 안팎")}`
-      : local.durationPending;
-    const questionNote = liveAiEnabled
-      ? `<section class="ai-role-note"><span>${esc(t("연결 질문"))}</span><p>${esc(landing.followup || t("일부 구간에서는 앞선 응답을 구체화하는 질문이 이어집니다."))}</p></section>`
-      : `<section class="ai-role-note"><span>${esc(t("연결 질문"))}</span><p>${esc(t("앞선 답변에서 이어지는 질문이 세 구간에 나누어 나타납니다."))}</p></section>`;
+    const local = greetingFirst();
+    const journey = local.journey.map(([title, help], index) => `<li class="${index === 0 || index === local.journey.length - 1 ? "greeting-stage" : ""}"><div class="stage-marker"><span class="stage-number">${String(index + 1).padStart(2, "0")}</span><span class="stage-node" aria-hidden="true"></span></div><strong>${esc(title)}</strong><p>${esc(help)}</p></li>`).join("");
+    const startAction = draft ? "resume" : "start";
+    const startLabel = draft ? local.continueDraft : local.start;
     return `<main class="rc2-intro">
       <section class="rc2-intro-main">
         <div class="intro-hero">
-          <div class="archive-label">〈만 39세 이상〉 · RESEARCH & OPEN CALL</div>
-          <h1 tabindex="-1">${esc(local.introTitle)}</h1>
+          <div class="archive-label">${esc(local.introEyebrow)}</div>
+          <h1 tabindex="-1"><span class="intro-title-lead">${esc(local.introTitleLead)}</span><span class="intro-title-main">${esc(local.introTitleMain)}</span></h1>
           <div class="intro-copy">
             <p>${esc(local.introLead)}</p>
-            <p>${esc(local.introFlow)}</p>
+            <p>${esc(local.introGreeting)}</p>
+            <p>${esc(local.introAudience)}</p>
             <p>${esc(local.introRecord)}</p>
           </div>
-          <div class="intro-ready-note"><strong>${esc(local.ready)}</strong><span>${esc(duration)}</span></div>
-          ${creditBlock("intro")}
+          <section class="greeting-first-journey" aria-label="${esc(local.journeyLabel)}">
+            <div class="greeting-first-journey-heading"><span>${esc(local.journeyTitle)}</span></div>
+            <div class="greeting-first-journey-map"><div class="greeting-first-journey-track" aria-hidden="true"><span></span></div><ol>${journey}</ol></div>
+          </section>
+          <div class="intro-disclosure" role="note">
+            <p><strong>AI</strong><span>${esc(local.introAi)}</span></p>
+          </div>
+          <div class="intro-ready-note"><strong>${esc(local.duration)}</strong></div>
         </div>
-        <section class="entry-route-grid" aria-label="${esc(t("참여 경로"))}">
-          <article class="entry-route-card interactive-tilt">
-            <div class="route-object route-logo route-logo-led" aria-hidden="true"><span class="route-logo-shadow">${ledWordmark({ className: "route-led-wordmark", decorative: true, fill: "#777873" })}</span><span class="route-logo-body">${ledWordmark({ className: "route-led-wordmark", decorative: true })}</span></div><span>RESEARCH</span>
-            <h2>${esc(t("문화예술 경험 기록"))}</h2>
-            <p>${esc(t("작가·창작자·비평가·기획자·교육자·관객·시민의 경험을 기억·현재·조건의 세 구간을 따라 듣습니다."))}</p>
-            <div class="entry-route-meta">${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건 · 참여 기록"))}</div>
-            <div class="entry-route-actions"><button class="primary-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button>${draft ? `<button class="secondary-button" type="button" data-action="resume">${esc(t("작성 이어가기"))}</button>` : ""}</div>
-          </article>
-          <article class="entry-route-card entry-route-call interactive-tilt">
-            <div class="route-object route-logo route-logo-moho" aria-hidden="true"><span class="route-logo-shadow"></span><span class="route-logo-body">${mohoHouseMark({ className: "route-moho-mark" })}</span></div><span>2026 OPEN CALL</span>
-            <h2>${esc(t("공모"))}</h2>
-            <p>${esc(t("2026년 12월 · 모호주택에서 함께할 작업을 기다립니다."))}</p>
-            <div class="entry-route-meta">${esc(t("설문 참여와 독립된 공모입니다"))}</div>
-            <div class="entry-route-actions"><button class="primary-button" type="button" data-action="open-call">${esc(t("공모 보기"))} <span aria-hidden="true">↗</span></button></div>
+        <section class="entry-route-grid entry-route-grid-research" aria-label="${esc(t("참여 경로"))}">
+          <article class="entry-route-card entry-route-research interactive-tilt">
+            <div class="route-copy"><span>RESEARCH</span>
+            <h2>${esc(local.researchTitle)}</h2>
+            <p>${esc(local.researchDescription)}</p>
+            <div class="entry-route-meta">${esc(local.researchMeta)}</div>
+            <div class="entry-route-actions"><button class="primary-button" type="button" data-action="${startAction}">${esc(startLabel)} <span aria-hidden="true">→</span></button></div></div>
           </article>
         </section>
-        <p class="entry-route-note">${esc(t("설문과 공모는 각각 독립적으로 참여합니다. 설문에서 만든 참여 기록은 본인이 선택한 경우에만 공모 자료와 연결됩니다."))}</p>
-        ${researchJourney()}
-        ${questionNote}
-        <section class="intro-closing"><strong>${esc(t("정확한 이름이나 연도가 떠오르지 않아도 괜찮습니다."))}</strong><p>${esc(t("남아 있는 장면에서 시작해 현재의 경험과 앞으로 필요한 조건까지 차분히 이어갑니다."))}</p></section>
+        ${creditBlock("intro")}
       </section>
     </main>`;
   }
@@ -2438,10 +2698,30 @@ function renderSaveFailed() {
   return `<main class="saving-layout"><section class="saving-card save-failed" role="alert"><h1>${esc(local.saveFailedTitle)}</h1><p>${esc(local.saveFailedLead)}</p><div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-survey">${esc(local.backToResponses)}</button><button class="primary-button" type="button" data-action="resend">${esc(local.retrySave)} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
+function renderFirstGreeting() {
+  const local = greetingFirst();
+  const simplified = greetingSimple();
+  const greeting = state.firstGreeting || { status: "loading" };
+  if (greeting.status === "loading") {
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-loading" aria-live="polite"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingLoading)}</h1><p>${esc(local.greetingLoadingHelp)}</p>${processingSignal(local.greetingLoading)}</section></main>`;
+  }
+  if (greeting.status === "received") {
+    const isSeed = greeting.origin === "core_seed";
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}<div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(local.beginStory)} <span aria-hidden="true">→</span></button></div></section></main>`;
+  }
+  const unavailable = greeting.status === "unavailable";
+  return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(unavailable ? local.unavailableHelp : local.waitingHelp)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(local.continueWithoutGreeting)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;
+}
+
+function renderGreetingChoice() {
+  const local = greetingFirst();
+  return `<main class="first-greeting-layout greeting-choice-layout"><section class="first-greeting-card greeting-choice-card"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingChoiceTitle)}</h1><p>${esc(local.greetingChoiceHelp)}</p><div class="greeting-choice-actions"><button class="primary-button" type="button" data-action="choose-first-greeting">${esc(local.greetingChoicePrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="skip-first-greeting">${esc(local.greetingChoiceSecondary)}</button></div></section></main>`;
+}
+
 function render(focusHeading = false) {
   const scrollPosition = { x: window.scrollX, y: window.scrollY };
   document.documentElement.lang = state.language;
-  const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "saving" ? renderSavePending() : state.phase === "save_failed" ? renderSaveFailed() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderRetiredRc1ExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
+  const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "greeting-choice" ? renderGreetingChoice() : state.phase === "greeting-first" ? renderFirstGreeting() : state.phase === "saving" ? renderSavePending() : state.phase === "save_failed" ? renderSaveFailed() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderRetiredRc1ExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
   root.innerHTML = `<div class="site-shell phase-${esc(state.phase)}">${header()}${content}${footer()}</div>`;
   const legacyAgeGate = root.querySelector('[data-exhibition-field="eligibility_ack"]')?.closest(".connection-section");
   if (legacyAgeGate) legacyAgeGate.innerHTML = `<h2>${esc(t("프로젝트가 다루는 시간"))}</h2><p>${esc(t("〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다."))}</p>`;
@@ -2478,7 +2758,6 @@ function changeChoice(id, value, multi, max, exclusive) {
       clearDepthOutcome();
     } else {
       state.answers[field] = value;
-      if (id === "RC01") state.answers[storedField(question("RC02")) || "consent.ai_processing_ack"] = value;
     }
     if (id === "P01_CONTEXT" && value !== "PROFESSIONAL") state.answers = sanitizeAnswersForRoute(state.answers);
     if (id === "ID01") {
@@ -2494,6 +2773,7 @@ function changeChoice(id, value, multi, max, exclusive) {
     }
     if (id === "P11" && ["SKIP", "UNSURE"].includes(value)) delete state.answers.transition_text;
     if (id === "P13" && !["YES", "MIXED"].includes(value)) delete state.answers.invisible_continuity_text;
+    if (id === "D02" && !/^D[1-4]$/.test(String(value))) delete state.answers.desired_change_text;
     if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => delete state.answers[key]);
     if (id === "reflection_action") {
       delete state.answers.participant_revision;
@@ -2511,6 +2791,7 @@ function changeChoice(id, value, multi, max, exclusive) {
     else { selected = selected.filter((itemValue) => !exclusive.includes(itemValue)); if (!max || selected.length < max) selected.push(value); }
     state.answers[field] = selected;
     if (id === "P19" && selected.length === 1 && selected[0] === "NONE") delete state.answers.support_conditions_text;
+    if (id === "P16" && selected.some((item) => ["NONE", "UNSURE"].includes(item))) delete state.answers.pause_context_other;
     if (!["depth_m", "depth_s", "depth_d"].includes(id) && !String(id).startsWith("adaptive_check_")) reconcileIfResearchEdit(id);
   }
   if (isRc2 && ["depth_m", "depth_s"].includes(id)) clearDepthAfter(id === "depth_m" ? "M" : "S");
@@ -2521,7 +2802,12 @@ function changeConnectionChoice(field, value, multi, max) {
   const connection = getConnection();
   if (!multi) {
     connection[field] = value;
-    if (field === "opt_in" && value === "YES" && !values(connection.reply_modes).length) connection.reply_modes = ["MEDIATED_WEB"];
+    if (field === "opt_in" && value === "YES") {
+      connection.receive_opt_in = "YES";
+      connection.stage = "receive";
+      if (!values(connection.receive_scopes).length) connection.receive_scopes = ["RESONANCE"];
+      if (!values(connection.reply_modes).length) connection.reply_modes = ["MEDIATED_WEB"];
+    }
     if (field === "receive_opt_in" && value === "YES" && !values(connection.receive_scopes).length) connection.receive_scopes = ["RESONANCE"];
     if (field === "receive_opt_in" && value !== "YES") {
       connection.receive_scopes = [];
@@ -2529,7 +2815,8 @@ function changeConnectionChoice(field, value, multi, max) {
       connection.contact_email = "";
       connection.contact_permission = "";
     }
-    if (field === "opt_in" && value !== "YES") Object.assign(connection, defaultConnection(), { opt_in: "NO" });
+    if (field === "opt_in" && value !== "YES") Object.assign(connection, defaultConnection(), { opt_in: "NO", receive_opt_in: "NO", stage: "receive" });
+    if (["message_audience", "sender_visibility", "translation_allowed"].includes(field)) connection.preview_confirmed = false;
   } else {
     let selected = values(connection[field]);
     if (selected.includes(value)) selected = selected.filter((item) => item !== value);
@@ -2549,6 +2836,45 @@ function changeExhibitionChoice(field, value) {
   saveExhibitionApplication();
 }
 
+function saveCurrentConnection() {
+  if (!connectionCanSave() || state.connectionStatus === "sending") return;
+  const connection = getConnection();
+  const connectionStage = connection.stage || "receive";
+  const update = createConnectionUpdate();
+  const participantAccess = state.submitted?.participant_access || ensureParticipantReference(update.response_id);
+  // `participant_access` is transport-only for the reservation endpoint.
+  // It must not travel in a relationship snapshot or outbox payload.
+  delete update.participant_access;
+  saveConnection();
+  state.connectionStatus = "sending";
+  render(false);
+  const separated = splitResearchAndContact(update);
+  const relationEnvelope = createEnvelope("relationship_update", { ...separated.research, pii: undefined }, "relationship");
+  const sends = [sendEnvelope(relationEnvelope, { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey })];
+  if (separated.contact) sends.push(sendEnvelope(createEnvelope("contact_update", separated.contact, "contact"), { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }));
+  Promise.all(sends).then((results) => {
+    const result = results[0];
+    state.connectionStatus = result.status;
+    state.submitted = separated.research;
+    if (result.status === "confirmed" && connectionStage === "receive" && connection.opt_in === "YES") {
+      requestGreetingReservation({ response_id: update.response_id, participant_access: participantAccess }).then((reservation) => {
+        state.greetingReservation = reservation;
+        if (reservation.status === "reserved" && reservation.receipt?.relay_url) {
+          window.location.assign(reservation.receipt.relay_url);
+          return;
+        }
+        connection.stage = "waiting";
+        saveConnection();
+        state.phase = "connection";
+        render(true);
+      });
+      return;
+    }
+    state.phase = "complete";
+    render(true);
+  });
+}
+
 document.addEventListener("click", (event) => {
   const target = event.target.closest("button");
   if (!target) return;
@@ -2556,6 +2882,11 @@ document.addEventListener("click", (event) => {
     state.feedback[target.dataset.feedbackField] = target.dataset.feedbackValue;
     saveDraft();
     render(false);
+    return;
+  }
+  if (target.dataset.greetingOptInAction) {
+    changeConnectionChoice("opt_in", target.dataset.greetingOptInAction, false, 0);
+    saveCurrentConnection();
     return;
   }
   if (target.dataset.connectionField) {
@@ -2586,6 +2917,9 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.useField) {
     state.answers[target.dataset.useField] = target.dataset.useValue;
+    if (target.dataset.useField === "public_archive_interest" && target.dataset.useValue !== "ASK_LATER") {
+      state.researchContact = { email: "", consent: false, status: null };
+    }
     saveDraft();
     render(false);
     return;
@@ -2598,23 +2932,28 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.action === "open-call") { window.open(openCallUrl(), "_blank", "noopener,noreferrer"); return; }
   if (target.dataset.action === "notice") { state.phase = "notice"; render(true); return; }
-  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: state.language, feedback: {}, referralStatus: null }; saveDraft(); render(true); return; }
+  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; saveDraft(); render(true); return; }
   if (target.dataset.action === "resume") {
     const draft = loadDraft();
     if (draft) {
-      const answers = sanitizeAnswersForRoute(draft.answers || {});
+      const answers = restoreLegacySynthesisConfirmation(sanitizeAnswersForRoute(draft.answers || {}));
       const screens = buildActiveScreens(answers, { adaptive: isRc2 });
       const mappedStep = draft.screenId && screens.includes(draft.screenId)
         ? screens.indexOf(draft.screenId)
         : Math.min(Number(draft.step || 0), Math.max(0, screens.length - 1));
-      state = { phase: "survey", step: mappedStep, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: draft.language || state.language, feedback: draft.feedback || {} };
+      const responseId = draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`;
+      const firstGreeting = draft.firstGreeting || loadFirstGreeting(responseId);
+      const resumedPhase = ["greeting-choice", "greeting-first"].includes(draft.phase) ? draft.phase : "survey";
+      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
     }
     render(true);
+    if (state.phase === "greeting-first" && state.firstGreeting?.status === "loading") beginFirstGreeting();
     return;
   }
   if (target.dataset.action === "recover-pending") {
     const pending = loadPending();
     if (!pending) return;
+    const pendingDraft = loadDraft();
     state = {
       phase: "complete",
       step: 0,
@@ -2630,10 +2969,12 @@ document.addEventListener("click", (event) => {
       responseId: pending.response_id,
       language: pending.source_language || state.language,
       feedback: {},
+      researchContact: pendingDraft?.researchContact || { email: "", consent: false, status: null },
     };
     render(true);
     verifyResearchStorage(pending.response_id).then((result) => {
       state.submissionStatus = result.status;
+      if (result.status === "confirmed") clearPending();
       render(false);
     });
     return;
@@ -2671,6 +3012,39 @@ document.addEventListener("click", (event) => {
     render(true);
     return;
   }
+  if (target.dataset.action === "begin-story") {
+    beginResearchStory(true);
+    return;
+  }
+  if (target.dataset.action === "choose-first-greeting") {
+    beginFirstGreeting();
+    return;
+  }
+  if (target.dataset.action === "skip-first-greeting") {
+    state.firstGreeting = { status: "skipped", skipped_at: new Date().toISOString() };
+    saveFirstGreeting();
+    beginResearchStory(false);
+    return;
+  }
+  if (target.dataset.action === "finish-greeting") {
+    const connection = getConnection();
+    connection.stage = "done";
+    saveConnection();
+    state.connectionStatus = "finished";
+    render(false);
+    return;
+  }
+  if (target.dataset.action === "first-greeting") {
+    const connection = getConnection();
+    connection.opt_in = "YES";
+    connection.receive_opt_in = connection.receive_opt_in === "YES" ? "YES" : "NO";
+    connection.stage = "message";
+    connection.message_audience = connection.message_audience || "OPEN";
+    connection.preview_confirmed = false;
+    saveConnection();
+    render(true);
+    return;
+  }
   if (target.dataset.action === "save-exhibition") {
     const application = getExhibitionApplication();
     const validation = validateExhibitionApplication(application);
@@ -2691,38 +3065,7 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "save-connection") {
-    if (!connectionCanSave()) return;
-    const update = createConnectionUpdate();
-    const participantAccess = state.submitted?.participant_access || ensureParticipantReference(update.response_id);
-    // `participant_access` is transport-only for the reservation endpoint.
-    // It must not travel in a relationship snapshot or outbox payload.
-    delete update.participant_access;
-    saveConnection();
-    state.connectionStatus = "sending";
-    render(false);
-    const separated = splitResearchAndContact(update);
-    const relationEnvelope = createEnvelope("relationship_update", { ...separated.research, pii: undefined }, "relationship");
-    const sends = [sendEnvelope(relationEnvelope, { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey })];
-    if (separated.contact) sends.push(sendEnvelope(createEnvelope("contact_update", separated.contact, "contact"), { endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }));
-    Promise.all(sends).then((results) => {
-      const result = results[0];
-      state.connectionStatus = result.status;
-      state.submitted = separated.research;
-      if (result.status === "confirmed") {
-        requestGreetingReservation({ response_id: update.response_id, participant_access: participantAccess }).then((reservation) => {
-          state.greetingReservation = reservation;
-          if (reservation.status === "reserved" && reservation.receipt?.relay_url) {
-            window.location.assign(reservation.receipt.relay_url);
-            return;
-          }
-          state.phase = "complete";
-          render(true);
-        });
-        return;
-      }
-      state.phase = "complete";
-      render(true);
-    });
+    saveCurrentConnection();
     return;
   }
   if (target.dataset.action === "referral") { state.phase = "referral"; state.referralStatus = null; render(true); return; }
@@ -2773,6 +3116,20 @@ document.addEventListener("click", (event) => {
     });
     return;
   }
+  if (target.dataset.action === "context-back") {
+    state.contextStep = Math.max(0, Number(state.contextStep || 0) - 1);
+    saveDraft();
+    render(true);
+    return;
+  }
+  if (target.dataset.action === "context-next") {
+    const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
+    if (!canContinueContextStep(step)) return;
+    state.contextStep = Math.min(2, step + 1);
+    saveDraft();
+    render(true);
+    return;
+  }
   if (target.dataset.action === "back") { state.step = Math.max(0, state.step - 1); saveDraft(); render(!isRc2); return; }
   if (target.dataset.action === "retry-adaptive") {
     const checkpoint = String(target.dataset.checkpoint || "");
@@ -2789,15 +3146,19 @@ document.addEventListener("click", (event) => {
     const id = screens[state.step];
     if (!canContinue(id) || state.submissionStatus === "sending") return;
 
+    if (isRc2 && id === "CONSENT") {
+      state.phase = "greeting-choice";
+      saveDraft();
+      render(true);
+      return;
+    }
+
     if (isRc2) {
       const sourceAnchorByScreen = {
         M04: "M04_TEXT",
-        NO_RECALL_RELATION: shouldAskNoRecallRelationFollowup(state.answers) ? "NO_RECALL_RELATION" : null,
-        TRANSITION: "P12",
-        CONTINUITY: "P13_TEXT",
-        SUPPORT_CONDITIONS: "P19_TEXT",
-        D02: "D02_TEXT",
-        D04: shouldAskD04ConditionsFollowup(state.answers) ? "D04_CONDITIONS" : null,
+        TRANSITION: hasSubstantiveTransition(state.answers) ? "P12" : null,
+        CONTINUITY: ["YES", "MIXED"].includes(state.answers.invisible_continuity_state) ? "P13_TEXT" : null,
+        D02: hasSubstantiveDChange(state.answers) ? "D02_TEXT" : null,
       };
       const sourceAnchor = sourceAnchorByScreen[id];
       if (sourceAnchor) {
@@ -2872,15 +3233,7 @@ document.addEventListener("click", (event) => {
       return;
     }
     if (id === "USE_SCOPE") {
-      state.answers.document_confirmation_ack = "YES";
-      state.answers.participant_approved_text = state.answers.participant_approved_text || approvedReflectionText();
-      state.answers.participant_approved_provenance = {
-        kind: "participant-confirmed",
-        source_draft_kind: state.answers.depth_summary?.provenance?.kind || (state.answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
-        action: state.answers.reflection_action || "ACCEPT",
-        final_text: state.answers.participant_approved_text,
-      };
-      state.answers.document_confirmed_at = state.answers.document_confirmed_at || new Date().toISOString();
+      if (state.answers.synthesis_confirmation_ack !== "YES" || !state.answers.participant_approved_text) return;
       state.answers.response_document_draft = buildCurrentResponseDocument({ final: true, confirmedAt: state.answers.document_confirmed_at });
       state.submitted = createResponse();
       savePending(state.submitted);
@@ -2890,8 +3243,11 @@ document.addEventListener("click", (event) => {
       requestResearchStorage(state.submitted).then(async (result) => {
         state.submissionStatus = result.status;
         if (["confirmed", "local_only"].includes(result.status)) {
-          if (result.status === "confirmed") clearDraft();
-          state.greetingReservation = await requestGreetingReservation(state.submitted);
+          if (result.status === "confirmed") {
+            clearDraft();
+            clearPending();
+          }
+          await requestResearchContactStorage(state.submitted);
           state.phase = "complete";
         } else state.phase = "save_failed";
         render(true);
@@ -2901,6 +3257,7 @@ document.addEventListener("click", (event) => {
 
     const nextId = screens[state.step + 1];
     if (isRc2 && id === "REFLECTION_REVIEW" && nextId === "SUBMIT") {
+      if (!confirmParticipantSynthesis()) return;
       prepareApprovedTranslation()
         .then(() => { state.step += 1; saveDraft(); render(true); })
         .catch(() => { state.translationGenerating = false; state.step += 1; saveDraft(); render(true); });
@@ -2967,19 +3324,29 @@ document.addEventListener("click", (event) => {
     (submitFunctionUrl ? retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }) : requestResearchStorage(pending)).then(async (result) => {
       state.submissionStatus = Array.isArray(result) ? (readOutbox().length ? "unverified" : "confirmed") : result.status;
       if (["confirmed", "local_only"].includes(state.submissionStatus)) {
-        if (state.submissionStatus === "confirmed") clearDraft();
-        state.greetingReservation = await requestGreetingReservation(state.submitted || pending);
+        if (state.submissionStatus === "confirmed") {
+          clearDraft();
+          clearPending();
+        }
+        await requestResearchContactStorage(state.submitted || pending);
         state.phase = "complete";
       } else state.phase = "save_failed";
       render(true);
     });
     return;
   }
-  if (target.dataset.action === "restart") { clearDraft(); state = { phase: "intro", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: state.language, feedback: {}, referralStatus: null }; render(true); }
+  if (target.dataset.action === "restart") { clearFirstGreeting(); clearDraft(); state = { phase: "intro", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; render(true); }
 });
 
 document.addEventListener("input", (event) => {
   const input = event.target;
+  if (input.matches("[data-research-contact]")) {
+    state.researchContact = { ...(state.researchContact || {}), [input.dataset.researchContact]: input.value, status: null };
+    saveDraft();
+    const nextButton = document.querySelector("button.primary-button[data-action='next']");
+    if (nextButton) nextButton.disabled = !canContinue("USE_SCOPE");
+    return;
+  }
   if (input.matches("[data-referral-input]")) {
     const referral = getReferral();
     referral[input.dataset.referralInput] = input.value;
@@ -3023,12 +3390,20 @@ document.addEventListener("input", (event) => {
   else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
   if (isRc2 && ["participant_revision", "display_name"].includes(field)) clearDocumentConfirmation();
   saveDraft();
-  const nextButton = document.querySelector("button.primary-button[data-action='next']");
-  if (nextButton) nextButton.disabled = !canContinue(activeScreens()[state.step]);
+  const activeId = activeScreens()[state.step];
+  const nextButton = document.querySelector("button.primary-button[data-action='next'], button.primary-button[data-action='context-next']");
+  if (nextButton) nextButton.disabled = activeId === "PARTICIPANT_CONTEXT" ? !canContinueContextStep() : !canContinue(activeId);
 });
 
 document.addEventListener("change", (event) => {
   const input = event.target;
+  if (input.matches("[data-research-contact-consent]")) {
+    state.researchContact = { ...(state.researchContact || {}), consent: input.checked, status: null };
+    saveDraft();
+    const nextButton = document.querySelector("button.primary-button[data-action='next']");
+    if (nextButton) nextButton.disabled = !canContinue("USE_SCOPE");
+    return;
+  }
   if (input.matches("[data-connection-preview-confirmed]")) {
     const connection = getConnection();
     connection.preview_confirmed = input.checked;

@@ -1,3 +1,5 @@
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js";
+
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const relayQuery = new URLSearchParams(location.search);
@@ -33,6 +35,54 @@ const forwardingCopy = {
   ms: { title: "Selepas membacanya, tinggalkan satu ayat untuk orang seterusnya", help: "Teks asal anda disimpan dan maklumat hubungan tidak dipaparkan kepada sesiapa. Ayat ini menunggu sebagai salam baharu untuk peserta seterusnya.", send: "Amanahkan salam seterusnya", sent: "Salam seterusnya telah diamanahkan.", notificationTitle: "Mahukah anda menerima e-mel apabila salam seterusnya tiba?", notificationHelp: "E-mel anda hanya digunakan untuk menghantar pautan peti surat dan tidak pernah dipaparkan kepada peserta lain.", notificationLabel: "E-mel untuk notis", notificationConsent: "E-mel ini boleh digunakan hanya untuk notis salam seterusnya.", notificationSave: "Simpan permintaan notis", notificationStored: "Permintaan notis anda telah disimpan. E-mel hanya dihantar jika salam baharu tiba." },
 };
 
+const receiptCopy = {
+  ko: { senderContext: "이 안부를 남긴 사람", finishHere: "여기에서 마치기" },
+  en: { senderContext: "The person who left this greeting", finishHere: "Finish here" },
+  ja: { senderContext: "このあいさつを残した人", finishHere: "ここで終える" },
+  "zh-Hans": { senderContext: "留下这则问候的人", finishHere: "在这里结束" },
+  "zh-Hant": { senderContext: "留下這則問候的人", finishHere: "在這裡結束" },
+  fr: { senderContext: "La personne qui a laissé cette salutation", finishHere: "Terminer ici" },
+  es: { senderContext: "La persona que dejó este saludo", finishHere: "Terminar aquí" },
+  nl: { senderContext: "De persoon die deze groet achterliet", finishHere: "Hier afronden" },
+  ms: { senderContext: "Orang yang meninggalkan salam ini", finishHere: "Tamat di sini" },
+};
+
+const task10a4ReceiptCopy = {
+  ko: { receivedTitle: "안부 한 통이 도착했습니다.", receivedHelp: "먼저 이곳을 지나간 한 사람이 남긴 문장입니다. 천천히 읽어보세요.", reasonSummary: "두 기록에 함께 남은 현재의 흐름과 관계의 단서를 바탕으로 이어진 안부입니다. 이번 기록에서 읽힌 맥락이라 시간이 지나면 달라질 수 있습니다." },
+  en: { receivedTitle: "A greeting has arrived.", receivedHelp: "This sentence was left by someone who passed through here before you. Take your time reading it.", reasonSummary: "This greeting was connected through clues about the present flow and relationships that remained in both records. It is context read in these records and may change over time." },
+  ja: { receivedTitle: "あいさつが一通届きました。", receivedHelp: "先にここを通った一人が残した文章です。ゆっくり読んでみてください。", reasonSummary: "二つの記録にともに残った現在の流れと関係の手がかりをもとにつながったあいさつです。今回の記録から読まれた文脈なので、時間がたてば変わることがあります。" },
+  "zh-Hans": { receivedTitle: "一则问候已经抵达。", receivedHelp: "这是先前经过这里的一位参与者留下的句子。请慢慢阅读。", reasonSummary: "这则问候根据两份记录中共同留下的当下脉络与关系线索相连。这是从本次记录中读到的语境，日后可能发生变化。" },
+  "zh-Hant": { receivedTitle: "一則問候已經抵達。", receivedHelp: "這是先前經過這裡的一位參與者留下的句子。請慢慢閱讀。", reasonSummary: "這則問候根據兩份記錄中共同留下的當下脈絡與關係線索相連。這是從本次記錄中讀到的脈絡，日後可能發生變化。" },
+  fr: { receivedTitle: "Une salutation est arrivée.", receivedHelp: "Cette phrase a été laissée par une personne passée ici avant vous. Prenez le temps de la lire.", reasonSummary: "Cette salutation relie des indices du mouvement présent et des relations restés dans les deux récits. Ce contexte est lu dans ces récits et peut changer avec le temps." },
+  es: { receivedTitle: "Ha llegado un saludo.", receivedHelp: "Esta frase la dejó una persona que pasó por aquí antes. Léala con calma.", reasonSummary: "Este saludo se conectó a partir de pistas del curso actual y de las relaciones presentes en ambos registros. Es un contexto leído en estos registros y puede cambiar con el tiempo." },
+  nl: { receivedTitle: "Er is een groet aangekomen.", receivedHelp: "Deze zin is achtergelaten door iemand die hier eerder langskwam. Neem de tijd om hem te lezen.", reasonSummary: "Deze groet is verbonden via aanwijzingen over de huidige beweging en relaties die in beide records staan. Deze context is in de records gelezen en kan met de tijd veranderen." },
+  ms: { receivedTitle: "Satu salam telah tiba.", receivedHelp: "Ayat ini ditinggalkan oleh seseorang yang melalui tempat ini lebih awal. Bacalah dengan perlahan.", reasonSummary: "Salam ini dihubungkan melalui petunjuk tentang aliran semasa dan hubungan yang kekal dalam kedua-dua rekod. Konteks ini dibaca daripada rekod semasa dan boleh berubah mengikut masa." },
+};
+
+// Retire the older direct-reply wording at runtime while retaining the
+// non-public field names required by the existing relay contract.
+for (const [language, nextPerson] of Object.entries(forwardingCopy)) {
+  Object.assign(copy[language], {
+    replyTitle: nextPerson.title,
+    replyHelp: nextPerson.help,
+    send: nextPerson.send,
+    sent: nextPerson.sent,
+  });
+}
+Object.assign(copy.en, { label: "〈Over 39〉 · Coordinates of Greeting", title: "Coordinates of Greeting" });
+
+const composeCopy = {
+  ko: { begin: "이 안부를 읽고 다음 사람에게 한 문장 남기기", visibility: "상대에게 보이는 표기를 골라주세요.", named: "이름 또는 선택한 표기를 보여줘도 괜찮아요", contextual: "역할·지역 정도만 보여주세요", anonymous: "익명으로 남길게요", translation: "다른 언어권의 사람에게 닿을 때 번역을 함께 보여줄까요?", translationYes: "원문과 번역을 함께 보여주세요", translationNo: "원문만 보여주세요", preview: "상대에게 보이는 내용 확인하기", previewTitle: "상대에게 보이는 내용", confirm: "연락처와 설문 전체가 전달되지 않는 것을 확인했고, 이 문장을 다음 사람에게 맡길게요.", back: "문장 다시 보기" },
+  en: { begin: "After reading, leave one sentence for the next person", visibility: "Choose how you will appear to the recipient.", named: "Show my name or chosen label", contextual: "Show only my role or region", anonymous: "Leave it anonymously", translation: "If it reaches another language, should a translation appear with it?", translationYes: "Show the original and a translation", translationNo: "Show the original only", preview: "Review what the recipient sees", previewTitle: "What the recipient sees", confirm: "I understand that contact details and the full survey are not shared, and I entrust this sentence to the next person.", back: "Edit the sentence" },
+  ja: { begin: "この便りを読み、次の人へ一文を残す", visibility: "相手に見える表記を選んでください。", named: "名前または選んだ表記を見せる", contextual: "役割・地域だけを見せる", anonymous: "匿名で残す", translation: "別の言語の人に届く時、翻訳も一緒に見せますか？", translationYes: "原文と翻訳を一緒に見せる", translationNo: "原文だけを見せる", preview: "相手に見える内容を確認する", previewTitle: "相手に見える内容", confirm: "連絡先と調査全体が渡らないことを確認し、この一文を次の人へ託します。", back: "文章を見直す" },
+  "zh-Hans": { begin: "读完后，为下一位参与者留下一句话", visibility: "请选择对方看到的署名方式。", named: "显示姓名或选择的称呼", contextual: "只显示角色或地区", anonymous: "匿名留下", translation: "传到其他语言使用者时，要同时显示翻译吗？", translationYes: "同时显示原文和翻译", translationNo: "只显示原文", preview: "确认对方看到的内容", previewTitle: "对方看到的内容", confirm: "我已确认联系方式和完整问卷不会传递，并将这句话托付给下一位参与者。", back: "重新查看句子" },
+  "zh-Hant": { begin: "讀完後，為下一位參與者留下一句話", visibility: "請選擇對方看到的署名方式。", named: "顯示姓名或選擇的稱呼", contextual: "只顯示角色或地區", anonymous: "匿名留下", translation: "傳到其他語言使用者時，要同時顯示翻譯嗎？", translationYes: "同時顯示原文和翻譯", translationNo: "只顯示原文", preview: "確認對方看到的內容", previewTitle: "對方看到的內容", confirm: "我已確認聯絡方式和完整問卷不會傳遞，並將這句話託付給下一位參與者。", back: "重新查看句子" },
+  fr: { begin: "Après cette lecture, laisser une phrase pour la personne suivante", visibility: "Choisissez la mention visible par la personne destinataire.", named: "Montrer mon nom ou la mention choisie", contextual: "Montrer seulement mon rôle ou ma région", anonymous: "Laisser ce message anonymement", translation: "S’il arrive dans une autre langue, afficher aussi une traduction ?", translationYes: "Afficher l’original et la traduction", translationNo: "Afficher seulement l’original", preview: "Vérifier ce que la personne verra", previewTitle: "Ce que la personne verra", confirm: "Je comprends que les coordonnées et le questionnaire complet ne sont pas transmis, et je confie cette phrase à la personne suivante.", back: "Revoir la phrase" },
+  es: { begin: "Después de leerlo, deje una frase para la siguiente persona", visibility: "Elija cómo aparecerá ante quien lo reciba.", named: "Mostrar mi nombre o la mención elegida", contextual: "Mostrar solo mi rol o región", anonymous: "Dejarlo de forma anónima", translation: "Si llega a otra lengua, ¿se muestra también una traducción?", translationYes: "Mostrar original y traducción", translationNo: "Mostrar solo el original", preview: "Revisar lo que verá la persona", previewTitle: "Lo que verá la persona", confirm: "Entiendo que no se comparten los datos de contacto ni la encuesta completa, y confío esta frase a la siguiente persona.", back: "Revisar la frase" },
+  nl: { begin: "Laat na het lezen één zin achter voor de volgende persoon", visibility: "Kies hoe u voor de ontvanger zichtbaar bent.", named: "Toon mijn naam of gekozen aanduiding", contextual: "Toon alleen mijn rol of regio", anonymous: "Laat het anoniem achter", translation: "Als het een andere taal bereikt, ook een vertaling tonen?", translationYes: "Toon origineel en vertaling", translationNo: "Toon alleen het origineel", preview: "Bekijk wat de ontvanger ziet", previewTitle: "Wat de ontvanger ziet", confirm: "Ik begrijp dat contactgegevens en de volledige enquête niet worden gedeeld en vertrouw deze zin toe aan de volgende persoon.", back: "De zin herzien" },
+  ms: { begin: "Selepas membacanya, tinggalkan satu ayat untuk orang seterusnya", visibility: "Pilih bagaimana anda dipaparkan kepada penerima.", named: "Paparkan nama atau label pilihan saya", contextual: "Paparkan peranan atau rantau sahaja", anonymous: "Tinggalkan secara tanpa nama", translation: "Jika sampai kepada bahasa lain, paparkan terjemahan juga?", translationYes: "Paparkan teks asal dan terjemahan", translationNo: "Paparkan teks asal sahaja", preview: "Semak apa yang dilihat penerima", previewTitle: "Apa yang dilihat penerima", confirm: "Saya faham bahawa maklumat hubungan dan keseluruhan soal selidik tidak dikongsi, dan saya mengamanahkan ayat ini kepada orang seterusnya.", back: "Semak semula ayat" },
+};
+
 // Structured v3 reason snapshots are deliberately made from category codes,
 // not translated respondent text. That lets the same factual explanation be
 // shown in the recipient's language while legacy v2 snapshots remain intact.
@@ -48,47 +98,67 @@ const greetingReasonCopy = {
   ms: { map: "Kedudukan semasa yang dibaca dalam dua rekod", sender: { MAKING: "seorang peserta yang terus menghasilkan karya", CONNECTING: "seorang peserta yang menghubungkan karya dan orang", READING: "seorang peserta yang membaca dan mendokumentasikan karya", PERFORMANCE: "seorang peserta yang meneruskan persembahan dan latihan", EDUCATION: "seorang peserta yang meneruskan seni dan budaya melalui pengajaran dan pembelajaran", EVERYDAY: "seorang peserta yang meneruskan seni dan budaya dalam kehidupan harian", CULTURAL_RELATION: "seorang peserta yang terus berhubung dengan seni dan budaya" }, summary: "Salam ini disampaikan dengan membaca bersama arah yang dekat dalam kedua-dua rekod, peranan semasa dan arah hubungan yang dipilih. Kedudukan ini boleh berubah mengikut masa atau keadaan.", SAME_DIRECTION: "Satu arah yang dekat muncul dalam kedua-dua rekod.", ADJACENT_DIRECTION: "Sebahagian arah dalam dua rekod bersebelahan.", ROLE_BRIDGE: "Soalan yang serupa berterusan daripada peranan yang berbeza." },
 };
 
-let state = { loading: true, relay: null, error: "", result: "", notification: "", translations: new Set() };
+let state = { loading: true, relay: null, error: "", result: "", notification: "", translations: new Set(), composeStep: "read", draft: { message: "", sender_visibility: "", translation_allowed: "", confirmed: false } };
 function c() { return copy[interfaceLanguageCode] || copy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function forwarding() { return forwardingCopy[interfaceLanguageCode] || forwardingCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
+function compose() { return composeCopy[interfaceLanguageCode] || composeCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function reasonCopy() { return greetingReasonCopy[interfaceLanguageCode] || greetingReasonCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
-function pointIndex(point) {
-  const number = (key) => Number(String(point?.[key]?.code || point?.[key] || "").slice(1));
-  const [m, s, d] = [number("m"), number("s"), number("d")];
-  return m && s && d ? (m - 1) * 16 + (s - 1) * 4 + (d - 1) : -1;
-}
-function coordinateGraphic(thread) {
-  const sender = pointIndex(thread.sender_coordinate || thread.connection_reason?.sender_point);
-  const mine = pointIndex(thread.receiver_coordinate || thread.connection_reason?.receiver_point);
-  if (sender < 0 && mine < 0) return "";
-  return `<div class="greeting-coordinate-map"><div class="coordinate-grid" aria-label="${text(reasonCopy().map)}">${Array.from({ length: 64 }, (_, index) => `<span class="${index === sender ? "is-sender" : ""} ${index === mine ? "is-mine" : ""}"><i></i></span>`).join("")}</div><div class="coordinate-legend"><span><i class="mine-dot"></i>${text(c().mine)}</span><span><i class="sender-dot"></i>${text(c().sender)}</span></div></div>`;
-}
-function reasonSection(thread) {
+function receipt() { return receiptCopy[interfaceLanguageCode] || receiptCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
+function task10a4Receipt() { return task10a4ReceiptCopy[interfaceLanguageCode] || task10a4ReceiptCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
+function simplifiedGreeting() { return greetingSimplificationCopy(interfaceLanguageCode); }
+function reasonDetails(thread) {
   const reason = thread.connection_reason;
-  if (!reason) return "";
+  if (!reason) return { sender: "", summary: "", evidence: [] };
   const structured = reason.version === "greeting-coordinate-reason-v3" && reason.summary_key === "CURATED_RECORD_CONNECTION";
   const localized = reasonCopy();
   const sender = structured
     ? (reason.sender_visibility === "ANONYMOUS" ? "" : (reason.sender_visibility === "NAMED" && reason.sender_display_label ? reason.sender_display_label : localized.sender[reason.sender_context_code]))
     : reason.sender_context;
-  const summary = structured ? localized.summary : reason.summary;
+  const summary = task10a4Receipt().reasonSummary;
   const evidence = structured
     ? (reason.evidence_codes || []).slice(0, 2).map((item) => localized[item?.type]).filter(Boolean)
-    : (reason.evidence || []).slice(0, 2);
-  return `<section class="relay-reason"><span>${text(c().reason)}</span>${sender ? `<strong>${text(sender)}</strong>` : ""}<p>${text(summary || "")}</p>${coordinateGraphic(thread)}${evidence.map((item) => `<small>${text(item)}</small>`).join("")}</section>`;
+    : [];
+  return { sender, summary, evidence };
+}
+function senderContextSection(thread) {
+  const { sender } = reasonDetails(thread);
+  return sender ? `<section class="relay-sender-context"><span>${text(receipt().senderContext)}</span><strong>${text(sender)}</strong></section>` : "";
 }
 function messageCard(message) {
+  return `<article class="relay-letter"><p lang="${text(message.source_language || "")}">${text(message.body_original)}</p></article>`;
+}
+function messageLanguage(message) {
   const open = state.translations.has(message.id);
-  return `<article class="relay-letter"><div class="relay-envelope" aria-hidden="true"><i></i><b></b><span></span></div><span>${text(c().original)} · ${text(message.source_language || "")}</span><p lang="${text(message.source_language || "")}">${text(message.body_original)}</p>${message.translated_body ? `<button class="translation-toggle" type="button" data-translation-id="${text(message.id)}" aria-expanded="${open}">${text(open ? c().hideTranslation : c().translation)}</button>${open ? `<div class="relay-translation" lang="${text(message.translation_language || "")}"><span>${text(message.translation_language || "")}</span><p>${text(message.translated_body)}</p></div>` : ""}` : ""}</article>`;
+  return `<section class="relay-message-language"><span>${text(c().original)} · ${text(message.source_language || "")}</span>${message.translated_body ? `<button class="translation-toggle" type="button" data-translation-id="${text(message.id)}" aria-expanded="${open}">${text(open ? c().hideTranslation : c().translation)}</button>${open ? `<div class="relay-translation" lang="${text(message.translation_language || "")}"><span>${text(message.translation_language || "")}</span><p>${text(message.translated_body)}</p></div>` : ""}` : ""}</section>`;
 }
 function render() {
+  const simplified = simplifiedGreeting();
   if (state.loading) { root.innerHTML = `<main class="relay-layout"><p>${text(c().loading)}</p></main>`; return; }
-  if (state.error) { root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="relay-project-mark" aria-hidden="true">39+</div><div class="archive-label">${text(c().label)}</div><h1>${text(c().error)}</h1></section></main>`; return; }
-  if (state.result) { root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="relay-project-mark" aria-hidden="true">39+</div><div class="archive-label">${text(c().label)}</div><h1>${text(state.result)}</h1></section></main>`; return; }
-  const thread = state.relay.thread; const messages = thread.messages || [];
+  if (state.error) { root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="archive-label">${text(simplified.projectLabel)}</div><h1>${text(c().error)}</h1></section></main>`; return; }
   const next = forwarding();
   const notification = `<section class="relay-notification"><h2>${text(next.notificationTitle)}</h2><p>${text(next.notificationHelp)}</p><label>${text(next.notificationLabel)}<input class="text-input text-input-single" type="email" data-relay-notification-email autocomplete="email" /></label><label class="final-check"><input type="checkbox" data-relay-notification-consent /><span>${text(next.notificationConsent)}</span></label><button class="secondary-button" data-relay-action="notification">${text(next.notificationSave)}</button>${state.notification ? `<p role="status">${text(state.notification)}</p>` : ""}</section>`;
-  root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="relay-project-mark" aria-hidden="true">39+</div><div class="archive-label">${text(c().label)}</div><h1>${text(c().title)}</h1><p class="relay-lead">${text(c().lead)}</p>${reasonSection(thread)}<section class="relay-messages">${messages.map(messageCard).join("")}</section>${thread.can_reply ? `<section class="relay-reply"><h2>${text(next.title)}</h2><p>${text(next.help)}</p><textarea class="text-input" data-relay-message maxlength="1400" placeholder="${text(c().placeholder)}"></textarea><div class="relay-actions"><button class="secondary-button" data-relay-action="pass">${text(c().pass)}</button><button class="primary-button" data-relay-action="reply">${text(next.send)} <span aria-hidden="true">→</span></button></div><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></section>` : ""}${notification}</section></main>`;
+  if (state.result) { root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="archive-label">${text(simplified.projectLabel)}</div><h1>${text(state.result)}</h1>${notification}</section></main>`; return; }
+  const thread = state.relay.thread; const messages = thread.messages || [];
+  const draft = state.draft;
+  const identityChoices = [["NAMED", compose().named], ["CONTEXTUAL", compose().contextual], ["ANONYMOUS", compose().anonymous]];
+  const choiceButtons = (field, options) => `<div class="choice-list">${options.map(([value, label]) => `<button type="button" class="choice ${draft[field] === value ? "selected" : ""}" data-relay-choice="${text(field)}" data-relay-choice-value="${text(value)}" aria-pressed="${draft[field] === value}"><span aria-hidden="true">${draft[field] === value ? "✓" : ""}</span><strong>${text(label)}</strong></button>`).join("")}</div>`;
+  const composeFlow = state.composeStep === "read"
+    ? `<section class="relay-reply relay-read-actions"><div class="relay-next-prompt"><h2>${text(simplified.continuationTitle)}</h2><p>${text(simplified.continuationHelp)}</p></div><div class="relay-actions relay-next-actions"><button class="primary-button" data-relay-action="begin">${text(simplified.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" data-relay-action="pass">${text(simplified.continuationSecondary)}</button></div><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></section>`
+    : state.composeStep === "write"
+      ? `<section class="relay-reply"><h2>${text(simplified.writingTitle)}</h2><p class="greeting-writing-help">${text(simplified.writingHelp)}</p><textarea class="text-input" data-relay-message maxlength="1400" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><aside class="greeting-writing-example" aria-label="${text(simplified.exampleLabel)}"><span>${text(simplified.exampleLabel)}</span><p>${text(simplified.exampleText)}</p></aside><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<h3>${text(compose().translation)}</h3>${choiceButtons("translation_allowed", [["YES", compose().translationYes], ["NO", compose().translationNo]])}<div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
+      : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(interfaceLanguageCode)}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(draft.translation_allowed === "YES" ? compose().translationYes : compose().translationNo)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
+  const firstMessage = messages[0] || null;
+  const laterMessages = messages.slice(1);
+  const receivedGreeting = firstMessage
+    ? `<section class="relay-messages relay-received-message">${messageCard(firstMessage)}</section>${senderContextSection(thread)}${messageLanguage(firstMessage)}`
+    : "";
+  const laterThread = laterMessages.length
+    ? `<section class="relay-messages relay-later-messages">${laterMessages.map((message) => `${messageCard(message)}${messageLanguage(message)}`).join("")}</section>`
+    : "";
+  const receivedHeading = firstMessage
+    ? `<h1>${text(simplified.receivedTitle)}</h1><p class="relay-lead">${text(simplified.receivedHelp)}</p>`
+    : `<h1>${text(simplified.featureName)}</h1>`;
+  root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}</section></main>`;
 }
 async function request(payload) {
   if (!endpoint || !token) throw new Error("RELAY_NOT_CONFIGURED");
@@ -101,6 +171,8 @@ async function request(payload) {
 document.addEventListener("click", async (event) => {
   const translation = event.target.closest("[data-translation-id]");
   if (translation) { const id = translation.dataset.translationId; state.translations.has(id) ? state.translations.delete(id) : state.translations.add(id); render(); return; }
+  const choice = event.target.closest("[data-relay-choice]");
+  if (choice) { state.draft[choice.dataset.relayChoice] = choice.dataset.relayChoiceValue; state.draft.confirmed = false; render(); return; }
   const button = event.target.closest("[data-relay-action]"); if (!button) return;
   try {
     const action = button.dataset.relayAction;
@@ -113,11 +185,37 @@ document.addEventListener("click", async (event) => {
       render();
       return;
     }
+    if (action === "begin") { state.composeStep = "write"; render(); return; }
+    if (action === "back-read") { state.composeStep = "read"; render(); return; }
+    if (action === "back-write") { state.composeStep = "write"; state.draft.confirmed = false; render(); return; }
+    if (action === "preview") {
+      if (!state.draft.message.trim() || !state.draft.sender_visibility || !state.draft.translation_allowed) return;
+      state.composeStep = "preview";
+      render();
+      return;
+    }
     if (action === "pass") { await request({ action: "respond", intent: "pass" }); state.result = c().passed; }
     else if (action === "withdraw") { await request({ action: "respond", intent: "withdraw" }); state.result = c().withdrawn; }
-    else { const message = document.querySelector("[data-relay-message]")?.value.trim() || ""; if (!message) return; await request({ action: "respond", intent: "reply", message, source_language: interfaceLanguageCode }); state.result = forwarding().sent; }
+    else if (action === "reply") {
+      if (!state.draft.message.trim() || !state.draft.sender_visibility || !state.draft.translation_allowed || !state.draft.confirmed) return;
+      await request({ action: "respond", intent: "reply", message: state.draft.message.trim(), source_language: interfaceLanguageCode, sender_visibility: state.draft.sender_visibility, translation_allowed: state.draft.translation_allowed === "YES" });
+      state.result = forwarding().sent;
+    }
   } catch { state.error = "RELAY_REQUEST_FAILED"; }
   render();
+});
+
+document.addEventListener("input", (event) => {
+  if (!event.target.matches("[data-relay-message]")) return;
+  state.draft.message = event.target.value;
+  state.draft.confirmed = false;
+});
+
+document.addEventListener("change", (event) => {
+  if (!event.target.matches("[data-relay-preview-confirmed]")) return;
+  state.draft.confirmed = event.target.checked;
+  const button = document.querySelector("[data-relay-action='reply']");
+  if (button) button.disabled = !state.draft.confirmed;
 });
 
 if (!token || !endpoint) { state.loading = false; state.error = "RELAY_NOT_CONFIGURED"; render(); }

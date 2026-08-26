@@ -1,8 +1,8 @@
 {
   "project": "over39-research-survey",
-  "version": "1.4.4-rc2-stage1-patch2",
+  "version": "1.4.6-rc2-task9-live-data-local",
   "mode": "production",
   "source_commit": "cfffae8bb785",
   "source_state": "working_tree_uncommitted",
-  "built_at": "2026-08-14T05:49:51.607Z"
+  "built_at": "2026-08-26T06:07:51.793Z"
 }

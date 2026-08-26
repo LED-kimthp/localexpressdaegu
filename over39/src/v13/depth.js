@@ -894,7 +894,7 @@ function sentenceExcerpt(value, fallback = "") {
 
 export function buildAdaptiveRuleSummary({ answers = {}, turns = [] } = {}) {
   const isAudience = answers.route === "AUDIENCE" || answers.response_position === "AUDIENCE_CITIZEN";
-  const m = adaptiveAxisFromTurns("M", turns, answers) || (AXIS_LABELS[answers.m_declared] ? answers.m_declared : null);
+  const m = answers.memory_type === "NO_RECALL" ? null : (adaptiveAxisFromTurns("M", turns, answers) || (AXIS_LABELS[answers.m_declared] ? answers.m_declared : null));
   const s = adaptiveAxisFromTurns("S", turns, answers) || inferredS(answers);
   const d = adaptiveAxisFromTurns("D", turns, answers) || (AXIS_LABELS[answers.d_desired_change_primary] ? answers.d_desired_change_primary : null);
   const firstInformative = (...candidates) => {
@@ -930,7 +930,7 @@ export function buildAdaptiveRuleSummary({ answers = {}, turns = [] } = {}) {
     secondary_axes: { m: null, s: null, d: null },
     evidence: {
       m: ["M02", "M04_TEXT", ...turns.filter((turn) => turn.axis === "M").map((turn) => turn.id)],
-      s: ["NO_RECALL_RELATION", "P14", "P15", "P17", "P18", "P13_TEXT", "P19_TEXT", ...turns.filter((turn) => turn.axis === "S").map((turn) => turn.id)],
+      s: ["NO_RECALL_RELATION", "P14", "P15", "P16", "P11", "P12", "P13_TEXT", "P19", "P19_TEXT", ...turns.filter((turn) => turn.axis === "S").map((turn) => turn.id)],
       d: ["D02_TEXT", "D04", ...turns.filter((turn) => turn.axis === "D").map((turn) => turn.id)],
     },
     uncertainty: [m, s, d].some((value) => !value) ? "일부 방향은 참여자의 추가 확인이 필요해요." : null,

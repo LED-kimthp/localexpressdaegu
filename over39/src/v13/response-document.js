@@ -1,6 +1,7 @@
 import { responseDocumentFrame } from "./response-document-i18n.js";
+import { task7Copy } from "./task7-i18n.js";
 
-export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.6.0-cultural-arts-context-2026-08-13";
+export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
 const ROLE_LABELS = {
   R01: "시각예술가", R02: "사진·영상·미디어 작가", R03: "공예·디자인 창작자",
@@ -165,6 +166,28 @@ const esc = (value) => String(value ?? "")
 const array = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
+const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
+  "memory_clue_text", "no_recall_relation_text", "memory_meaning_text", "memory_branch_followup",
+  "transition_text", "pause_context_text", "invisible_continuity_text", "support_conditions_text",
+  "desired_change_text", "d_context_impact_text", "coordinate_feedback_text",
+  "role_primary_other", "roles_parallel_other", "field_other", "participation_mode_other",
+  "activity_form_other", "participation_unit_other", "depth_m_text", "depth_s_text", "depth_d_text",
+]);
+
+export function rawParticipantWords(answers = {}) {
+  const fields = [...RAW_PARTICIPANT_TEXT_FIELDS];
+  for (const turn of array(answers.adaptive_turns)) {
+    if (turn?.answer_field) fields.push(turn.answer_field);
+  }
+  const seen = new Set();
+  return fields.flatMap((field) => {
+    const value = clean(answers[field]);
+    if (!value || seen.has(value)) return [];
+    seen.add(value);
+    return [{ field, text: value, source_kind: "participant_raw", editable: "at_source_question", participant_approved: false }];
+  });
+}
+
 function dateLabel(value, language = "ko") {
   if (!value) return "—";
   const date = new Date(value);
@@ -310,7 +333,16 @@ function recordCoordinate(answers = {}) {
 
 function safeSection(id, number, title, lines, emptyText) {
   const paragraphs = array(lines).map(clean).filter(Boolean);
-  return { id, number, title, paragraphs: paragraphs.length ? paragraphs : [emptyText] };
+  return {
+    id,
+    number,
+    title,
+    paragraphs: paragraphs.length ? paragraphs : [emptyText],
+    source_kind: "system_organized",
+    editable: false,
+    approval_scope: "excluded",
+    participant_approved: false,
+  };
 }
 
 export function buildResponseDocument({
@@ -350,6 +382,7 @@ export function buildResponseDocument({
     summary: "응답 정리", promiseTitle: "당신의 기록을 남깁니다", promise: ["여기 적힌 기억과 지금의 이야기를 오래 살펴보겠습니다.", "서로 다른 기록들이 쌓이면 우리가 무엇을 기억하고, 어떤 조건을 필요로 하는지도 조금씩 선명해집니다.", "이 기록들이 앞으로 문화예술의 제도와 정책을 이야기하는 자리까지 이어질 수 있도록 계속 가져가겠습니다.", "당신이 남긴 이야기를 기억하겠습니다."],
   };
   const frame = responseDocumentFrame(frameLanguage);
+  const task7 = task7Copy(frameLanguage);
   if (frameLanguage !== "ko" && frameLanguage !== "en") Object.assign(copy, frame);
   const original = clean(approvedOriginal);
   const korean = clean(approvedKorean) || (sourceLanguage === "ko" ? original : "");
@@ -368,6 +401,7 @@ export function buildResponseDocument({
   const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
   const coordinateAxes = [axisText[coordinate.m], axisText[coordinate.s], axisText[coordinate.d]].filter(Boolean).join(" × ");
   const coordinateLine = [coordinateAxes || copy.coordinatePending, copy.coordinateText];
+  const rawWords = rawParticipantWords(answers);
   const sectionTitles = english
     ? { origin: audience ? "A remembered encounter" : "Where this record begins", present: audience ? "Arts and culture in the present" : "Current practice and arts and culture", background: "Conditions in the background", continuity: "What has continued", support: "What has supported it", needs: "Conditions for continuing" }
     : { origin: audience ? "관객의 기억과 판단" : "이번 응답의 출발점", present: audience ? "현재의 관람과 문화예술의 관계" : "현재의 활동과 문화예술의 관계", background: audience ? "관람과 참여의 흐름에 함께 있던 조건" : "현재 상태가 형성된 배경", continuity: audience ? "전시장 밖에서도 이어진 관심" : "밖으로 드러나지 않아도 이어진 활동", support: audience ? "관심과 참여를 이어가게 한 조건" : "활동과 참여를 지지하는 조건", needs: "이어가기 위한 조건" };
@@ -388,6 +422,18 @@ export function buildResponseDocument({
     support: [answers.support_conditions_text],
     needs: [answers.desired_change_text, answers.d_context_impact_text],
   }[id] || []);
+
+  const legacySections = [
+    safeSection("origin", "1", sectionTitles.origin, localizedFallback(0) ? foreignLines("origin") : originSection(answers, english), localizedFallback(0) || (english ? "The starting point of this record is gathered from the choices and words shared earlier." : "이번 응답의 출발점은 앞선 선택과 기록을 중심으로 남겼습니다.")),
+    safeSection("present", "2", sectionTitles.present, localizedFallback(1) ? foreignLines("present") : presentSection(answers, english), localizedFallback(1) || (english ? "The current state is gathered from the choices shared earlier." : "현재의 활동과 참여 상태는 앞선 선택을 중심으로 기록했습니다.")),
+    safeSection("background", "3", sectionTitles.background, localizedFallback(2) ? foreignLines("background") : backgroundSection(answers, english), localizedFallback(2) || (english ? "The background is gathered from the conditions selected earlier." : "현재 상태의 배경은 선택한 조건을 중심으로 기록했습니다.")),
+    safeSection("continuity", "4", sectionTitles.continuity, localizedFallback(3) ? foreignLines("continuity") : continuitySection(answers, english), localizedFallback(3) || (english ? "Continuing interests and activities are gathered from the responses shared earlier." : "이어진 활동과 관심은 선택한 응답을 중심으로 남겼습니다.")),
+    safeSection("support", "5", sectionTitles.support, localizedFallback(4) ? foreignLines("support") : supportSection(answers, english), localizedFallback(4) || (english ? "The conditions that supported participation are gathered from the choices shared earlier." : "활동과 참여를 지지한 조건은 선택한 응답을 중심으로 남겼습니다.")),
+    safeSection("needs", "6", sectionTitles.needs, localizedFallback(5) ? foreignLines("needs") : needSection(answers, english), localizedFallback(5) || (english ? "The conditions for continuing are gathered from the choices shared earlier." : "이어가기 위한 조건은 선택한 항목을 중심으로 기록했습니다.")),
+    { ...safeSection("coordinate", "7", copy.coordinateTitle, coordinateLine, copy.coordinatePending), source_kind: "research_derived" },
+    { id: "summary", number: "8", title: copy.summary, paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true, approval_scope: "participant_synthesis_text_only", participant_approved: true },
+    { ...safeSection("promise", "9", copy.promiseTitle, copy.promise, copy.promise.at(-1)), source_kind: "project_information" },
+  ];
 
   return {
     document_version: RESPONSE_DOCUMENT_VERSION,
@@ -412,17 +458,32 @@ export function buildResponseDocument({
       [frameLanguage === "ko" ? "기록 언어" : frameLanguage === "en" ? "Record language" : frame.language, sourceLabel],
     ],
     coordinate: { m: coordinate.m || null, s: coordinate.s || null, d: coordinate.d || null },
-    sections: [
-      safeSection("origin", "1", sectionTitles.origin, localizedFallback(0) ? foreignLines("origin") : originSection(answers, english), localizedFallback(0) || (english ? "The starting point of this record is gathered from the choices and words shared earlier." : "이번 응답의 출발점은 앞선 선택과 기록을 중심으로 남겼습니다.")),
-      safeSection("present", "2", sectionTitles.present, localizedFallback(1) ? foreignLines("present") : presentSection(answers, english), localizedFallback(1) || (english ? "The current state is gathered from the choices shared earlier." : "현재의 활동과 참여 상태는 앞선 선택을 중심으로 기록했습니다.")),
-      safeSection("background", "3", sectionTitles.background, localizedFallback(2) ? foreignLines("background") : backgroundSection(answers, english), localizedFallback(2) || (english ? "The background is gathered from the conditions selected earlier." : "현재 상태의 배경은 선택한 조건을 중심으로 기록했습니다.")),
-      safeSection("continuity", "4", sectionTitles.continuity, localizedFallback(3) ? foreignLines("continuity") : continuitySection(answers, english), localizedFallback(3) || (english ? "Continuing interests and activities are gathered from the responses shared earlier." : "이어진 활동과 관심은 선택한 응답을 중심으로 남겼습니다.")),
-      safeSection("support", "5", sectionTitles.support, localizedFallback(4) ? foreignLines("support") : supportSection(answers, english), localizedFallback(4) || (english ? "The conditions that supported participation are gathered from the choices shared earlier." : "활동과 참여를 지지한 조건은 선택한 응답을 중심으로 남겼습니다.")),
-      safeSection("needs", "6", sectionTitles.needs, localizedFallback(5) ? foreignLines("needs") : needSection(answers, english), localizedFallback(5) || (english ? "The conditions for continuing are gathered from the choices shared earlier." : "이어가기 위한 조건은 선택한 항목을 중심으로 기록했습니다.")),
-      safeSection("coordinate", "7", copy.coordinateTitle, coordinateLine, copy.coordinatePending),
-      { id: "summary", number: "8", title: copy.summary, paragraphs: summaryParagraphs },
-      safeSection("promise", "9", copy.promiseTitle, copy.promise, copy.promise.at(-1)),
+    // `sections` remains for old analysis/export consumers. Participant UI
+    // uses `layers`, whose approval metadata matches what was actually read
+    // and confirmed.
+    sections: legacySections,
+    layers: [
+      {
+        id: "raw_participant_words", title: task7.rawTitle, description: task7.rawHelp,
+        entries: rawWords, source_kind: "participant_raw", editable: "at_source_question",
+        approval_scope: "excluded", participant_approved: false,
+      },
+      {
+        id: "participant_confirmed_synthesis", title: task7.synthesisTitle, description: task7.synthesisHelp,
+        paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true,
+        approval_scope: "participant_synthesis_text_only", participant_approved: Boolean(original),
+      },
+      {
+        id: "research_reading", title: task7.researchTitle, description: task7.researchHelp,
+        paragraphs: coordinateLine, source_kind: "research_derived", editable: false,
+        approval_scope: "excluded", participant_approved: false,
+      },
     ],
+    project_note: {
+      title: copy.promiseTitle, paragraphs: copy.promise, source_kind: "project_information",
+      editable: false, approval_scope: "excluded", participant_approved: false,
+    },
+    approval_scope: "participant_synthesis_text_only",
     confirmation: confirmationText,
     source_language: sourceLanguage,
     display_language: frameLanguage,
@@ -430,6 +491,25 @@ export function buildResponseDocument({
 }
 
 export function renderResponseDocument(document = {}) {
+  const frame = responseDocumentFrame(document.display_language || document.source_language);
+  const task7 = task7Copy(document.display_language || document.source_language);
+  const layers = array(document.layers);
+  const layeredBody = layers.length ? layers.map((layer) => {
+    let body = "";
+    if (layer.id === "raw_participant_words") {
+      body = array(layer.entries).length
+        ? array(layer.entries).map((entry) => `<blockquote>${esc(entry.text)}</blockquote>`).join("")
+        : `<p class="response-document-empty">${esc(task7.rawEmpty)}</p>`;
+    } else if (layer.id === "participant_confirmed_synthesis") {
+      body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
+    } else {
+      body = array(layer.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
+    }
+    return `<section class="response-document-layer response-document-layer-${esc(layer.id)}" data-source-kind="${esc(layer.source_kind)}" data-approval-scope="${esc(layer.approval_scope)}"><header><h3>${esc(layer.title)}</h3><p>${esc(layer.description)}</p></header><div class="response-document-layer-body">${body}</div></section>`;
+  }).join("") : "";
+  const projectNote = document.project_note
+    ? `<aside class="response-document-project-note" data-source-kind="project_information"><h3>${esc(document.project_note.title)}</h3>${array(document.project_note.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("")}</aside>`
+    : "";
   const sections = array(document.sections).map((section) => {
     const body = section.id === "summary"
       ? array(section.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(responseDocumentFrame(document.display_language || document.source_language).summaryEmpty)}</p>`
@@ -437,5 +517,5 @@ export function renderResponseDocument(document = {}) {
     return `<section class="response-document-section response-document-section-${esc(section.id)}"><div class="response-document-section-head"><span>${esc(section.number)}</span><h3>${esc(section.title)}</h3></div><div class="response-document-section-body">${body}</div></section>`;
   }).join("");
   const metadata = array(document.metadata).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");
-  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${sections}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
+  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${layers.length ? `${layeredBody}${projectNote}` : sections}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }

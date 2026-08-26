@@ -110,19 +110,48 @@ export function sanitizeAnswersForRoute(answers = {}) {
   return next;
 }
 
+export function hasSubstantiveTransition(answers = {}) {
+  return ["CLEAR", "GRADUAL", "MULTIPLE"].includes(answers.transition_state);
+}
+
+export function needsContinuityQuestion(answers = {}) {
+  const presentShift = needsPauseContext(answers);
+  return presentShift || hasSubstantiveTransition(answers);
+}
+
+export function hasSubstantiveDChange(answers = {}) {
+  return /^D[1-4]$/.test(String(answers.d_desired_change_primary || ""));
+}
+
 export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = {}) {
   const ids = ["M01"];
   if (answers.route === "AUDIENCE" && answers.memory_type === "NO_RECALL") ids.push("NO_RECALL_RELATION");
   if (answers.memory_type !== "NO_RECALL") {
-    ids.push("M02", "M03", "M04");
+    ids.push("M02");
+    if (!adaptive) ids.push("M03");
+    ids.push("M04");
     if (adaptive) ids.push("M04_TEXT");
-    ids.push("M05", "M06", "M07", "M08", "M09", "M10");
+    ids.push("M05", "M06", "M07", "M08", "M09");
+    if (!adaptive) ids.push("M10");
   }
-  ids.push("P05", "P06", "P07");
-  if (adaptive) ids.push("P14", "P15", "P16", "P17", "P18", "P11", "P12", "P13", "P13_TEXT", "P19", "P19_TEXT");
+  // P06/P07 remain valid legacy fields but are no longer part of the RC2 core.
+  ids.push("P05");
+  if (adaptive) {
+    ids.push("P14", "P15", "P16", "P11");
+    if (hasSubstantiveTransition(answers)) ids.push("P12");
+    if (needsContinuityQuestion(answers)) {
+      ids.push("P13");
+      if (["YES", "MIXED"].includes(answers.invisible_continuity_state)) ids.push("P13_TEXT");
+    }
+    ids.push("P19");
+    if (Array.isArray(answers.support_conditions) && answers.support_conditions.some((value) => value !== "NONE")) ids.push("P19_TEXT");
+  } else {
+    ids.push("P06", "P07");
+  }
   ids.push("D01", "D02");
-  if (adaptive) ids.push("D02_TEXT");
+  if (adaptive && hasSubstantiveDChange(answers)) ids.push("D02_TEXT");
   ids.push("D03", "D04", "R01");
+  if (adaptive && answers.memory_type !== "NO_RECALL") ids.push("M03", "M10");
   return ids;
 }
 
@@ -146,28 +175,28 @@ function addAnchorScreen(screens, answers, sourceScreen, anchorId, anchorScreen)
 }
 
 function buildAdaptiveScreens(answers = {}) {
-  const screens = ["CONSENT", "P01", "DOCUMENT_IDENTITY"];
+  const screens = ["CONSENT", "P01"];
   if (answers.route === "MEMORY") screens.push("P01_CONTEXT");
-  if (isProfessionalAnswers(answers)) screens.push("ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL");
   screens.push("PARTICIPANT_CONTEXT");
-  screens.push("PROFILE", "M01");
-  if (answers.route === "AUDIENCE" && answers.memory_type === "NO_RECALL") {
-    addAnchorScreen(screens, answers, "NO_RECALL_RELATION", "NO_RECALL_RELATION", "AI_CONDITIONAL_NO_RECALL_RELATION");
-  }
+  if (isProfessionalAnswers(answers)) screens.push("ROLE_BRIDGE");
+  screens.push("M01");
+  if (answers.route === "AUDIENCE" && answers.memory_type === "NO_RECALL") screens.push("NO_RECALL_RELATION");
   if (answers.memory_type !== "NO_RECALL") {
-    screens.push("M02", "M03");
+    screens.push("M02");
     addAnchorScreen(screens, answers, "M04", "M04_TEXT", "AI_ANCHOR_M04_TEXT");
     screens.push("M05", "MEMORY_TIME", "MEMORY_EVIDENCE");
   }
-  screens.push("MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND");
-  addAnchorScreen(screens, answers, "TRANSITION", "P12", "AI_ANCHOR_P12");
-  addAnchorScreen(screens, answers, "CONTINUITY", "P13_TEXT", "AI_ANCHOR_P13_TEXT");
-  addAnchorScreen(screens, answers, "SUPPORT_CONDITIONS", "P19_TEXT", "AI_ANCHOR_P19_TEXT");
-  screens.push("D01");
-  addAnchorScreen(screens, answers, "D02", "D02_TEXT", "AI_ANCHOR_D02_TEXT");
-  screens.push("D03", "D04");
-  if (shouldAskD04ConditionsFollowup(answers)) screens.push("AI_CONDITIONAL_D04_CONDITIONS");
-  screens.push("R01", "COMMUNITY", "REFLECTION_REVIEW", "SUBMIT", "USE_SCOPE");
+  screens.push("MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION");
+  if (hasSubstantiveTransition(answers) && !isLowInformationText(anchorSourceText(answers, "P12"))) screens.push("AI_ANCHOR_P12");
+  if (needsContinuityQuestion(answers)) {
+    screens.push("CONTINUITY");
+    if (["YES", "MIXED"].includes(answers.invisible_continuity_state) && !isLowInformationText(anchorSourceText(answers, "P13_TEXT"))) screens.push("AI_ANCHOR_P13_TEXT");
+  }
+  screens.push("SUPPORT_CONDITIONS", "D01", "D02");
+  if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
+  screens.push("D03", "D04", "R01");
+  if (answers.memory_type !== "NO_RECALL") screens.push("M03_RECONNECT", "M10_VERIFY");
+  screens.push("COMMUNITY", "DOCUMENT_IDENTITY", "PROFILE", "REFLECTION_REVIEW", "SUBMIT", "USE_SCOPE");
   return screens;
 }
 
@@ -177,22 +206,22 @@ export function buildActiveScreens(answers = {}, { adaptive = false } = {}) {
 
 export function fixedQuestionIdsForScreen(screen, answers = {}, { adaptive = false } = {}) {
   const map = {
-    ACTIVITY: ["P05", "P06", "P07"],
+    ACTIVITY: adaptive ? ["P05"] : ["P05", "P06", "P07"],
     PRACTICE_PUBLIC_STATE: adaptive ? ["P14", "P15"] : [],
-    STATE_BACKGROUND: adaptive ? ["P16", "P17", "P18"] : [],
-    TRANSITION: adaptive ? ["P11", "P12"] : [],
-    CONTINUITY: adaptive ? ["P13", "P13_TEXT"] : [],
-    SUPPORT_CONDITIONS: adaptive ? ["P19", "P19_TEXT"] : [],
-    M01: ["M01"], NO_RECALL_RELATION: ["NO_RECALL_RELATION"], M02: ["M02"], M03: ["M03"], M04: adaptive ? ["M04", "M04_TEXT"] : ["M04"], M05: ["M05"],
-    MEMORY_TIME: ["M06", "M07"], MEMORY_EVIDENCE: ["M08", "M09", "M10"],
-    D01: ["D01"], D02: adaptive ? ["D02", "D02_TEXT"] : ["D02"], D03: ["D03"], D04: ["D04"], R01: ["R01"],
+    STATE_BACKGROUND: adaptive ? ["P16"] : [],
+    TRANSITION: adaptive ? ["P11", ...(hasSubstantiveTransition(answers) ? ["P12"] : [])] : [],
+    CONTINUITY: adaptive && needsContinuityQuestion(answers) ? ["P13", ...(["YES", "MIXED"].includes(answers.invisible_continuity_state) ? ["P13_TEXT"] : [])] : [],
+    SUPPORT_CONDITIONS: adaptive ? ["P19", ...(Array.isArray(answers.support_conditions) && answers.support_conditions.some((value) => value !== "NONE") ? ["P19_TEXT"] : [])] : [],
+    M01: ["M01"], NO_RECALL_RELATION: ["NO_RECALL_RELATION"], M02: ["M02"], M03: ["M03"], M03_RECONNECT: ["M03"], M10_VERIFY: ["M10"], M04: adaptive ? ["M04", "M04_TEXT"] : ["M04"], M05: ["M05"],
+    MEMORY_TIME: ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],
+    D01: ["D01"], D02: adaptive ? ["D02", ...(hasSubstantiveDChange(answers) ? ["D02_TEXT"] : [])] : ["D02"], D03: ["D03"], D04: ["D04"], R01: ["R01"],
   };
   return map[screen] || [];
 }
 
 export function flowCounts(screens, answers = {}, { adaptive = false } = {}) {
   const requiredIds = ["M01", "M02", "M04", "D01", "D02"];
-  if (adaptive) requiredIds.push("P14", "P15", "P11", "P13", "P19");
+  if (adaptive) requiredIds.push("P14", "P15", "P16", "P11", "P19");
   const fixed = applicableFixedQuestionIds(answers, { adaptive });
   return {
     fixedResearchQuestions: fixed.length,

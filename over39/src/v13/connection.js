@@ -74,7 +74,7 @@ export function buildConnectionProfile(response, connection = {}) {
     offers: values(connection.offers),
     reply_modes: values(connection.reply_modes),
     introduction: String(connection.message_text || connection.introduction || "").trim(),
-    visibility: connection.sender_visibility || connection.visibility || "CONTEXTUAL",
+    visibility: connection.sender_visibility || null,
     greeting_origin: connection.origin === "core_seed" ? "core_seed" : "participant",
     matching_mode: "mailbox_store_and_forward",
     status: connection.opt_in === "YES" ? "stored_waiting_receiver" : "not_requested",

@@ -2,6 +2,7 @@
 // These codes never replace R01–R20, route, or any M/S/D value.
 import { participantContextDHints, participantContextLabels, participantContextualCopy } from "./participant-context-i18n.js";
 export const PARTICIPANT_CONTEXT_VERSION = "over39-participant-context-v1-2026-08-13";
+export const LEGACY_MAPPING_VERSION = "context_to_legacy_v1";
 
 export const PARTICIPANT_CONTEXT_FIELDS = Object.freeze([
   "field",
@@ -77,11 +78,81 @@ export function participantContextKind(answers = {}) {
   return isEverydayArtsContext(answers) ? "EVERYDAY" : "PROFESSIONAL";
 }
 
+export function deriveLegacyRoleCandidates(answers = {}) {
+  const fields = new Set(values(answers.field));
+  const modes = new Set(values(answers.participation_mode));
+  const candidates = new Set();
+  let coverage = "partial";
+  let confidence = "medium";
+
+  if (modes.has("LEARNING_TRAINING") || modes.has("HOBBY_CLUB_EVERYDAY_ARTS") || ["HOBBY_CLUB", "LEARNING_TRAINING"].includes(answers.activity_form)) {
+    return { coverage: "not_applicable", candidates: [], confidence: null, mapping_version: LEGACY_MAPPING_VERSION };
+  }
+  if (modes.has("CREATION_PRODUCTION")) {
+    if (fields.has("VISUAL_ARTS")) candidates.add("R01");
+    if (fields.has("PHOTO_MEDIA")) candidates.add("R02");
+    if (fields.has("CRAFT_DESIGN")) candidates.add("R03");
+  }
+  if (modes.has("CURATION_PRODUCING")) { candidates.add("R04"); candidates.add("R05"); }
+  if (modes.has("CRITICISM_RESEARCH")) { candidates.add("R06"); candidates.add("R07"); }
+  if (modes.has("EDITING_PUBLISHING_MEDIA")) ["R08", "R09", "R10", "R13"].forEach((r) => candidates.add(r));
+  if (modes.has("DOCUMENTATION_ARCHIVE")) { candidates.add("R11"); candidates.add("R12"); }
+  if (modes.has("SPACE_INSTITUTION_OPERATION")) { candidates.add("R14"); candidates.add("R15"); }
+  if (modes.has("EDUCATION_TRANSMISSION")) candidates.add("R16");
+  if (modes.has("TECHNICAL_PRODUCTION_SUPPORT")) candidates.add("R18");
+  if (modes.has("DISTRIBUTION_PATRONAGE")) candidates.add("R19");
+  if (fields.has("HERITAGE_ARCHIVE") && (modes.has("DOCUMENTATION_ARCHIVE") || modes.has("TECHNICAL_PRODUCTION_SUPPORT"))) candidates.add("R20");
+
+  const list = [...candidates];
+  if (!list.length) {
+    const outsideLegacy = modes.has("PERFORMANCE_LIVE") || modes.has("DIRECTION_CHOREOGRAPHY_COMPOSITION")
+      || fields.has("DANCE") || fields.has("MUSIC") || fields.has("THEATRE_PERFORMANCE")
+      || modes.has("LOCAL_COMMUNITY_ACTIVITY");
+    coverage = outsideLegacy ? "not_covered" : "partial";
+    confidence = outsideLegacy ? null : "low";
+  } else if (list.length === 1 && ["R01", "R02", "R03", "R18"].includes(list[0])) {
+    coverage = "covered";
+    confidence = "high";
+  } else {
+    coverage = "partial";
+    confidence = list.length <= 2 ? "medium" : "low";
+  }
+  return { coverage, candidates: list, confidence, mapping_version: LEGACY_MAPPING_VERSION };
+}
+
+export function legacyRoleProvenance(answers = {}) {
+  const mapping = deriveLegacyRoleCandidates(answers);
+  const confirmedRole = answers.role_primary || null;
+  const source = confirmedRole
+    ? "bridge_confirmed"
+    : mapping.coverage === "not_applicable"
+      ? "not_applicable"
+      : mapping.coverage === "not_covered"
+        ? "not_covered"
+        : "context_candidate";
+  return {
+    legacy_role_value: confirmedRole,
+    legacy_role_group: answers.role_group_primary || null,
+    legacy_role_source: source,
+    legacy_mapping_version: mapping.mapping_version,
+    legacy_mapping_confidence: confirmedRole ? "participant_confirmed" : mapping.confidence,
+    legacy_mapping_candidates: mapping.candidates,
+    legacy_taxonomy_coverage: mapping.coverage,
+  };
+}
+
 export function compactParticipantContext(answers = {}) {
+  const provenance = legacyRoleProvenance(answers);
   return {
     version: PARTICIPANT_CONTEXT_VERSION,
-    legacy_role: answers.role_primary || null,
-    legacy_role_group: answers.role_group_primary || null,
+    legacy_role: provenance.legacy_role_value,
+    legacy_role_group: provenance.legacy_role_group,
+    legacy_role_source: provenance.legacy_role_source,
+    legacy_mapping_version: provenance.legacy_mapping_version,
+    legacy_mapping_confidence: provenance.legacy_mapping_confidence,
+    legacy_mapping_candidates: provenance.legacy_mapping_candidates,
+    legacy_taxonomy_coverage: provenance.legacy_taxonomy_coverage,
+    legacy_mapping: deriveLegacyRoleCandidates(answers),
     field: values(answers.field),
     field_other: String(answers.field_other || "").trim() || null,
     participation_mode: values(answers.participation_mode),
