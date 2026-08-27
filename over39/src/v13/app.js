@@ -1519,7 +1519,10 @@ async function prepareAdaptiveSummary() {
   const response = createResponse("adaptive_complete");
   const turns = adaptiveTurns();
   const context = { ...buildAdaptiveSummaryContext({ response, turns, answers: state.answers }), interview_mode: "adaptive_v2", anchor_ids: ACTIVE_ANCHOR_ORDER, adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
-  const summary = await createAdaptiveSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, answers: state.answers, turns, timeoutMs: 45000 });
+  // A full participant record asks Motif to compose 3–5 sentences and return
+  // the three evidence-backed directions. Keep this longer than the Edge
+  // summary window so a valid provider response is not aborted in-browser.
+  const summary = await createAdaptiveSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, answers: state.answers, turns, timeoutMs: 80000 });
   state.answers.depth_summary = {
     summary: summary.summary,
     summary_ko: summary.summary_ko || (responseSourceLanguage() === "ko" ? summary.summary : ""),
