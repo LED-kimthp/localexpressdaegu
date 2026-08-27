@@ -3,6 +3,11 @@
 // because the surrounding sentence is assembled with contextual values.
 const copy = {
   ko: {
+    deepQuestionLead: "방금 쓰신 문장을 읽었어요. 한 가지만 더 여쭙고 싶어요.",
+    deepQuestionReading: "방금 쓰신 문장을 읽고 있어요.",
+    deepQuestionPause: "여기서 잠깐 멈춰서, 한 가지만 더 여쭐게요.",
+    deepQuestionNote: "천천히 적으셔도 돼요.",
+    deepQuestionStage: "여기서 잠깐",
     landing: { condition: "조건", followup: "일부 구간에서는 앞선 응답을 구체화하는 질문이 이어집니다." },
     topics: { PARTICIPANT_CONTEXT: "활동의 맥락" },
     m01: {
@@ -17,6 +22,11 @@ const copy = {
     d4Title: "지금까지 적은 조건이 활동, 기억 또는 관계에 남긴 영향을 들려주세요.", d4HelpWithContext: "한두 문장으로 적어도 좋아요. {hints} 가운데 실제로 연결된 조건이 있다면 함께 적어도 좋아요.", d4HelpWithoutContext: "한두 문장으로 적어도 좋아요. {hints}처럼 지금 떠오르는 영향이 없다면 비워둘 수 있어요.",
   },
   en: {
+    deepQuestionLead: "We read what you just wrote. There is one more thing we would like to ask.",
+    deepQuestionReading: "We are reading what you just wrote.",
+    deepQuestionPause: "We will pause here and ask just one more thing.",
+    deepQuestionNote: "Take your time.",
+    deepQuestionStage: "A pause here",
     landing: { condition: "Conditions", followup: "At a few points, a question follows to make an earlier answer more specific." },
     topics: { PARTICIPANT_CONTEXT: "Activity context" },
     m01: {
@@ -31,6 +41,11 @@ const copy = {
     d4Title: "Briefly describe how the conditions you named have affected activity, memory, or relationships.", d4HelpWithContext: "One or two sentences are enough. If any of these conditions are genuinely connected, you may include them: {hints}.", d4HelpWithoutContext: "One or two sentences are enough. You may leave this blank if no effect comes to mind; {hints} are only examples.",
   },
   ja: {
+    deepQuestionLead: "今書いてくださった文章を読みました。もう一つだけお伺いしたいことがあります。",
+    deepQuestionReading: "今書いてくださった文章を読んでいます。",
+    deepQuestionPause: "ここで少し立ち止まって、もう一つだけお伺いします。",
+    deepQuestionNote: "ゆっくり書いてくださって構いません。",
+    deepQuestionStage: "ここで少し",
     landing: { condition: "条件", followup: "いくつかの場面では、前の回答をもう少し具体的にする質問が続きます。" },
     topics: { PARTICIPANT_CONTEXT: "活動の背景" },
     m01: {
@@ -45,6 +60,11 @@ const copy = {
     d4Title: "ここまでに挙げた条件が、活動、記憶、または関係に残した影響を聞かせてください。", d4HelpWithContext: "一、二文で十分です。実際につながっている条件があれば、{hints}も含められます。", d4HelpWithoutContext: "一、二文で十分です。思い浮かぶ影響がなければ空欄でもかまいません。{hints}は例です。",
   },
   "zh-Hans": {
+    deepQuestionLead: "我们读了您刚写下的文字。想再多问一件事。",
+    deepQuestionReading: "正在读您刚写下的文字。",
+    deepQuestionPause: "在这里稍作停留，只再问一件事。",
+    deepQuestionNote: "可以慢慢写。",
+    deepQuestionStage: "在这里稍停",
     landing: { condition: "条件", followup: "在少数环节，会出现帮助具体化前面回答的后续问题。" },
     topics: { PARTICIPANT_CONTEXT: "活动背景" },
     m01: {
@@ -59,6 +79,11 @@ const copy = {
     d4Title: "请简要说明已写下的条件如何影响了活动、记忆或关系。", d4HelpWithContext: "一两句话就够了。如果确实有关联，也可以写入这些条件：{hints}。", d4HelpWithoutContext: "一两句话就够了。如果暂时想不到影响，可以留空；{hints}只是示例。",
   },
   "zh-Hant": {
+    deepQuestionLead: "我們讀了您剛寫下的文字。想再多問一件事。",
+    deepQuestionReading: "正在讀您剛寫下的文字。",
+    deepQuestionPause: "在這裡稍作停留，只再問一件事。",
+    deepQuestionNote: "可以慢慢寫。",
+    deepQuestionStage: "在這裡稍停",
     landing: { condition: "條件", followup: "在少數環節，會出現幫助具體化前面回答的後續問題。" },
     topics: { PARTICIPANT_CONTEXT: "活動背景" },
     m01: {
@@ -73,6 +98,11 @@ const copy = {
     d4Title: "請簡要說明已寫下的條件如何影響了活動、記憶或關係。", d4HelpWithContext: "一兩句話就夠了。如果確實有關聯，也可以寫入這些條件：{hints}。", d4HelpWithoutContext: "一兩句話就夠了。如果暫時想不到影響，可以留空；{hints}只是示例。",
   },
   fr: {
+    deepQuestionLead: "Nous avons lu ce que vous venez d'écrire. Il y a encore une chose que nous aimerions vous demander.",
+    deepQuestionReading: "Nous lisons ce que vous venez d'écrire.",
+    deepQuestionPause: "Nous marquons une pause ici pour vous poser encore une seule question.",
+    deepQuestionNote: "Prenez votre temps.",
+    deepQuestionStage: "Une pause ici",
     landing: { condition: "Conditions", followup: "À quelques moments, une question prolonge une réponse précédente pour la préciser." },
     topics: { PARTICIPANT_CONTEXT: "Contexte de l’activité" },
     m01: {
@@ -87,6 +117,11 @@ const copy = {
     d4Title: "Décrivez brièvement comment les conditions indiquées ont influencé l’activité, la mémoire ou les relations.", d4HelpWithContext: "Une ou deux phrases suffisent. Si elles sont réellement liées, vous pouvez inclure ces conditions : {hints}.", d4HelpWithoutContext: "Une ou deux phrases suffisent. Vous pouvez laisser vide si aucun effet ne vous vient ; {hints} ne sont que des exemples.",
   },
   es: {
+    deepQuestionLead: "Hemos leído lo que acaba de escribir. Hay una cosa más que nos gustaría preguntarle.",
+    deepQuestionReading: "Estamos leyendo lo que acaba de escribir.",
+    deepQuestionPause: "Nos detenemos aquí para preguntarle solo una cosa más.",
+    deepQuestionNote: "Puede tomarse su tiempo.",
+    deepQuestionStage: "Una pausa aquí",
     landing: { condition: "Condiciones", followup: "En algunos momentos, una pregunta continúa una respuesta anterior para hacerla más concreta." },
     topics: { PARTICIPANT_CONTEXT: "Contexto de la actividad" },
     m01: {
@@ -101,6 +136,11 @@ const copy = {
     d4Title: "Describa brevemente cómo las condiciones indicadas afectaron la actividad, la memoria o las relaciones.", d4HelpWithContext: "Basta una o dos frases. Si están realmente relacionadas, puede incluir estas condiciones: {hints}.", d4HelpWithoutContext: "Basta una o dos frases. Puede dejarlo vacío si no surge ningún efecto; {hints} son solo ejemplos.",
   },
   nl: {
+    deepQuestionLead: "We hebben gelezen wat u zojuist schreef. Er is nog één ding dat we u willen vragen.",
+    deepQuestionReading: "We lezen wat u zojuist hebt geschreven.",
+    deepQuestionPause: "We houden hier even halt en stellen nog één vraag.",
+    deepQuestionNote: "Neem gerust de tijd.",
+    deepQuestionStage: "Even stilstaan",
     landing: { condition: "Voorwaarden", followup: "Op enkele momenten volgt een vraag die een eerder antwoord concreter maakt." },
     topics: { PARTICIPANT_CONTEXT: "Context van de activiteit" },
     m01: {
@@ -115,6 +155,11 @@ const copy = {
     d4Title: "Beschrijf kort hoe de genoemde voorwaarden activiteit, herinnering of relaties hebben beïnvloed.", d4HelpWithContext: "Een of twee zinnen zijn genoeg. Als ze werkelijk verbonden zijn, kunt u deze voorwaarden noemen: {hints}.", d4HelpWithoutContext: "Een of twee zinnen zijn genoeg. Laat dit leeg als er geen effect in u opkomt; {hints} zijn alleen voorbeelden.",
   },
   ms: {
+    deepQuestionLead: "Kami telah membaca apa yang baru anda tulis. Ada satu perkara lagi yang ingin kami tanyakan.",
+    deepQuestionReading: "Kami sedang membaca apa yang baru anda tulis.",
+    deepQuestionPause: "Kami berhenti sebentar di sini untuk bertanya satu perkara lagi.",
+    deepQuestionNote: "Ambil masa anda.",
+    deepQuestionStage: "Berhenti sebentar",
     landing: { condition: "Syarat", followup: "Pada beberapa bahagian, satu soalan susulan membantu menjadikan jawapan terdahulu lebih khusus." },
     topics: { PARTICIPANT_CONTEXT: "Konteks kegiatan" },
     m01: {

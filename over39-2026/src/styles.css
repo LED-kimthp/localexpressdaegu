@@ -747,8 +747,10 @@ h2:focus {
   background: #fffefa;
   box-shadow: inset 0 1px 2px rgba(31, 32, 29, 0.035);
   color: var(--ink);
-  font-size: 16px;
-  line-height: 1.7;
+  /* Matched to the reading size above. The participant spends twenty to thirty minutes
+     writing here; the surface they write on should not be smaller than the one they read. */
+  font-size: 17px;
+  line-height: 1.75;
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease;
@@ -5851,4 +5853,112 @@ html:lang(zh) .first-greeting-card h1 {
 @media (max-width: 720px) {
   .ai-health { overflow-x: auto; }
   .ai-health-table { min-width: 560px; }
+}
+
+/* Refinements · 2026-08-27 (2)
+   Four small corrections and one added beat on the greeting. Nothing here changes the
+   type scale, the palette, or any layout. */
+
+/* Dragging to fix a sentence was the one moment the browser's own blue appeared on a page
+   made entirely of paper tones. Selection now belongs to the same palette. */
+::selection {
+  background: rgba(163, 72, 57, 0.16);
+  color: var(--ink);
+}
+::-moz-selection {
+  background: rgba(163, 72, 57, 0.16);
+  color: var(--ink);
+}
+
+/* Counters and meta lines carry digits that change while the participant types. Tabular
+   figures keep them from shifting under the eye. Running prose is left alone - proportional
+   numerals read better inside a sentence. */
+.text-field-meta,
+.interview-meta,
+.journey-meta,
+.footer-credits,
+.intro-credit-item {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The focus ring was the only cool colour in a warm system. It keeps its weight and offset -
+   this is a hue change, not a visibility change. */
+:root {
+  --focus: #a34839;
+}
+button:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.text-input:focus-visible {
+  border-color: var(--focus);
+  outline: 2px solid rgba(163, 72, 57, 0.22);
+  outline-offset: 1px;
+}
+
+/* One more beat on the arriving greeting. The sentence already fades up first; now the two
+   rules and the paper tone settle a moment after it, so the page appears to make room for
+   the sentence rather than arriving with it. Colour-only animation - no reflow. */
+.greeting-arrival .first-greeting-reading,
+.relay-card-received.greeting-arrival .relay-received-message {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  background-color: rgba(238, 236, 229, 0);
+  animation:
+    greeting-sentence-arrive .94s cubic-bezier(.22, .61, .36, 1) .34s forwards,
+    greeting-frame-settle 1.15s ease-out .62s forwards;
+}
+
+@keyframes greeting-frame-settle {
+  from {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    background-color: rgba(238, 236, 229, 0);
+  }
+  to {
+    border-top-color: var(--line-dark);
+    border-bottom-color: var(--line-dark);
+    background-color: rgba(238, 236, 229, .38);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .greeting-arrival .first-greeting-reading,
+  .relay-card-received.greeting-arrival .relay-received-message {
+    border-top-color: var(--line-dark);
+    border-bottom-color: var(--line-dark);
+    background-color: rgba(238, 236, 229, .38);
+    animation: none;
+  }
+}
+
+/* The deep question uses the greeting's arrival language · 2026-08-27
+   Receiving a greeting and being asked a question that came from your own sentence are the
+   same kind of moment - someone attended to you. Giving them the same timing makes the two
+   read as one gesture, which is what makes leaving a greeting at the end feel like a next
+   step rather than a chore. Same keyframe, same curve, same ordering as the greeting. */
+.adaptive-previous-answer,
+.adaptive-question,
+.adaptive-turn-note {
+  opacity: 0;
+  animation: greeting-sentence-arrive .72s cubic-bezier(.22, .61, .36, 1) forwards;
+}
+
+/* Your own words settle first, so the question that follows is visibly answering them. */
+.adaptive-previous-answer { animation-delay: .08s; }
+.adaptive-question { animation-duration: .9s; animation-delay: .38s; }
+.adaptive-turn-note { animation-delay: .78s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .adaptive-previous-answer,
+  .adaptive-question,
+  .adaptive-turn-note {
+    opacity: 1;
+    animation: none;
+  }
 }
