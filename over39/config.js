@@ -22,7 +22,7 @@ window.OVER39_SUPABASE_OPEN_CALL_URL = "https://alluyuuliogbkvrwagrl.supabase.co
 
 // 운영 일정·보유기간·지원 조건 확정 전에는 실제 접수를 열지 않습니다.
 window.OVER39_OPEN_CALL_SUBMISSIONS_ENABLED = false;
-window.OVER39_GLOBAL_GREETINGS_ENABLED = true;
+window.OVER39_GLOBAL_GREETINGS_ENABLED = false;
 
 // fallback | mock | live. Live calls the configured provider through the Edge Function.
 window.OVER39_AI_MODE = "live";

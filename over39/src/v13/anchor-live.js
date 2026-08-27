@@ -1,7 +1,7 @@
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
-export const ADAPTIVE_POLICY_VERSION = "adaptive-v2-2026-08-17";
+export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.1-2026-08-27";
 export const ACTIVE_ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "D02_TEXT"];
-export const MAX_TOTAL_AI_FOLLOWUPS = 2;
+export const MAX_TOTAL_AI_FOLLOWUPS = 3;
 export const MAX_AI_FOLLOWUPS_PER_AXIS = 1;
 
 // The original five anchors remain the strict, comparable Motif pilot set.
@@ -167,6 +167,36 @@ export function hasRedundantAdjacentEvidence(anchorId, answers = {}) {
   return false;
 }
 
+// Korean is the semantic source language of this research, so one Hangul syllable is the
+// unit of weight. Han ideographs carry more meaning per character; kana and alphabetic
+// scripts carry less. Spaces and punctuation are skipped because word spacing is a script
+// convention, not content - counting it would quietly make spaced languages stricter.
+// 100 content characters is the Korean equivalent of the 140 raw characters this policy
+// used before, so Korean participants see exactly the behaviour they saw previously.
+export const SUFFICIENT_SOURCE_WEIGHT = 100;
+
+const HAN_WEIGHT = 1.7;
+const KANA_WEIGHT = 0.85;
+const HANGUL_WEIGHT = 1;
+const DEFAULT_SCRIPT_WEIGHT = 0.58;
+
+const CONTENT_CHARACTER = /[\p{L}\p{N}]/u;
+const HAN_CHARACTER = /\p{Script=Han}/u;
+const KANA_CHARACTER = /[\p{Script=Hiragana}\p{Script=Katakana}]/u;
+const HANGUL_CHARACTER = /\p{Script=Hangul}/u;
+
+export function informationWeight(value) {
+  let weight = 0;
+  for (const character of normalizedAnchorText(value)) {
+    if (!CONTENT_CHARACTER.test(character)) continue;
+    if (HAN_CHARACTER.test(character)) weight += HAN_WEIGHT;
+    else if (KANA_CHARACTER.test(character)) weight += KANA_WEIGHT;
+    else if (HANGUL_CHARACTER.test(character)) weight += HANGUL_WEIGHT;
+    else weight += DEFAULT_SCRIPT_WEIGHT;
+  }
+  return weight;
+}
+
 export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
   const id = String(anchorId || "");
   const axis = ANCHOR_AXES[id] || null;
@@ -188,7 +218,10 @@ export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
   const normalized = normalizedAnchorText(source);
   // A sufficiently developed answer is respected as complete. This is a conservative
   // pilot heuristic, not a psychometric score; human pilot evidence can tune it later.
-  if (normalized.length >= 140) return { ...base, decision: "SKIP", reason: "source_sufficient" };
+  // Length is weighed by script so the same amount of story counts the same in every
+  // language. A raw character count kept over-asking Han/Kana writers, who say more per
+  // character, and under-asking Latin-script writers, whose single sentence passed the bar.
+  if (informationWeight(normalized) >= SUFFICIENT_SOURCE_WEIGHT) return { ...base, decision: "SKIP", reason: "source_sufficient" };
   return { ...base, decision: "ASK", reason: "meaningful_but_brief" };
 }
 

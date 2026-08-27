@@ -2189,7 +2189,7 @@ function header() {
 }
 
 function footer() {
-  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span></div><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></footer>`;
+  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
   return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>PUBLIC MEMORY RESEARCH · INSTITUTION RC1</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
 }
 

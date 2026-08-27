@@ -1062,8 +1062,10 @@ h2:focus {
 
 .footer-credits {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  /* auto-fit so the row stays balanced whatever the credit count is; a fixed five
+     columns left a visible empty cell once the credits settled at four. */
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 16px 20px;
 }
 
 .footer-credits span {
@@ -5737,4 +5739,116 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
     animation: none;
     transform: none;
   }
+}
+
+/* Typographic refinements · 2026-08-27
+   Small corrections only; the existing scale, colour and spacing are unchanged. */
+
+/* Display tracking is set for Latin letterforms. CJK syllable blocks are full-width and
+   square, so the same -.048em reads as compressed rather than tight. Latin scripts keep
+   the original setting; only CJK loosens. */
+html:lang(ko) .rc2-intro h1,
+html:lang(ja) .rc2-intro h1,
+html:lang(zh) .rc2-intro h1 {
+  letter-spacing: -.026em;
+}
+
+html:lang(ko) .first-greeting-card h1,
+html:lang(ja) .first-greeting-card h1,
+html:lang(zh) .first-greeting-card h1 {
+  letter-spacing: -.022em;
+}
+
+/* In the credit block the organisation should be read before its role. The accent red on
+   all four role labels pulled the eye to the labels instead; a quiet label with slightly
+   open tracking reads as a caption and lets the names carry the weight. */
+.intro-credit-item span {
+  color: var(--muted);
+  font-weight: 640;
+  letter-spacing: .045em;
+}
+
+/* The AI disclosure was the one reading surface still breaking Korean mid-word. */
+.intro-disclosure {
+  word-break: keep-all;
+}
+
+/* Admin · AI operations panel. Colour carries a repeated meaning here (a launch that should
+   not widen), so each grade also carries its label in text - never colour alone. */
+.ai-health-verdict {
+  margin: 0 0 6px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--line-dark);
+  background: var(--surface-soft);
+  font-size: 14px;
+  font-weight: 640;
+  word-break: keep-all;
+}
+.ai-health-verdict.ai-health-grade-warn { border-left-color: #8a6a2f; }
+.ai-health-verdict.ai-health-grade-stop { border-left-color: var(--red); }
+.ai-health-note {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.ai-health-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 1px;
+  margin: 0 0 18px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+.ai-health-totals > div { padding: 12px 14px; background: var(--surface); }
+.ai-health-totals dt { color: var(--muted); font-size: 11px; letter-spacing: .04em; }
+.ai-health-totals dd { margin: 4px 0 0; font-size: 16px; font-weight: 650; }
+.ai-health-totals .ai-health-grade-warn dd { color: #8a6a2f; }
+.ai-health-totals .ai-health-grade-stop dd { color: var(--red); }
+.ai-health-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.ai-health-table th,
+.ai-health-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+.ai-health-table thead th {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 640;
+  letter-spacing: .03em;
+}
+.ai-health-table tbody th[scope="row"],
+.ai-health-table thead th:first-child { text-align: left; }
+.ai-health-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 640;
+  white-space: nowrap;
+}
+.ai-health-grade-warn .ai-health-badge { border-color: #8a6a2f; color: #8a6a2f; }
+.ai-health-grade-stop .ai-health-badge { border-color: var(--red); color: var(--red); }
+.ai-health-errors {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+.ai-health-errors code { font-size: 12px; }
+
+/* The table is the one thing here that cannot reflow; let it scroll rather than push the
+   dashboard sideways. */
+@media (max-width: 720px) {
+  .ai-health { overflow-x: auto; }
+  .ai-health-table { min-width: 560px; }
 }

@@ -883,7 +883,7 @@ function isLowInformationText(value) {
   if (!text) return true;
   if (text.length < 5) return true;
   if (/^(없음|없어요|모름|모르겠음|잘 모르겠어요|해당 없음|ㅇ+|ㅋ+|ㅎ+|[.·,_-]+)$/i.test(text)) return true;
-  const compact = text.replace(/[^가-힣A-Za-z0-9]/g, "");
+  const compact = text.replace(/[^\p{L}\p{N}]/gu, "");
   return compact.length < 4 || new Set(compact).size < 2;
 }
 
@@ -1010,8 +1010,13 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
   if (mode !== "live" || !endpoint) return safeFinalSummaryFailure("FINAL_SUMMARY_NOT_CONFIGURED");
   const started = performance.now();
   const clientRequestId = String(context?.client_request_id || "").trim() || null;
+  let repairAttempted = false;
+  let initialRequestId = null;
+  let repairRequestId = null;
+  let repairClientRequestId = null;
   try {
-    const adaptiveResult = await requestAiJson({ endpoint, anonKey, operation: "summarize_adaptive", context, fetchImpl, timeoutMs });
+    let requestContext = context;
+    let adaptiveResult = await requestAiJson({ endpoint, anonKey, operation: "summarize_adaptive", context: requestContext, fetchImpl, timeoutMs });
     let body = adaptiveResult.body;
     let compatibilityMode = null;
     let effectiveOperation = "summarize_adaptive";
@@ -1033,9 +1038,31 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       throw apiResponseError(adaptiveResult);
     }
 
-    const summary = String(body.summary || "").trim();
-    if (summary.length < 20 || !/[가-힣A-Za-z0-9]/.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY");
-    if (isTranscriptLikeAdaptiveSummary(summary, context)) throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE");
+    let summary = String(body.summary || "").trim();
+    if (summary.length < 20 || !/[\p{L}\p{N}]/u.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY");
+    if (isTranscriptLikeAdaptiveSummary(summary, context) && effectiveOperation === "summarize_adaptive") {
+      repairAttempted = true;
+      initialRequestId = body.request_id || adaptiveResult.request_id || null;
+      repairClientRequestId = crypto.randomUUID();
+      requestContext = {
+        ...context,
+        client_request_id: repairClientRequestId,
+        summary_revision: {
+          reason: "transcript_like",
+          rejected_summary: summary,
+          instruction: "Preserve every supported fact, but rewrite the record as new sentences instead of copying the participant's source sentences.",
+        },
+      };
+      adaptiveResult = await requestAiJson({ endpoint, anonKey, operation: "summarize_adaptive", context: requestContext, fetchImpl, timeoutMs });
+      if (!adaptiveResult.ok) throw apiResponseError(adaptiveResult);
+      body = adaptiveResult.body;
+      repairRequestId = body.request_id || adaptiveResult.request_id || null;
+      summary = String(body.summary || "").trim();
+      if (summary.length < 20 || !/[\p{L}\p{N}]/u.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY_REPAIR");
+      if (isTranscriptLikeAdaptiveSummary(summary, context)) throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE_AFTER_REPAIR");
+    } else if (isTranscriptLikeAdaptiveSummary(summary, context)) {
+      throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE");
+    }
     const axes = Object.fromEntries(["m", "s", "d"].map((key) => {
       const axis = key.toUpperCase();
       const value = body.axes?.[key];
@@ -1044,6 +1071,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
     const provider = API_SOURCES.has(body.provider) ? body.provider : "api";
     const serverSource = String(body.source || provider || "api").toLowerCase();
     const requestId = body.request_id || adaptiveResult.request_id || null;
+    const effectiveClientRequestId = repairAttempted ? repairClientRequestId : clientRequestId;
     const verifiedMotif = provider === "motif" && serverSource === "motif";
     return {
       summary,
@@ -1060,17 +1088,22 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
         provider,
         model: body.model || null,
         request_id: requestId,
-        client_request_id: clientRequestId,
-        client_request_id_sent: clientRequestId,
+        client_request_id: effectiveClientRequestId,
+        client_request_id_sent: effectiveClientRequestId,
         client_request_id_returned: body.client_request_id || null,
-        client_request_id_match: Boolean(clientRequestId && body.client_request_id === clientRequestId),
+        client_request_id_match: Boolean(effectiveClientRequestId && body.client_request_id === effectiveClientRequestId),
         operation: effectiveOperation,
         compatibility_mode: compatibilityMode,
+        repair_attempted: repairAttempted,
+        repair_reason: repairAttempted ? "transcript_like" : null,
+        initial_request_id: initialRequestId,
+        repair_request_id: repairRequestId,
+        network_calls: repairAttempted ? 2 : 1,
         prompt_version: body.prompt_version || ADAPTIVE_PROMPT_VERSION,
         http_status: adaptiveResult.status,
-        latency_ms: body.latency_ms ?? Math.round(performance.now() - started),
+        latency_ms: repairAttempted ? Math.round(performance.now() - started) : (body.latency_ms ?? Math.round(performance.now() - started)),
         usage: body.usage || null,
-        real_motif_pass: Boolean(verifiedMotif && requestId && clientRequestId && body.client_request_id === clientRequestId),
+        real_motif_pass: Boolean(verifiedMotif && requestId && effectiveClientRequestId && body.client_request_id === effectiveClientRequestId),
       },
     };
   } catch (error) {
@@ -1083,6 +1116,11 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       error_code: error?.message || "FINAL_SUMMARY_FAILED",
       latency_ms: Math.round(performance.now() - started),
       operation: "summarize_adaptive",
+      repair_attempted: repairAttempted,
+      repair_reason: repairAttempted ? "transcript_like" : null,
+      initial_request_id: initialRequestId,
+      repair_request_id: repairRequestId,
+      network_calls: repairAttempted ? 2 : 1,
       real_motif_pass: false,
     };
     return result;

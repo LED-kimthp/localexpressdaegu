@@ -1,3 +1,5 @@
+import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js";
+
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
 const anonKey = String(window.OVER39_SUPABASE_ANON_KEY || "");
@@ -5,7 +7,7 @@ const relayEndpoint = String(window.OVER39_SUPABASE_RELAY_URL || "");
 const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
 const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-let state = { session: null, sessions: [], selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "" };
+let state = { session: null, sessions: [], selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "" };
 
 function loadSession() { try { return JSON.parse(sessionStorage.getItem(sessionKey) || "null"); } catch { return null; } }
 function saveSession(session) { state.session = session; sessionStorage.setItem(sessionKey, JSON.stringify(session)); }
@@ -35,6 +37,20 @@ async function loadSessions() {
   await verifyAdmin();
   state.sessions = await api("over39_sessions", "?select=*&order=updated_at.desc&limit=500");
   state.status = "ready";
+  render();
+}
+
+async function loadAiRuns() {
+  state.view = "ai-health";
+  state.aiRunsError = "";
+  render();
+  try {
+    // Only the columns the summary reads, newest first. `output_raw` carries upstream_attempts.
+    state.aiRuns = await api("over39_ai_runs", "?select=response_id,operation,status,source,latency_ms,http_status,error_code,output_raw,started_at&order=started_at.desc&limit=2000");
+  } catch (error) {
+    state.aiRuns = [];
+    state.aiRunsError = error.message === "ADMIN_ACCESS_DENIED" ? "이 계정으로는 AI 실행 기록을 볼 수 없습니다." : "AI 실행 기록을 불러오지 못했습니다.";
+  }
   render();
 }
 
@@ -91,9 +107,53 @@ function renderDetail() {
     ${detailSection("오류·운영 로그", d.over39_operational_events, (row) => `<article><strong>${esc(row.event_type)} · ${esc(row.severity)}</strong><p>${esc(JSON.stringify(row.details))}</p></article>`)}`;
 }
 
+const OPERATION_LABEL = { anchor_followup: "후속 질문", summarize_adaptive: "참여 기록 정리" };
+const GRADE_LABEL = { ok: "정상", warn: "확인 필요", stop: "보류", unknown: "자료 부족" };
+
+function pct(value) { return `${(value * 100).toFixed(1)}%`; }
+function secs(value) { return Number.isFinite(value) ? `${(value / 1000).toFixed(1)}초` : "—"; }
+
+function aiHealthRow(name, stats) {
+  return `<tr class="ai-health-grade-${esc(stats.grade)}">
+    <th scope="row">${esc(OPERATION_LABEL[name] || name)}</th>
+    <td>${stats.total}</td>
+    <td>${stats.delivered}</td>
+    <td>${stats.degraded + stats.failed}</td>
+    <td>${stats.total ? pct(stats.missRate) : "—"}</td>
+    <td>${secs(stats.latencyP50)}</td>
+    <td>${secs(stats.latencyP95)}</td>
+    <td><span class="ai-health-badge">${esc(GRADE_LABEL[stats.grade])}</span></td>
+  </tr>`;
+}
+
+function renderAiHealth() {
+  if (state.aiRunsError) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>${esc(state.aiRunsError)}</p></section>`;
+  if (!state.aiRuns) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>불러오는 중입니다.</p></section>`;
+  const summary = aiHealthSummary(state.aiRuns);
+  const errors = summary.errorCodes.slice(0, 6);
+  return `<section class="detail-section ai-health">
+    <h2>AI 운영 지표</h2>
+    <p class="ai-health-verdict ai-health-grade-${esc(summary.verdict)}">${esc(VERDICT_COPY[summary.verdict])}</p>
+    <p class="ai-health-note">참여자가 받아야 할 질문이나 정리를 받지 못한 경우를 셉니다. 실패해도 참여자 화면에는 오류가 보이지 않으므로, 배포를 넓히기 전에 이 숫자로 판단해 주세요.</p>
+    <dl class="ai-health-totals">
+      <div><dt>참여자</dt><dd>${summary.participants}명</dd></div>
+      <div><dt>AI 호출</dt><dd>${summary.runs}회</dd></div>
+      <div><dt>1인당</dt><dd>${summary.callsPerParticipant.toFixed(1)}회</dd></div>
+      <div class="ai-health-grade-${esc(summary.rateLimitedGrade)}"><dt>호출 한도 초과</dt><dd>${summary.rateLimited}회 · ${summary.runs ? pct(summary.rateLimitedRate) : "—"}</dd></div>
+      <div><dt>재시도로 살린 호출</dt><dd>${summary.retried}회</dd></div>
+    </dl>
+    <table class="ai-health-table">
+      <thead><tr><th scope="col">단계</th><th scope="col">호출</th><th scope="col">정상</th><th scope="col">못 받음</th><th scope="col">비율</th><th scope="col">중간값</th><th scope="col">상위 5%</th><th scope="col">판정</th></tr></thead>
+      <tbody>${Object.entries(summary.byOperation).map(([name, stats]) => aiHealthRow(name, stats)).join("")}</tbody>
+    </table>
+    ${errors.length ? `<h3>오류 코드</h3><ul class="ai-health-errors">${errors.map((item) => `<li><code>${esc(item.code)}</code> ${item.count}회</li>`).join("")}</ul>` : ""}
+    <p class="ai-health-note">최근 2,000건 기준입니다.</p>
+  </section>`;
+}
+
 function renderDashboard() {
   const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${totals.all}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div><button class="secondary-button" data-admin-action="export-json">비식별 JSON</button><button class="secondary-button" data-admin-action="export-csv">비식별 CSV</button></div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${totals.all}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="export-json">비식별 JSON</button><button class="secondary-button" data-admin-action="export-csv">비식별 CSV</button></div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : renderDetail()}</section></main></div>`;
 }
 
 function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
@@ -118,7 +178,8 @@ function exportSummaryRows(bundle) {
 document.addEventListener("click", async (event) => {
   const button = event.target.closest("button");
   if (!button) return;
-  if (button.dataset.responseId) return loadDetail(button.dataset.responseId);
+  if (button.dataset.adminAction === "ai-health") return loadAiRuns();
+  if (button.dataset.responseId) { state.view = "responses"; return loadDetail(button.dataset.responseId); }
   if (button.dataset.adminFilter) { state.filter = button.dataset.adminFilter; render(); return; }
   if (button.dataset.adminAction === "logout") { clearSession(); state.status = "ready"; render(); return; }
   if (button.dataset.adminAction === "login") {
