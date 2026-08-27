@@ -440,11 +440,11 @@ const rc2QuestionPurposes = {
 const rc2QuestionTopics = {
   CONSENT: "참여 안내", P01: "시작 위치", DOCUMENT_IDENTITY: "참여자 표기", P01_CONTEXT: "기억의 위치",
   ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", ROLE_BRIDGE: "역할 확인", PARTICIPANT_CONTEXT: "활동의 맥락", PROFILE: "생활과 지역",
-  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "한 걸음 더", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "이유", AI_ANCHOR_M04_TEXT: "한 걸음 더", M05: "남은 단서",
+  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "여기서 잠깐", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "이유", AI_ANCHOR_M04_TEXT: "여기서 잠깐", M05: "남은 단서",
   MEMORY_TIME: "시간", MEMORY_EVIDENCE: "경험 방식", MEMORY_TO_PRESENT: "현재",
   ACTIVITY: "현재의 연결", PRACTICE_PUBLIC_STATE: "현재 상태", STATE_BACKGROUND: "현재에 작용한 현실",
-  TRANSITION: "변화", AI_ANCHOR_P12: "한 걸음 더", CONTINUITY: "보이지 않는 지속", AI_ANCHOR_P13_TEXT: "한 걸음 더", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "한 걸음 더", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "한 걸음 더",
-  D03: "현실 경험", D04: "영향", AI_CONDITIONAL_D04_CONDITIONS: "한 걸음 더", R01: "이어갈 방식", COMMUNITY: "다른 이름",
+  TRANSITION: "변화", AI_ANCHOR_P12: "여기서 잠깐", CONTINUITY: "보이지 않는 지속", AI_ANCHOR_P13_TEXT: "여기서 잠깐", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "여기서 잠깐", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "여기서 잠깐",
+  D03: "현실 경험", D04: "영향", AI_CONDITIONAL_D04_CONDITIONS: "여기서 잠깐", R01: "이어갈 방식", COMMUNITY: "다른 이름",
   REFLECTION_REVIEW: "응답 정리", SUBMIT: "세 방향 확인", USE_SCOPE: "활용 범위",
 };
 
@@ -663,7 +663,7 @@ function progressMeta(id) {
       : id === "REFLECTION_REVIEW" || id === "SUBMIT" || id === "USE_SCOPE" ? t("기록 정리") : "";
     const progressBase = currentFixed.length ? endNumber : priorFixed.length;
     return {
-      label: ui().topics[id] || (state.language === "ko" ? (rc2QuestionTopics[id] || rc2Phases[id] || "기록") : ""),
+      label: ui().topics[id] || (Object.hasOwn(ALL_ADAPTIVE_SCREEN_MAP, id) ? ui().deepQuestionStage : "") || (state.language === "ko" ? (rc2QuestionTopics[id] || rc2Phases[id] || "기록") : ""),
       count,
       progress: Math.min(100, Math.round((progressBase / Math.max(1, fixedIds.length)) * 100)),
       stageIndex: rc2StageIndex(id),
@@ -864,7 +864,7 @@ function purposeForScreen(id = activeScreens()[state.step]) {
 
 function screenHeading(title, help = "", purpose = purposeForScreen()) {
   const id = activeScreens()[state.step];
-  const topic = isRc2 ? (ui().topics[id] || (state.language === "ko" ? (rc2QuestionTopics[id] || "") : "")) : "";
+  const topic = isRc2 ? (ui().topics[id] || (Object.hasOwn(ALL_ADAPTIVE_SCREEN_MAP, id) ? ui().deepQuestionStage : "") || (state.language === "ko" ? (rc2QuestionTopics[id] || "") : "")) : "";
   const localizedTitle = t(title);
   const heading = topic && !String(title).includes("—") ? `${t(topic)} — ${localizedTitle}` : localizedTitle;
   const kicker = isRc2 ? "" : `<div class="interview-kicker">PUBLIC MEMORY INTERVIEW · INSTITUTION RC1</div>`;
@@ -1494,7 +1494,7 @@ async function requestAdaptiveNext(checkpoint) {
 function renderAdaptiveCheckpoint(checkpoint) {
   const turn = currentAdaptiveTurn(checkpoint);
   if (state.adaptiveGenerating || !turn) {
-    return `${screenHeading("앞의 답변에서 이어질 질문을 준비하고 있어요.", "방금 적은 문장에서 한 가지를 골라 한 번만 더 묻습니다.", "")}
+    return `${screenHeading(ui().deepQuestionReading, ui().deepQuestionPause, "")}
       ${processingSignal("다음 질문을 준비하고 있어요")}`;
   }
   const answer = state.answers[turn.answer_field] || "";
@@ -1506,11 +1506,11 @@ function renderAdaptiveCheckpoint(checkpoint) {
   const retry = turn.source !== "motif" && aiFunctionUrl
     ? `<button class="text-button adaptive-retry" type="button" data-action="retry-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("질문 다시 준비하기"))}</button>`
     : "";
-  return `${screenHeading(stage().followingQuestion, "방금 적은 답변에서 한 가지를 골라 이어갑니다.", turn.intent || "")}
+  return `${screenHeading(stage().followingQuestion, ui().deepQuestionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(turn.prompt)}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
-    <p class="adaptive-turn-note">${esc(t("이 질문에 답하면 바로 고정 설문으로 이어집니다."))}</p>${retry}`;
+    <p class="adaptive-turn-note">${esc(ui().deepQuestionNote)}</p>${retry}`;
 }
 
 async function prepareAdaptiveSummary() {
