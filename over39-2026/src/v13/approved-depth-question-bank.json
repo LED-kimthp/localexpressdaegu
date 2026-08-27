@@ -1,0 +1,54 @@
+{
+  "version": "rc1-approved-depth-bank-2026-08-03",
+  "status": "approved_rc1",
+  "questions": [
+    {
+      "id": "FB-M-01",
+      "axis": "M",
+      "routes": ["SELF", "MEMORY", "BOTH", "AUDIENCE"],
+      "prompt": "지금까지 떠올린 경험에서, 가장 오래 남아 있다고 느끼는 의미는 무엇인가요?",
+      "intent": "앞선 답변에서 중요하게 남은 의미를 다시 확인합니다. 특정한 의미를 정답으로 두지는 않습니다.",
+      "analysis_purpose": "Distinguish the participant-confirmed M primary from supporting memory tags."
+    },
+    {
+      "id": "FB-M-02",
+      "axis": "M",
+      "routes": ["SELF", "BOTH"],
+      "prompt": "당신의 활동을 계속 떠올리게 하는 것은 감각, 삶의 경험, 창작의 탐구, 사람과 사회의 관계 중 어디에 가장 가까운가요?",
+      "intent": "활동을 붙들고 있는 의미의 중심을 살핍니다. 여러 의미가 함께 있어도 괜찮습니다.",
+      "analysis_purpose": "Confirm the dominant M meaning for self-oriented routes."
+    },
+    {
+      "id": "FB-S-01",
+      "axis": "S",
+      "routes": ["SELF", "MEMORY", "BOTH", "AUDIENCE"],
+      "prompt": "그 의미와 당신의 관계는 지금 넓어지는 중인가요, 이어지는 중인가요, 달라지는 중인가요, 아니면 잠시 거리를 두고 있나요?",
+      "intent": "앞선 기억이 현재 어떤 움직임 안에 있는지 경험의 말로 확인합니다.",
+      "analysis_purpose": "Confirm one primary S movement while allowing mixed or unknown responses."
+    },
+    {
+      "id": "FB-S-02",
+      "axis": "S",
+      "routes": ["MEMORY", "AUDIENCE"],
+      "prompt": "그 기억은 지금의 당신에게 새롭게 다가오고 있나요, 비슷하게 이어지나요, 다른 의미가 되었나요, 아니면 멀어져 있나요?",
+      "intent": "과거의 기억과 현재 사이의 움직임을 살핍니다. 활동의 지속 여부를 미리 단정하지 않습니다.",
+      "analysis_purpose": "Confirm S for memory and audience routes without assuming professional activity."
+    },
+    {
+      "id": "FB-D-01",
+      "axis": "D",
+      "routes": ["SELF", "MEMORY", "BOTH", "AUDIENCE"],
+      "prompt": "다음 변화를 하나 먼저 시작한다면, 기회와 접근, 개인의 기반, 사람 사이의 연결, 제도와 구조 중 어디에서 시작하면 좋을까요?",
+      "intent": "앞에서 고른 필요들 가운데 가장 먼저 움직일 변화의 자리를 확인합니다.",
+      "analysis_purpose": "Confirm D primary independently from the current gap answer."
+    },
+    {
+      "id": "FB-D-02",
+      "axis": "D",
+      "routes": ["MEMORY", "BOTH"],
+      "prompt": "이 기억이 다시 이어지려면, 만날 기회, 작업을 지속할 기반, 대화하고 기록할 관계, 오래 남길 구조 중 무엇이 먼저 필요할까요?",
+      "intent": "기억의 재연결을 위해 먼저 필요한 변화의 위치를 살핍니다.",
+      "analysis_purpose": "Confirm D primary for memory-reconnection contexts."
+    }
+  ]
+}
