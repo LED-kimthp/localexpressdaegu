@@ -346,7 +346,7 @@ function download(filename, content, type) { const blob = new Blob([content], { 
 function csvValue(value) { const text = String(value ?? ""); return `"${text.replaceAll('"', '""')}"`; }
 // `over39_response_snapshots`가 빠져 있었다. 참여자가 쓴 서술 원문과 참여 기록 문서가
 // 전부 그 payload 안에 있으므로, 이 내보내기로는 가장 중요한 연구 데이터를 받을 수 없었다.
-const exportTables = ["over39_sessions", "over39_response_snapshots", "over39_fixed_answers", "over39_axis_snapshots", "over39_depth_questions", "over39_depth_answers", "over39_ai_runs", "over39_participant_revisions", "over39_consent_events", "over39_connection_profiles", "over39_institution_feedback", "over39_operational_events"];
+const exportTables = ["over39_sessions", "over39_response_snapshots", "over39_fixed_answers", "over39_axis_snapshots", "over39_depth_questions", "over39_depth_answers", "over39_ai_runs", "over39_participant_revisions", "over39_consent_events", "over39_connection_profiles", "over39_institution_feedback", "over39_operational_events", "over39_greetings"];
 
 // 예전에는 테이블마다 `limit=5000`을 한 번 걸고 끝냈다. `over39_fixed_answers`는 한 사람이
 // 문항 32개 × 스냅샷 2단계로 약 60행을 남기므로 **80명 남짓에서 상한에 걸려 조용히 잘렸다.**
@@ -355,11 +355,20 @@ const EXPORT_PAGE_SIZE = 1000;
 // 참여 기록 묶음은 스냅샷 payload 원문을 읽어야 해서 한 행이 수십 KB다. 1,000행씩 받으면
 // 한 응답이 수십 MB가 되므로, `onPage`로 받는 즉시 사람당 하나로 접고 원문을 버린다.
 const SNAPSHOT_PAGE_SIZE = 200;
+// 표마다 기본키가 다르다. `over39_sessions`와 `over39_connection_profiles`는 `response_id`가
+// 기본키이고 `id` 컬럼이 아예 없다. PostgREST는 없는 정렬 컬럼에 HTTP 400을 돌려주므로,
+// `order=id.asc`를 모든 표에 쓰던 이 함수는 그 둘에서 예외를 던졌고 호출부가 빈 배열로
+// 삼켰다. 그래서 참여 기록 묶음은 **항상 "0명분"** 으로 나왔다 — 스냅샷·승인문·동의를
+// 정상적으로 받아 놓고도 붙일 사람이 없어 전부 버렸다. 자료를 모아도 꺼낼 수 없었다.
+// `over39_greetings`는 반대로 `id`는 있고 `response_id`가 없다.
+const TABLE_ORDER_KEY = { over39_sessions: "response_id", over39_connection_profiles: "response_id" };
+const orderKeyFor = (table) => TABLE_ORDER_KEY[table] || "id";
+
 async function fetchAllRows(table, { pageSize = EXPORT_PAGE_SIZE, onPage = null } = {}) {
   const rows = [];
   let received = 0;
   for (let offset = 0; ; offset += pageSize) {
-    const page = await api(table, `?select=*&order=id.asc&limit=${pageSize}&offset=${offset}`);
+    const page = await api(table, `?select=*&order=${orderKeyFor(table)}.asc&limit=${pageSize}&offset=${offset}`);
     received += page.length;
     if (onPage) onPage(page);
     else rows.push(...page);

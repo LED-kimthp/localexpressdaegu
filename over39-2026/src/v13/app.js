@@ -49,6 +49,15 @@ const requestedLanguage = String(query.get("lang") || localStorage.getItem(inter
 const initialLanguage = ["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"].includes(requestedLanguage) ? requestedLanguage : "ko";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
+// 초대 링크를 사람마다 다르게 보내기 위한 표식(`?pid=A01`). 참여자 화면에는 아무 영향이
+// 없고, 어느 링크로 들어왔는지만 남는다. 이것이 없으면 초대한 사람 명단과 들어온 응답을
+// 맞출 수 없어, 누가 아직 참여하지 않았는지도 표본 구성이 실제로 어떠했는지도 알 수 없다.
+const participantCode = String(query.get("pid") || "").trim().slice(0, 40);
+
+// 이탈 지점을 알기 위한 중간 스냅샷 지점. 기억 블록이 끝나는 자리와, 현재 조건까지
+// 마친 자리 둘이다. 더 늘리면 참여자당 요청만 늘고 얻는 해상도는 크지 않다.
+const DROP_OFF_CHECKPOINTS = new Set(["MEMORY_EVIDENCE", "SUPPORT_CONDITIONS"]);
+const sentDropOffCheckpoints = new Set();
 // 표본은 빌드가 정한 이 회차의 기본값을 따른다. 참여자가 받는 주소에 쿼리가 없어야
 // 이어쓰기나 링크 공유로 같은 사람의 표본이 갈리지 않는다. `?sample=`은 검증 주행이
 // 연구 표본을 오염시키지 않게 빠져나가는 용도로만 남긴다.
@@ -1236,10 +1245,15 @@ function renderMemoryTime() {
   const q = question("M06");
   const locations = values(state.answers.memory_locations).map((location) => location.label || location).join("; ");
   const title = noRecall() ? q.text_no_recall : q.text;
+  // M07의 예시는 파서와 어긋나 있었다. `locationValues`는 항목을 `;`/개행으로 나눈 뒤
+  // 쉼표 앞을 country_code, 뒤를 city로 읽는다. 옛 예시 `광주, 전시장 / 온라인`대로 적으면
+  // 도시가 국가 칸에 들어가고 `/`는 구분자가 아니라 city의 일부가 된다. 수집이 끝난 뒤에는
+  // 참여자가 국가를 적은 건지 도시를 적은 건지 판정할 수 없다. P10이 이미 쓰는 올바른
+  // 예시로 통일한다 — 같은 문자열이라 8개 언어 번역도 그대로 따라온다.
   const locationQuestion = question("M07");
   const locationLabel = noRecall() ? locationQuestion.text_no_recall : "장소 — 어디에서 만난 경험인가요?";
   return `${screenHeading(title)}${renderChoices("M06", q.options)}${state.answers.memory_time_band ? renderText("M06_YEAR", { multiline: false, placeholder: "예: 2018", label: "기억나는 연도 (선택)" }) : ""}
-  ${renderText("M07", { multiline: false, placeholder: "예: 광주, 전시장 / 온라인", label: locationLabel, value: locations })}`;
+  ${renderText("M07", { multiline: false, placeholder: "예: KR,대구; 온라인", label: locationLabel, value: locations })}`;
 }
 
 function renderEvidence() {
@@ -1251,7 +1265,13 @@ function renderEvidence() {
   const m09Text = audience ? m09.text_audience : m09.text;
   return `${screenHeading(title)}
     <label class="field-label">${esc(m08Text)}</label>${renderChoices("M08", m08.options, { multi: true, max: 2 })}
-    <label class="field-label">${esc(m09Text)}</label>${renderChoices("M09", m09.options)}`;
+    <label class="field-label">${esc(m09Text)}</label>${renderChoices("M09", m09.options)}
+    <label class="field-label">${esc(t("이 기억이 얼마나 또렷한가요?"))} <span class="field-optional">${esc(t("선택"))}</span></label>${renderChoices("memory_confidence", [
+      ["CERTAIN", t("분명히 기억해요")],
+      ["MOSTLY", t("대체로 기억해요")],
+      ["VAGUE", t("흐릿해요")],
+      ["UNSURE", t("확신이 없어요")],
+    ])}`;
 }
 
 function renderMemoryVerify() {
@@ -2010,6 +2030,7 @@ function createResponse(submissionPhase = "final") {
     sample_type: sampleType,
     institution_code: institutionCode || null,
     acquisition_source: acquisitionSource,
+    participant_code: participantCode || null,
     rc1_version: releaseVersion,
     release_version: releaseVersion,
     include_in_policy_statistics: sampleType === "research" && cleanedAnswers.policy_research_use === "ANON_ANALYSIS",
@@ -3354,6 +3375,25 @@ document.addEventListener("click", (event) => {
     const screens = activeScreens();
     const id = screens[state.step];
     if (!canContinue(id) || state.submissionStatus === "sending") return;
+
+    // 도중에 그만둔 사람의 기록을 남긴다. 적응형 경로는 맨 마지막 저장 버튼을 누르기
+    // 전까지 서버로 아무것도 보내지 않아서, 25분을 쓰고 중간에 창을 닫은 사람은 아예
+    // 오지 않은 사람과 구분되지 않았다. 16명 규모에서 "어느 질문에서 멈췄는가"는
+    // 해석의 핵심이므로, 이야기가 어느 정도 쌓인 두 지점에서 스냅샷을 보낸다.
+    //
+    // **참여자를 절대 막지 않는다.** 화면 전환과 무관하게 뒤에서 보내고, 실패해도
+    // 조용히 넘어간다. 상태·렌더·진행에 손대지 않는다 — 이 화면들에서 참여자가
+    // 갇히는 것이 이 기능으로 얻는 것보다 훨씬 나쁘다.
+    if (isRc2 && DROP_OFF_CHECKPOINTS.has(id) && !sentDropOffCheckpoints.has(id)) {
+      sentDropOffCheckpoints.add(id);
+      try {
+        const snapshot = createResponse("fixed_complete");
+        snapshot.drop_off_checkpoint = id;
+        Promise.resolve(requestResearchStorage(snapshot)).catch(() => {});
+      } catch (error) {
+        // 스냅샷을 만들다 실패해도 참여자는 그대로 다음 화면으로 간다.
+      }
+    }
 
     if (isRc2 && id === "CONSENT") {
       state.phase = "greeting-choice";

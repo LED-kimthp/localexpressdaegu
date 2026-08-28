@@ -1222,3 +1222,199 @@ Object.assign(extraCopy.en || (extraCopy.en = {}), {
   "한 문장 더 남기고 싶다면 들려주세요.": "If there is one more sentence you would like to leave, please share it.",
   "최대 240자": "Up to 240 characters"
 });
+
+// v0.4.8: 배포된 RC2에서 참여자가 반드시 지나가는 화면에 남아 있던 구멍.
+// 가장 큰 것은 역할 선택(P02G → P02 → P03)이다. `role_code`는 이 연구의 핵심
+// 분류 변수인데, 한국어로 남아 있어도 진행이 막히지 않는다 — 참여자는 뜻을
+// 모른 채 아무 값이나 고를 수 있고, 그 값이 그대로 연구 데이터가 된다.
+// 영어는 스키마 라벨이 `예술교육자·강사`에서 `대학교수·예술교육자·강사`로
+// 바뀌면서 키가 어긋나 R16만 한국어로 남아 있었다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "기존 역할로 한정하기 어려움": "Hard to place within the existing roles",
+  "대학교수·예술교육자·강사": "University professor, arts educator, or instructor",
+  // 동의 화면의 소제목. 참여자가 보는 첫 화면인데 여덟 언어 모두 한국어였다.
+  "연구 참여": "Taking part in the research",
+  "AI 사용": "Use of AI",
+  // 역할별 폴백 후속질문(depth.js `fallbackAdaptiveQuestion`). 큐레이터(R04)·
+  // 기자(R08)·교수(R16)·비평가(R06) 분기는 P02 선택값으로 바로 걸리므로
+  // 비한국어 참여자에게도 그대로 나타난다.
+  "그 일을 마친 뒤 작업의 감각으로 돌아가기까지 어떤 시간이 필요했나요?": "After that work was finished, what did you need before you could return to the feel of your own practice?",
+  "그 판단이 분명해진 작품이나 전시의 한 장면을 들려주세요.": "Please tell us about one scene, in a work or an exhibition, where that judgement became clear.",
+  "그 기억에서 전시나 작가와의 관계가 가장 선명하게 드러난 한 장면을 들려주세요.": "Please tell us about the one scene in that memory where your relationship with the exhibition or the artist showed most clearly.",
+  "그 장면에서 작품이나 작가를 바라보는 판단이 움직인 지점은 무엇이었나요?": "In that scene, where did your judgement of the work or the artist begin to shift?",
+  "이 기억은 지금의 작업, 수업 또는 역할을 바라보는 생각과 어떻게 이어져 있나요?": "How does this memory connect with how you now think about your work, your teaching, or your role?",
+  "최근 기획에서 조사나 작가와의 대화에 충분한 시간을 쓰기 어려웠던 장면이 있었나요?": "In a recent project, was there a moment when it was hard to give enough time to research or to conversations with artists?",
+  "최근 현장 취재나 기사 작성 방식이 달라졌다고 느낀 장면이 있었나요?": "Was there a moment recently when you felt that reporting on site, or the way you write, had changed?",
+  "수업과 행정 업무 가운데 가장 많은 시간을 사용한 일은 무엇이었나요?": "Across teaching and administrative work, what took up the most of your time?",
+  "비평과 작가 연구의 의미를 다시 생각하게 된 장면은 무엇이었나요?": "What was the scene that made you think again about what criticism and research on artists are for?",
+  "조사와 기획을 충분히 이어가기 위해 지금 가장 먼저 달라져야 할 조건은 무엇인가요?": "For research and curating to carry on with enough room, which condition would have to change first?",
+  "문화예술 취재를 이어가기 위해 지금 가장 필요하다고 느끼는 조건은 무엇인가요?": "To keep reporting on arts and culture, which condition do you feel is most needed now?",
+  "작업과 교육을 함께 이어가기 위해 가장 먼저 조정되어야 할 일은 무엇인가요?": "For your own practice and your teaching to continue together, what would need to be adjusted first?",
+  "비평과 작가 연구가 오래 이어지기 위해 지금 필요한 조건은 무엇인가요?": "What conditions are needed now for criticism and research on artists to continue over a long time?",
+  // 모든 화면에 그려지는 진행 표시줄과 공통 문구.
+  "이어지는 질문": "Follow-up question",
+  // 역할 다리 화면과 기억 구간.
+  "현재 활동을 직접 적기": "Describe your current practice in your own words",
+  "문화예술 외 역할": "A role outside arts and culture",
+  "최근의 거리감, 여러 경험이 섞인 상태, 이름은 흐리지만 남은 느낌을 적어도 좋아요.": "You may write about a recent sense of distance, a mix of several experiences, or a feeling that remains even when the name has blurred.",
+  "지금 문화예술을 떠올릴 때 남아 있는 느낌이나 상태": "The feeling or state that remains when you think of arts and culture now",
+  "지금 떠오르는 상태를 먼저 적어주세요.": "Please begin by writing the state that comes to you now.",
+  "현재의 거리감이나 남아 있는 느낌": "A present sense of distance, or a feeling that remains",
+  "이 기억의 경험과 관계를 알려주세요.": "Please tell us about the experience behind this memory and your relationship to it.",
+  "기억을 다음 기록과 연결하기 전에 한 가지를 더 확인할게요.": "Before we carry this memory into the next part of the record, let us check one more thing.",
+  "이 질문은 선택 사항입니다. 기억과의 관계를 지금의 말로 남기고 싶을 때만 골라주세요.": "This question is optional. Choose an answer only if you would like to put your relationship to the memory into your own words now.",
+  "관계를 직접 적어주세요.": "Please describe the relationship in your own words.",
+  "당신에게 남아 있는 장면을 들었어요.": "We have heard about the scene that remains with you.",
+  "이제 그 기억이나 활동이 지금의 삶과 어떤 관계에 있는지 살펴볼게요.": "Now let us look at how that memory or practice relates to your life today.",
+  // 현재 구간(STATE_BACKGROUND).
+  "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.": "Please choose what comes closest among daily life, travel, information, the people who were with you, and the atmosphere of a place. If none of these apply, or you are not sure yet, you may say so.",
+  "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.": "Please choose what comes closest among your living circumstances, your roles, your relationships, and conditions in the field. If none of these apply, or you are not sure yet, you may say so.",
+  // 조건 구간(D01~D04).
+  "지금 이 기억을 다시 만나기 위해, 가장 먼저 채워지면 좋겠다고 느끼는 것은 무엇인가요?": "For you to meet this memory again, what would you most want to see filled in first?",
+  "변화의 초점을 먼저 선택해 주세요.": "Please choose the focus of the change first.",
+  "특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.": "If you do not feel that any particular change is needed, or you are not sure yet, you may choose that as it is.",
+  "지금과 가까운 변화의 방향을 골라주세요.": "Please choose the direction of change closest to where you are now.",
+  "현실의 맥락을 직접 적어주세요.": "Please describe the circumstances in your own words.",
+  "이 조건이 활동·기억·관계에 남긴 영향을 적어주세요.": "Please write what this condition left behind in your practice, your memories, or your relationships.",
+  // 참여자 표기와 마무리 화면.
+  "이 기록에서 어떻게 불러드리면 좋을까요?": "How would you like to be addressed in this record?",
+  "예: T.K.": "e.g. T.K.",
+  "다음 화면에서 정책연구에 활용할 범위를 직접 정한 뒤 저장합니다.": "On the next screen you will decide yourself how far this may be used in the policy research, and then it is saved.",
+  "다음 화면에서 활용 범위를 정한 뒤 참여 기록을 이 기기에 보관합니다.": "On the next screen you will decide how far this may be used, and then your participation record is kept on this device.",
+});
+
+// v0.4.8: nl/es/fr/ms. 빈 문자열은 "이미 등록돼 있으니 덮어쓰지 않는다"는 뜻이다
+// (네덜란드어는 역할 문항과 큰 범주가 이미 있었다). 아래 루프가 빈 값을 건너뛴다.
+const rc2RoleAndRequiredPathRows = [
+  // --- 역할 선택 화면 (P02G → P02 → P03) ---
+  ["이번 답변에서 가장 가까운 역할의 큰 범주를 선택해 주세요.", "", "Elija la categoría amplia de rol más cercana a esta respuesta.", "Choisissez la grande catégorie de rôle la plus proche de cette réponse.", "Pilih kategori peranan yang paling hampir dengan jawapan ini."],
+  ["그 범주 안에서 이번 답변과 가장 가까운 주 역할을 선택해 주세요.", "", "Dentro de esa categoría, elija el papel principal más cercano a esta respuesta.", "Dans cette catégorie, choisissez le rôle principal le plus proche de cette réponse.", "Dalam kategori itu, pilih peranan utama yang paling hampir dengan jawapan ini."],
+  ["함께 이어가고 있는 다른 역할이 있나요?", "", "¿Hay otros papeles que mantenga al mismo tiempo?", "Exercez-vous d’autres rôles en parallèle ?", "Adakah peranan lain yang anda jalankan serentak?"],
+  ["창작", "", "Creación", "Création", "Penciptaan"],
+  ["기획·프로듀싱", "", "Comisariado y producción", "Commissariat et production", "Kurasi dan penerbitan"],
+  ["비평·연구", "", "Crítica e investigación", "Critique et recherche", "Kritikan dan penyelidikan"],
+  ["언론·미디어", "", "Prensa y medios", "Presse et médias", "Kewartawanan dan media"],
+  ["기록·출판·소통", "", "Documentación, publicación y comunicación", "Documentation, édition et communication", "Dokumentasi, penerbitan dan komunikasi"],
+  ["공간·기관 운영", "", "Gestión de espacios e instituciones", "Gestion de lieux et d’institutions", "Pengurusan ruang dan institusi"],
+  ["교육·행정·정책", "", "Educación, administración y políticas", "Éducation, administration et politiques", "Pendidikan, pentadbiran dan dasar"],
+  ["제작·보존·유통", "", "Producción, conservación y distribución", "Production, conservation et diffusion", "Penghasilan, pemuliharaan dan pengedaran"],
+  ["기존 역할로 한정하기 어려움", "Moeilijk in de bestaande rollen te plaatsen", "Difícil de encajar en los papeles existentes", "Difficile à situer parmi les rôles proposés", "Sukar diletakkan dalam peranan sedia ada"],
+  ["시각예술가", "Beeldend kunstenaar", "Artista visual", "Artiste visuel", "Artis seni visual"],
+  ["사진·영상·미디어 작가", "Fotograaf, film- of mediakunstenaar", "Artista de fotografía, imagen en movimiento o medios", "Artiste photo, image en mouvement ou médias", "Pengkarya fotografi, imej bergerak atau media"],
+  ["공예·디자인 창작자", "Maker in ambacht of vormgeving", "Creador de artesanía o diseño", "Créateur en artisanat ou en design", "Pengkarya kraf atau reka bentuk"],
+  ["큐레이터·전시기획자", "Curator of tentoonstellingsmaker", "Comisario o planificador de exposiciones", "Commissaire ou concepteur d’expositions", "Kurator atau perancang pameran"],
+  ["독립기획자·프로듀서", "Onafhankelijk programmamaker of producent", "Programador independiente o productor", "Programmateur indépendant ou producteur", "Perancang bebas atau penerbit"],
+  ["비평가", "Criticus", "Crítico", "Critique", "Pengkritik"],
+  ["연구자", "Onderzoeker", "Investigador", "Chercheur", "Penyelidik"],
+  ["문화예술 기자", "Kunst- en cultuurjournalist", "Periodista de cultura y artes", "Journaliste culturel", "Wartawan seni dan budaya"],
+  ["독립미디어 관계자", "Medewerker bij onafhankelijke media", "Profesional de medios independientes", "Acteur des médias indépendants", "Penggiat media bebas"],
+  ["편집자·출판기획자", "Redacteur of uitgeefplanner", "Editor o planificador editorial", "Éditeur ou responsable de projets d’édition", "Editor atau perancang penerbitan"],
+  ["아키비스트·기록연구자", "Archivaris of documentatieonderzoeker", "Archivero o investigador de documentación", "Archiviste ou chercheur en documentation", "Arkivis atau penyelidik dokumentasi"],
+  ["사진·영상 기록자", "Foto- of videodocumentalist", "Documentalista de fotografía o vídeo", "Documentariste photo ou vidéo", "Pendokumentasi foto atau video"],
+  ["디자인·홍보·커뮤니케이션 담당자", "Medewerker vormgeving, publiciteit of communicatie", "Responsable de diseño, difusión o comunicación", "Responsable design, promotion ou communication", "Petugas reka bentuk, promosi atau komunikasi"],
+  ["독립공간 운영자", "Beheerder van een onafhankelijke ruimte", "Gestor de un espacio independiente", "Responsable d’un lieu indépendant", "Pengendali ruang bebas"],
+  ["미술관·문화기관 실무자", "Medewerker van een museum of culturele instelling", "Profesional de museo o institución cultural", "Professionnel de musée ou d’institution culturelle", "Petugas muzium atau institusi budaya"],
+  ["대학교수·예술교육자·강사", "Universitair docent, kunstdocent of instructeur", "Profesor universitario, educador artístico o docente", "Professeur d’université, éducateur artistique ou intervenant", "Pensyarah universiti, pendidik seni atau tenaga pengajar"],
+  ["문화행정·정책 관계자", "Medewerker cultuurbeleid of -bestuur", "Profesional de administración o política cultural", "Acteur de l’administration ou des politiques culturelles", "Penggiat pentadbiran atau dasar budaya"],
+  ["제작·설치·기술 인력", "Productie-, installatie- of technisch medewerker", "Personal de producción, montaje o técnica", "Personnel de production, de montage ou technique", "Tenaga penghasilan, pemasangan atau teknikal"],
+  ["갤러리·유통·후원 관계자", "Medewerker galerie, distributie of mecenaat", "Profesional de galería, distribución o mecenazgo", "Acteur de galerie, de diffusion ou de mécénat", "Penggiat galeri, pengedaran atau naungan"],
+  ["보존·수복·소장품 관리 관계자", "Medewerker conservering, restauratie of collectiebeheer", "Profesional de conservación, restauración o gestión de colecciones", "Professionnel de conservation, de restauration ou de gestion des collections", "Penggiat pemuliharaan, pemulihan atau pengurusan koleksi"],
+  // --- 동의 화면의 소제목 (참여자가 보는 첫 화면) ---
+  ["연구 참여", "Deelname aan het onderzoek", "Participación en la investigación", "Participation à la recherche", "Penyertaan dalam penyelidikan"],
+  ["AI 사용", "Gebruik van AI", "Uso de la IA", "Utilisation de l’IA", "Penggunaan AI"],
+  // --- 역할별 폴백 후속질문 (depth.js). R04·R08·R16·R06은 P02 값으로 바로 걸린다 ---
+  ["그 일을 마친 뒤 작업의 감각으로 돌아가기까지 어떤 시간이 필요했나요?", "Nadat dat werk was afgerond, wat had u nodig om terug te keren naar het gevoel van uw eigen praktijk?", "Una vez terminado ese trabajo, ¿qué necesitó para volver a la sensación de su propia práctica?", "Une fois ce travail terminé, de quoi avez-vous eu besoin pour retrouver la sensation de votre propre pratique ?", "Setelah kerja itu selesai, apakah yang anda perlukan untuk kembali kepada rasa karya anda sendiri?"],
+  ["그 판단이 분명해진 작품이나 전시의 한 장면을 들려주세요.", "Vertel ons over één scène, in een werk of een tentoonstelling, waarin dat oordeel duidelijk werd.", "Cuéntenos una escena, en una obra o una exposición, en la que ese juicio se volvió claro.", "Racontez-nous une scène, dans une œuvre ou une exposition, où ce jugement est devenu clair.", "Ceritakan satu babak, dalam sesebuah karya atau pameran, ketika penilaian itu menjadi jelas."],
+  ["그 기억에서 전시나 작가와의 관계가 가장 선명하게 드러난 한 장면을 들려주세요.", "Vertel ons over de scène in die herinnering waarin uw band met de tentoonstelling of de kunstenaar het helderst naar voren kwam.", "Cuéntenos la escena de ese recuerdo en la que su relación con la exposición o con el artista se muestra con mayor nitidez.", "Racontez-nous la scène de ce souvenir où votre lien avec l’exposition ou avec l’artiste apparaît le plus nettement.", "Ceritakan satu babak dalam ingatan itu yang paling jelas menunjukkan hubungan anda dengan pameran atau dengan pengkarya."],
+  ["그 장면에서 작품이나 작가를 바라보는 판단이 움직인 지점은 무엇이었나요?", "Op welk punt in die scène begon uw oordeel over het werk of de kunstenaar te verschuiven?", "En esa escena, ¿en qué punto empezó a moverse su juicio sobre la obra o sobre el artista?", "Dans cette scène, à quel moment votre jugement sur l’œuvre ou sur l’artiste a-t-il commencé à se déplacer ?", "Dalam babak itu, di titik manakah penilaian anda terhadap karya atau pengkarya mula berubah?"],
+  ["이 기억은 지금의 작업, 수업 또는 역할을 바라보는 생각과 어떻게 이어져 있나요?", "Hoe hangt deze herinnering samen met hoe u nu naar uw werk, uw onderwijs of uw rol kijkt?", "¿Cómo se enlaza este recuerdo con la manera en que hoy ve su trabajo, sus clases o su papel?", "Comment ce souvenir rejoint-il votre manière de voir aujourd’hui votre travail, vos cours ou votre rôle ?", "Bagaimanakah ingatan ini bersambung dengan cara anda melihat kerja, pengajaran atau peranan anda sekarang?"],
+  ["최근 기획에서 조사나 작가와의 대화에 충분한 시간을 쓰기 어려웠던 장면이 있었나요?", "Was er bij een recent project een moment waarop het moeilijk was genoeg tijd te besteden aan onderzoek of aan gesprekken met kunstenaars?", "En un proyecto reciente, ¿hubo un momento en que fue difícil dedicar tiempo suficiente a la investigación o a las conversaciones con los artistas?", "Dans un projet récent, y a-t-il eu un moment où il a été difficile de consacrer assez de temps à la recherche ou aux échanges avec les artistes ?", "Dalam projek terbaharu, adakah saat ketika sukar untuk memberikan masa yang mencukupi kepada penyelidikan atau perbualan dengan pengkarya?"],
+  ["최근 현장 취재나 기사 작성 방식이 달라졌다고 느낀 장면이 있었나요?", "Was er onlangs een moment waarop u merkte dat de verslaggeving ter plaatse of uw manier van schrijven veranderd was?", "¿Hubo hace poco un momento en que sintió que la cobertura sobre el terreno o su forma de escribir había cambiado?", "Y a-t-il eu récemment un moment où vous avez senti que le reportage sur le terrain ou votre façon d’écrire avait changé ?", "Adakah baru-baru ini saat anda merasakan liputan di lapangan atau cara anda menulis telah berubah?"],
+  ["수업과 행정 업무 가운데 가장 많은 시간을 사용한 일은 무엇이었나요?", "Wat kostte u de meeste tijd: het lesgeven of het administratieve werk?", "Entre la docencia y las tareas administrativas, ¿qué le ocupó más tiempo?", "Entre l’enseignement et les tâches administratives, qu’est-ce qui vous a pris le plus de temps ?", "Antara pengajaran dan tugas pentadbiran, apakah yang paling banyak mengambil masa anda?"],
+  ["비평과 작가 연구의 의미를 다시 생각하게 된 장면은 무엇이었나요?", "Welke scène bracht u ertoe opnieuw na te denken over de betekenis van kritiek en kunstenaarsonderzoek?", "¿Qué escena le llevó a repensar el sentido de la crítica y de la investigación sobre los artistas?", "Quelle scène vous a amené à repenser le sens de la critique et de la recherche sur les artistes ?", "Babak apakah yang membuat anda memikirkan semula makna kritikan dan penyelidikan tentang pengkarya?"],
+  ["조사와 기획을 충분히 이어가기 위해 지금 가장 먼저 달라져야 할 조건은 무엇인가요?", "Om onderzoek en curatorschap voldoende ruimte te geven, welke voorwaarde zou als eerste moeten veranderen?", "Para llevar la investigación y el comisariado con tiempo suficiente, ¿qué condición debería cambiar primero?", "Pour mener la recherche et le commissariat avec assez de temps, quelle condition devrait changer en premier ?", "Untuk meneruskan penyelidikan dan kerja kurasi dengan mencukupi, syarat apakah yang perlu berubah dahulu?"],
+  ["문화예술 취재를 이어가기 위해 지금 가장 필요하다고 느끼는 조건은 무엇인가요?", "Om over kunst en cultuur te blijven berichten, welke voorwaarde acht u nu het meest nodig?", "Para seguir cubriendo la cultura y las artes, ¿qué condición le parece hoy más necesaria?", "Pour continuer à couvrir la culture et les arts, quelle condition vous semble aujourd’hui la plus nécessaire ?", "Untuk terus membuat liputan seni dan budaya, syarat apakah yang anda rasakan paling diperlukan sekarang?"],
+  ["작업과 교육을 함께 이어가기 위해 가장 먼저 조정되어야 할 일은 무엇인가요?", "Om uw eigen werk en het lesgeven samen voort te zetten, wat zou als eerste moeten worden bijgesteld?", "Para llevar a la vez su práctica y la docencia, ¿qué debería ajustarse primero?", "Pour mener de front votre pratique et l’enseignement, qu’est-ce qui devrait être ajusté en premier ?", "Untuk meneruskan karya dan pengajaran secara serentak, apakah yang perlu diselaraskan dahulu?"],
+  ["비평과 작가 연구가 오래 이어지기 위해 지금 필요한 조건은 무엇인가요?", "Welke voorwaarden zijn nu nodig om kritiek en kunstenaarsonderzoek lang te laten voortbestaan?", "¿Qué condiciones hacen falta hoy para que la crítica y la investigación sobre los artistas duren mucho tiempo?", "Quelles conditions faut-il aujourd’hui pour que la critique et la recherche sur les artistes durent longtemps ?", "Syarat apakah yang diperlukan sekarang agar kritikan dan penyelidikan tentang pengkarya dapat bertahan lama?"],
+  // --- 모든 화면에 그려지는 진행 표시줄과 공통 문구 ---
+  ["시작", "Begin", "Inicio", "Début", "Permulaan"],
+  ["전체 설문 진행 단계", "Voortgangsfasen van de hele vragenlijst", "Etapas de avance de todo el cuestionario", "Étapes de progression de l’ensemble du questionnaire", "Peringkat kemajuan keseluruhan soal selidik"],
+  ["기억 · 현재 · 조건", "Herinnering · Heden · Voorwaarden", "Memoria · Presente · Condiciones", "Mémoire · Présent · Conditions", "Ingatan · Keadaan semasa · Syarat"],
+  ["이어지는 질문", "Vervolgvraag", "Pregunta de seguimiento", "Question de suivi", "Soalan susulan"],
+  ["다음 질문을 준비하고 있어요", "We bereiden de volgende vraag voor", "Estamos preparando la siguiente pregunta", "Nous préparons la question suivante", "Kami sedang menyediakan soalan seterusnya"],
+  ["당신이 기억하고 있는 장면과 생각을 들려주세요. 그 이야기를 차분히 듣고 기록하겠습니다.", "Vertel ons over de scènes en gedachten die u zich herinnert. We luisteren er rustig naar en leggen ze vast.", "Cuéntenos las escenas y los pensamientos que recuerda. Los escucharemos con calma y los registraremos.", "Racontez-nous les scènes et les pensées dont vous vous souvenez. Nous les écouterons calmement et les consignerons.", "Ceritakan adegan dan fikiran yang anda ingati. Kami akan mendengarnya dengan tenang dan merekodkannya."],
+  ["현재 활동을 직접 적기", "Zelf uw huidige activiteit beschrijven", "Describir usted mismo su actividad actual", "Décrire vous-même votre activité actuelle", "Tulis sendiri kegiatan anda sekarang"],
+  ["문화예술 외 역할", "Een rol buiten kunst en cultuur", "Un papel fuera de la cultura y las artes", "Un rôle en dehors de la culture et des arts", "Peranan di luar seni dan budaya"],
+  // --- 기억 구간 (M02 · M04 · MEMORY_EVIDENCE · M10_VERIFY) ---
+  ["최근의 거리감, 여러 경험이 섞인 상태, 이름은 흐리지만 남은 느낌을 적어도 좋아요.", "U mag ook een recent gevoel van afstand opschrijven, een mengeling van meerdere ervaringen, of een indruk die blijft terwijl de naam vervaagd is.", "Puede escribir una distancia sentida hace poco, una mezcla de varias experiencias, o una impresión que permanece aunque el nombre se haya borrado.", "Vous pouvez écrire une distance ressentie récemment, un mélange de plusieurs expériences, ou une impression qui demeure même si le nom s’est effacé.", "Anda boleh menulis rasa jarak baru-baru ini, keadaan bercampur beberapa pengalaman, atau perasaan yang kekal walaupun namanya sudah kabur."],
+  ["지금 문화예술을 떠올릴 때 남아 있는 느낌이나 상태", "Het gevoel of de toestand die blijft wanneer u nu aan kunst en cultuur denkt", "La impresión o el estado que permanece cuando piensa hoy en la cultura y las artes", "L’impression ou l’état qui demeure lorsque vous pensez à la culture et aux arts aujourd’hui", "Perasaan atau keadaan yang kekal apabila anda mengingati seni dan budaya sekarang"],
+  ["지금 떠오르는 상태를 먼저 적어주세요.", "Schrijf eerst op welke toestand nu bij u opkomt.", "Escriba primero el estado que le viene ahora.", "Écrivez d’abord l’état qui vous vient maintenant.", "Tuliskan dahulu keadaan yang terlintas sekarang."],
+  ["현재의 거리감이나 남아 있는 느낌", "Een gevoel van afstand nu, of een indruk die blijft", "Una distancia sentida hoy, o una impresión que permanece", "Une distance ressentie aujourd’hui, ou une impression qui demeure", "Rasa jarak sekarang, atau perasaan yang kekal"],
+  ["이 기억의 경험과 관계를 알려주세요.", "Vertel ons over de ervaring achter deze herinnering en uw band ermee.", "Cuéntenos la experiencia de este recuerdo y su relación con ella.", "Parlez-nous de l’expérience à l’origine de ce souvenir et de votre lien avec elle.", "Ceritakan pengalaman di sebalik ingatan ini dan hubungan anda dengannya."],
+  ["기억을 다음 기록과 연결하기 전에 한 가지를 더 확인할게요.", "Voordat we deze herinnering met het volgende deel van het verslag verbinden, gaan we nog één ding na.", "Antes de enlazar este recuerdo con la siguiente parte del registro, comprobemos una cosa más.", "Avant de relier ce souvenir à la suite du récit, vérifions encore une chose.", "Sebelum menghubungkan ingatan ini dengan bahagian rekod seterusnya, kami ingin menyemak satu perkara lagi."],
+  ["이 질문은 선택 사항입니다. 기억과의 관계를 지금의 말로 남기고 싶을 때만 골라주세요.", "Deze vraag is optioneel. Kies alleen een antwoord als u uw band met de herinnering nu onder woorden wilt brengen.", "Esta pregunta es opcional. Elija una respuesta solo si desea expresar ahora su relación con el recuerdo.", "Cette question est facultative. Ne choisissez une réponse que si vous souhaitez formuler maintenant votre lien avec ce souvenir.", "Soalan ini pilihan. Pilih jawapan hanya jika anda ingin menyatakan hubungan anda dengan ingatan itu dalam kata-kata anda sekarang."],
+  ["관계를 직접 적어주세요.", "Beschrijf die band in uw eigen woorden.", "Describa esa relación con sus propias palabras.", "Décrivez ce lien avec vos propres mots.", "Tuliskan hubungan itu dengan kata-kata anda sendiri."],
+  // --- 기억에서 현재로 넘어가는 전환 화면 ---
+  ["당신에게 남아 있는 장면을 들었어요.", "We hebben geluisterd naar de scène die bij u is gebleven.", "Hemos escuchado la escena que ha quedado en usted.", "Nous avons écouté la scène qui vous reste.", "Kami telah mendengar adegan yang kekal bersama anda."],
+  ["이제 그 기억이나 활동이 지금의 삶과 어떤 관계에 있는지 살펴볼게요.", "Laten we nu kijken hoe die herinnering of activiteit zich verhoudt tot uw leven vandaag.", "Veamos ahora qué relación tiene ese recuerdo o esa actividad con su vida actual.", "Voyons maintenant quel lien ce souvenir ou cette activité entretient avec votre vie d’aujourd’hui.", "Mari lihat hubungan ingatan atau kegiatan itu dengan kehidupan anda sekarang."],
+  ["특별히 떠오르는 대상을 고르지 않은 응답도 그대로 기록했습니다. 기억을 억지로 되짚지 않고 현재의 활동과 관람, 생활의 흐름으로 이동합니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.", "Ook een antwoord zonder een bepaald onderwerp is precies zo vastgelegd. We halen de herinnering niet geforceerd terug, maar gaan verder met de lijn van uw activiteiten, uw bezoeken en uw leven nu. Vanaf het volgende scherm vragen we naar uw huidige situatie en de werkelijke omstandigheden.", "Su respuesta se ha registrado tal cual, aunque no haya elegido un objeto concreto. No forzaremos el regreso del recuerdo: pasamos al curso de sus actividades, sus visitas y su vida de hoy. Desde la pantalla siguiente preguntaremos por su situación actual y por las condiciones reales.", "Votre réponse a été consignée telle quelle, même sans objet particulier retenu. Nous n’allons pas forcer le retour du souvenir : nous passons au fil de vos activités, de vos visites et de votre vie d’aujourd’hui. À partir de l’écran suivant, les questions portent sur votre situation actuelle et sur les conditions réelles.", "Jawapan anda tetap direkodkan seadanya, walaupun tiada objek tertentu dipilih. Kami tidak akan memaksa ingatan itu kembali, sebaliknya beralih kepada aliran kegiatan, kunjungan dan kehidupan anda sekarang. Mulai skrin seterusnya, kami bertanya tentang keadaan anda kini dan syarat sebenarnya."],
+  ["앞서 남긴 장면을 다음 질문의 출발점으로 두었습니다. 이제 그 기억이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.", "De scène die u eerder achterliet is het vertrekpunt voor de volgende vragen. We kijken waar die herinnering aansluit op uw activiteiten, uw bezoeken of veranderingen in uw leven. Vanaf het volgende scherm vragen we naar uw huidige situatie en de werkelijke omstandigheden.", "La escena que dejó antes sirve de punto de partida para las siguientes preguntas. Veremos dónde ese recuerdo enlaza con sus actividades, sus visitas o los cambios de su vida. Desde la pantalla siguiente preguntaremos por su situación actual y por las condiciones reales.", "La scène que vous avez laissée sert de point de départ aux questions suivantes. Nous allons voir où ce souvenir rejoint vos activités, vos visites ou les changements de votre vie. À partir de l’écran suivant, les questions portent sur votre situation actuelle et sur les conditions réelles.", "Adegan yang anda tinggalkan tadi menjadi titik permulaan soalan seterusnya. Kami akan melihat di mana ingatan itu bersambung dengan kegiatan, kunjungan atau perubahan dalam kehidupan anda. Mulai skrin seterusnya, kami bertanya tentang keadaan anda kini dan syarat sebenarnya."],
+  ["앞에서 남긴 기억을 다음 질문의 출발점으로 두었습니다. 이제 그 경험이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.", "De herinnering die u eerder achterliet is het vertrekpunt voor de volgende vragen. We kijken waar die ervaring aansluit op uw activiteiten, uw bezoeken of veranderingen in uw leven. Vanaf het volgende scherm vragen we naar uw huidige situatie en de werkelijke omstandigheden.", "El recuerdo que dejó antes sirve de punto de partida para las siguientes preguntas. Veremos dónde esa experiencia enlaza con sus actividades, sus visitas o los cambios de su vida. Desde la pantalla siguiente preguntaremos por su situación actual y por las condiciones reales.", "Le souvenir que vous avez laissé sert de point de départ aux questions suivantes. Nous allons voir où cette expérience rejoint vos activités, vos visites ou les changements de votre vie. À partir de l’écran suivant, les questions portent sur votre situation actuelle et sur les conditions réelles.", "Ingatan yang anda tinggalkan tadi menjadi titik permulaan soalan seterusnya. Kami akan melihat di mana pengalaman itu bersambung dengan kegiatan, kunjungan atau perubahan dalam kehidupan anda. Mulai skrin seterusnya, kami bertanya tentang keadaan anda kini dan syarat sebenarnya."],
+  // --- 현재 구간 (STATE_BACKGROUND · SUPPORT_CONDITIONS) ---
+  ["현재의 활동 방식에 함께 작용한 조건을 살펴볼게요.", "Laten we kijken naar de omstandigheden die meespelen in hoe u nu werkt.", "Veamos las condiciones que han influido en su forma de trabajar actual.", "Regardons les conditions qui ont pesé sur votre manière de travailler aujourd’hui.", "Mari lihat syarat yang turut mempengaruhi cara anda berkarya sekarang."],
+  ["일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.", "Kies wat het dichtst bij u ligt: het dagelijks leven, verplaatsingen, informatie, de mensen die erbij waren of de sfeer van de ruimte. Als geen enkele voorwaarde van toepassing is of u het nog niet weet, kunt u dat gewoon aangeven.", "Elija lo que más se le acerque entre la vida cotidiana, los desplazamientos, la información, las personas que le acompañaron y el ambiente de los espacios. Si ninguna condición se aplica o aún no lo sabe, puede indicarlo tal cual.", "Choisissez ce qui vous correspond le mieux parmi la vie quotidienne, les déplacements, l’information, les personnes présentes et l’atmosphère des lieux. Si aucune condition ne s’applique ou si vous ne savez pas encore, vous pouvez l’indiquer tel quel.", "Pilih yang paling hampir antara kehidupan harian, pergerakan, maklumat, orang yang bersama anda dan suasana ruang. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya."],
+  ["생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.", "Kies wat het dichtst bij u ligt: uw leven, uw rollen, uw relaties of de omstandigheden in het veld. Als geen enkele voorwaarde van toepassing is of u het nog niet weet, kunt u dat gewoon aangeven.", "Elija lo que más se le acerque entre su vida, sus papeles, sus relaciones y las condiciones del terreno. Si ninguna condición se aplica o aún no lo sabe, puede indicarlo tal cual.", "Choisissez ce qui vous correspond le mieux parmi votre vie, vos rôles, vos relations et les conditions du terrain. Si aucune condition ne s’applique ou si vous ne savez pas encore, vous pouvez l’indiquer tel quel.", "Pilih yang paling hampir antara kehidupan, peranan, hubungan dan keadaan di lapangan. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya."],
+  ["함께 작용한 다른 조건을 적어주세요.", "Noteer een andere voorwaarde die heeft meegespeeld.", "Escriba otra condición que también haya influido.", "Indiquez une autre condition qui a joué un rôle.", "Tuliskan syarat lain yang turut mempengaruhi."],
+  ["활동을 실제로 지탱한 사람, 공간, 소득, 기록과 관계를 남겨요. 최대 다섯 가지까지 고를 수 있어요.", "We leggen vast welke mensen, ruimtes, inkomsten, archieven en relaties uw activiteit werkelijk hebben gedragen. U kunt er maximaal vijf kiezen.", "Registramos las personas, los espacios, los ingresos, los archivos y las relaciones que han sostenido realmente su actividad. Puede elegir hasta cinco.", "Nous consignons les personnes, les lieux, les revenus, les archives et les relations qui ont réellement soutenu votre activité. Vous pouvez en choisir jusqu’à cinq.", "Kami merekodkan orang, ruang, pendapatan, rekod dan hubungan yang benar-benar menyokong kegiatan anda. Anda boleh memilih sehingga lima."],
+  ["직접 적고 싶은 조건을 남겨주세요.", "Noteer in uw eigen woorden de voorwaarde die u wilt achterlaten.", "Escriba con sus propias palabras la condición que quiera dejar.", "Indiquez avec vos propres mots la condition que vous souhaitez laisser.", "Tuliskan syarat yang ingin anda tinggalkan dengan kata-kata anda sendiri."],
+  // --- 조건 구간 (D01 ~ D04) ---
+  ["지금 이 기억을 다시 만나기 위해, 가장 먼저 채워지면 좋겠다고 느끼는 것은 무엇인가요?", "Om deze herinnering nu opnieuw te ontmoeten, wat zou u het liefst als eerste ingevuld zien?", "Para reencontrarse hoy con este recuerdo, ¿qué le gustaría que se cubriera primero?", "Pour retrouver ce souvenir aujourd’hui, qu’aimeriez-vous voir comblé en premier ?", "Untuk bertemu semula dengan ingatan ini sekarang, apakah yang paling anda mahu dipenuhi dahulu?"],
+  ["변화의 초점을 먼저 선택해 주세요.", "Kies eerst waar de verandering op gericht is.", "Elija primero el foco del cambio.", "Veuillez d’abord choisir le point sur lequel porte le changement.", "Sila pilih fokus perubahan terlebih dahulu."],
+  ["특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.", "Als u niet het gevoel hebt dat een bepaalde verandering nodig is, of als u het nog niet weet, kunt u dat gewoon zo kiezen.", "Si no siente que haga falta un cambio concreto, o si aún no lo sabe, puede elegir ese estado tal cual.", "Si vous n’avez pas le sentiment qu’un changement précis soit nécessaire, ou si vous ne savez pas encore, vous pouvez choisir cet état tel quel.", "Jika anda tidak merasakan sebarang perubahan tertentu diperlukan, atau masih belum pasti, anda boleh memilih keadaan itu seadanya."],
+  ["지금과 가까운 변화의 방향을 골라주세요.", "Kies de richting van verandering die het dichtst bij uw huidige situatie ligt.", "Elija la dirección de cambio más cercana a su situación actual.", "Choisissez la direction de changement la plus proche de votre situation actuelle.", "Pilih arah perubahan yang paling hampir dengan keadaan anda sekarang."],
+  ["현실의 맥락을 직접 적어주세요.", "Beschrijf die werkelijke context in uw eigen woorden.", "Describa ese contexto real con sus propias palabras.", "Décrivez ce contexte réel avec vos propres mots.", "Tuliskan konteks sebenar itu dengan kata-kata anda sendiri."],
+  ["이 조건이 활동·기억·관계에 남긴 영향을 적어주세요.", "Beschrijf welk effect deze voorwaarde heeft achtergelaten op uw activiteit, uw herinneringen en uw relaties.", "Describa el efecto que esta condición dejó en su actividad, sus recuerdos y sus relaciones.", "Décrivez l’effet que cette condition a laissé sur votre activité, vos souvenirs et vos relations.", "Tuliskan kesan yang ditinggalkan oleh syarat ini pada kegiatan, ingatan dan hubungan anda."],
+  // --- 참여자 표기와 마무리 화면 (DOCUMENT_IDENTITY · SUBMIT · USE_SCOPE) ---
+  ["이 기록에서 어떻게 불러드리면 좋을까요?", "Hoe wilt u in dit verslag genoemd worden?", "¿Cómo desea que le llamemos en este registro?", "Comment souhaitez-vous être nommé dans ce récit ?", "Bagaimanakah anda ingin dipanggil dalam rekod ini?"],
+  ["예: T.K.", "Bijv.: T.K.", "Ej.: T.K.", "Ex. : T.K.", "Contoh: T.K."],
+  ["참여 기록에 표시할 표기", "De naam die in het deelnameverslag wordt getoond", "El nombre que se mostrará en el registro de participación", "Le nom à afficher dans le récit de participation", "Nama yang akan dipaparkan dalam rekod penyertaan"],
+  ["직접 확인", "Zelf nakijken", "Revíselo usted mismo", "À vérifier vous-même", "Semak sendiri"],
+  ["응답을 바탕으로 세 방향을 정리하는 중", "De drie richtingen worden uit uw antwoorden samengesteld", "Organizando las tres direcciones a partir de sus respuestas", "Mise en forme des trois directions à partir de vos réponses", "Menyusun tiga arah berdasarkan jawapan anda"],
+  ["기억에서는 ‘{value}’", "In de herinnering: ‘{value}’", "En la memoria: «{value}»", "Dans la mémoire : « {value} »", "Dalam ingatan: “{value}”"],
+  ["현재에서는 ‘{value}’", "In het heden: ‘{value}’", "En el presente: «{value}»", "Dans le présent : « {value} »", "Dalam keadaan semasa: “{value}”"],
+  ["이어가기 위한 조건에서는 ‘{value}’", "In de voorwaarden om door te gaan: ‘{value}’", "En las condiciones para continuar: «{value}»", "Dans les conditions pour poursuivre : « {value} »", "Dalam syarat untuk meneruskan: “{value}”"],
+  ["기억의 의미 × 현재의 흐름 × 이어가기 위한 조건", "Betekenis in herinnering × Huidige stroom × Voorwaarden om door te gaan", "Sentido de la memoria × Flujo actual × Condiciones para continuar", "Sens de la mémoire × Mouvement actuel × Conditions pour poursuivre", "Makna dalam ingatan × Aliran semasa × Keadaan untuk meneruskan"],
+  ["{explanation}이 이번 기록에서 함께 나타났습니다.", "{explanation} komen in dit verslag samen naar voren.", "{explanation} aparecen juntos en este registro.", "{explanation} apparaissent ensemble dans ce récit.", "{explanation} muncul bersama dalam rekod ini."],
+  ["다음 화면에서 정책연구에 활용할 범위를 직접 정한 뒤 저장합니다.", "Op het volgende scherm bepaalt u zelf hoever dit voor het beleidsonderzoek gebruikt mag worden, daarna wordt het opgeslagen.", "En la pantalla siguiente definirá usted mismo el uso permitido para la investigación y después se guardará.", "Sur l’écran suivant, vous définirez vous-même l’usage autorisé pour la recherche, puis le récit sera enregistré.", "Pada skrin seterusnya, anda sendiri menetapkan skop penggunaan untuk penyelidikan dasar, kemudian rekod disimpan."],
+  ["다음 화면에서 활용 범위를 정한 뒤 참여 기록을 이 기기에 보관합니다.", "Op het volgende scherm bepaalt u hoever dit gebruikt mag worden, daarna wordt uw deelnameverslag op dit apparaat bewaard.", "En la pantalla siguiente definirá el uso permitido y después el registro de participación se guardará en este dispositivo.", "Sur l’écran suivant, vous définirez l’usage autorisé, puis le récit de participation sera conservé sur cet appareil.", "Pada skrin seterusnya, anda menetapkan skop penggunaan, kemudian rekod penyertaan disimpan pada peranti ini."],
+  ["원문을 먼저 보관하며, 한국어 번역은 원문을 기준으로 정리합니다.", "De oorspronkelijke tekst wordt als eerste bewaard; de Koreaanse vertaling wordt daarop gebaseerd.", "Se conserva primero el texto original; la traducción al coreano se elabora a partir de él.", "Le texte original est conservé en premier ; la traduction coréenne est établie à partir de ce texte.", "Teks asal disimpan terlebih dahulu; terjemahan bahasa Korea disusun berdasarkan teks itu."],
+  ["원문을 기준으로 한국어 번역을 준비하고 있어요", "We bereiden de Koreaanse vertaling voor op basis van de oorspronkelijke tekst", "Estamos preparando la traducción al coreano a partir del texto original", "Nous préparons la traduction coréenne à partir du texte original", "Kami sedang menyediakan terjemahan bahasa Korea berdasarkan teks asal"],
+  ["세 방향이 만나는 자리", "De plek waar de drie richtingen samenkomen", "El punto donde se encuentran las tres direcciones", "Le point où les trois directions se rejoignent", "Titik pertemuan tiga arah"],
+  ["익명 분석", "Anonieme analyse", "Análisis anónimo", "Analyse anonyme", "Analisis tanpa nama"],
+];
+
+// 빈 문자열은 이미 등록된 번역을 덮어쓰지 않기 위한 표시다.
+for (const [source, nl, es, fr, ms] of rc2RoleAndRequiredPathRows) {
+  if (nl) Object.assign(extraCopy.nl || (extraCopy.nl = {}), { [source]: nl });
+  if (es) Object.assign(extraCopy.es || (extraCopy.es = {}), { [source]: es });
+  if (fr) Object.assign(extraCopy.fr || (extraCopy.fr = {}), { [source]: fr });
+  if (ms) Object.assign(extraCopy.ms || (extraCopy.ms = {}), { [source]: ms });
+}
+
+// v0.4.8: MEMORY_EVIDENCE 화면에 새로 붙은 기억 선명도 문항(en·nl·es·fr·ms).
+// 「선택」은 이 화면에서 "선택 입력"이라는 뜻이며, 영어는 이미 등록돼 있다.
+const rc2MemoryConfidenceRows = [
+  ["이 기억이 얼마나 또렷한가요?", "How vivid is this memory?", "Hoe helder is deze herinnering?", "¿Con qué nitidez recuerda esto?", "À quel point ce souvenir est-il net ?", "Sejelas manakah ingatan ini?"],
+  ["선택", "", "Optioneel", "Opcional", "Facultatif", "Pilihan"],
+  ["분명히 기억해요", "I remember it clearly", "Ik herinner het me duidelijk", "Lo recuerdo con claridad", "Je m’en souviens clairement", "Saya ingat dengan jelas"],
+  ["대체로 기억해요", "I remember it for the most part", "Ik herinner het me grotendeels", "Lo recuerdo en general", "Je m’en souviens dans l’ensemble", "Saya ingat secara umum"],
+  ["흐릿해요", "It is hazy", "Het is vaag", "Es difuso", "C’est flou", "Ia kabur"],
+  ["확신이 없어요", "I am not sure", "Ik weet het niet zeker", "No estoy seguro", "Je n’en suis pas sûr", "Saya tidak pasti"],
+];
+for (const [source, en, nl, es, fr, ms] of rc2MemoryConfidenceRows) {
+  if (en) Object.assign(extraCopy.en || (extraCopy.en = {}), { [source]: en });
+  if (nl) Object.assign(extraCopy.nl || (extraCopy.nl = {}), { [source]: nl });
+  if (es) Object.assign(extraCopy.es || (extraCopy.es = {}), { [source]: es });
+  if (fr) Object.assign(extraCopy.fr || (extraCopy.fr = {}), { [source]: fr });
+  if (ms) Object.assign(extraCopy.ms || (extraCopy.ms = {}), { [source]: ms });
+}
