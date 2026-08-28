@@ -49,7 +49,16 @@ const requestedLanguage = String(query.get("lang") || localStorage.getItem(inter
 const initialLanguage = ["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"].includes(requestedLanguage) ? requestedLanguage : "ko";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
-const sampleType = institutionCode ? "institution_review" : query.get("sample") === "research" ? "research" : "test";
+// 표본은 빌드가 정한 이 회차의 기본값을 따른다. 참여자가 받는 주소에 쿼리가 없어야
+// 이어쓰기나 링크 공유로 같은 사람의 표본이 갈리지 않는다. `?sample=`은 검증 주행이
+// 연구 표본을 오염시키지 않게 빠져나가는 용도로만 남긴다.
+const defaultSampleType = window.OVER39_DEFAULT_SAMPLE_TYPE === "research" ? "research" : "test";
+const requestedSample = query.get("sample");
+const sampleType = institutionCode
+  ? "institution_review"
+  : requestedSample === "research" ? "research"
+  : requestedSample === "test" ? "test"
+  : defaultSampleType;
 
 let schema;
 let depthBank;
@@ -506,6 +515,8 @@ function saveDraft() {
       answers: state.answers,
       step: state.step,
       contextStep: Number(state.contextStep || 0),
+      // 「앞선 답변 보기」로 떠나온 자리. 이어쓰기로 돌아와도 정리 화면으로 돌아갈 길이 남는다.
+      reviewReturnStep: typeof state.reviewReturnStep === "number" ? state.reviewReturnStep : null,
       screenId: activeScreens()[state.step] || null,
       releaseVersion,
       language: state.language,
@@ -736,6 +747,15 @@ function renderChoices(id, options, { multi = false, max = 0, exclusive = [] } =
   }).join("")}</div>`;
 }
 
+// 글자수 표시는 예전에 `최대 ${limit}자` 문자열 자체를 사전 키로 썼다. 한도가 여섯 가지라
+// 언어마다 여섯 항목이 필요했고 실제로는 `최대 800자` 하나만 등록돼 있었다. 그래서 대부분의
+// 화면에서 한도가 한국어로만 보였다 — `maxlength`는 걸려 있으므로, 참여자는 이유를 모른 채
+// 타이핑이 멈추고 문장이 잘린 줄도 모르고 넘어간다. 한도를 자리표시자로 빼서 키를 하나로 모은다.
+function characterLimitLabel(limit) {
+  const template = t("최대 {n}자");
+  return template === "최대 {n}자" ? `최대 ${limit}자` : template.replace("{n}", String(limit));
+}
+
 function renderText(id, { placeholder = "짧게 적어도 괜찮습니다.", multiline = true, label = "", field = "", value = undefined, maxChars = null } = {}) {
   const inputId = `input-${id}-${field || "default"}`.replaceAll(".", "-");
   const item = question(id);
@@ -745,7 +765,7 @@ function renderText(id, { placeholder = "짧게 적어도 괜찮습니다.", mul
   const input = multiline
     ? `<textarea id="${esc(inputId)}" class="text-input" data-input-id="${esc(id)}"${fieldAttr} maxlength="${limit}" placeholder="${esc(t(placeholder))}">${esc(currentValue)}</textarea>`
     : `<input id="${esc(inputId)}" class="text-input text-input-single" data-input-id="${esc(id)}"${fieldAttr} value="${esc(currentValue)}" placeholder="${esc(t(placeholder))}" />`;
-  return `<div class="text-field">${label ? `<label class="text-field-label" for="${esc(inputId)}">${esc(t(label))}</label>` : ""}${input}${multiline ? `<span class="text-field-meta">${esc(t(`최대 ${limit}자`))}</span>` : ""}</div>`;
+  return `<div class="text-field">${label ? `<label class="text-field-label" for="${esc(inputId)}">${esc(t(label))}</label>` : ""}${input}${multiline ? `<span class="text-field-meta">${esc(characterLimitLabel(limit))}</span>` : ""}</div>`;
 }
 
 function renderOtherInput(id, label = "기타 내용을 짧게 적어주세요.") {
@@ -771,9 +791,40 @@ function clearDocumentConfirmation() {
   ["synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
 }
 
+// 「응답 정리」에서 다음으로 넘어갈 수 있는지를 판단하는 **단 하나의** 조건.
+// 예전에는 두 곳이 서로 다른 조건을 봤다. `canContinue("REFLECTION_REVIEW")`는 확인 칸
+// (`synthesis_confirmation_ack`)만 보고 버튼을 켰는데, 클릭 핸들러의
+// `confirmParticipantSynthesis()`는 정리문이 비었는지를 따로 봤다. 그래서 AI 정리문이
+// 비면 확인 칸을 체크해 버튼이 켜지고, 눌러도 화면을 다시 그리지 않고 조용히 return했다.
+// 참여자에게는 20~30분을 쓴 뒤 기록을 저장하기 직전에 버튼이 죽은 것으로 보인다.
+// 버튼이 켜지는 조건과 클릭이 통과하는 조건은 반드시 같은 함수여야 한다.
+function synthesisConfirmed(answers = state.answers) {
+  return Boolean(approvedReflectionText(answers)) && answers.synthesis_confirmation_ack === "YES";
+}
+
+// 「활용 범위」 04 블록(연구 연락 이메일)이 채워졌는지를 판단하는 단 하나의 조건.
+// 저장 버튼을 여는 계산과 화면에 보이는 상태가 서로 다른 규칙을 쓰면, 다 채운 것처럼
+// 보이는데 버튼만 잠기는 상태가 다시 생긴다.
+function researchContactComplete(contact = state.researchContact || {}) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(contact.email || "").trim()) && contact.consent === true;
+}
+
+function useScopeContactStatusText() {
+  const label = task7().researchContactLabel;
+  return researchContactComplete() ? `${label} ✓` : `${label} · ${stage1UiExtraCopy(state.language).required}`;
+}
+
+// 이메일을 타이핑하는 동안 화면을 통째로 다시 그리면 커서가 튄다. 그래서 요약줄의
+// 이 칸만 직접 고친다. 이게 없으면 이메일을 다 채워도 요약줄은 `필수` 그대로 남아,
+// 무엇이 남았는지 보이게 하려던 표시가 오히려 거짓말을 한다.
+function refreshUseScopeContactStatus() {
+  const slot = document.querySelector("[data-use-scope-contact-status]");
+  if (slot) slot.textContent = useScopeContactStatusText();
+}
+
 function confirmParticipantSynthesis() {
+  if (!synthesisConfirmed()) return false;
   const finalText = approvedReflectionText();
-  if (!finalText || state.answers.synthesis_confirmation_ack !== "YES") return false;
   const confirmedAt = new Date().toISOString();
   const provenance = {
     kind: "participant-confirmed",
@@ -1170,7 +1221,7 @@ function renderMeaning() {
   const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : note.text;
   const placeholder = noRecall() ? "현재의 거리감이나 남아 있는 느낌" : "먼저 떠오르는 내용을 적어주세요.";
   return `${screenHeading(title, "한 문장으로 적어도 좋아요.")}
-    ${renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label })}
+    ${requiredBlock("m04-text-required", renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label }))}
     <label class="field-label">${esc(t("기억의 방향 — 가까운 항목을 골라주세요."))}</label>
     ${renderChoices("M04", options)}`;
 }
@@ -1271,11 +1322,19 @@ function renderCommunity() {
   const c01 = question("C01");
   const c02 = question("C02");
   const c03 = question("C03");
+  const c04 = question("C04");
   const yes = state.answers.community_module_opt_in === "YES";
+  // C04는 C00이 YES일 때 C01~C03과 같은 화면에 함께 나온다. 스키마가 C04에 show_if를 두지 않아
+  // (C03도 마찬가지다) 문항 단위 조건이 없고, 커뮤니티 모듈 자체의 C00 == YES 게이트만 적용된다.
+  // 화면을 새로 만들지 않는 이유: C02·C03이 코드형 선택만 받으므로, 참여자가 그 이름을 왜 떠올렸는지
+  // 자기 언어로 남기는 자리는 같은 문맥 안에 있어야 답을 잇기 쉽고 화면 수도 늘지 않는다.
+  // 음성 저장 필드(store[1] = community_note_audio_ref)는 일부러 비워 둔다. 스키마 type이
+  // text_or_voice지만 이 앱의 음성 경로(V01~V06)는 별개 구조이고, 파일럿 전에 새 미디어 경로를
+  // 여는 것은 범위를 넘는다. renderText는 store[0](community_note_text)만 쓴다.
   return `${screenHeading("다른 이름이나 장면을 하나 더 남길까요?", "이 단계는 선택 사항입니다. 지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.")}
     ${state.summaryGenerating ? processingSignal("응답을 정리하고 있어요") : ""}
     ${renderChoices("C00", c00.options)}
-    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(c02.text)}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}` : ""}`;
+    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(c02.text)}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
 }
 
 function renderFixedCheckpoint() {
@@ -1468,7 +1527,15 @@ async function requestAdaptiveNext(checkpoint) {
       latency_ms: 0, http_status: null, error_code: null, fallback_reason: need.reason, answer_fingerprint: answerRevision,
       context_fingerprint: anchorContextFingerprint(checkpoint, context), network_calls: 0, need_decision: "SKIP", need_reason: need.reason,
       source_question_id: checkpoint, source_response_revision: answerRevision, generation_provenance: "not_generated", adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
-    state.answers.adaptive_ai_runs = [...values(state.answers.adaptive_ai_runs), run];
+    // 화면을 왕복할 때마다 같은 skip 기록이 무한히 쌓이면 스냅샷 payload가 부풀고
+    // 관측 자체가 읽기 어려워진다. `recordSkippedLowInformation`이 쓰는 것과 같은
+    // 지문 검사를 여기에도 둔다 — 답이나 맥락이 바뀐 경우에만 새로 남긴다.
+    const alreadyRecorded = values(state.answers.adaptive_ai_runs).some((existing) => existing
+      && existing.checkpoint === checkpoint
+      && existing.need_decision === "SKIP"
+      && existing.answer_fingerprint === answerRevision
+      && existing.context_fingerprint === run.context_fingerprint);
+    if (!alreadyRecorded) state.answers.adaptive_ai_runs = [...values(state.answers.adaptive_ai_runs), run];
     setAdaptiveStatus(checkpoint, "skipped_policy");
     saveDraft();
     return { decision: "skip", question: null, source: "policy_skip", run };
@@ -1508,7 +1575,7 @@ function renderAdaptiveCheckpoint(checkpoint) {
     : "";
   return `${screenHeading(stage().followingQuestion, ui().deepQuestionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
-    <section class="adaptive-question"><h3>${esc(turn.prompt)}</h3>${aiNotice}</section>
+    <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
     <p class="adaptive-turn-note">${esc(ui().deepQuestionNote)}</p>${retry}`;
 }
@@ -1564,6 +1631,24 @@ async function prepareAdaptiveSummary() {
   saveDraft();
 }
 
+// 참여 기록 확인 칸은 위의 선택지(그대로 두기 / 고치기 / 다시 쓰기)와 똑같이 생겨서,
+// 처음 보는 사람은 그것이 **진행을 여는 마지막 확인**이라는 것을 알 수 없었다. 누르지
+// 않으면 `다음`이 비활성인 채로 아무 설명이 없어서, 무엇이 막고 있는지 모른 채 멈춘다.
+// 그래서 이 칸만 따로 감싸고 `필수` 표시를 붙인다. 문구는 새로 만들지 않고 9개 언어에
+// 이미 있는 `required`를 쓴다.
+// 필수 표시가 필요한 곳은 「응답 정리」 확인 칸 하나가 아니다. 「활용 범위」 04 블록과
+// 「세 방향 확인」의 마지막 선택도 같은 이유로 진행을 막는데 표시가 없었다. 문구는 새로
+// 만들지 않고 9개 언어에 이미 있는 `required`만 쓰고, 표시 방식도 한 곳으로 모은다.
+// `aria-describedby`가 이 표시를 가리키므로 화면 낭독에서도 무엇이 필수인지 들린다.
+function requiredBlock(id, inner) {
+  const requiredLabel = stage1UiExtraCopy(state.language).required;
+  return `<div class="record-confirm" role="group" aria-describedby="${esc(id)}"><span class="record-confirm-label" id="${esc(id)}">${esc(requiredLabel)}</span>${inner}</div>`;
+}
+
+function renderRecordConfirm(label) {
+  return requiredBlock("record-confirm-required", renderChoices("synthesis_confirmation_ack", [["YES", label]]));
+}
+
 function renderDepth(axis, index) {
   const item = depthQuestion(axis);
   if (state.summaryGenerating && axis === "D") return `${screenHeading("응답을 정리하고 있어요.", "앞선 답변의 흐름을 한 편의 기록으로 정리하고 있습니다.", "")}${processingSignal("응답을 정리하고 있어요")}`;
@@ -1584,6 +1669,12 @@ function renderDepth(axis, index) {
     ${isRc2 ? "" : renderQuestionIntent(item)}`;
 }
 
+// 확인 칸은 `고치기`/`다시 쓰기`를 고른 **순간** 나타나야 한다. 예전에는 고친 문장이
+// 비어 있지 않을 때에만 나타났는데, 입력만으로는 화면을 다시 그리지 않기 때문에
+// 문장을 다 적어도 확인 칸이 끝내 나타나지 않았다. 참여자는 `다음`이 꺼진 채로
+// 무엇이 막는지 모르고 멈춘다 — 기록을 저장하기 한 화면 앞에서. 매 글자마다 다시
+// 그리면 한글 조합 중에 커서가 튀므로, 다시 그리는 대신 확인 칸을 먼저 보여준다.
+// 고친 문장이 비어 있으면 `canContinue`가 여전히 진행을 막는다.
 function renderReflectionReview() {
   const summaryValue = state.answers.depth_summary?.summary?.trim() || "";
   const summary = summaryValue || "응답 정리를 불러오는 동안 연결이 원활하지 않았습니다.";
@@ -1599,7 +1690,7 @@ function renderReflectionReview() {
       <div class="notice">${esc(local.fallbackNotice)}</div>
       ${renderChoices("reflection_action", [["REWRITE", local.rewriteAction]])}
       ${action === "REWRITE" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: local.rewritePlaceholder, label: local.rewriteLabel }) : ""}
-      ${action === "REWRITE" && state.answers.participant_revision?.trim() ? renderChoices("synthesis_confirmation_ack", [["YES", local.synthesisConfirm]]) : ""}</section>
+      ${action === "REWRITE" ? renderRecordConfirm(local.synthesisConfirm) : ""}</section>
       <div class="reflection-tools"><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(local.regenerateSummary)}</button></div>
       ${state.summaryGenerating ? processingSignal(local.regenerating) : ""}`;
   }
@@ -1625,7 +1716,7 @@ function renderReflectionReview() {
     ${translatedPreview}
     ${renderChoices("reflection_action", [["ACCEPT", local.acceptAction], ["EDIT", local.editAction], ["REWRITE", local.rewriteNewAction]])}
     ${["EDIT", "REWRITE"].includes(action) ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: revisionPlaceholder, label: revisionLabel }) : ""}
-    ${action && (action === "ACCEPT" || state.answers.participant_revision?.trim()) ? renderChoices("synthesis_confirmation_ack", [["YES", local.synthesisConfirm]]) : ""}</section>
+    ${action ? renderRecordConfirm(local.synthesisConfirm) : ""}</section>
     <div class="reflection-tools"><button class="text-button" type="button" data-action="review-answers">${esc(local.reviewAnswers)}</button><button class="text-button" type="button" data-action="regenerate-summary" ${state.summaryGenerating ? "disabled" : ""}>${esc(local.regenerateSummary)}</button></div>
     ${state.summaryGenerating ? processingSignal(local.regenerating) : ""}`;
 }
@@ -1703,13 +1794,21 @@ function renderSubmit() {
       : "";
   const mOpen = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
   const dOpen = ["NO_MAJOR_GAP", "UNSURE"].includes(state.answers.d_current_gap) || ["NO_SPECIFIC_CHANGE", "UNSURE"].includes(state.answers.d_desired_change_primary);
-  const mReview = mOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("기억의 의미"))}</span><strong>${esc(stage().task5.noAxisMemory)}</strong></div></section>` : renderAxisReview("participant_m", "기억의 의미");
-  const dReview = dOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("이어가기 위한 조건"))}</span><strong>${esc(stage().task5.noAxisCondition)}</strong></div></section>` : renderAxisReview("participant_d", "이어가기 위한 조건");
+  // 한 축을 한 방향으로 좁히지 않은 것은 결핍이 아니라 유효한 상태다(complete 외에
+  // mixed·pending_review·insufficient 를 모두 허용한다). 그래서 이 문장을 라벨 칸에
+  // 함께 넣지 않고, 다른 두 축에서 선택지가 놓이는 넓은 칸에 그대로 둔다. 라벨은 같은
+  // 칸에 남으므로 세 축의 폭과 정렬이 어긋나지 않고, 문장도 세 줄로 꺾이지 않는다.
+  const mReview = mOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("기억의 의미"))}</span></div><strong class="axis-review-open-state">${esc(stage().task5.noAxisMemory)}</strong></section>` : renderAxisReview("participant_m", "기억의 의미");
+  const dReview = dOpen ? `<section class="axis-review-card axis-review-open"><div><span>${esc(t("이어가기 위한 조건"))}</span></div><strong class="axis-review-open-state">${esc(stage().task5.noAxisCondition)}</strong></section>` : renderAxisReview("participant_d", "이어가기 위한 조건");
+  // 세 방향(M·S·D)은 이미 채워진 채로 보이기 때문에 이 화면은 다 끝난 것처럼 읽힌다.
+  // 실제로 진행을 막는 것은 `coordinate_feedback` 미선택 하나뿐인데, 그 선택지는 긴
+  // 설명 아래에 서술문처럼 놓여 있고 버튼은 한참 아래에 있어서 질문으로 읽히지 않았다.
+  // 필수 표시를 붙여 무엇이 남았는지 보이게 한다(문구는 기존 `required` 그대로).
   return `${screenHeading(t("당신의 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
     <section class="axis-review"><div class="axis-review-intro"><span>THREE DIRECTIONS · YOUR RECORD</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>
-    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]])}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
+    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${requiredBlock("coordinate-feedback-required", renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]]))}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
 
@@ -1721,13 +1820,25 @@ function renderUseScope() {
   const local = task7();
   const researchContact = state.researchContact || { email: "", consent: false, status: null };
   const choice = (field, value, title, copy) => { const selected = state.answers[field] === value; return `<button type="button" class="use-scope-choice ${selected ? "selected" : ""}" data-use-field="${esc(field)}" data-use-value="${esc(value)}" aria-pressed="${selected}"><strong>${esc(t(title))}</strong>${copy ? `<small>${esc(t(copy))}</small>` : ""}</button>`; };
-  const contactSection = archiveUse === "ASK_LATER" ? `<section class="use-scope-section research-contact-section"><span>04 · ${esc(local.researchContactLabel)}</span><h3>${esc(local.researchContactTitle)}</h3><p>${esc(local.researchContactHelp)}</p><label class="field-label" for="research-contact-email">${esc(local.researchContactLabel)}</label><input id="research-contact-email" class="text-input text-input-single" type="email" inputmode="email" autocomplete="email" data-research-contact="email" value="${esc(researchContact.email || "")}" placeholder="name@example.com" /><label class="final-check"><input type="checkbox" data-research-contact-consent ${researchContact.consent ? "checked" : ""} /><span>${esc(local.researchContactConsent)}</span></label></section>` : "";
+  // 03에서 `다시 확인`(ASK_LATER)을 고르면, 이 04 블록의 이메일과 동의 체크가 저장
+  // 버튼을 여는 필수 조건이 된다(`canContinue("USE_SCOPE")`). 그런데 이 블록에는 필수
+  // 표시가 하나도 없었다. 이메일을 다 넣어도 버튼이 열리지 않는 이유가 화면 어디에도
+  // 없었고, 이메일을 주고 싶지 않은 사람은 03을 바꿔야 한다는 것도 알 수 없었다.
+  // 「응답 정리」 확인 칸과 같은 방식으로 감싸 무엇이 남았는지 보이게 한다.
+  const contactSection = archiveUse === "ASK_LATER" ? `<section class="use-scope-section research-contact-section"><span>04 · ${esc(local.researchContactLabel)}</span><h3>${esc(local.researchContactTitle)}</h3><p>${esc(local.researchContactHelp)}</p>${requiredBlock("research-contact-required", `<label class="field-label" for="research-contact-email">${esc(local.researchContactLabel)}</label><input id="research-contact-email" class="text-input text-input-single" type="email" inputmode="email" autocomplete="email" required aria-required="true" aria-describedby="research-contact-required" data-research-contact="email" value="${esc(researchContact.email || "")}" placeholder="name@example.com" /><label class="final-check"><input type="checkbox" data-research-contact-consent aria-required="true" aria-describedby="research-contact-required" ${researchContact.consent ? "checked" : ""} /><span>${esc(local.researchContactConsent)}</span></label>`)}</section>` : "";
+  // 요약줄이 `… · 공개 활용은 다시 확인`에서 끝나면 다 채운 것처럼 읽힌다. 실제로는
+  // 04가 남아 있어 저장 버튼이 잠겨 있는데, 그 사실이 어디에도 없었다. 03에서 `다시
+  // 확인`을 고른 동안에만 04의 상태를 같은 줄에 덧붙인다. 문구는 이미 9개 언어에 있는
+  // `researchContactLabel`과 `required`만 쓴다.
+  const contactSummary = archiveUse === "ASK_LATER"
+    ? ` · <span data-use-scope-contact-status>${esc(useScopeContactStatusText())}</span>`
+    : "";
   return `${screenHeading(consent.title, local.useScopeHelp)}
     <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(consent.researchQ)}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", consent.researchYes, "")}${choice("policy_research_use", "INTERNAL_ONLY", consent.researchNo, "")}</div></section>
     <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(consent.quoteQ)}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", consent.quoteYes, "")}${choice("policy_quote_use", "NO_QUOTE", consent.quoteNo, "")}</div></section>
     <section class="use-scope-section"><span>03 · ${esc(t("전시·출판·웹 기록"))}</span><h3>${esc(consent.publicQ)}</h3><div class="use-scope-grid">${choice("public_archive_interest", "ASK_LATER", consent.publicYes, "")}${choice("public_archive_interest", "RESEARCH_ONLY", consent.publicNo, "")}</div></section>
     ${contactSection}
-    <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse ? (archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리") : "공개 활용 범위 미선택"))}</p></div>`;
+    <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse ? (archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리") : "공개 활용 범위 미선택"))}${contactSummary}</p></div>`;
 }
 
 function screenBody(id) {
@@ -1807,7 +1918,11 @@ function canContinue(id) {
   if (id === "SUPPORT_CONDITIONS") return Boolean(values(state.answers.support_conditions).length);
   if (adaptiveScreenCheckpoint[id]) {
     const turn = currentAdaptiveTurn(adaptiveScreenCheckpoint[id]);
-    return Boolean(turn && state.answers[turn.answer_field]?.trim() && !state.adaptiveGenerating);
+    if (state.adaptiveGenerating) return false;
+    // 질문이 없는 화면에는 답할 것이 없다. 진행을 막으면 참여자가 대기 문구
+    // 앞에서 갇히고, 그 지점은 기록을 저장하기 직전이다.
+    if (!turn) return true;
+    return Boolean(state.answers[turn.answer_field]?.trim());
   }
   if (id === "D01") return Boolean(state.answers.d_current_gap);
   if (id === "D02") return Boolean(state.answers.d_desired_change_primary) && (!hasSubstantiveDChange(state.answers) || Boolean(state.answers.desired_change_text?.trim()));
@@ -1817,7 +1932,9 @@ function canContinue(id) {
   if (id === "REFLECTION_REVIEW") {
     if (!state.answers.reflection_action) return false;
     if (["EDIT", "REWRITE"].includes(state.answers.reflection_action) && !state.answers.participant_revision?.trim()) return false;
-    return state.answers.synthesis_confirmation_ack === "YES";
+    // 클릭 가드(`confirmParticipantSynthesis`)와 **같은 함수**를 본다. 확인 칸만 보던
+    // 예전 조건에서는, 정리문이 빈 상태에서도 버튼이 켜지고 눌러도 아무 일이 없었다.
+    return synthesisConfirmed();
   }
   if (id === "SUBMIT") {
     const mOptional = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
@@ -1825,11 +1942,14 @@ function canContinue(id) {
     return Boolean((mOptional || state.answers.participant_m) && state.answers.participant_s && (dOptional || state.answers.participant_d) && state.answers.coordinate_feedback) && !state.translationGenerating;
   }
   if (id === "USE_SCOPE") {
+    // 저장 버튼의 클릭 핸들러가 따로 들고 있던 2차 가드를 여기로 옮겼다. 두 곳이 다른
+    // 조건을 보면, 버튼이 켜져 있는데 눌러도 아무 일이 없는 상태가 생긴다 — 그것도
+    // 참여 기록을 실제로 저장하는 마지막 버튼에서.
+    if (!synthesisConfirmed() || !state.answers.participant_approved_text) return false;
     const useScopeComplete = Boolean(state.answers.policy_research_use && state.answers.policy_quote_use && state.answers.public_archive_interest);
     if (!useScopeComplete) return false;
     if (state.answers.public_archive_interest !== "ASK_LATER") return true;
-    const contact = state.researchContact || {};
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(contact.email || "").trim()) && contact.consent === true;
+    return researchContactComplete();
   }
   return true;
 }
@@ -2063,6 +2183,21 @@ async function requestResearchContactStorage(response) {
   return result;
 }
 
+// 안부 예약 요청에 시간 제한이 없으면, 릴레이가 멈춘 동안(모바일·캡티브 포털·엣지 함수
+// 지연) `fetch`가 영영 끝나지 않는다. 그러면 `beginFirstGreeting`은 `loading` 상태에
+// 머무르고, 참여자는 설문 **맨 앞**에서 앞으로도 뒤로도 가지 못한다. 시간이 지나면
+// 실패로 보고 이미 있는 `waiting`/`unavailable` 상태로 내려간다.
+const GREETING_RESERVATION_TIMEOUT_MS = 15000;
+
+function greetingReservationSignal(ms = GREETING_RESERVATION_TIMEOUT_MS) {
+  if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") return AbortSignal.timeout(ms);
+  // 구형 사파리에는 `AbortSignal.timeout`이 없다. 그때도 참여자가 갇히지 않도록 직접 끊는다.
+  if (typeof AbortController === "undefined") return undefined;
+  const controller = new AbortController();
+  window.setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+
 async function requestGreetingReservation(response, { inlineFirst = false } = {}) {
   const reference = response?.participant_access || ensureParticipantReference(response?.response_id);
   if (!globalGreetingsEnabled || !relayFunctionUrl || !reference?.access_token) return { status: "not_active" };
@@ -2070,6 +2205,7 @@ async function requestGreetingReservation(response, { inlineFirst = false } = {}
   try {
     const result = await fetch(relayFunctionUrl, {
       method: "POST",
+      signal: greetingReservationSignal(),
       headers: {
         "Content-Type": "application/json",
         ...(supabaseAnonKey ? { Authorization: `Bearer ${supabaseAnonKey}`, apikey: supabaseAnonKey } : {}),
@@ -2338,6 +2474,16 @@ function renderConnection() {
   return `<main class="connection-layout"><section class="connection-main"><div class="archive-label">CONNECTION LAYER · OPTIONAL</div><h1 tabindex="-1">이 응답에서 시작할 수 있는 대화를 열어둘까요?</h1><p class="connection-lead">AI는 누군가의 가치나 적합성을 판정하지 않습니다. 응답의 맥락과 연결 의향을 정리해 연구자에게 후보를 제안하고, 실제 연결은 양쪽의 선택과 연구팀의 검토 뒤에만 이루어집니다.</p>${renderAnalysisCard(response)}<section class="connection-section"><h2>다른 참여자와의 연결을 검토해도 될까요?</h2>${renderConnectionChoices("opt_in", [["YES", "네, 연구팀의 연결 제안을 받아보고 싶습니다"], ["NO", "아니요, 이번에는 연구 응답만 남기겠습니다"]])}</section>${connection.opt_in === "YES" ? `<section class="connection-section"><h2>지금 필요한 대화나 연결은 무엇인가요?</h2><p>최대 세 가지까지 고를 수 있습니다. 이 선택은 매칭 후보를 찾기 위한 단서일 뿐, 자동 연결을 뜻하지는 않습니다.</p>${renderConnectionChoices("needs", topicOptions, { multi: true, max: 3 })}</section><section class="connection-section"><h2>다른 참여자에게 나눌 수 있는 경험이나 관점이 있나요?</h2><p>전문 서비스나 약속이 아니라, 대화에서 나눌 수 있는 관심과 경험의 범위입니다.</p>${renderConnectionChoices("offers", topicOptions, { multi: true, max: 3 })}</section><section class="connection-section"><h2>어떤 방식이 편한가요?</h2>${renderConnectionChoices("reply_modes", modeOptions, { multi: true, max: 2 })}${values(connection.reply_modes).includes("EMAIL_NOTICE") ? `<label class="field-label" for="connection-email">후속 안내를 받을 이메일</label><input id="connection-email" class="text-input text-input-single" type="email" data-connection-input="contact_email" value="${esc(connection.contact_email)}" placeholder="name@example.com" /><div class="connection-consent">${renderConnectionChoices("contact_permission", [["YES", "이 이메일을 연구팀의 매칭 안내용으로 별도 보관하는 데 동의합니다"], ["NO", "이메일을 남기지 않겠습니다"]])}</div>` : ""}</section><section class="connection-section"><h2>연결 카드에 남길 한 줄이 있나요?</h2><p>활동명, 실명, 세부 연락처, 제3자 정보는 적지 않아도 됩니다. 연구팀 검토용이며, 다른 참여자에게 자동 공개되지 않습니다.</p><textarea class="text-input" data-connection-input="introduction" maxlength="400" placeholder="지금 나누고 싶은 질문, 현장, 작업의 조건을 짧게 적어주세요.">${esc(connection.introduction)}</textarea></section><section class="connection-section connection-safety"><h2>연결은 어떻게 이루어지나요?</h2><p>동의한 응답만 검토합니다. 연구팀은 매칭 이유와 공개 범위를 먼저 확인하고, 양쪽이 수락한 뒤에만 안부나 질문을 중계합니다. 자동으로 이메일이나 연락처를 서로 공개하지 않습니다.</p></section>` : ""}</section><aside class="connection-side"><div class="panel-title">CONNECTION STATUS</div><strong>${connectionStatusLabel}</strong><p>${profile.coordinate ? `${esc(profile.coordinate.shortTitle)} 위치를 출발점으로, 필요와 제안이 맞닿는 다른 응답을 연구자가 검토합니다.` : "분석 위치가 정리된 뒤 연결 후보를 검토할 수 있습니다."}</p><button class="primary-button wide-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>연결 의향 저장 <span aria-hidden="true">→</span></button><button class="secondary-button wide-button" type="button" data-action="back-to-result">결과로 돌아가기</button><p class="connection-local-status">${state.connectionStatus === "confirmed" ? "연구용 저장소에 연결 의향을 저장했습니다." : submitFunctionUrl ? "저장 뒤 연구팀 검토 상태로 전환됩니다." : "원격 저장소 설정 전에는 이 기기의 재전송 대기열에 보관됩니다."}</p></aside></main>`;
 }
 
+// 안부 1단계에서 `상대에게 보이는 내용 확인하기`가 열리는 **단 하나의** 조건.
+// 렌더와 입력 핸들러가 서로 다른 판정을 보면, 선택지를 먼저 고르고 문장을 나중에 쓴
+// 참여자는 다 쓰고도 회색 버튼 앞에 남는다. 랜딩이 `04 다음 사람에게`로 약속한
+// 마지막 단계가 거기서 끊긴다.
+function connectionCanPreview() {
+  const connection = getConnection();
+  const hasMessage = Boolean(String(connection.message_text || connection.introduction || "").trim());
+  return hasMessage && Boolean(connection.message_audience) && Boolean(connection.sender_visibility) && ["YES", "NO"].includes(connection.translation_allowed);
+}
+
 function renderGlobalGreetingsConnection(connection) {
   const copy = greetingUiCopy(state.language);
   const local = task7();
@@ -2356,11 +2502,21 @@ function renderGlobalGreetingsConnection(connection) {
   const stageContent = currentStage === "receive" ? receiveSection : currentStage === "waiting" ? waitingSection : currentStage === "message" ? messageSection : previewSection;
   const writingFlow = ["message", "preview"].includes(currentStage);
   const primaryAction = ["receive", "waiting", "message"].includes(currentStage) ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button>`;
+  // 안부 쓰기는 `1 한 문장 / 2 상대에게 보이는 내용` 두 단계다. 1단계에는 앞 단계가 없다.
+  // 그런데 1단계에도 `이전 단계`(`data-connection-stage="waiting"`)가 있어서, 누르면
+  // 안부를 **받는** 화면(`아직 당신에게 이어질 안부가 없어요.`)으로 떨어지고 단계 표시도
+  // 사라졌다. 안부를 **쓰던** 사람에게는 전혀 다른 화면이다. 1단계에서는 감추고, 이미
+  // 있는 `참여 기록으로 돌아가기`(`copy.back`)만 남긴다.
+  const stageActions = currentStage === "message"
+    ? `<div class="greeting-stage-actions"><button class="primary-button" type="button" data-connection-stage="preview" ${!connectionCanPreview() ? "disabled" : ""}>${esc(local.previewAction)} <span aria-hidden="true">→</span></button></div>`
+    : currentStage === "preview"
+      ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="message">${esc(copy.previous)}</button></div>`
+      : "";
   return `<main class="connection-layout rc2-connection-layout greeting-connection">
     <section class="connection-main">
       <div class="greeting-intro"><div><div class="archive-label">${esc(local.greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingFeatureName)}</h1><p class="greeting-privacy-note">${esc(copy.privacy)}</p></div></div>
       ${writingFlow ? stepNav : ""}${stageContent}
-      ${currentStage === "message" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="waiting">${esc(copy.previous)}</button><button class="primary-button" type="button" data-connection-stage="preview" ${!hasMessage || !connection.message_audience || !connection.sender_visibility || !["YES", "NO"].includes(connection.translation_allowed) ? "disabled" : ""}>${esc(local.previewAction)} <span aria-hidden="true">→</span></button></div>` : currentStage === "preview" ? `<div class="greeting-stage-actions"><button class="secondary-button" type="button" data-connection-stage="message">${esc(copy.previous)}</button></div>` : ""}
+      ${stageActions}
       <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button>${primaryAction}</div>
     </section>
   </main>`;
@@ -2438,7 +2594,11 @@ function renderRc2Complete(response) {
     confirmedAt: response.document_confirmation?.confirmed_at || response.submitted_at,
     final: true,
   });
-  const openCallSection = `<section class="rc2-open-call-next"><div class="open-call-badge">${esc(copy.openCallBadge)}</div><h2>${esc(copy.openCallTitle)}</h2><p>${esc(copy.openCallText)}</p><button class="primary-button" type="button" data-action="open-call">${esc(copy.openCallButton)} <span aria-hidden="true">↗</span></button></section>`;
+  // 완료 화면은 연구 응답을 마친 자리다. 여기에서 공모를 다시 권하면 참여 기록이
+  // 공모 신청의 앞단계처럼 읽힌다. 랜딩에서 공모 카드를 뺀 것과 같은 이유로 완료
+  // 화면에서도 뺀다. 공모 자체는 그대로다 — `over39-open-call.html` 라우트,
+  // `over39-open-call` Edge 함수, `OVER39_OPEN_CALL_SUBMISSIONS_ENABLED` 게이트,
+  // `openCallUrl()` 과 공모 링크 클릭 처리는 모두 그대로 살아 있다.
   const audienceLead = isAudienceContext()
     ? copy.audienceLead
     : copy.otherLead;
@@ -2448,13 +2608,17 @@ function renderRc2Complete(response) {
   const greetingChoice = globalGreetingsEnabled
     ? greetingChoiceSaved && Boolean(String(connection.message_text || "").trim())
       ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.outgoingSaved)}</h2><p>${esc(greetingFirstLocal.outgoingSavedHelp)}</p></div>`
+      // `여기에서 마치기`를 한 번 누르면 안부 버튼이 사라져, 이 응답에서는 안부를 남길
+      // 방법이 영영 없어졌다. 되돌리는 길이 `restart`(기록 전체 초기화)뿐이었고 확인
+      // 대화도 없었다. 랜딩이 `04 다음 사람에게`로 약속한 마지막 단계다. 마친 뒤에도
+      // 이미 있는 `다음 사람에게 안부 남기기`로 돌아갈 수 있게 남겨 둔다.
       : connection.stage === "done" || state.connectionStatus === "finished"
-        ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.continuationSecondary)}</h2><p>${esc(greetingFirstLocal.continuationHelp)}</p></div>`
+        ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.continuationSecondary)}</h2><p>${esc(greetingFirstLocal.continuationHelp)}</p><div class="greeting-opt-in-actions"><button class="secondary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button></div></div>`
         : `<h2>${esc(greetingFirstLocal.coordinateTransitionTitle)}</h2><p>${esc(greetingFirstLocal.coordinateTransitionHelp)}</p><div class="greeting-opt-in-actions"><button class="primary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="finish-greeting">${esc(greetingFirstLocal.continuationSecondary)}</button></div>`
     : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p class="feature-closed-status" role="status">${esc(task7Local.gateOff)}</p>`;
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid">${openCallSection}<div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
@@ -2554,7 +2718,7 @@ function renderSurvey() {
   const nextDisabled = (contextInternalStep === null ? !canContinue(id) : !canContinueContextStep(contextInternalStep)) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
   const backAction = contextInternalStep !== null && contextInternalStep > 0 ? "context-back" : "back";
   const nextAction = contextInternalStep !== null && contextInternalStep < 2 ? "context-next" : "next";
-  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button><span></span><button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
+  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function researchJourney() {
@@ -2706,7 +2870,11 @@ function renderFirstGreeting() {
   const simplified = greetingSimple();
   const greeting = state.firstGreeting || { status: "loading" };
   if (greeting.status === "loading") {
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-loading" aria-live="polite"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingLoading)}</h1><p>${esc(local.greetingLoadingHelp)}</p>${processingSignal(local.greetingLoading)}</section></main>`;
+    // 이 화면에는 조작이 하나도 없었다. 안부를 불러오는 동안 릴레이가 멈추면 참여자는
+    // 설문 맨 앞에서 앞으로도 뒤로도 못 간다 — 이야기를 한 줄도 쓰기 전에. 기다림이
+    // 끝나기를 기다리게 두지 않고, 기다림이 끝난 뒤 화면(waiting/unavailable)에 이미
+    // 있는 그 버튼을 여기에도 상시 노출한다. 새 문구를 만들지 않는다.
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-loading" aria-live="polite"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingLoading)}</h1><p>${esc(local.greetingLoadingHelp)}</p>${processingSignal(local.greetingLoading)}<div class="first-greeting-continue"><button class="secondary-button" type="button" data-action="begin-story">${esc(local.continueWithoutGreeting)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   if (greeting.status === "received") {
     const isSeed = greeting.origin === "core_seed";
@@ -2947,7 +3115,7 @@ document.addEventListener("click", (event) => {
       const responseId = draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`;
       const firstGreeting = draft.firstGreeting || loadFirstGreeting(responseId);
       const resumedPhase = ["greeting-choice", "greeting-first"].includes(draft.phase) ? draft.phase : "survey";
-      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
+      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
     }
     render(true);
     if (state.phase === "greeting-first" && state.firstGreeting?.status === "loading") beginFirstGreeting();
@@ -2984,7 +3152,19 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.action === "review-answers") {
     const index = activeScreens().indexOf("M01");
+    // 돌아올 자리를 남긴다. 예전에는 첫 질문으로 보내기만 해서, 20~30분을 쓰고 정리문
+    // 앞에 앉은 사람이 한 단어를 확인하러 눌렀다가 화면 스무 개를 다시 지나가거나
+    // 창을 닫아야 했다. 설문 화면의 이동 수단이 `이전`/`다음` 둘뿐이기 때문이다.
+    state.reviewReturnStep = state.step;
     state.step = index >= 0 ? index : 0;
+    saveDraft();
+    render(true);
+    return;
+  }
+  if (target.dataset.action === "return-to-review") {
+    const step = state.reviewReturnStep;
+    delete state.reviewReturnStep;
+    if (typeof step === "number" && step >= 0 && step < activeScreens().length) state.step = step;
     saveDraft();
     render(true);
     return;
@@ -3041,10 +3221,18 @@ document.addEventListener("click", (event) => {
     const connection = getConnection();
     connection.opt_in = "YES";
     connection.receive_opt_in = connection.receive_opt_in === "YES" ? "YES" : "NO";
+    // `여기에서 마치기`로 남은 표식을 함께 푼다. 이게 없으면 안부를 다시 쓰러 들어갔다
+    // 나온 뒤에도 완료 화면이 계속 "마쳤다"고 말한다.
+    if (state.connectionStatus === "finished") state.connectionStatus = null;
     connection.stage = "message";
     connection.message_audience = connection.message_audience || "OPEN";
     connection.preview_confirmed = false;
     saveConnection();
+    // `connection.stage`만 바꾸고 화면을 다시 그리면 완료 화면이 그대로 다시 그려진다.
+    // 완료 화면의 안부 블록은 `stage`를 보지 않기 때문이다(`done`일 때만 본다). 안부를
+    // 쓰는 화면은 `phase === "connection"`에서 그려지므로 여기서 함께 옮겨야 한다.
+    // 이게 없어서 랜딩이 `04 다음 사람에게`로 약속한 마지막 단계의 버튼이 죽어 있었다.
+    state.phase = "connection";
     render(true);
     return;
   }
@@ -3133,7 +3321,25 @@ document.addEventListener("click", (event) => {
     render(true);
     return;
   }
-  if (target.dataset.action === "back") { state.step = Math.max(0, state.step - 1); saveDraft(); render(!isRc2); return; }
+  if (target.dataset.action === "back") {
+    let previous = Math.max(0, state.step - 1);
+    // 앞으로 갈 때는 질문이 없는 앵커 화면을 건너뛰지만, 뒤로 갈 때는 그 화면에 그대로
+    // 착지했다. 거기서는 아무것도 생성되고 있지 않은데도 "다음 질문을 준비하고 있어요"가
+    // 계속 떠 있어서, 20~30분을 쓴 참여자가 기다리는 쪽을 택할 수 있다. 뒤로 가는 길에서도
+    // 같은 화면을 건너뛴다 — 문구를 고치는 대신 그 화면을 만나지 않게 한다.
+    if (isRc2) {
+      const screens = activeScreens();
+      while (previous > 0) {
+        const checkpoint = adaptiveScreenCheckpoint[screens[previous]];
+        if (!checkpoint || state.adaptiveGenerating || currentAdaptiveTurn(checkpoint)) break;
+        previous -= 1;
+      }
+    }
+    state.step = previous;
+    saveDraft();
+    render(!isRc2);
+    return;
+  }
   if (target.dataset.action === "retry-adaptive") {
     const checkpoint = String(target.dataset.checkpoint || "");
     if (!checkpoint || state.adaptiveGenerating) return;
@@ -3166,7 +3372,10 @@ document.addEventListener("click", (event) => {
       const sourceAnchor = sourceAnchorByScreen[id];
       if (sourceAnchor) {
         if (recordSkippedLowInformation(sourceAnchor)) saveDraft();
-        else if (["skipped_low_information", "complete"].includes(adaptiveStatus(sourceAnchor))) setAdaptiveStatus(sourceAnchor, "pending");
+        // 앵커의 종료 상태 전부를 다시 pending으로 되돌린다. `skipped_policy`와
+        // `complete_motif`/`complete_fallback`이 빠져 있었고, 그래서 참여 기록을
+        // 다시 보러 앞으로 돌아온 참여자는 질문이 없는 화면을 다시 만났다.
+        else if (["skipped_low_information", "skipped_policy", "complete", "complete_motif", "complete_fallback"].includes(adaptiveStatus(sourceAnchor))) setAdaptiveStatus(sourceAnchor, "pending");
       }
     }
 
@@ -3236,7 +3445,9 @@ document.addEventListener("click", (event) => {
       return;
     }
     if (id === "USE_SCOPE") {
-      if (state.answers.synthesis_confirmation_ack !== "YES" || !state.answers.participant_approved_text) return;
+      // 2차 가드를 두지 않는다. 여기서 걸릴 수 있는 조건은 전부 `canContinue("USE_SCOPE")`
+      // 안으로 옮겼고, 그 값이 그대로 버튼의 disabled 계산에 쓰인다. 두 조건이 갈라져
+      // 있던 동안에는 버튼이 켜져 있어도 눌러서 아무 일이 없을 수 있었다.
       state.answers.response_document_draft = buildCurrentResponseDocument({ final: true, confirmedAt: state.answers.document_confirmed_at });
       state.submitted = createResponse();
       savePending(state.submitted);
@@ -3346,6 +3557,7 @@ document.addEventListener("input", (event) => {
   if (input.matches("[data-research-contact]")) {
     state.researchContact = { ...(state.researchContact || {}), [input.dataset.researchContact]: input.value, status: null };
     saveDraft();
+    refreshUseScopeContactStatus();
     const nextButton = document.querySelector("button.primary-button[data-action='next']");
     if (nextButton) nextButton.disabled = !canContinue("USE_SCOPE");
     return;
@@ -3376,6 +3588,10 @@ document.addEventListener("input", (event) => {
     saveConnection();
     const saveButton = document.querySelector("button[data-action='save-connection']");
     if (saveButton) saveButton.disabled = !connectionCanSave();
+    // 1단계에는 `save-connection`이 없다. 미리보기 버튼도 같이 갱신하지 않으면
+    // 문장을 아무리 써도 화면이 반응하지 않는다.
+    const previewButton = document.querySelector("button[data-connection-stage='preview']");
+    if (previewButton) previewButton.disabled = !connectionCanPreview();
     return;
   }
   if (!input.matches("[data-input-id]")) return;
@@ -3391,7 +3607,18 @@ document.addEventListener("input", (event) => {
   if (isRc2 && /^depth_[ms]_text$/.test(field)) clearDepthAfter(field === "depth_m_text" ? "M" : "S");
   if (isRc2 && ["NO_RECALL_RELATION", "M02", "M04_TEXT", "P18", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT", "D04", "M06_YEAR", "M07", "P09_COUNTRY", "P10"].includes(id)) reconcileAnchorsAfterResearchEdit(id);
   else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
-  if (isRc2 && ["participant_revision", "display_name"].includes(field)) clearDocumentConfirmation();
+  if (isRc2 && ["participant_revision", "display_name"].includes(field)) {
+    clearDocumentConfirmation();
+    // 확인은 취소됐는데 버튼은 `renderChoices`가 그린 DOM 그대로 ✓를 달고 남아 있었다.
+    // 참여자에게는 필수 항목이 채워진 화면인데 `다음`만 끝까지 꺼져 있는 것으로 보인다.
+    // 여기서 다시 그리면 한글 조합 중 커서가 튀므로 표시만 직접 끈다.
+    document.querySelectorAll('[data-choice-id="synthesis_confirmation_ack"]').forEach((button) => {
+      button.classList.remove("selected");
+      button.setAttribute("aria-pressed", "false");
+      const mark = button.querySelector("span[aria-hidden='true']");
+      if (mark) mark.textContent = "";
+    });
+  }
   saveDraft();
   const activeId = activeScreens()[state.step];
   const nextButton = document.querySelector("button.primary-button[data-action='next'], button.primary-button[data-action='context-next']");
@@ -3403,6 +3630,7 @@ document.addEventListener("change", (event) => {
   if (input.matches("[data-research-contact-consent]")) {
     state.researchContact = { ...(state.researchContact || {}), consent: input.checked, status: null };
     saveDraft();
+    refreshUseScopeContactStatus();
     const nextButton = document.querySelector("button.primary-button[data-action='next']");
     if (nextButton) nextButton.disabled = !canContinue("USE_SCOPE");
     return;

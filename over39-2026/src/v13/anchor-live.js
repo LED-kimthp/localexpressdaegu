@@ -1,5 +1,5 @@
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
-export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.1-2026-08-27";
+export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
 export const ACTIVE_ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "D02_TEXT"];
 export const MAX_TOTAL_AI_FOLLOWUPS = 3;
 export const MAX_AI_FOLLOWUPS_PER_AXIS = 1;
@@ -197,6 +197,52 @@ export function informationWeight(value) {
   return weight;
 }
 
+// 길이는 깊이가 아니다. "지원이 부족하고 공간이 없고 제도가 문제입니다"를 200자로
+// 유창하게 쓴 답에는 장면이 하나도 없는데, 글자 수만 보면 충분한 답으로 읽힌다. 그리고
+// 그렇게 쓰는 사람이 이 연구에서 가장 많을 유형이다 — 지원서를 여러 번 써 본 사람들이다.
+// 후속질문을 넣은 이유가 왜·언제부터·어떤 장면에서를 듣는 것이므로, 이 구분은 실제로
+// 중요하다.
+//
+// 그래서 아래 신호를 계산해 모든 판정에 함께 기록한다. **다만 판정에는 쓰지 않는다.**
+// 2026-08-27 독립 검증에서, 이 신호로 SKIP/ASK를 가르자 9개 언어 중 8개가 장면을 충실히
+// 써도 신호가 0으로 나오는 것이 실측으로 확인됐다(같은 장면을 9개 언어로 써서 비교:
+// 한국어만 신호 3개, 나머지는 0~1개이고 프랑스어의 1개는 아포스트로피 오탐이었다).
+// place·people·action은 한국어 어휘만, proper_noun은 라틴문자만 보고, quantity의 단위에도
+// fr/es/nl/ms의 기간 표현과 번체자가 없다. 그대로 게이트로 쓰면 오늘 오전 `informationWeight`
+// 에서 교정한 문자 체계 불공정이 방향만 바꿔 재발한다(그때는 라틴문자권이 질문을 못 받았고,
+// 이번에는 한국어 외 전원이 불필요한 질문을 받는다).
+//
+// 게다가 한국어 쪽에도 부분문자열 오탐이 있다: `형태`의 `형`이 people로, `힘들었`의 `들었`이
+// action으로, `2024년`+`3가지`가 time+quantity로 잡혀 정작 잡아야 할 추상적인 답이 통과했다.
+//
+// 어휘 사전을 9개 언어로 제대로 갖추는 일은 각 언어 사용자의 확인이 필요하고, 참여자에게
+// 보이는 질문 수를 바꾸는 결정이다. 그래서 파일럿에서는 **관측만** 하고, 어느 언어에서
+// 어느 신호가 얼마나 잡히는지와 `긴데 추상적인` 답이 실제로 얼마나 나오는지를 모은 뒤
+// 근거를 가지고 결정한다. 이 값들은 판정을 바꾸지 않으므로 참여자 경험에 영향이 없다.
+const CONCRETENESS_PROBES = [
+  // 시점: 연도는 어느 언어에서나 같은 모양이다.
+  ["time_year", /(^|\D)(19|20)\d{2}(\D|$)/],
+  // 수량·횟수·기간: 숫자에 단위가 붙은 자리. 장면에는 대체로 숫자가 하나 있다.
+  ["quantity", /\d+\s*(년|년대|년생|월|일|주|개월|달|살|세|학년|시|번|명|시간|분|권|점|편|회|가지|살쯤|년쯤|年|月|日|回|人|時間|岁|次|个|years?|months?|weeks?|days?|times?|people|hours?|minutes?)/i],
+  // 직접 인용: 기억된 발화는 거의 항상 구체적인 장면에 붙어 있다.
+  // 아포스트로피(J'ai, isn't, 's)는 인용이 아니므로 제외하고, 프랑스어 « »를 포함한다.
+  ["quotation", /["“”「」『』«»]{1}[^"“”「」『』«»]{4,}["“”「」『』«»]{1}/],
+  // 장소·자리: 한국어에서 장면이 놓이는 곳의 이름들.
+  ["place", /(작업실|전시장|미술관|박물관|도서관|극장|무대|공방|연습실|강의실|교실|학교|대학|동네|골목|시장|카페|사무실|스튜디오|창고|공원|버스|기차|지하철|가게|서점|식당|집앞|마당|옥상|지하)/],
+  // 사람과 관계의 자리: 누구와 있었는지가 나오면 장면이다.
+  ["people", /(선생님|어머니|아버지|엄마|아빠|친구|동료|후배|선배|아이|딸|아들|손님|관객|이웃|형|누나|오빠|언니|동생|남편|아내)/],
+  // 감각·행위: 설명이 아니라 몸이 한 일.
+  ["action", /(앉아|앉았|걸어|걸었|적어|적었|그려|그렸|만들었|불렀|들렸|들었|보였|봤|울|웃|마셨|먹었|서 있|누워|잠|땀|냄새|소리|빛|비가|눈이 내|추웠|더웠|손이|목소리)/],
+  // 라틴문자권 고유명사: 문장 첫 낱말이 아닌 대문자 시작 낱말.
+  ["proper_noun", /[a-z,;:)]\s+[A-Z][a-z]{2,}/],
+];
+
+export function concretenessSignals(value) {
+  const text = normalizedAnchorText(value);
+  const signals = CONCRETENESS_PROBES.filter(([, probe]) => probe.test(text)).map(([name]) => name);
+  return { score: signals.length, signals };
+}
+
 export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
   const id = String(anchorId || "");
   const axis = ANCHOR_AXES[id] || null;
@@ -221,8 +267,10 @@ export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
   // Length is weighed by script so the same amount of story counts the same in every
   // language. A raw character count kept over-asking Han/Kana writers, who say more per
   // character, and under-asking Latin-script writers, whose single sentence passed the bar.
-  if (informationWeight(normalized) >= SUFFICIENT_SOURCE_WEIGHT) return { ...base, decision: "SKIP", reason: "source_sufficient" };
-  return { ...base, decision: "ASK", reason: "meaningful_but_brief" };
+  if (informationWeight(normalized) >= SUFFICIENT_SOURCE_WEIGHT) {
+    return { ...base, decision: "SKIP", reason: "source_sufficient", concreteness: concretenessSignals(normalized) };
+  }
+  return { ...base, decision: "ASK", reason: "meaningful_but_brief", concreteness: concretenessSignals(normalized) };
 }
 
 export function anchorSourceText(answers = {}, anchorId) {

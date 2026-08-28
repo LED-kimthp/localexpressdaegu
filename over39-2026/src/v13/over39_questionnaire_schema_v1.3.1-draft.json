@@ -3620,7 +3620,7 @@
     "consent_version": "consent-v1.3.2-response-document",
     "community_list_version": "community-memory-v1",
     "curation_map_version": null,
-    "adaptive_policy_version": "adaptive-v2.1-2026-08-27",
+    "adaptive_policy_version": "adaptive-v2.2-2026-08-27",
     "legacy_mapping_version": "context_to_legacy_v1"
   },
   "deployment_blockers": [

@@ -995,6 +995,14 @@ const rc2CoreSurveyRows = [
   ["기록 정리", "Mise en forme du récit", "Organización del registro", "Het verslag ordenen", "Menyusun rekod"], ["이 내용이 가까워요", "Ce texte me ressemble", "Este texto se acerca a lo que quiero decir", "Deze tekst voelt dichtbij", "Teks ini terasa dekat"], ["일부 문장을 고칠게요", "Je vais modifier quelques phrases", "Modificaré algunas frases", "Ik pas enkele zinnen aan", "Saya akan membaiki beberapa ayat"], ["새 문장으로 적을게요", "Je vais écrire un nouveau texte", "Escribiré un texto nuevo", "Ik schrijf een nieuwe tekst", "Saya akan menulis ayat baharu"],
   ["당신의 기록이 닿은 세 방향", "Les trois directions que votre récit atteint", "Las tres direcciones que alcanza su registro", "De drie richtingen die uw verslag bereikt", "Tiga arah yang dicapai oleh rekod anda"],
   ["앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요.", "Nous avons rassemblé la position des trois directions à partir du fil de vos questions et réponses. Vous pouvez les ajuster pour les rapprocher de votre récit actuel.", "Hemos reunido la posición de las tres direcciones a partir del recorrido de sus preguntas y respuestas. Puede ajustarlas para acercarlas a su registro actual.", "We hebben de positie van de drie richtingen verzameld uit het verloop van uw vragen en antwoorden. U kunt ze aanpassen zodat ze dichter bij uw huidige verslag komen.", "Kami telah menghimpunkan kedudukan tiga arah daripada aliran soalan dan jawapan anda. Anda boleh melaraskannya agar lebih dekat dengan rekod anda sekarang."],
+  // MIXED/DIFFERENT 를 고르면 열리는 자유서술 칸. 연구가 받고 싶은 서술이 여기 들어온다.
+  ["함께 남길 설명", "Précision à joindre", "Explicación que desea añadir", "Toelichting om toe te voegen", "Penjelasan yang ingin disertakan"],
+  ["두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.", "Écrivez pourquoi vous ressentez ces deux directions ensemble, ou ce que vous souhaitez ajouter.", "Escriba por qué siente estas dos direcciones juntas o lo que quiera añadir.", "Schrijf waarom u deze twee richtingen samen voelt, of wat u wilt toevoegen.", "Tuliskan sebab anda merasakan kedua-dua arah ini bersama, atau apa yang ingin anda tambahkan."],
+  // 선택지 문구는 `앞 — 뒤` 전체가 사전 키다. 반쪽만 있으면 t()가 통째로
+  // 한국어로 떨어지고, 이 선택은 최종 저장을 여는 유일한 조건이다.
+  ["이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.", "Ces trois directions me semblent proches — Gardez les trois directions affichées comme position de ce récit.", "Estas tres direcciones me resultan cercanas — Guarde las tres direcciones mostradas como la posición de este registro.", "Deze drie richtingen voelen dichtbij — Bewaar de getoonde drie richtingen als positie van dit verslag.", "Tiga arah ini terasa dekat — Simpan tiga arah yang dipaparkan sebagai kedudukan rekod ini."],
+  ["두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요.", "Deux courants apparaissent ensemble — Si deux courants sont présents dans une direction, vous pouvez les indiquer tous les deux.", "Aparecen dos corrientes juntas — Si siente dos corrientes en una dirección, puede señalar ambas.", "Twee stromen zijn samen zichtbaar — Als u in één richting twee stromen voelt, kunt u ze beide markeren.", "Dua aliran kelihatan bersama — Jika dua aliran terasa dalam satu arah, anda boleh menandakan kedua-duanya."],
+  ["조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요.", "Je souhaite ajouter une précision — Après avoir choisi les trois directions, ajoutez librement ce que vous souhaitez laisser.", "Quiero explicar un poco más — Después de elegir las tres direcciones, añada libremente lo que quiera dejar dicho.", "Ik wil iets meer toelichten — Voeg na het kiezen van de drie richtingen vrij toe wat u wilt achterlaten.", "Saya mahu menerangkan sedikit lagi — Selepas memilih tiga arah, tambahkan secara bebas apa yang anda mahu tinggalkan."],
   ["이 세 방향이 가까워요", "Ces trois directions me semblent proches", "Estas tres direcciones me resultan cercanas", "Deze drie richtingen voelen dichtbij", "Tiga arah ini terasa dekat"], ["지금 보이는 세 방향을 이번 기록의 위치로 남겨요.", "Gardez les trois directions affichées comme position de ce récit.", "Guarde las tres direcciones mostradas como la posición de este registro.", "Bewaar de getoonde drie richtingen als positie van dit verslag.", "Simpan tiga arah yang dipaparkan sebagai kedudukan rekod ini."],
   ["두 흐름이 함께 보여요", "Deux courants apparaissent ensemble", "Aparecen dos corrientes juntas", "Twee stromen zijn samen zichtbaar", "Dua aliran kelihatan bersama"], ["한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요.", "Si deux courants sont présents dans une direction, vous pouvez les indiquer tous les deux.", "Si siente dos corrientes en una dirección, puede señalar ambas.", "Als u in één richting twee stromen voelt, kunt u ze beide markeren.", "Jika dua aliran terasa dalam satu arah, anda boleh menandakan kedua-duanya."],
   ["조금 더 설명하고 싶어요", "Je souhaite ajouter une précision", "Quiero explicar un poco más", "Ik wil iets meer toelichten", "Saya mahu menerangkan sedikit lagi"], ["세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요.", "Après avoir choisi les trois directions, ajoutez librement ce que vous souhaitez laisser.", "Después de elegir las tres direcciones, añada libremente lo que quiera dejar dicho.", "Voeg na het kiezen van de drie richtingen vrij toe wat u wilt achterlaten.", "Selepas memilih tiga arah, tambahkan secara bebas apa yang anda mahu tinggalkan."],
@@ -1032,6 +1040,25 @@ const rc2CoreSurveyRows = [
   ["1년 미만", "Moins d’un an", "Menos de 1 año", "Minder dan 1 jaar", "Kurang daripada 1 tahun"], ["1년 이상 3년 미만", "Entre 1 et 3 ans", "Entre 1 y 3 años", "1 tot 3 jaar", "1 hingga kurang 3 tahun"], ["3년 이상 5년 미만", "Entre 3 et 5 ans", "Entre 3 y 5 años", "3 tot 5 jaar", "3 hingga kurang 5 tahun"], ["5년 이상 10년 미만", "Entre 5 et 10 ans", "Entre 5 y 10 años", "5 tot 10 jaar", "5 hingga kurang 10 tahun"], ["10년 이상 20년 미만", "Entre 10 et 20 ans", "Entre 10 y 20 años", "10 tot 20 jaar", "10 hingga kurang 20 tahun"], ["20년 이상 30년 미만", "Entre 20 et 30 ans", "Entre 20 y 30 años", "20 tot 30 jaar", "20 hingga kurang 30 tahun"], ["30년 이상", "30 ans ou plus", "30 años o más", "30 jaar of langer", "30 tahun atau lebih"], ["정확한 시기를 말하기 어려움", "Il est difficile de donner une période précise", "Es difícil indicar un período preciso", "Het is moeilijk een precieze periode te noemen", "Sukar untuk menyatakan tempoh yang tepat"], ["한 가지 상태로 말하기 어렵다", "Difficile à décrire par un seul état", "Es difícil describirlo con un solo estado", "Het is moeilijk als één toestand te beschrijven", "Sukar untuk dihuraikan sebagai satu keadaan"], ["해당 없음", "Sans objet", "No corresponde", "Niet van toepassing", "Tidak berkenaan"],
   ["기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요.", "Veuillez vérifier le sens de la mémoire, le mouvement actuel et les conditions pour poursuivre.", "Revise el sentido de la memoria, el flujo actual y las condiciones para continuar.", "Bekijk de betekenis in herinnering, de huidige stroom en de voorwaarden om door te gaan.", "Semak makna ingatan, aliran semasa dan keadaan untuk meneruskan."],
   ["선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다.", "Lorsque vous modifiez un choix, l’affichage des trois directions ci-dessous reflète aussi le mouvement le plus proche de ce récit.", "Al cambiar una elección, el indicador de tres direcciones también reflejará el recorrido más cercano a este registro.", "Als u een keuze wijzigt, weerspiegelt de weergave van de drie richtingen hieronder ook de stroom die het dichtst bij dit verslag ligt.", "Apabila anda mengubah pilihan, paparan tiga arah di bawah juga mencerminkan aliran yang paling dekat dengan rekod ini."],
+  // v0.4.7: adaptive follow-up fallback prompts (depth.js `fallbackAdaptiveQuestion`).
+  // When the AI follow-up fails — network error, rate limit, or a question that
+  // does not pass validation — the interview falls back to these fixed prompts.
+  // They open a free-text field, so a participant who suddenly meets Korean here
+  // leaves the answer the research wants most empty. Per-checkpoint base cases only
+  // (route-level defaults); role-specific branches still fall back to Korean.
+  ["그 경험을 다른 사람에게 이야기하거나 다시 찾아본 적이 있나요?", "Vous est-il arrivé de raconter cette expérience à quelqu’un ou d’y revenir ?", "¿Alguna vez ha contado esa experiencia a otra persona o ha vuelto a ella?", "Hebt u die ervaring weleens aan iemand verteld of bent u er later op teruggekomen?", "Pernahkah anda menceritakan pengalaman itu kepada orang lain atau kembali mencarinya semula?"],
+  ["지금 떠오르는 것은 사람, 작품, 공간, 장면, 또는 이름 붙이기 어려운 감각 가운데 어디에 가까운가요?", "Ce qui vous vient à l’esprit maintenant se rapproche-t-il d’une personne, d’une œuvre, d’un lieu, d’une scène ou d’une sensation difficile à nommer ?", "Lo que le viene a la mente ahora, ¿se acerca más a una persona, una obra, un espacio, una escena o una sensación difícil de nombrar?", "Ligt wat nu bij u opkomt dichter bij een persoon, een werk, een ruimte, een scène of een gevoel dat moeilijk te benoemen is?", "Adakah apa yang terlintas sekarang lebih dekat kepada seseorang, sebuah karya, sebuah ruang, satu babak, atau rasa yang sukar dinamakan?"],
+  ["앞에서 떠올린 기억은 작품 한 점, 전시 전체, 공간의 분위기, 사람의 모습 가운데 어디에 더 가까운가요?", "Le souvenir que vous venez d’évoquer se rapproche-t-il davantage d’une seule œuvre, d’une exposition entière, de l’atmosphère d’un lieu ou de la présence d’une personne ?", "El recuerdo que acaba de evocar, ¿se acerca más a una sola obra, a una exposición entera, al ambiente de un espacio o a la presencia de una persona?", "Ligt de herinnering die u zojuist ophaalde dichter bij één werk, een hele tentoonstelling, de sfeer van een ruimte of de aanwezigheid van een persoon?", "Adakah ingatan yang anda imbau tadi lebih dekat kepada satu karya, keseluruhan pameran, suasana sesebuah ruang, atau kehadiran seseorang?"],
+  ["앞에서 떠올린 대상은 사람, 작품, 전시, 공간, 장면 가운데 어디에 가장 가까운가요?", "Ce que vous venez d’évoquer se rapproche-t-il le plus d’une personne, d’une œuvre, d’une exposition, d’un lieu ou d’une scène ?", "Lo que acaba de evocar, ¿se acerca más a una persona, una obra, una exposición, un espacio o una escena?", "Ligt wat u zojuist ophaalde het dichtst bij een persoon, een werk, een tentoonstelling, een ruimte of een scène?", "Adakah apa yang anda imbau tadi paling dekat kepada seseorang, sebuah karya, sebuah pameran, sebuah ruang, atau satu babak?"],
+  ["그 순간에 가장 선명했던 색, 소리, 움직임 또는 사람의 모습은 무엇이었나요?", "Qu’est-ce qui était le plus net à cet instant : une couleur, un son, un mouvement ou la présence de quelqu’un ?", "¿Qué color, sonido, movimiento o presencia de alguien fue lo más nítido en aquel momento?", "Welke kleur, welk geluid, welke beweging of wiens aanwezigheid was op dat moment het helderst?", "Warna, bunyi, gerakan atau kehadiran seseorang yang manakah paling jelas pada saat itu?"],
+  ["방금 적은 내용 가운데 지금도 가장 선명한 한 장면을 조금 더 들려주세요.", "Parmi ce que vous venez d’écrire, racontez un peu plus la scène qui reste aujourd’hui la plus nette.", "De lo que acaba de escribir, cuéntenos un poco más la escena que sigue siendo la más nítida.", "Vertel iets meer over de ene scène uit wat u net schreef die nu nog het helderst is.", "Ceritakan sedikit lagi tentang satu babak daripada apa yang baru anda tulis, yang masih paling jelas sehingga kini."],
+  ["이 기억은 지금의 취향, 선택, 대화 또는 다시 보고 싶은 마음과 어떻게 이어져 있나요?", "Comment ce souvenir rejoint-il vos goûts, vos choix, vos conversations d’aujourd’hui ou l’envie de revoir quelque chose ?", "¿Cómo se enlaza este recuerdo con sus gustos, sus decisiones, sus conversaciones o el deseo de volver a ver algo?", "Hoe hangt deze herinnering samen met uw huidige voorkeuren, keuzes, gesprekken of de wens om iets terug te zien?", "Bagaimanakah ingatan ini bersambung dengan citarasa, pilihan, perbualan anda sekarang, atau keinginan untuk melihatnya semula?"],
+  ["이 기억은 지금의 작업이나 선택에 어떤 모습으로 이어져 있나요?", "Sous quelle forme ce souvenir se prolonge-t-il dans votre travail ou vos choix d’aujourd’hui ?", "¿De qué forma se prolonga este recuerdo en su trabajo o en sus decisiones de ahora?", "In welke vorm loopt deze herinnering door in uw huidige werk of keuzes?", "Dalam bentuk apakah ingatan ini bersambung dengan kerja atau pilihan anda sekarang?"],
+  ["이 기억은 지금의 생각이나 선택과 어떻게 이어져 있나요?", "Comment ce souvenir rejoint-il vos réflexions ou vos choix d’aujourd’hui ?", "¿Cómo se enlaza este recuerdo con sus ideas o decisiones de ahora?", "Hoe hangt deze herinnering samen met uw huidige gedachten of keuzes?", "Bagaimanakah ingatan ini bersambung dengan pemikiran atau pilihan anda sekarang?"],
+  ["전시장이나 행사에 가지 않는 시기에도 계속 찾아보거나 기억한 것이 있었나요?", "Même dans les périodes où vous n’alliez pas aux expositions ou aux événements, y a-t-il eu quelque chose que vous continuiez à chercher ou à garder en mémoire ?", "Incluso en las épocas en que no acudía a exposiciones o actos, ¿hubo algo que siguiera buscando o recordando?", "Was er ook in tijden dat u niet naar tentoonstellingen of evenementen ging iets dat u bleef opzoeken of onthouden?", "Semasa anda tidak pergi ke pameran atau acara pun, adakah sesuatu yang terus anda cari atau ingati?"],
+  ["밖에서 잘 보이지 않았던 시간에도 실제로 이어지고 있던 활동이나 생각이 있다면 한 장면으로 들려주세요.", "Si une activité ou une réflexion s’est réellement poursuivie pendant une période peu visible de l’extérieur, racontez-la comme une scène.", "Si hubo actividades o ideas que continuaron realmente en un tiempo poco visible desde fuera, cuéntenoslas como una escena.", "Als er in een periode die van buitenaf nauwelijks zichtbaar was toch iets doorliep, vertel dat dan als één scène.", "Jika ada kegiatan atau pemikiran yang sebenarnya berterusan pada waktu yang sukar dilihat dari luar, ceritakanlah sebagai satu babak."],
+  ["비슷한 경험을 다시 만나게 하는 가장 작은 조건은 무엇인가요?", "Quelle est la plus petite condition qui vous permettrait de retrouver une expérience semblable ?", "¿Cuál es la condición más pequeña que le permitiría reencontrar una experiencia semejante?", "Wat is de kleinste voorwaarde waardoor u een vergelijkbare ervaring opnieuw zou tegenkomen?", "Apakah syarat paling kecil yang membolehkan anda bertemu semula dengan pengalaman yang serupa?"],
+  ["지금 바라는 변화가 시작되었다고 느낄 수 있는 가장 작은 장면은 무엇인가요?", "Quelle serait la plus petite scène qui vous ferait sentir que le changement souhaité a commencé ?", "¿Cuál sería la escena más pequeña que le haría sentir que el cambio que desea ya ha comenzado?", "Wat zou de kleinste scène zijn waaraan u merkt dat de verandering die u wenst begonnen is?", "Apakah babak paling kecil yang membuat anda merasakan perubahan yang anda harapkan telah bermula?"],
 ];
 
 for (const [source, fr, es, nl, ms] of rc2CoreSurveyRows) {
@@ -1040,6 +1067,26 @@ for (const [source, fr, es, nl, ms] of rc2CoreSurveyRows) {
   Object.assign(extraCopy.nl || (extraCopy.nl = {}), { [source]: nl });
   Object.assign(extraCopy.ms || (extraCopy.ms = {}), { [source]: ms });
 }
+
+// v0.4.7: English wording for the adaptive follow-up fallback prompts above.
+// `rc2CoreSurveyRows` carries only fr/es/nl/ms, so English is registered here;
+// ja and zh-Hant live in rc2-ui-i18n.js and zh-Hans is derived from zh-Hant.
+const rc2AdaptiveFallbackEnglish = {
+  "그 경험을 다른 사람에게 이야기하거나 다시 찾아본 적이 있나요?": "Have you talked about that experience with someone else, or returned to it since?",
+  "지금 떠오르는 것은 사람, 작품, 공간, 장면, 또는 이름 붙이기 어려운 감각 가운데 어디에 가까운가요?": "Is what comes to mind now closer to a person, a work, a place, a scene, or a feeling that is hard to name?",
+  "앞에서 떠올린 기억은 작품 한 점, 전시 전체, 공간의 분위기, 사람의 모습 가운데 어디에 더 가까운가요?": "Is the memory you recalled earlier closer to a single work, a whole exhibition, the atmosphere of a place, or the presence of a person?",
+  "앞에서 떠올린 대상은 사람, 작품, 전시, 공간, 장면 가운데 어디에 가장 가까운가요?": "Is what you recalled earlier closest to a person, a work, an exhibition, a place, or a scene?",
+  "그 순간에 가장 선명했던 색, 소리, 움직임 또는 사람의 모습은 무엇이었나요?": "What was most vivid in that moment: a colour, a sound, a movement, or the presence of someone?",
+  "방금 적은 내용 가운데 지금도 가장 선명한 한 장면을 조금 더 들려주세요.": "From what you have just written, please tell us a little more about the one scene that stays most vivid.",
+  "이 기억은 지금의 취향, 선택, 대화 또는 다시 보고 싶은 마음과 어떻게 이어져 있나요?": "How does this memory connect with your present tastes, choices, conversations, or the wish to see something again?",
+  "이 기억은 지금의 작업이나 선택에 어떤 모습으로 이어져 있나요?": "In what form does this memory carry into your present work or choices?",
+  "이 기억은 지금의 생각이나 선택과 어떻게 이어져 있나요?": "How does this memory connect with your present thoughts or choices?",
+  "전시장이나 행사에 가지 않는 시기에도 계속 찾아보거나 기억한 것이 있었나요?": "Even in periods when you were not going to exhibitions or events, was there something you kept looking for or holding in mind?",
+  "밖에서 잘 보이지 않았던 시간에도 실제로 이어지고 있던 활동이나 생각이 있다면 한 장면으로 들려주세요.": "If an activity or a line of thinking in fact continued through a time that was hard to see from outside, please tell us about it as one scene.",
+  "비슷한 경험을 다시 만나게 하는 가장 작은 조건은 무엇인가요?": "What is the smallest condition that would let you meet a similar experience again?",
+  "지금 바라는 변화가 시작되었다고 느낄 수 있는 가장 작은 장면은 무엇인가요?": "What would be the smallest scene that lets you feel the change you hope for has begun?",
+};
+Object.assign(extraCopy.en || (extraCopy.en = {}), rc2AdaptiveFallbackEnglish);
 
 const rc2CoreSurveyRowsShared = {
   fr: {
@@ -1109,3 +1156,69 @@ for (const [source, en, ja, zhHans, zhHant, fr, es, nl, ms] of rc2LandingRows) {
   Object.assign(extraCopy.nl || (extraCopy.nl = {}), { [source]: nl });
   Object.assign(extraCopy.ms || (extraCopy.ms = {}), { [source]: ms });
 }
+
+// RC2 커뮤니티 모듈(C01~C04).
+// 이 화면은 C00에서 "네"를 고른 사람에게만 열린다. 즉 번역이 비면 벽을 만나는 사람이
+// **더 남기겠다고 자원한 참여자뿐**이고, 잃는 것이 하필 그 추가 기록이다.
+// 문항 텍스트·선택지 라벨뿐 아니라 같은 화면에 함께 그려지는 플레이스홀더와
+// 글자 수 표시, 처리 중 표시까지 넣는다. 하나라도 비면 화면이 한국어로 섞인다.
+// 배치: fr·es·nl·ms는 아래 행 배열, en은 그 다음 블록,
+//       ja와 번체(zh-Hant)는 rc2-ui-i18n.js, 간체는 번체에서 자동 변환된다.
+const rc2CommunityModuleRows = [
+  ["지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적어주세요.", "Si un autre artiste, une autre œuvre, un lieu ou une scène vous vient à l’esprit, écrivez-le ici.", "Si le viene a la mente otro artista, obra, espacio o escena, escríbalo aquí.", "Als er nog een kunstenaar, werk, plek of scène bij u opkomt, schrijf die dan hier op.", "Jika terlintas seniman, karya, ruang atau adegan lain, sila tuliskannya di sini."],
+  ["작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", "Un artiste, une œuvre, un lieu, une scène, ou un nom qui vient en dehors de la liste", "Un artista, una obra, un espacio o una escena, o un nombre que surja fuera de la lista", "Een kunstenaar, werk, plek of scène, of een naam die buiten de lijst opkomt", "Seniman, karya, ruang atau adegan, atau nama yang terlintas di luar senarai"],
+  ["이 인물이 지금 다시 떠오른 가장 큰 이유는 무엇인가요?", "Quelle est la principale raison pour laquelle cette personne vous revient à l’esprit aujourd’hui ?", "¿Cuál es la razón principal por la que esta persona vuelve a su memoria ahora?", "Wat is de belangrijkste reden dat deze persoon nu weer bij u opkomt?", "Apakah sebab utama orang ini terlintas semula sekarang?"],
+  ["작품을 다시 보고 싶어서", "Parce que je souhaite revoir l’œuvre", "Porque quiero volver a ver la obra", "Omdat ik het werk opnieuw wil zien", "Kerana saya ingin melihat karya itu semula"],
+  ["활동을 오래 지켜봐서", "Parce que je suis cette activité depuis longtemps", "Porque he seguido su actividad durante mucho tiempo", "Omdat ik het werk al lang volg", "Kerana saya lama mengikuti kegiatannya"],
+  ["한동안 소식이나 기록을 만나기 어려워서", "Parce qu’il est difficile depuis un moment d’en trouver des nouvelles ou des traces", "Porque desde hace un tiempo cuesta encontrar noticias o registros", "Omdat er al een tijd weinig nieuws of documentatie te vinden is", "Kerana sejak beberapa waktu sukar menemui berita atau rekod"],
+  ["지역 미술사에서 다시 살펴볼 필요가 있어서", "Parce qu’il faut le réexaminer dans l’histoire de l’art locale", "Porque conviene revisarlo de nuevo en la historia del arte local", "Omdat dit opnieuw bekeken moet worden in de lokale kunstgeschiedenis", "Kerana ia perlu ditinjau semula dalam sejarah seni tempatan"],
+  ["함께한 기억이 있어서", "Parce que j’ai des souvenirs partagés avec cette personne", "Porque tengo recuerdos compartidos con esta persona", "Omdat ik gedeelde herinneringen heb met deze persoon", "Kerana saya mempunyai kenangan bersama orang ini"],
+  ["정확히 설명하기 어렵지만 계속 떠올라서", "Parce que cela revient sans cesse, même si c’est difficile à expliquer précisément", "Porque vuelve una y otra vez, aunque cueste explicarlo con precisión", "Omdat het steeds terugkomt, ook al is het moeilijk precies uit te leggen", "Kerana ia terus terlintas, walaupun sukar dijelaskan dengan tepat"],
+  ["이 선택의 배경은 무엇인가요?", "Quel est le contexte de ce choix ?", "¿Cuál es el contexto de esta elección?", "Wat is de achtergrond van deze keuze?", "Apakah latar belakang pilihan ini?"],
+  ["작품이나 전시를 직접 보았다", "J’ai vu l’œuvre ou l’exposition en personne", "Vi la obra o la exposición en persona", "Ik heb het werk of de tentoonstelling zelf gezien", "Saya melihat sendiri karya atau pameran itu"],
+  ["오랫동안 활동을 지켜보았다", "J’ai suivi cette activité pendant longtemps", "He seguido su actividad durante mucho tiempo", "Ik heb het werk lange tijd gevolgd", "Saya mengikuti kegiatannya sejak lama"],
+  ["전시·기획·연구를 함께했다", "Nous avons mené ensemble une exposition, un projet ou une recherche", "Trabajamos juntos en una exposición, un proyecto o una investigación", "We hebben samen aan een tentoonstelling, project of onderzoek gewerkt", "Kami pernah bersama menjalankan pameran, projek atau penyelidikan"],
+  ["개인적 친분이나 동료 관계가 있다", "Il existe un lien personnel ou une relation entre collègues", "Existe una amistad personal o una relación de colegas", "Er is een persoonlijke band of een collegiale relatie", "Ada hubungan peribadi atau hubungan sebagai rakan sekerja"],
+  ["비평·도록·기록을 통해 알고 있다", "Je le connais par la critique, les catalogues ou les archives", "Lo conozco a través de la crítica, los catálogos o los registros", "Ik ken het via kritiek, catalogi of documentatie", "Saya mengenalinya melalui kritikan, katalog atau rekod"],
+  ["다른 사람의 추천으로 알게 되었다", "Je l’ai découvert grâce à la recommandation de quelqu’un", "Lo conocí por la recomendación de otra persona", "Ik heb het leren kennen via de aanbeveling van iemand anders", "Saya mengetahuinya melalui cadangan orang lain"],
+  ["이번 목록에서 처음 관심이 생겼다", "C’est dans cette liste que mon intérêt est né", "Mi interés surgió por primera vez en esta lista", "Mijn belangstelling ontstond pas bij deze lijst", "Minat saya baru timbul daripada senarai ini"],
+  ["한 문장 더 남기고 싶다면 들려주세요.", "Si vous souhaitez laisser une phrase de plus, nous vous écoutons.", "Si quiere dejar una frase más, compártala con nosotros.", "Wilt u nog één zin achterlaten, deel die dan gerust.", "Jika anda ingin meninggalkan satu ayat lagi, sila kongsikan."],
+  // 같은 화면에서 함께 그려지는 공용 문구. C04는 max_chars가 240이라 「최대 800자」와
+  // 다른 키가 만들어지고, 그 키는 어느 언어에도 없었다.
+  ["응답을 정리하고 있어요", "Vos réponses sont en cours de mise en forme", "Estamos organizando sus respuestas", "Uw antwoorden worden geordend", "Jawapan anda sedang disusun"],
+  ["짧게 적어도 괜찮습니다.", "Une réponse brève convient tout à fait.", "Una respuesta breve está bien.", "Een kort antwoord is prima.", "Jawapan ringkas pun memadai."],
+  ["최대 800자", "800 caractères maximum", "Máximo 800 caracteres", "Maximaal 800 tekens", "Maksimum 800 aksara"],
+  ["최대 240자", "240 caractères maximum", "Máximo 240 caracteres", "Maximaal 240 tekens", "Maksimum 240 aksara"],
+];
+
+for (const [source, fr, es, nl, ms] of rc2CommunityModuleRows) {
+  Object.assign(extraCopy.fr || (extraCopy.fr = {}), { [source]: fr });
+  Object.assign(extraCopy.es || (extraCopy.es = {}), { [source]: es });
+  Object.assign(extraCopy.nl || (extraCopy.nl = {}), { [source]: nl });
+  Object.assign(extraCopy.ms || (extraCopy.ms = {}), { [source]: ms });
+}
+
+// 커뮤니티 모듈 C01~C04의 영어. 위 행 배열은 fr/es/nl/ms만 담기 때문에 여기에 둔다.
+// 「응답을 정리하고 있어요」와 「짧게 적어도 괜찮습니다.」, 「최대 800자」는 영어가
+// 이미 등록돼 있어 다시 넣지 않는다. 「최대 240자」만 영어가 비어 있었다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적어주세요.": "If another artist, work, place, or scene comes to mind now, please write it here.",
+  "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름": "An artist, work, place, or scene, or a name from beyond the list",
+  "이 인물이 지금 다시 떠오른 가장 큰 이유는 무엇인가요?": "What is the main reason this person comes to mind again now?",
+  "작품을 다시 보고 싶어서": "Because I would like to see the work again",
+  "활동을 오래 지켜봐서": "Because I have followed this practice for a long time",
+  "한동안 소식이나 기록을 만나기 어려워서": "Because news or records have been hard to find for some time",
+  "지역 미술사에서 다시 살펴볼 필요가 있어서": "Because this deserves another look in local art history",
+  "함께한 기억이 있어서": "Because I have memories of time we shared",
+  "정확히 설명하기 어렵지만 계속 떠올라서": "Because it keeps coming back, though it is hard to explain exactly",
+  "이 선택의 배경은 무엇인가요?": "What lies behind this choice?",
+  "작품이나 전시를 직접 보았다": "I saw the work or exhibition in person",
+  "오랫동안 활동을 지켜보았다": "I followed the practice for a long time",
+  "전시·기획·연구를 함께했다": "We worked together on an exhibition, project, or research",
+  "개인적 친분이나 동료 관계가 있다": "We know each other personally or as colleagues",
+  "비평·도록·기록을 통해 알고 있다": "I know of them through criticism, catalogues, or records",
+  "다른 사람의 추천으로 알게 되었다": "I came to know of them through someone else’s recommendation",
+  "이번 목록에서 처음 관심이 생겼다": "My interest began with this list",
+  "한 문장 더 남기고 싶다면 들려주세요.": "If there is one more sentence you would like to leave, please share it.",
+  "최대 240자": "Up to 240 characters"
+});

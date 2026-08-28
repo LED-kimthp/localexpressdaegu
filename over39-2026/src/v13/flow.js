@@ -1,5 +1,14 @@
 import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js";
 
+// 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
+// applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
+// P17(지금의 관계 상태 판단)·P18(현재 상태가 시작된 시기)은 어느 경로에서도 묻지 않는다.
+// Task 4 연구 타당성 검토가 "같은 판단을 중복해서 묻는 부담을 줄이라"고 결론냈고, Task 5에서
+// 정식 S 코어를 P14/P15/P16/P11/P19로 확정하면서 RC2 코어 노출을 걷어냈기 때문이다
+// (근거: CURRENT_STATE.md "New RC2 standardized core no longer repeats legacy P06/P07, P17,
+// or standalone P18", CODEX_HANDOFF_2026-08-18.md). 응답 호환을 위해 ID는 지우지 않았다.
+// P06/P07도 같은 결정으로 RC2에서 빠졌고 RC1 경로에만 남아 있다.
+// flow.test.js가 P17/P18이 화면에 없음을 계약으로 검증하므로, 되살리려면 TK 승인이 먼저 필요하다.
 export const FIXED_RESEARCH_QUESTION_IDS = [
   "M01", "NO_RECALL_RELATION", "M02", "M03", "M04", "M04_TEXT", "M05", "M06", "M07", "M08", "M09", "M10",
   "P05", "P06", "P07", "P14", "P15", "P16", "P17", "P18", "P11", "P12", "P13", "P13_TEXT", "P19", "P19_TEXT",
@@ -20,6 +29,9 @@ const MEMORY_DETAIL_FIELDS = [
   "memory_experience_modes_other", "memory_relationship", "witness_role", "witness_role_other",
 ];
 
+// P14/P15가 더 이상 쉼·전환 상태를 뜻하지 않을 때 지워야 하는 필드들. 실제 삭제는 app.js가
+// 선택 변경 시점에 직접 하고 있어서 이 목록은 flow.js에서 쓰이지 않는다. pause_meaning(P17)과
+// pause_context_text(P18)이 여기 남아 있는 것은 저장 필드 기록일 뿐, 두 문항을 묻는다는 뜻이 아니다.
 const PAUSE_CONTEXT_FIELDS = ["pause_context_tags", "pause_context_other", "pause_meaning", "pause_context_text"];
 
 const ADAPTIVE_FIELDS = [
@@ -41,10 +53,15 @@ const DERIVED_FIELDS = [
   ...ADAPTIVE_FIELDS,
 ];
 
-const COMMUNITY_FIELDS = [
-  "community_module_opt_in", "community_selected_name", "community_selection_reason",
-  "community_relationship_tags", "community_relationship_other",
-];
+// C00에서 "이름을 하나 더 남긴다"를 고르지 않으면 C01~C04는 화면에 나오지 않는다. 참여자가
+// 고른 뒤 마음을 바꾸면 묻지 않은 화면의 답이 제출 데이터에 그대로 남기 때문에 여기서 지운다.
+// 필드명은 스키마의 store 값을 그대로 쓴다(C01=community_recall_mode, C02=community_recall_reason,
+// C03=community_background, C04=community_note_text). 이전 목록에 있던
+// community_selected_name·community_selection_reason·community_relationship_tags·
+// community_relationship_other는 앱이 쓰지 않는 이름이어서 삭제가 한 건도 일어나지 않고 있었다.
+// C04의 두 번째 store 필드(community_note_audio_ref)는 목록에 없다. 음성 경로를 배선하지 않아
+// 앱이 그 필드를 한 번도 쓰지 않기 때문이며, 음성을 여는 날 함께 추가해야 한다.
+const COMMUNITY_DEPENDENT_FIELDS = ["community_recall_mode", "community_recall_reason", "community_background", "community_note_text"];
 
 // Additive context remains when the route is edited. The original route and
 // R01–R20 role fields still define their own existing flow rules.
@@ -102,7 +119,7 @@ export function sanitizeAnswersForRoute(answers = {}) {
   const next = { ...answers };
   if (next.route !== "MEMORY") delete next.response_position;
   if (!isProfessionalAnswers(next)) PROFESSIONAL_FIELDS.forEach((field) => delete next[field]);
-  if (next.community_module_opt_in !== "YES") COMMUNITY_FIELDS.slice(1).forEach((field) => delete next[field]);
+  if (next.community_module_opt_in !== "YES") COMMUNITY_DEPENDENT_FIELDS.forEach((field) => delete next[field]);
   if (next.route !== "BOTH" && !(next.route === "MEMORY" && next.response_position === "PROFESSIONAL")) delete next.d_scope;
   if (next.display_name_mode === "ANONYMOUS") delete next.display_name;
   if (next.memory_type === "NO_RECALL") MEMORY_DETAIL_FIELDS.forEach((field) => delete next[field]);

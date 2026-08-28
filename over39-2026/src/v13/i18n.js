@@ -55,7 +55,7 @@ const copy = {
     "이전": "Back",
     "다음": "Next",
     "이 기기에 임시 저장됨": "Saved temporarily on this device",
-    "최대 800자": "Up to 800 characters",
+    "최대 800자": "Up to 800 characters", "최대 {n}자": "Up to {n} characters",
     "짧게 적어도 괜찮습니다.": "A short answer is welcome.",
     "기타 내용을 짧게 적어주세요.": "Please add a brief note.",
     "없음": "None",
@@ -105,7 +105,7 @@ const copy = {
     "이전": "戻る",
     "다음": "次へ",
     "이 기기에 임시 저장됨": "この端末に一時保存済み",
-    "최대 800자": "800文字まで",
+    "최대 800자": "800文字まで", "최대 {n}자": "{n}文字まで",
     "짧게 적어도 괜찮습니다.": "短く書いても大丈夫です。",
     "기타 내용을 짧게 적어주세요.": "補足を短く入力してください。",
     "없음": "なし",
@@ -155,7 +155,7 @@ const copy = {
     "이전": "上一步",
     "다음": "下一步",
     "이 기기에 임시 저장됨": "暫存於此裝置",
-    "최대 800자": "最多 800 字",
+    "최대 800자": "最多 800 字", "최대 {n}자": "最多 {n} 字",
     "짧게 적어도 괜찮습니다.": "簡短回答也很好。",
     "기타 내용을 짧게 적어주세요.": "請簡短補充說明。",
     "없음": "沒有",
@@ -167,6 +167,15 @@ const copy = {
 
 Object.entries(extraCopy).forEach(([language, entries]) => {
   copy[language] = { ...(copy[language] || {}), ...entries };
+});
+
+// 글자 한도 표시는 한도를 자리표시자로 뺀 키 하나만 쓴다(app.js의 `characterLimitLabel`).
+// 예전에는 `최대 800자`처럼 한도가 박힌 문자열이 키였고, 한도가 여섯 가지인데 등록된 것은
+// 하나뿐이라 대부분의 화면에서 한국어로 남았다. `maxlength`는 걸려 있으므로 참여자는 이유를
+// 모른 채 타이핑이 멈추고, 문장이 잘린 줄도 모르고 넘어간다. en·ja·zh는 위 사전에 있다.
+const characterLimitCopy = { nl: "Maximaal {n} tekens", es: "Hasta {n} caracteres", fr: "Jusqu’à {n} caractères", ms: "Sehingga {n} aksara" };
+Object.entries(characterLimitCopy).forEach(([language, value]) => {
+  copy[language] = { ...(copy[language] || {}), "최대 {n}자": value };
 });
 
 // RC2 exposes Simplified and Traditional Chinese as separate language choices.
