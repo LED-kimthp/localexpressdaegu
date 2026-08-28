@@ -415,6 +415,16 @@ function sampleOf(sessions, includeTest) {
   const test = rows.filter((row) => row.sample_type === "test");
   const institution = rows.filter((row) => row.sample_type === "institution_review");
   const included = includeTest ? [...research, ...test] : research;
+  // ⚠️ 참여자가 「활용 범위」 01에서 `아니요, 연구 분석에는 포함하지 말아주세요.`를 골라도
+  // 아래 `ids`가 그 응답을 모든 분포표·교차표·좌표 집계에 통과시킨다. `policyStatistics`는
+  // 개수만 센다. 즉 참여자가 명확히 아니라고 한 것이 보고서의 표에 실린다.
+  //
+  // 한 줄로 고칠 수 없다: `include_in_policy_statistics`는 저장 시점에
+  // `sample_type === "research" && policy_research_use === "ANON_ANALYSIS"`로 계산되어
+  // **동의 여부와 표본 종류를 한 값에 섞어** 담는다. 테스트 표본은 동의와 무관하게 항상
+  // false이므로, 이 값으로 거르면 「테스트 포함」 토글이 통째로 죽는다.
+  // 제대로 하려면 `policy_research_use` 원값을 세션 행이나 별도 조회로 가져와야 한다.
+  // TK 판단 대기 항목이다.
   return {
     includeTest,
     counted: included.length,

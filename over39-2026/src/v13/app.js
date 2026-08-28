@@ -45,7 +45,11 @@ const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
 const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
 const query = new URLSearchParams(window.location.search);
 const interfaceLanguageKey = "over39-interface-language";
-const requestedLanguage = String(query.get("lang") || localStorage.getItem(interfaceLanguageKey) || "ko");
+// 이 줄은 모듈 최상단이다. 사파리에서 「모든 쿠키 차단」을 켠 참여자는 `localStorage`
+// 접근만으로 SecurityError를 받고, 그러면 이 모듈 전체가 실행되지 않아 **완전한 흰 화면**이
+// 된다. 「불러오는 중입니다」조차 나오지 않는다. 저장소는 언제든 없을 수 있다고 보고 읽는다.
+const readStoredLanguage = () => { try { return localStorage.getItem(interfaceLanguageKey); } catch { return null; } };
+const requestedLanguage = String(query.get("lang") || readStoredLanguage() || "ko");
 const initialLanguage = ["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"].includes(requestedLanguage) ? requestedLanguage : "ko";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
@@ -517,8 +521,11 @@ const RC2_STAGES = [
 ];
 
 
+// 초안 저장이 던지면 `input` 핸들러가 그 뒤의 `다음` 버튼 갱신에 도달하지 못한다.
+// 글을 다 적었는데 버튼이 끝까지 꺼진 채이고 무엇이 막는지 화면에 없었다.
 function saveDraft() {
   if (["survey", "greeting-choice", "greeting-first"].includes(state.phase)) {
+    try {
     localStorage.setItem(draftKey, JSON.stringify({
       phase: state.phase,
       answers: state.answers,
@@ -535,6 +542,7 @@ function saveDraft() {
       researchContact: state.researchContact || null,
       savedAt: new Date().toISOString(),
     }));
+    } catch { state.storageBlocked = true; }
   }
 }
 
@@ -543,7 +551,10 @@ function loadDraft() {
 }
 
 function clearDraft() { localStorage.removeItem(draftKey); }
-function savePending(response) { localStorage.setItem(pendingKey, JSON.stringify(response)); }
+// `savePending`은 최종 저장 버튼의 **첫 줄**에서 불린다. 여기서 던지면 클릭 핸들러가
+// 그대로 끝나 화면이 바뀌지도, 네트워크로 나가지도 않는다 — 참여자에게는 "눌러도
+// 아무 일이 없는 저장 버튼"이 된다. 저장소가 막혀도 전송은 계속 시도해야 한다.
+function savePending(response) { try { localStorage.setItem(pendingKey, JSON.stringify(response)); } catch { state.storageBlocked = true; } }
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
 function clearPending() { localStorage.removeItem(pendingKey); }
 function loadFirstGreeting(responseId = state.responseId) {
@@ -2153,15 +2164,20 @@ function createResponse(submissionPhase = "final") {
 }
 
 async function requestResearchStorage(response) {
+  const kind = response.submission_phase === "fixed_complete" ? "fixed_snapshot" : "research_submission";
+  // 멱등키는 `${response_id}:${submission_phase}`다. 이탈 스냅샷은 두 지점에서 같은
+  // `fixed_complete` 단계로 보내므로 키가 겹치고, 서버는 겹치는 키를 `duplicate: true`로
+  // 그냥 버린다(over39-submit). 그러면 두 번째 지점이 조용히 사라져 "어느 질문에서
+  // 멈췄는가"가 반쪽만 남는다. 지점 이름을 접미사로 붙여 각자 하나의 기록이 되게 한다.
+  const suffix = response.drop_off_checkpoint ? String(response.drop_off_checkpoint) : "";
   if (submitFunctionUrl) {
-    return sendEnvelope(createEnvelope(response.submission_phase === "fixed_complete" ? "fixed_snapshot" : "research_submission", response), {
+    return sendEnvelope(createEnvelope(kind, response, suffix), {
       endpoint: submitFunctionUrl,
       anonKey: supabaseAnonKey,
     });
   }
   if (!googleAppsScriptUrl) {
-    const kind = response.submission_phase === "fixed_complete" ? "fixed_snapshot" : "research_submission";
-    return sendEnvelope(createEnvelope(kind, response), {});
+    return sendEnvelope(createEnvelope(kind, response, suffix), {});
   }
   try {
     await fetch(googleAppsScriptUrl, {
@@ -3505,6 +3521,13 @@ document.addEventListener("click", (event) => {
           state.phase = "complete";
         } else state.phase = "save_failed";
         render(true);
+      }).catch(() => {
+        // catch가 없던 동안에는 이 체인이 reject되면 「참여 기록을 저장하고 있어요」
+        // 화면에서 영구히 멈췄다. 그 화면에는 버튼이 하나도 없어서, 27분을 쓴 참여자가
+        // 할 수 있는 일은 창을 닫는 것뿐이었다. 실패는 실패로 보여야 다시 시도할 수 있다.
+        state.submissionStatus = "failed";
+        state.phase = "save_failed";
+        render(true);
       });
       return;
     }
@@ -3576,7 +3599,11 @@ document.addEventListener("click", (event) => {
     state.phase = "saving";
     render(true);
     (submitFunctionUrl ? retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }) : requestResearchStorage(pending)).then(async (result) => {
-      state.submissionStatus = Array.isArray(result) ? (readOutbox().length ? "unverified" : "confirmed") : result.status;
+      // 아웃박스 전체 길이로 판정하면, 이 응답과 무관한 봉투 하나가 남아 있을 때
+    // 참여자는 저장에 성공했는데도 완료 화면을 영영 보지 못한다. 자기 응답만 본다.
+    const verifyId = state.submitted?.response_id || pending.response_id;
+    const stillQueued = readOutbox().some((item) => item.payload?.response_id === verifyId);
+    state.submissionStatus = Array.isArray(result) ? (stillQueued ? "unverified" : "confirmed") : result.status;
       if (["confirmed", "local_only"].includes(state.submissionStatus)) {
         if (state.submissionStatus === "confirmed") {
           clearDraft();
@@ -3710,6 +3737,19 @@ window.addEventListener("online", () => {
     render(false);
   });
 });
+
+// 아직 서버로 못 간 응답이 있으면 앱을 열 때 조용히 다시 보낸다. 예전에는 `online`
+// 이벤트와 수동 버튼에서만 재전송했는데, 저장에 실패한 참여자가 창을 닫고 나중에 다시
+// 들어오면 이미 온라인이라 `online` 이벤트가 뜨지 않았다. RC2 인트로에는 「이전 제출
+// 상태 확인」 버튼도 없다(그 버튼은 RC1 분기 전용). 그래서 그 사람의 이야기는 자기 기기
+// localStorage 안에서 영구히 대기했다 — 16명 중 한 명만 겪어도 표본의 6%다.
+if (submitFunctionUrl) {
+  try {
+    if (readOutbox().length) {
+      retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }).catch(() => {});
+    }
+  } catch { /* 저장소를 못 읽어도 앱은 그대로 뜬다. */ }
+}
 
 Promise.all([schemaUrl, depthBankUrl].map((url) => fetch(url).then((response) => response.ok ? response.json() : Promise.reject(new Error(`load failed: ${url}`)))))
   .then(([loadedSchema, loadedDepthBank]) => { schema = loadedSchema; depthBank = loadedDepthBank; state.phase = "intro"; render(); })

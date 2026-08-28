@@ -111,6 +111,13 @@ function reasonDetails(thread) {
   if (!reason) return { sender: "", summary: "", evidence: [] };
   const structured = reason.version === "greeting-coordinate-reason-v3" && reason.summary_key === "CURATED_RECORD_CONNECTION";
   const localized = reasonCopy();
+  // 익명 검사가 `structured` 분기 안에만 있었다. 그런데 실제 자동 배달 경로는
+  // `greeting-random-safe-v1`이라 그 분기를 타지 않고 `reason.sender_context`를 그대로
+  // 보여줬다 — 익명으로 남긴 참여자의 역할이 낯선 사람 화면에 나왔다. 어느 판본이든
+  // 익명이면 발신자 표시를 비운다.
+  if (reason.sender_visibility === "ANONYMOUS") {
+    return { sender: "", summary: task10a4Receipt().reasonSummary, evidence: [] };
+  }
   const sender = structured
     ? (reason.sender_visibility === "ANONYMOUS" ? "" : (reason.sender_visibility === "NAMED" && reason.sender_display_label ? reason.sender_display_label : localized.sender[reason.sender_context_code]))
     : reason.sender_context;

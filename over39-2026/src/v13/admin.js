@@ -9,7 +9,11 @@ const relayEndpoint = String(window.OVER39_SUPABASE_RELAY_URL || "");
 const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
 const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-let state = { session: null, sessions: [], selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false };
+let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false };
+
+// 매직링크가 돌아올 주소. 토큰은 프래그먼트로 오므로 `#`을, 표본 쿼리가 붙은 채 열렸을
+// 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
+const adminRedirectUrl = () => `${location.origin}${location.pathname}`;
 
 function loadSession() { try { return JSON.parse(sessionStorage.getItem(sessionKey) || "null"); } catch { return null; } }
 function saveSession(session) { state.session = session; sessionStorage.setItem(sessionKey, JSON.stringify(session)); }
@@ -23,11 +27,20 @@ function captureAuthCallback() {
   history.replaceState({}, "", location.pathname);
 }
 
-async function api(table, query = "") {
-  const response = await fetch(`${supabaseUrl}/rest/v1/${table}${query}`, { headers: { apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` } });
+async function api(table, query = "", { withCount = false } = {}) {
+  const headers = { apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` };
+  // `Prefer: count=exact`를 붙이면 PostgREST가 RLS 적용 뒤의 전체 행 수를 Content-Range에
+  // 담아 준다(`0-499/1234`). 행을 더 받지 않고 잘림을 알 수 있는 유일한 값이고, Supabase는
+  // 이 헤더를 Access-Control-Expose-Headers에 넣어 두어 브라우저에서 읽을 수 있다.
+  // 라이브 확인: `access-control-expose-headers: ... Content-Range ...`
+  if (withCount) headers.Prefer = "count=exact";
+  const response = await fetch(`${supabaseUrl}/rest/v1/${table}${query}`, { headers });
   if (response.status === 401 || response.status === 403) throw new Error("ADMIN_ACCESS_DENIED");
   if (!response.ok) throw new Error(`ADMIN_HTTP_${response.status}`);
-  return response.json();
+  const rows = await response.json();
+  if (!withCount) return rows;
+  const total = Number(String(response.headers.get("content-range") || "").split("/")[1]);
+  return Object.assign(rows, { total: Number.isFinite(total) ? total : null });
 }
 
 async function verifyAdmin() {
@@ -35,9 +48,14 @@ async function verifyAdmin() {
   if (!rows.length) throw new Error("ADMIN_NOT_REGISTERED");
 }
 
+// 목록은 최근 순으로 이만큼만 받는다. 상한을 없애는 대신 잘렸다는 사실을 화면에 쓴다.
+const SESSION_LIST_LIMIT = 500;
+
 async function loadSessions() {
   await verifyAdmin();
-  state.sessions = await api("over39_sessions", "?select=*&order=updated_at.desc&limit=500");
+  const rows = await api("over39_sessions", `?select=*&order=updated_at.desc&limit=${SESSION_LIST_LIMIT}`, { withCount: true });
+  state.sessions = rows;
+  state.sessionsTotal = rows.total;
   state.status = "ready";
   render();
 }
@@ -102,9 +120,26 @@ async function loadDetail(responseId) {
   render();
 }
 
+// 허용목록에 없는 `redirect_to`는 GoTrue가 오류로 돌려주지 않는다. 조용히 Site URL로
+// 갈아치우고 메일은 정상 발송한다. 그러니 "보냈습니다"만 쓰면 연구자는 링크를 눌러
+// 엉뚱한 페이지가 열린 뒤에도 무엇이 잘못됐는지 알 수 없다. 돌아올 주소를 함께 적는다.
+function otpSentMessage(redirectTo) {
+  return `로그인 링크를 보냈습니다. 이메일을 확인해 주세요. 링크는 ${redirectTo} 로 돌아옵니다. 다른 주소가 열리면 Supabase의 Authentication → URL Configuration → Redirect URLs에 이 주소가 등록되지 않은 것입니다.`;
+}
+
+// 링크가 오지 않는 이유는 대개 이 화면 밖에 있다(메일 발송 한도, 이메일 제공자 미설정,
+// 회원가입 차단). 이유를 감추면 연구자가 혼자 원인을 찾을 수 없으므로 응답을 그대로 옮긴다.
+async function otpFailureMessage(response) {
+  const body = await response.json().catch(() => null);
+  const reason = body?.msg || body?.message || body?.error_description || body?.error || "";
+  const parts = [`HTTP ${response.status}`, body?.error_code, reason].filter(Boolean);
+  const hint = response.status === 429 ? " 메일 발송 한도에 걸렸습니다. 잠시 뒤에 다시 시도해 주세요." : "";
+  return `로그인 링크를 보내지 못했습니다 (${parts.join(" · ")}).${hint}`;
+}
+
 function renderLogin() {
   const configured = Boolean(supabaseUrl && anonKey);
-  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1><p>${configured ? "등록된 관리자 이메일로 일회용 로그인 링크를 받습니다." : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}</p>${configured ? `<label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" class="text-input text-input-single" placeholder="research@example.com" /><button class="primary-button" data-admin-action="login">로그인 링크 받기</button>` : ""}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
+  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1><p>${configured ? "등록된 관리자 이메일로 일회용 로그인 링크를 받습니다." : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}</p>${configured ? `<label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" class="text-input text-input-single" placeholder="research@example.com" /><button class="primary-button" data-admin-action="login">로그인 링크 받기</button><p class="ai-health-note" style="margin:12px 0 0;">이 주소가 Supabase의 Authentication → URL Configuration → Redirect URLs에 등록되어 있어야 링크가 이 화면으로 돌아옵니다: <code>${esc(adminRedirectUrl())}</code></p>` : ""}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
 function statusLabel(item) { return item.status === "completed" ? "완료" : item.status === "in_progress" ? "중단·진행 중" : item.status; }
@@ -332,9 +367,28 @@ function renderResearchInsights() {
   </section>`;
 }
 
+const koNum = (value) => Number(value).toLocaleString("ko-KR");
+
+// 목록은 최근 500건까지만 받는다. 왼쪽 표본 카운트도 그 500건에서 센 수다. 잘렸다는 말을
+// 쓰지 않으면 연구자가 "연구 500"을 전체로 읽는다 — 목표가 300~500명인 조사에서 그 오독은
+// 모집을 멈출지 이어갈지의 판단을 그대로 틀리게 만든다. 전체를 다 받는 대신 사실을 밝힌다.
+function sessionCapNotice() {
+  const shown = state.sessions.length;
+  const total = Number.isFinite(state.sessionsTotal) ? state.sessionsTotal : null;
+  // 전체 건수를 읽지 못했을 때(Content-Range 없음)는 상한에 정확히 닿았는지로 판단한다.
+  if (total === null) {
+    if (shown < SESSION_LIST_LIMIT) return "";
+    return `<p class="ai-health-note" role="status" style="margin:8px 0 0;">목록 상한 ${koNum(SESSION_LIST_LIMIT)}건에 닿았습니다. 더 오래된 응답은 이 목록과 위 표본 카운트에 빠져 있을 수 있습니다. 내보내기는 상한 없이 전부 받습니다.</p>`;
+  }
+  if (total <= shown) return "";
+  return `<p class="ai-health-note" role="status" style="margin:8px 0 0;">전체 ${koNum(total)}건 가운데 최근 ${koNum(shown)}건만 표시하고 있습니다. 위 표본 카운트도 이 ${koNum(shown)}건에서 센 수이므로 전체 표본 크기가 아닙니다. 내보내기와 연구 지표는 이 상한을 쓰지 않습니다.</p>`;
+}
+
 function renderDashboard() {
   const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${totals.all}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div><button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">비식별 JSON</button><button class="secondary-button" data-admin-action="export-csv">비식별 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : renderDetail()}</section></main></div>`;
+  // 큐 머리의 숫자 하나가 가장 많이 읽힌다. 잘렸을 때는 그 자리에서 "500 / 전체"로 보여준다.
+  const queueCount = Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? `${koNum(totals.all)} / ${koNum(state.sessionsTotal)}` : koNum(totals.all);
+  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">비식별 JSON</button><button class="secondary-button" data-admin-action="export-csv">비식별 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : renderDetail()}</section></main></div>`;
 }
 
 function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
@@ -442,8 +496,17 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.adminAction === "login") {
     const email = document.querySelector("#admin-email")?.value.trim();
     if (!email) return;
-    const response = await fetch(`${supabaseUrl}/auth/v1/otp`, { method: "POST", headers: { apikey: anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email, options: { emailRedirectTo: location.href.split("#")[0] } }) });
-    state.error = response.ok ? "로그인 링크를 보냈습니다. 이메일을 확인해 주세요." : "로그인 링크를 보내지 못했습니다.";
+    const redirectTo = adminRedirectUrl();
+    // GoTrue의 원시 REST는 본문의 `options.emailRedirectTo`를 읽지 않는다. 서버가 디코딩하는
+    // `OtpParams`에는 `options`도 `emailRedirectTo`도 없고, Go는 모르는 필드를 조용히 버린다.
+    // 돌아갈 주소는 `utilities.GetReferrer()`가 쿼리스트링 `redirect_to` → `Referer` 헤더 →
+    // 프로젝트 Site URL 순으로 정한다. supabase-js의 `emailRedirectTo`는 클라이언트가
+    // `?redirect_to=`로 옮겨 붙이는 이름일 뿐이다(`_request`가 `qs['redirect_to']`로 넣는다).
+    // 그래서 본문에 넣는 동안 매직링크는 이 화면이 아니라 Referer(교차 출처에서는 출처만
+    // 전송되므로 사이트 첫 화면)나 Site URL로 떨어졌다. 그 페이지에는 `captureAuthCallback()`이
+    // 없어 프래그먼트의 access_token이 그대로 버려졌다 — 링크를 눌러도 로그인이 끝나지 않았다.
+    const response = await fetch(`${supabaseUrl}/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`, { method: "POST", headers: { apikey: anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+    state.error = response.ok ? otpSentMessage(redirectTo) : await otpFailureMessage(response);
     render();
     return;
   }

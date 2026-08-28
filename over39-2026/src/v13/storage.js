@@ -8,16 +8,20 @@ export function readOutbox(storage = localStorage) {
   return parse(storage.getItem(OUTBOX_KEY) || "[]", []);
 }
 
+// 저장소는 언제든 막힐 수 있다(사파리 사생활 보호, 용량 초과). 이 두 함수는 전송 실패
+// 경로 안에서 불리므로, 여기서 던지면 `sendEnvelope`가 reject하고 호출부의 화면이
+// 멈춘다 — 저장에 실패한 참여자가 실패 화면조차 못 보는 상태가 된다. 큐에 못 넣는 것은
+// 이미 나쁜 일이지만, 그 때문에 화면까지 잃을 이유는 없다.
 export function enqueueOutbox(envelope, storage = localStorage) {
   const outbox = readOutbox(storage).filter((item) => item.idempotency_key !== envelope.idempotency_key);
   outbox.push({ ...envelope, queued_at: new Date().toISOString(), attempts: Number(envelope.attempts || 0) });
-  storage.setItem(OUTBOX_KEY, JSON.stringify(outbox));
+  try { storage.setItem(OUTBOX_KEY, JSON.stringify(outbox)); } catch { /* 저장소가 막혔다. 큐는 이 세션에만 남는다. */ }
   return outbox;
 }
 
 export function removeFromOutbox(idempotencyKey, storage = localStorage) {
   const outbox = readOutbox(storage).filter((item) => item.idempotency_key !== idempotencyKey);
-  storage.setItem(OUTBOX_KEY, JSON.stringify(outbox));
+  try { storage.setItem(OUTBOX_KEY, JSON.stringify(outbox)); } catch { /* 위와 같다. */ }
   return outbox;
 }
 
