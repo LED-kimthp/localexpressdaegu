@@ -318,3 +318,21 @@ export function localizeQuestion(language, item) {
   }
   return deepTranslate(key, result);
 }
+
+// v0.4.8: 간체 잔여 보정. 위 `simplifyChinese` 표에 없는 번체 글자가 `questions`
+// 계열에 남아 있어, 간체를 고른 참여자에게 P01·P08·P09·P10·M01·P05·P01_CONTEXT 의
+// 문항과 선택지가 「什麼」「告訴我們」「年齡層」처럼 번체 섞인 채로 보였다. 모두
+// 1:1 대응이라 기존 표는 건드리지 않고 뒤에서 한 번 더 훑는다.
+const zhHansResidualPairs = [
+  ["談", "谈"], ["對", "对"], ["為", "为"], ["眾", "众"], ["齡", "龄"], ["層", "层"],
+  ["訴", "诉"], ["們", "们"], ["觸", "触"], ["麼", "么"], ["織", "织"], ["踐", "践"],
+  ["庫", "库"], ["夥", "伙"],
+];
+const applyZhHansResidual = (value) => {
+  if (typeof value === "string") return zhHansResidualPairs.reduce((text, [from, to]) => text.replaceAll(from, to), value);
+  if (Array.isArray(value)) return value.map(applyZhHansResidual);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, applyZhHansResidual(item)]));
+  return value;
+};
+questions["zh-Hans"] = applyZhHansResidual(questions["zh-Hans"]);
+copy["zh-Hans"] = applyZhHansResidual(copy["zh-Hans"]);
