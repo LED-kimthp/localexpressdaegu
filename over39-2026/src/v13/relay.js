@@ -4,7 +4,11 @@ const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const relayQuery = new URLSearchParams(location.search);
 const token = relayQuery.get("t") || "";
-const interfaceLanguage = relayQuery.get("lang") || localStorage.getItem("over39-interface-language") || navigator.language || "ko";
+// 모듈 최상단이다. 쿠키를 막은 사파리에서는 접근만으로 던지고, 그러면 이 파일 전체가
+// 실행되지 않아 `#relay-root`가 빈 div로 남는다 — **안부 링크를 열면 완전한 흰 화면.**
+// 서버가 만드는 메일함 링크에는 `?lang=`이 붙지 않아 이 줄은 항상 실행된다.
+const storedRelayLanguage = () => { try { return localStorage.getItem("over39-interface-language"); } catch { return null; } };
+const interfaceLanguage = relayQuery.get("lang") || storedRelayLanguage() || navigator.language || "ko";
 const interfaceLanguageCode = String(interfaceLanguage || "").replace(/^zh(?:[-_])?cn$/i, "zh-Hans").replace(/^zh(?:[-_])?(tw|hk)$/i, "zh-Hant");
 const text = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 

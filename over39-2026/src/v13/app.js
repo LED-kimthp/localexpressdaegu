@@ -598,7 +598,11 @@ function ensureParticipantReference(responseId = state.responseId) {
   } catch { /* create a fresh local reference below */ }
   const reference = createParticipantReference();
   state.participantReference = reference;
-  localStorage.setItem(participantReferenceKey(responseId), JSON.stringify(reference));
+  // 이 함수는 최종 저장 클릭 핸들러의 앞줄에서 불린다. 저장소가 막혔을 때 여기서 던지면
+  // 핸들러가 그대로 끝나 **저장 버튼이 아무 반응 없이 죽는다** — 화면도 안 바뀌고
+  // 네트워크로도 안 나간다. 아래 `.catch()`는 그보다 뒤에 있어 닿지 못한다.
+  // 참여자 코드를 기기에 못 남기는 것보다 이야기를 못 보내는 것이 훨씬 나쁘다.
+  try { localStorage.setItem(participantReferenceKey(responseId), JSON.stringify(reference)); } catch { state.storageBlocked = true; }
   return reference;
 }
 function defaultConnection() {
@@ -2159,7 +2163,9 @@ function createResponse(submissionPhase = "final") {
       research_contact_storage: cleanedAnswers.public_archive_interest === "ASK_LATER" && state.researchContact?.consent === true,
       consent_version: schema.versioning.consent_version,
     },
-    outbox_count: readOutbox().length,
+    // `readOutbox()`는 기본 인자 `storage = localStorage` 평가만으로 던질 수 있다.
+    // 이 값은 진단용 숫자일 뿐인데, 그것 때문에 응답 전체를 못 만들면 안 된다.
+    outbox_count: (() => { try { return readOutbox().length; } catch { return null; } })(),
   };
 }
 
