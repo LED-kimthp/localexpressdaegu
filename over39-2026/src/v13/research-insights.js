@@ -414,21 +414,26 @@ function sampleOf(sessions, includeTest) {
   const research = rows.filter((row) => row.sample_type === RESEARCH_SAMPLE_TYPE);
   const test = rows.filter((row) => row.sample_type === "test");
   const institution = rows.filter((row) => row.sample_type === "institution_review");
-  const included = includeTest ? [...research, ...test] : research;
-  // ⚠️ 참여자가 「활용 범위」 01에서 `아니요, 연구 분석에는 포함하지 말아주세요.`를 골라도
-  // 아래 `ids`가 그 응답을 모든 분포표·교차표·좌표 집계에 통과시킨다. `policyStatistics`는
-  // 개수만 센다. 즉 참여자가 명확히 아니라고 한 것이 보고서의 표에 실린다.
+  // 참여자가 「활용 범위」 01에서 `아니요, 연구 분석에는 포함하지 말아주세요.`를 고르면
+  // 저장 시점에 `include_in_policy_statistics`가 false가 된다. 예전에는 그 값을 개수만
+  // 세고 거르지 않아, **참여자가 분명히 아니라고 한 응답이 모든 분포표·교차표·좌표
+  // 집계에 실렸다.** 동의를 받아놓고 지키지 않는 상태였다.
   //
-  // 한 줄로 고칠 수 없다: `include_in_policy_statistics`는 저장 시점에
-  // `sample_type === "research" && policy_research_use === "ANON_ANALYSIS"`로 계산되어
-  // **동의 여부와 표본 종류를 한 값에 섞어** 담는다. 테스트 표본은 동의와 무관하게 항상
-  // false이므로, 이 값으로 거르면 「테스트 포함」 토글이 통째로 죽는다.
-  // 제대로 하려면 `policy_research_use` 원값을 세션 행이나 별도 조회로 가져와야 한다.
-  // TK 판단 대기 항목이다.
+  // 이 값은 `sample_type === "research" && policy_research_use === "ANON_ANALYSIS"`로
+  // 계산되어 동의와 표본 종류를 한 값에 섞는다. 그래서 **연구 표본에만** 이 필터를 건다.
+  // 테스트 표본은 동의와 무관하게 언제나 false이므로 함께 거르면 「테스트 포함」 토글이
+  // 통째로 죽는다(예전에 그렇게 시도했다가 테스트가 잡아냈다). 연구 표본에만 걸면
+  // 동의도 지켜지고 토글도 산다.
+  const researchConsented = research.filter((row) => row.include_in_policy_statistics === true);
+  const included = includeTest ? [...researchConsented, ...test] : researchConsented;
   return {
     includeTest,
     counted: included.length,
     research: research.length,
+    researchConsented: researchConsented.length,
+    // 몇 명이 동의하지 않아 빠졌는지 화면에 밝힌다. 조용히 빠지면 연구자가 표본 크기를
+    // 잘못 읽는다.
+    researchExcludedByConsent: research.length - researchConsented.length,
     test: test.length,
     institutionReview: institution.length,
     completed: included.filter((row) => row.status === "completed").length,

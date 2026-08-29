@@ -285,10 +285,11 @@ function renderResearchInsights() {
       <div><dt>집계 대상</dt><dd>${sample.counted}건</dd></div>
       <div><dt>완료</dt><dd>${sample.completed}건</dd></div>
       <div><dt>정책 통계 동의</dt><dd>${sample.policyStatistics}건</dd></div>
+      <div><dt>제외 · 연구 분석 미동의</dt><dd>${sample.researchExcludedByConsent}건</dd></div>
       <div><dt>제외 · 기관 검토</dt><dd>${sample.institutionReview}건</dd></div>
       <div><dt>제외 · 테스트</dt><dd>${state.insightsIncludeTest ? "포함 중" : `${sample.test}건`}</dd></div>
     </dl>
-    <p class="ai-health-note">기관 검토 표본은 어떤 경우에도 연구 지표에 넣지 않습니다. 테스트 표본은 위 토글로만 섞입니다.</p>
+    <p class="ai-health-note">기관 검토 표본은 어떤 경우에도 연구 지표에 넣지 않습니다. 테스트 표본은 위 토글로만 섞입니다. <strong>「연구 분석에는 포함하지 말아주세요」를 고른 응답은 아래 모든 표에서 빠집니다</strong> — 원문은 그대로 보관되고 집계에서만 빠집니다.</p>
 
     ${(() => {
       // 이 연구가 가장 경계한 표현이 '경력 단절'이다. P14(제작 상태)와 P15(공개 활동 상태)를

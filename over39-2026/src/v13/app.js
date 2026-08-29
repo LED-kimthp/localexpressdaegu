@@ -523,6 +523,18 @@ const RC2_STAGES = [
 
 // 초안 저장이 던지면 `input` 핸들러가 그 뒤의 `다음` 버튼 갱신에 도달하지 못한다.
 // 글을 다 적었는데 버튼이 끝까지 꺼진 채이고 무엇이 막는지 화면에 없었다.
+// 저장소 쓰기는 언제든 실패한다(사파리 「모든 쿠키 차단」, 용량 초과, 사생활 보호 모드).
+// 실패가 화면을 멈추게 해서는 안 된다. 실제로 `saveFirstGreeting`이 **두 번째 화면**에서
+// 던져 「안부 읽고 시작하기」·「안부 없이 시작하기」가 둘 다 아무 반응 없는 버튼이 됐고,
+// 성공한 저장 뒤의 `clearDraft()`가 던져 **저장에 성공한 참여자에게 실패 화면**이 떴다.
+// 모든 쓰기를 이 두 함수로 지나가게 해서, 막히면 그 사실만 기록하고 흐름은 계속한다.
+function storageWrite(key, value) {
+  try { localStorage.setItem(key, value); return true; } catch { state.storageBlocked = true; return false; }
+}
+function storageRemove(key) {
+  try { localStorage.removeItem(key); return true; } catch { state.storageBlocked = true; return false; }
+}
+
 function saveDraft() {
   if (["survey", "greeting-choice", "greeting-first"].includes(state.phase)) {
     try {
@@ -550,22 +562,22 @@ function loadDraft() {
   try { return JSON.parse(localStorage.getItem(draftKey) || "null"); } catch { return null; }
 }
 
-function clearDraft() { localStorage.removeItem(draftKey); }
+function clearDraft() { storageRemove(draftKey); }
 // `savePending`은 최종 저장 버튼의 **첫 줄**에서 불린다. 여기서 던지면 클릭 핸들러가
 // 그대로 끝나 화면이 바뀌지도, 네트워크로 나가지도 않는다 — 참여자에게는 "눌러도
 // 아무 일이 없는 저장 버튼"이 된다. 저장소가 막혀도 전송은 계속 시도해야 한다.
 function savePending(response) { try { localStorage.setItem(pendingKey, JSON.stringify(response)); } catch { state.storageBlocked = true; } }
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
-function clearPending() { localStorage.removeItem(pendingKey); }
+function clearPending() { storageRemove(pendingKey); }
 function loadFirstGreeting(responseId = state.responseId) {
   if (!responseId) return null;
   try { return JSON.parse(localStorage.getItem(firstGreetingKey(responseId)) || "null"); } catch { return null; }
 }
 function saveFirstGreeting() {
-  if (state.responseId && state.firstGreeting) localStorage.setItem(firstGreetingKey(state.responseId), JSON.stringify(state.firstGreeting));
+  if (state.responseId && state.firstGreeting) storageWrite(firstGreetingKey(state.responseId), JSON.stringify(state.firstGreeting));
 }
 function clearFirstGreeting(responseId = state.responseId) {
-  if (responseId) localStorage.removeItem(firstGreetingKey(responseId));
+  if (responseId) storageRemove(firstGreetingKey(responseId));
 }
 function restoreLegacySynthesisConfirmation(answers = {}) {
   const approvedText = String(answers.participant_approved_text || "").trim();
@@ -631,7 +643,7 @@ function defaultConnection() {
 
 function loadConnection() { try { return JSON.parse(localStorage.getItem(connectionKey(state.responseId || state.submitted?.response_id)) || "null") || defaultConnection(); } catch { return defaultConnection(); } }
 function getConnection() { state.connection = state.connection || loadConnection(); return state.connection; }
-function saveConnection() { if (state.responseId || state.submitted?.response_id) localStorage.setItem(connectionKey(state.responseId || state.submitted?.response_id), JSON.stringify(getConnection())); }
+function saveConnection() { if (state.responseId || state.submitted?.response_id) storageWrite(connectionKey(state.responseId || state.submitted?.response_id), JSON.stringify(getConnection())); }
 
 function loadExhibitionApplication() {
   try {
@@ -643,7 +655,7 @@ function loadExhibitionApplication() {
 function getExhibitionApplication() { state.exhibition = state.exhibition || loadExhibitionApplication(); return state.exhibition; }
 function saveExhibitionApplication() {
   if (state.responseId || state.submitted?.response_id) {
-    localStorage.setItem(exhibitionKey(state.responseId || state.submitted?.response_id), JSON.stringify(getExhibitionApplication()));
+    storageWrite(exhibitionKey(state.responseId || state.submitted?.response_id), JSON.stringify(getExhibitionApplication()));
   }
 }
 
@@ -2685,7 +2697,7 @@ function getReferral() {
 
 function saveReferralDraft(referral) {
   const responseId = state.responseId || state.submitted?.response_id || "draft";
-  localStorage.setItem(referralKey(responseId), JSON.stringify(referral));
+  storageWrite(referralKey(responseId), JSON.stringify(referral));
 }
 
 function referralCanSave(referral = getReferral()) {
@@ -2905,7 +2917,7 @@ function renderSavePending() {
 
 function renderSaveFailed() {
   const local = stage1UiExtraCopy(state.language);
-  return `<main class="saving-layout"><section class="saving-card save-failed" role="alert"><h1>${esc(local.saveFailedTitle)}</h1><p>${esc(local.saveFailedLead)}</p><div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-survey">${esc(local.backToResponses)}</button><button class="primary-button" type="button" data-action="resend">${esc(local.retrySave)} <span aria-hidden="true">→</span></button></div></section></main>`;
+  return `<main class="saving-layout"><section class="saving-card save-failed" role="alert"><h1>${esc(local.saveFailedTitle)}</h1><p>${esc(state.storageBlocked && local.saveFailedNoStorage ? local.saveFailedNoStorage : local.saveFailedLead)}</p><div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-survey">${esc(local.backToResponses)}</button><button class="primary-button" type="button" data-action="resend">${esc(local.retrySave)} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function renderFirstGreeting() {
@@ -3121,7 +3133,7 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
-  if (target.dataset.lang) { state.language = target.dataset.lang; localStorage.setItem(interfaceLanguageKey, state.language); target.closest("details")?.removeAttribute("open"); saveDraft(); render(false); return; }
+  if (target.dataset.lang) { state.language = target.dataset.lang; storageWrite(interfaceLanguageKey, state.language); target.closest("details")?.removeAttribute("open"); saveDraft(); render(false); return; }
   if (target.dataset.axisField) {
     state.answers[target.dataset.axisField] = target.dataset.axisValue;
     delete state.answers.coordinate_snapshots;
@@ -3599,7 +3611,10 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "resend") {
-    const pending = loadPending();
+    // `loadPending()`은 저장소가 막히면 **항상** null이다. 그때 여기서 그냥 돌아가 버려,
+    // 저장에 실패한 참여자가 「저장 다시 확인」을 눌러도 화면조차 바뀌지 않았다 — 25분을
+    // 쓰고 남은 마지막 문이 잠겨 있었다. 메모리에 들고 있는 응답으로 대신 보낸다.
+    const pending = loadPending() || state.submitted;
     if (!pending || state.submissionStatus === "sending") return;
     state.submissionStatus = "sending";
     state.phase = "saving";
@@ -3618,6 +3633,12 @@ document.addEventListener("click", (event) => {
         await requestResearchContactStorage(state.submitted || pending);
         state.phase = "complete";
       } else state.phase = "save_failed";
+      render(true);
+    }).catch(() => {
+      // 최초 저장 경로에는 catch가 있는데 재시도 경로에는 없었다. 여기서 reject되면
+      // 「저장하고 있어요」 화면에 갇히는데, 그 화면에는 버튼이 하나도 없다.
+      state.submissionStatus = "failed";
+      state.phase = "save_failed";
       render(true);
     });
     return;
