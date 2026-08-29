@@ -601,7 +601,7 @@
       "required_if": "M01 != NO_RECALL",
       "text": "그 경험에서 지금도 떠오르는 장면은 무엇인가요?",
       "help": "이름이나 연도가 떠오르지 않아도 괜찮아요.",
-      "max_chars": 160,
+      "max_chars": 800,
       "store": [
         "memory_clue_text",
         "memory_clue_audio_ref"

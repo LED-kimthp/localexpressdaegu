@@ -1,7 +1,7 @@
 import { localizeQuestion, translate } from "./i18n.js?v=rc2-preproduction-20260813-landing-r2";
 import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js";
 import { buildConnectionProfile, connectionTopics } from "./connection.js";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute } from "./flow.js";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js";
 import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
 import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js";
 import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, translateResponseSummary } from "./depth.js";
@@ -1506,7 +1506,9 @@ function reconcileAnchorsAfterResearchEdit(questionId) {
   });
   if (result.removed.length) {
     beforeTurns.filter((turn) => result.removed.includes(turn.checkpoint || turn.anchor_id)).forEach((turn) => {
-      if (turn.answer_field) delete state.answers[turn.answer_field];
+      // 원답을 한 글자 고쳤다는 이유로 참여자가 후속질문에 쓴 답까지 지우고 있었다.
+      // 질문은 낡았어도 그 사람이 쓴 문장은 연구 자료다. 회수함으로 옮긴다.
+      if (turn.answer_field) withdrawAnswer(state.answers, turn.answer_field);
       if (turn.self_check_field) delete state.answers[turn.self_check_field];
     });
     if (result.turns.length) state.answers.adaptive_turns = result.turns; else delete state.answers.adaptive_turns;
@@ -2990,17 +2992,19 @@ function changeChoice(id, value, multi, max, exclusive) {
       if (value === "ANONYMOUS") delete state.answers.display_name;
       clearDocumentConfirmation();
     }
-    if (["P14", "P15"].includes(id) && !needsPauseContext(state.answers)) ["pause_context_tags", "pause_context_other", "pause_meaning", "pause_context_text"].forEach((key) => delete state.answers[key]);
-    if (id === "P02G") { delete state.answers.role_primary; delete state.answers.role_primary_other; delete state.answers.roles_parallel; delete state.answers.roles_parallel_other; }
-    if (id === "M01" && value === "NO_RECALL") ["memory_clue_text", "memory_branch_followup", "memory_meaning_text", "m_declared", "m_support_tags", "memory_time_band", "memory_year_optional", "memory_locations", "memory_experience_modes", "memory_experience_modes_other", "memory_relationship", "witness_role"].forEach((key) => delete state.answers[key]);
+    if (["P14", "P15"].includes(id) && !needsPauseContext(state.answers)) ["pause_context_tags", "pause_context_other", "pause_meaning", "pause_context_text"].forEach((key) => withdrawAnswer(state.answers, key));
+    if (id === "P02G") { delete state.answers.role_primary; withdrawAnswer(state.answers, "role_primary_other"); delete state.answers.roles_parallel; withdrawAnswer(state.answers, "roles_parallel_other"); }
+    // 여기서 그냥 지우면 참여자가 방금까지 쓰고 있던 장면과 이유가 한 번의 선택으로 사라진다.
+    // 경로에서 빼되 글은 회수함에 남겨 서버까지 보낸다.
+    if (id === "M01" && value === "NO_RECALL") ["memory_clue_text", "memory_branch_followup", "memory_meaning_text", "m_declared", "m_support_tags", "memory_time_band", "memory_year_optional", "memory_locations", "memory_experience_modes", "memory_experience_modes_other", "memory_relationship", "witness_role"].forEach((key) => withdrawAnswer(state.answers, key));
     if (id === "M01" && value !== "NO_RECALL") {
-      delete state.answers.no_recall_relation_text;
+      withdrawAnswer(state.answers, "no_recall_relation_text");
       clearAdaptiveAnchor("NO_RECALL_RELATION");
     }
-    if (id === "P11" && ["SKIP", "UNSURE"].includes(value)) delete state.answers.transition_text;
-    if (id === "P13" && !["YES", "MIXED"].includes(value)) delete state.answers.invisible_continuity_text;
-    if (id === "D02" && !/^D[1-4]$/.test(String(value))) delete state.answers.desired_change_text;
-    if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => delete state.answers[key]);
+    if (id === "P11" && ["SKIP", "UNSURE"].includes(value)) withdrawAnswer(state.answers, "transition_text");
+    if (id === "P13" && !["YES", "MIXED"].includes(value)) withdrawAnswer(state.answers, "invisible_continuity_text");
+    if (id === "D02" && !/^D[1-4]$/.test(String(value))) withdrawAnswer(state.answers, "desired_change_text");
+    if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => withdrawAnswer(state.answers, key));
     if (id === "reflection_action") {
       delete state.answers.participant_revision;
       clearDocumentConfirmation();

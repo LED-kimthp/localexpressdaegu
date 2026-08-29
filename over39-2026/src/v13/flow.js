@@ -68,9 +68,14 @@ const COMMUNITY_DEPENDENT_FIELDS = ["community_recall_mode", "community_recall_r
 const PARTICIPANT_CONTEXT_FIELDS = ["field", "field_other", "participation_mode", "participation_mode_other", "activity_form", "participation_unit", "participation_unit_other"];
 
 // The schema stores consent under dotted keys. Legacy flat keys are retained for old drafts.
+export const WITHDRAWN_KEY = "withdrawn_answers";
+
 const KEEP_ON_ROUTE_CHANGE = new Set([
   "consent.research_participation", "consent.ai_processing_ack",
   "research_consent", "data_processing_consent", "route", "display_name_mode", "display_name",
+  // 회수한 서술은 경로가 바뀌어도 끝까지 들고 간다. 여기 없으면 경로를 한 번 바꾸는 것만으로
+  // 앞서 지켜 둔 글이 도로 사라진다.
+  WITHDRAWN_KEY,
   ...PARTICIPANT_CONTEXT_FIELDS,
 ]);
 
@@ -100,11 +105,38 @@ export function normalizedDScope(answers = {}) {
   return answers.d_scope || "";
 }
 
+// 참여자가 타이핑한 글을 활성 답변에서 빼야 할 때가 있다. 분기 답을 바꾸면 앞서 쓴 서술이
+// 그 경로에 속하지 않게 되고, 그대로 두면 경로와 답이 어긋난 채 저장된다.
+//
+// 그렇다고 **글 자체를 없애면 안 된다.** 참여자는 자기가 쓴 문장을 잃고, 그 문장은 서버에
+// 닿지도 못한다 — 이 프로젝트가 정의한 가장 나쁜 결과다. 그래서 활성 답변에서는 빼되
+// `withdrawn_answers`로 옮겨 스냅샷과 함께 서버에 닿게 한다. 집계·좌표에는 쓰이지 않고,
+// 연구자가 원문을 읽을 때만 보인다.
+//
+// 선택지 코드(`NO_RECALL`, `D1` 같은 것)는 보관하지 않는다. 공백이 없고 짧다는 점으로
+// 가려낸다 — 한국어 서술에는 공백이 있고, 없더라도 40자를 넘지 않는 코드는 없다.
+
+function looksLikeWriting(value) {
+  return typeof value === "string" && Boolean(value.trim()) && (/\s/.test(value) || value.length > 40);
+}
+
+export function withdrawAnswer(target, field) {
+  const value = target?.[field];
+  if (looksLikeWriting(value)) {
+    target[WITHDRAWN_KEY] = { ...(target[WITHDRAWN_KEY] || {}), [field]: value };
+  }
+  delete target[field];
+  return target;
+}
+
 export function resetForRouteChange(answers, nextRoute) {
   const next = {};
+  const withdrawn = { ...(answers?.[WITHDRAWN_KEY] || {}) };
   for (const [key, value] of Object.entries(answers || {})) {
     if (KEEP_ON_ROUTE_CHANGE.has(key)) next[key] = value;
+    else if (looksLikeWriting(value)) withdrawn[key] = value;
   }
+  if (Object.keys(withdrawn).length) next[WITHDRAWN_KEY] = withdrawn;
   next.route = nextRoute;
   return next;
 }
@@ -118,12 +150,12 @@ export function clearDerivedAnswers(answers) {
 export function sanitizeAnswersForRoute(answers = {}) {
   const next = { ...answers };
   if (next.route !== "MEMORY") delete next.response_position;
-  if (!isProfessionalAnswers(next)) PROFESSIONAL_FIELDS.forEach((field) => delete next[field]);
-  if (next.community_module_opt_in !== "YES") COMMUNITY_DEPENDENT_FIELDS.forEach((field) => delete next[field]);
+  if (!isProfessionalAnswers(next)) PROFESSIONAL_FIELDS.forEach((field) => withdrawAnswer(next, field));
+  if (next.community_module_opt_in !== "YES") COMMUNITY_DEPENDENT_FIELDS.forEach((field) => withdrawAnswer(next, field));
   if (next.route !== "BOTH" && !(next.route === "MEMORY" && next.response_position === "PROFESSIONAL")) delete next.d_scope;
   if (next.display_name_mode === "ANONYMOUS") delete next.display_name;
-  if (next.memory_type === "NO_RECALL") MEMORY_DETAIL_FIELDS.forEach((field) => delete next[field]);
-  else delete next.no_recall_relation_text;
+  if (next.memory_type === "NO_RECALL") MEMORY_DETAIL_FIELDS.forEach((field) => withdrawAnswer(next, field));
+  else withdrawAnswer(next, "no_recall_relation_text");
   return next;
 }
 
