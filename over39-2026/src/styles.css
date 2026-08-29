@@ -6130,3 +6130,31 @@ select:focus-visible {
   .response-document-layer-body > p,
   .response-document-layer-body blockquote { margin-top: 6px !important; margin-bottom: 6px !important; }
 }
+
+/* 주변부 글씨를 본문에 가깝게 — 참여자는 만 39세 이상이고 20~30분 동안 읽고 씁니다.
+   라이브 실측: 질문 본문과 입력 칸은 17px/줄높이 1.75로 잘 읽히는데, **판단의 근거가 되는
+   글이 앱에서 가장 작았습니다.** 선택지 설명 13px(모바일 12.5px), 이동 버튼 라벨 13px,
+   랜딩 안내 도표 10.5px. 선택지 설명은 그것을 읽고 나서야 어느 항목인지 정하는 글이고,
+   이동 버튼은 서른 번 넘게 누르는 가장 중요한 조작 대상입니다.
+
+   대비도 함께 올립니다. 빈 체크 칸의 테두리가 1.95:1이라 "여기를 눌러야 다음이 열린다"를
+   흐린 빈 상자로 알아채야 했습니다(비텍스트 기준 3:1 미달). 자유서술 힌트는 3.64:1로
+   본문 기준 4.5:1에 못 미쳤습니다.
+
+   글자 크기만 올리고 구조·배치는 건드리지 않습니다. 모바일 375px에서 가로 스크롤이
+   없는 것과 터치 목표 44px 이상은 이미 확인된 상태이므로 그대로 둡니다. */
+.choice-copy small { font-size: 14.5px; }
+.primary-button,
+.secondary-button { font-size: 15px; }
+
+.choice > span {
+  width: 22px;
+  height: 22px;
+  border-color: #78766f;
+}
+
+.text-input::placeholder { color: #6e7069; }
+
+@media (max-width: 620px) {
+  .choice-copy small { font-size: 14px; }
+}
