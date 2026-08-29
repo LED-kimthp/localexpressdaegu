@@ -1622,11 +1622,17 @@ function renderAdaptiveCheckpoint(checkpoint) {
   const retry = turn.source !== "motif" && aiFunctionUrl
     ? `<button class="text-button adaptive-retry" type="button" data-action="retry-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("질문 다시 준비하기"))}</button>`
     : "";
+  // 동의 화면은 "답하기 어려운 질문은 건너뛸 수 있고"라고 약속한다. 고정 문항에는
+  // 「모르겠어요」 같은 선택지가 있지만 AI 후속질문에는 빠져나갈 문이 하나도 없었다 —
+  // 답을 쓰지 않으면 「다음」이 켜지지 않고 건너뛸 수도 없어서, 20분째에 답하고 싶지
+  // 않은 사람에게 남은 길은 창을 닫는 것뿐이었다. 그러면 그때까지 쓴 이야기가 서버에
+  // 닿지 못한다. 약속한 문을 실제로 만든다.
+  const skip = `<button class="text-button adaptive-skip" type="button" data-action="skip-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("이 질문은 건너뛸게요"))}</button>`;
   return `${screenHeading(stage().followingQuestion, ui().deepQuestionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
-    <p class="adaptive-turn-note">${esc(ui().deepQuestionNote)}</p>${retry}`;
+    <p class="adaptive-turn-note">${esc(ui().deepQuestionNote)}</p>${retry}${skip}`;
 }
 
 async function prepareAdaptiveSummary() {
@@ -1971,6 +1977,9 @@ function canContinue(id) {
     // 질문이 없는 화면에는 답할 것이 없다. 진행을 막으면 참여자가 대기 문구
     // 앞에서 갇히고, 그 지점은 기록을 저장하기 직전이다.
     if (!turn) return true;
+    // 한 번 건너뛴 질문으로 되돌아오면 답이 비어 있다. 그때 다시 막으면 참여자가
+    // 자기가 이미 지나온 화면에 갇힌다.
+    if (adaptiveStatus(adaptiveScreenCheckpoint[id]) === "skipped_by_participant") return true;
     return Boolean(state.answers[turn.answer_field]?.trim());
   }
   if (id === "D01") return Boolean(state.answers.d_current_gap);
@@ -3407,6 +3416,18 @@ document.addEventListener("click", (event) => {
     saveDraft();
     render(false);
     requestAdaptiveNext(checkpoint).then(() => render(false)).catch(() => { state.adaptiveGenerating = false; render(false); });
+    return;
+  }
+  if (target.dataset.action === "skip-adaptive") {
+    const checkpoint = String(target.dataset.checkpoint || "");
+    if (!checkpoint || state.adaptiveGenerating) return;
+    // 쓰다 만 문장이 있으면 지우지 않고 회수함으로 옮긴다.
+    const turn = currentAdaptiveTurn(checkpoint);
+    if (turn?.answer_field) withdrawAnswer(state.answers, turn.answer_field);
+    setAdaptiveStatus(checkpoint, "skipped_by_participant");
+    state.step += 1;
+    saveDraft();
+    render(true);
     return;
   }
   if (target.dataset.action === "next") {
