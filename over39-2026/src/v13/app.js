@@ -27,6 +27,9 @@ const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
 const depthBankUrl = "./src/v13/approved-depth-question-bank.json";
 const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
+// 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
+// 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
+const buildStamp = "c79b062267ca-dirty 2026-08-30T02:48:39.714Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -210,7 +213,10 @@ const CHOICE_COPY_KO = {
   P13: {
     YES: "보이지 않는 지속 — 밖에서 잘 보이지 않은 시기에도 이어온 일이 있었습니다.",
     MIXED: "이어짐과 멈춤 — 이어간 일과 멈춘 시기가 함께 있었습니다.",
-    NO: "떠오르기 어려움 — 그 시기에 이어온 일을 지금은 구체적으로 떠올리기 어렵습니다.",
+    NO: "떠오르기 어려움 — 밖에서 잘 보이지 않던 때에 이어온 일을 지금은 구체적으로 떠올리기 어렵습니다.",
+    // 계속 드러난 채로 이어온 사람에게는 「그 시기」가 없다. 이 선택지가 없으면 그분들이
+    // 자기 현실을 「기억이 안 난다」로 답해야 했다 — 연구가 피하려던 바로 그 일이다.
+    NO_SUCH_PERIOD: "계속 드러난 지속 — 활동이 대체로 밖으로 보이는 채 이어져 왔습니다.",
     UNSURE: "아직 정하기 어려움 — 지금은 그 이어짐을 한 가지 상태로 말하기 어렵습니다.",
   },
   P14: {
@@ -240,6 +246,9 @@ const CHOICE_COPY_KO = {
   },
   P16: {
     LIVELIHOOD: "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.",
+    // 이 연구의 이름값인 조건인데 옆 열넷과 달리 사람 문장이 없어, 행정 용어 한 덩어리로
+    // 떠 있었다.
+    AGE_ELIGIBILITY_END: "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.",
     CARE: "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.",
     HEALTH: "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.",
     COST: "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.",
@@ -552,6 +561,7 @@ function saveDraft() {
       feedback: state.feedback,
       firstGreeting: state.firstGreeting || null,
       researchContact: state.researchContact || null,
+      sessionStartedAt: state.sessionStartedAt || null,
       savedAt: new Date().toISOString(),
     }));
     } catch { state.storageBlocked = true; }
@@ -1176,13 +1186,18 @@ function renderMemoryToPresent() {
 function renderTransition() {
   const p11 = question("P11");
   const p12 = question("P12");
+  // 「비슷한 흐름으로 이어졌어요」를 고른 사람에게 「그 전후로 달라진 것」을 물으면
+  // 가리키는 앞뒤가 없다. 칸은 그대로 열어 둔다 — 이어짐 안에서의 작은 변화도 자료다.
+  const transitionDetailLabel = (value, contextCopy, question12) => (value === "CONTINUED"
+    ? "큰 전환 없이 이어졌더라도, 그 사이 조금 달라진 것이 있었다면 들려주세요."
+    : contextCopy.p12 || question12.text);
   const title = isProfessionalContext() ? p11.text_professional : p11.text_audience;
   const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.transition_state;
   const showText = stateValue && !["SKIP", "UNSURE"].includes(stateValue);
   return `${screenHeading(title, "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록합니다.")}
     ${renderChoices("P11", p11.options)}
-    ${showText ? `<div class="transition-detail-field">${renderText("P12", { field: "transition_text", value: state.answers.transition_text || "", placeholder: ui().transitionPlaceholder, label: copy.p12 || p12.text })}</div>` : ""}`;
+    ${showText ? `<div class="transition-detail-field">${renderText("P12", { field: "transition_text", value: state.answers.transition_text || "", placeholder: ui().transitionPlaceholder, label: transitionDetailLabel(stateValue, copy, p12) })}</div>` : ""}`;
 }
 
 function renderContinuity() {
@@ -2059,6 +2074,11 @@ function createResponse(submissionPhase = "final") {
     grid_version: schema.versioning.grid_version,
     consent_version: schema.versioning.consent_version,
     classification_version: isRc2 ? "m-s-d-participant-review-v0.4.5" : "m-s-d-coordinate-rc1",
+    // 이 둘은 응답을 받고 나면 만들 수 없다. 시작 시각은 서버 첫 기록(34화면 중 15번째쯤)이
+    // 아니라 참여자가 실제로 시작을 누른 순간이고, 빌드 도장은 어느 코드가 이 응답을
+    // 만들었는지를 남긴다 — 문항이 그대로여도 동작이 바뀐 배포를 구분할 방법이 이것뿐이다.
+    session_started_at: state.sessionStartedAt || null,
+    client_build: buildStamp,
     submission_phase: submissionPhase,
     submitted_at: new Date().toISOString(),
     source_language: sourceLanguage,
@@ -2850,7 +2870,7 @@ function renderNotice() {
     ? "원문과 참여자가 확인한 설명을 연구 기록으로 보존해요."
     : "응답은 현재 이 기기에 보관해요.";
   if (isRc2) {
-    return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">${esc(t("참여 안내"))}</div><h1 tabindex="-1">${esc(t("기억·현재·조건의 세 구간으로 이어집니다."))}</h1><div class="notice-list"><div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("오래 남아 있는 사람, 작품, 공간과 장면"))}</p></div><div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div><div><span>03</span><strong>${esc(t("조건"))}</strong><p>${esc(t("앞으로 이어가기 위한 시간, 공간, 관계와 제도"))}</p></div></div><p class="notice-assurance">${esc(t("일부 답변 뒤에는 앞선 응답을 조금 더 구체화하는 연결 질문이 나타납니다. 마지막 참여 기록은 직접 읽고 다듬습니다."))}</p></section><aside class="notice-side"><div class="panel-title">RESEARCH</div><p class="notice-assurance">${esc(t("정책연구 활용 범위는 마지막에 정합니다. 전시 공모와 안부·연락은 별도의 선택으로 이어집니다."))}</p><p class="notice-assurance">${esc(t("문의"))} · <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p><button class="primary-button wide-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button></aside></main>`;
+    return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">${esc(t("참여 안내"))}</div><h1 tabindex="-1">${esc(t("기억·현재·조건의 세 구간으로 이어집니다."))}</h1><div class="notice-list"><div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("오래 남아 있는 사람, 작품, 공간과 장면"))}</p></div><div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div><div><span>03</span><strong>${esc(t("조건"))}</strong><p>${esc(t("앞으로 이어가기 위한 시간, 공간, 관계와 제도"))}</p></div></div><p class="notice-assurance">${esc(t("일부 답변 뒤에는 앞선 응답을 조금 더 구체화하는 연결 질문이 나타납니다. 마지막 참여 기록은 직접 읽고 다듬습니다."))}</p></section><aside class="notice-side"><div class="panel-title">RESEARCH</div><p class="notice-assurance">${esc(t("정책연구 활용 범위는 마지막에 정합니다. 전시 공모와 안부·연락은 별도의 선택으로 이어집니다."))}</p><p class="notice-assurance">${esc(t("참여를 시작한 시각과 저장을 마친 시각, 그때 사용한 설문 앱의 버전이 응답과 함께 기록됩니다."))}</p><p class="notice-assurance">${esc(t("문의"))} · <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p><button class="primary-button wide-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button></aside></main>`;
   }
   return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">응답 전 안내</div><h1 tabindex="-1">기억과 현재의 경험을 차례로 들어요.</h1><p>남아 있는 장면과 지금의 조건을 기록합니다.</p></section><aside class="notice-side"><div class="panel-title">RESEARCH NOTICE</div><p class="notice-assurance">${esc(deliveryNotice)}</p><button class="primary-button wide-button" type="button" data-action="start">시작하기 <span aria-hidden="true">→</span></button></aside></main>`;
 }
@@ -3171,7 +3191,7 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.action === "open-call") { window.open(openCallUrl(), "_blank", "noopener,noreferrer"); return; }
   if (target.dataset.action === "notice") { state.phase = "notice"; render(true); return; }
-  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; saveDraft(); render(true); return; }
+  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, sessionStartedAt: new Date().toISOString(), language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; saveDraft(); render(true); return; }
   if (target.dataset.action === "resume") {
     const draft = loadDraft();
     if (draft) {
@@ -3183,7 +3203,7 @@ document.addEventListener("click", (event) => {
       const responseId = draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`;
       const firstGreeting = draft.firstGreeting || loadFirstGreeting(responseId);
       const resumedPhase = ["greeting-choice", "greeting-first"].includes(draft.phase) ? draft.phase : "survey";
-      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
+      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, sessionStartedAt: draft.sessionStartedAt || null, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
     }
     render(true);
     if (state.phase === "greeting-first" && state.firstGreeting?.status === "loading") beginFirstGreeting();
