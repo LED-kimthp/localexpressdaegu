@@ -23,6 +23,11 @@ window.OVER39_SUPABASE_OPEN_CALL_URL = "https://alluyuuliogbkvrwagrl.supabase.co
 // 운영 일정·보유기간·지원 조건 확정 전에는 실제 접수를 열지 않습니다.
 window.OVER39_OPEN_CALL_SUBMISSIONS_ENABLED = false;
 window.OVER39_GLOBAL_GREETINGS_ENABLED = true;
+// 「추천 안내」는 참여자가 동료의 이메일을 남기면 저장은 되지만, 이 저장소에 발송 코드가
+// 없어 안내가 실제로 가지 않는다. 남의 개인정보를 받아두고 지킬 수 없는 약속이므로
+// 발송 경로가 생길 때까지 화면에서 닫아 둔다. 열여섯 분은 이미 초대받은 분들이라
+// 이번 회차에 잃는 것도 없다.
+window.OVER39_REFERRAL_ENABLED = false;
 
 // 이 회차의 기본 표본. 참여자가 받는 주소에 쿼리를 붙이지 않으려고 빌드가 정합니다.
 // 기준 소스는 안전한 값으로 두고, 승인된 배포에서만 research가 됩니다.

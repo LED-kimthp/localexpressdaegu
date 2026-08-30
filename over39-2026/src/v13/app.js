@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c79b062267ca-dirty 2026-08-30T02:48:39.714Z";
+const buildStamp = "cec2de6d1480-dirty 2026-08-30T02:55:24.607Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -43,6 +43,7 @@ const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
 const relayFunctionUrl = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
+const referralEnabled = window.OVER39_REFERRAL_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
 const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
@@ -983,6 +984,7 @@ function renderConsent() {
       <section class="consent-choice-block">
         <h3>${esc(t("AI 사용"))}</h3>
         ${renderChoices("RC02", [["YES", local.consentAi]])}
+        <p class="ai-use-note" role="note">${esc(t("후속 질문과 참여 기록 초안을 만드는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다."))}</p>
       </section>`;
   }
   return `${screenHeading("이 조사의 목적과 참여 방식을 확인해 주세요.", "기억은 사라진 이름과 장면을 다시 불러오는 시작입니다.")}
@@ -2704,7 +2706,7 @@ function renderRc2Complete(response) {
     : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p class="feature-closed-status" role="status">${esc(task7Local.gateOff)}</p>`;
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section><section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section><div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
@@ -2870,7 +2872,7 @@ function renderNotice() {
     ? "원문과 참여자가 확인한 설명을 연구 기록으로 보존해요."
     : "응답은 현재 이 기기에 보관해요.";
   if (isRc2) {
-    return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">${esc(t("참여 안내"))}</div><h1 tabindex="-1">${esc(t("기억·현재·조건의 세 구간으로 이어집니다."))}</h1><div class="notice-list"><div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("오래 남아 있는 사람, 작품, 공간과 장면"))}</p></div><div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div><div><span>03</span><strong>${esc(t("조건"))}</strong><p>${esc(t("앞으로 이어가기 위한 시간, 공간, 관계와 제도"))}</p></div></div><p class="notice-assurance">${esc(t("일부 답변 뒤에는 앞선 응답을 조금 더 구체화하는 연결 질문이 나타납니다. 마지막 참여 기록은 직접 읽고 다듬습니다."))}</p></section><aside class="notice-side"><div class="panel-title">RESEARCH</div><p class="notice-assurance">${esc(t("정책연구 활용 범위는 마지막에 정합니다. 전시 공모와 안부·연락은 별도의 선택으로 이어집니다."))}</p><p class="notice-assurance">${esc(t("참여를 시작한 시각과 저장을 마친 시각, 그때 사용한 설문 앱의 버전이 응답과 함께 기록됩니다."))}</p><p class="notice-assurance">${esc(t("문의"))} · <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p><button class="primary-button wide-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button></aside></main>`;
+    return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">${esc(t("참여 안내"))}</div><h1 tabindex="-1">${esc(t("기억·현재·조건의 세 구간으로 이어집니다."))}</h1><div class="notice-list"><div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("오래 남아 있는 사람, 작품, 공간과 장면"))}</p></div><div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div><div><span>03</span><strong>${esc(t("조건"))}</strong><p>${esc(t("앞으로 이어가기 위한 시간, 공간, 관계와 제도"))}</p></div></div><p class="notice-assurance">${esc(t("일부 답변 뒤에는 앞선 응답을 조금 더 구체화하는 연결 질문이 나타납니다. 마지막 참여 기록은 직접 읽고 다듬습니다."))}</p></section><aside class="notice-side"><div class="panel-title">RESEARCH</div><p class="notice-assurance">${esc(t("정책연구 활용 범위는 마지막에 정합니다. 전시 공모와 안부·연락은 별도의 선택으로 이어집니다."))}</p><p class="notice-assurance">${esc(t("설문 중간의 두 지점에서도 그때까지의 응답이 저장됩니다. 도중에 멈추셔도 그 지점까지의 이야기는 남습니다."))}</p><p class="notice-assurance">${esc(t("참여를 시작한 시각과 저장을 마친 시각, 그때 사용한 설문 앱의 버전이 응답과 함께 기록됩니다."))}</p><p class="notice-assurance">${esc(t("문의"))} · <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p><button class="primary-button wide-button" type="button" data-action="start">${esc(t("설문 시작하기"))} <span aria-hidden="true">→</span></button></aside></main>`;
   }
   return `<main class="notice-layout"><section class="notice-main"><div class="archive-label">응답 전 안내</div><h1 tabindex="-1">기억과 현재의 경험을 차례로 들어요.</h1><p>남아 있는 장면과 지금의 조건을 기록합니다.</p></section><aside class="notice-side"><div class="panel-title">RESEARCH NOTICE</div><p class="notice-assurance">${esc(deliveryNotice)}</p><button class="primary-button wide-button" type="button" data-action="start">시작하기 <span aria-hidden="true">→</span></button></aside></main>`;
 }
