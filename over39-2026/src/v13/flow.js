@@ -163,6 +163,16 @@ export function hasSubstantiveTransition(answers = {}) {
   return ["CLEAR", "GRADUAL", "MULTIPLE"].includes(answers.transition_state);
 }
 
+// 「밖에서 잘 보이지 않는 동안에도 무엇이 이어졌는가」(P13)는 이 연구의 핵심 가설을 직접
+// 묻는 문항이다. 그런데 예전에는 **현재** 쉼·전환 신호를 낸 사람에게만 열렸다. 그래서
+// 지금은 안정적으로 활동하지만 과거에 비가시적 지속기를 겪은 사람은 이 질문을 아예 보지
+// 못했고, 분석에서 그 사람의 빈칸이 "없었다"인지 "묻지 않았다"인지 구분되지 않았다.
+// 전문 활동 경로에서는 상태질문을 항상 한 번 보여주고, 서술은 예전처럼 YES/MIXED에서만
+// 연다. 부담은 선택지 하나만큼 늘고, 미측정과 부정이 갈린다.
+export function showsContinuityQuestion(answers = {}) {
+  return needsContinuityQuestion(answers) || isProfessionalAnswers(answers);
+}
+
 export function needsContinuityQuestion(answers = {}) {
   const presentShift = needsPauseContext(answers);
   return presentShift || hasSubstantiveTransition(answers);
@@ -188,7 +198,7 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
   if (adaptive) {
     ids.push("P14", "P15", "P16", "P11");
     if (hasSubstantiveTransition(answers)) ids.push("P12");
-    if (needsContinuityQuestion(answers)) {
+    if (showsContinuityQuestion(answers)) {
       ids.push("P13");
       if (["YES", "MIXED"].includes(answers.invisible_continuity_state)) ids.push("P13_TEXT");
     }
@@ -236,11 +246,21 @@ function buildAdaptiveScreens(answers = {}) {
     screens.push("M05", "MEMORY_TIME", "MEMORY_EVIDENCE");
   }
   screens.push("MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION");
-  if (hasSubstantiveTransition(answers) && !isLowInformationText(anchorSourceText(answers, "P12"))) screens.push("AI_ANCHOR_P12");
-  if (needsContinuityQuestion(answers)) {
-    screens.push("CONTINUITY");
-    if (["YES", "MIXED"].includes(answers.invisible_continuity_state) && !isLowInformationText(anchorSourceText(answers, "P13_TEXT"))) screens.push("AI_ANCHOR_P13_TEXT");
-  }
+  // S축 심화는 한 사람당 한 번뿐인데, 예전에는 P12 화면이 먼저 나와 그 한 번을 늘 가져갔다.
+  // P13을 여는 조건(뚜렷한 전환)이 P12를 여는 조건과 **같기 때문에**, 전환을 겪은 사람은
+  // 예외 없이 P13 심화를 잃었다 — 합성 파일럿 5명 전원이 `axis_ai_cap_reached`였다.
+  // 이 연구가 가장 알고 싶어 하는 사람들이 정확히 그들이다.
+  // 그래서 P12의 되물음을 P13 뒤로 미루고, 둘 다 받은 뒤 한 번을 어디에 쓸지 정한다.
+  // 질문 총량도 축당 상한도 그대로다. 우선권은 P13에 둔다 — 전환의 내용은 P11 선택지로도
+  // 남지만, 「보이지 않는 동안 무엇이 이어졌는가」는 그 서술 말고는 남는 곳이 없다.
+  if (showsContinuityQuestion(answers)) screens.push("CONTINUITY");
+  const continuityFollowUp = showsContinuityQuestion(answers)
+    && ["YES", "MIXED"].includes(answers.invisible_continuity_state)
+    && !isLowInformationText(anchorSourceText(answers, "P13_TEXT"));
+  const transitionFollowUp = hasSubstantiveTransition(answers)
+    && !isLowInformationText(anchorSourceText(answers, "P12"));
+  if (continuityFollowUp) screens.push("AI_ANCHOR_P13_TEXT");
+  else if (transitionFollowUp) screens.push("AI_ANCHOR_P12");
   screens.push("SUPPORT_CONDITIONS", "D01", "D02");
   if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
   screens.push("D03", "D04", "R01");
