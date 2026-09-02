@@ -8,7 +8,7 @@ const copy = {
     introTitleLead: "한 사람의 안부에서 시작해,",
     introTitleMain: "당신의 이야기를 들려주세요.",
     introLead: "문화예술과 함께해온 당신의 시간을 천천히 들려주세요.",
-    introGreeting: "이곳을 지나간 사람이 남긴 안부가 먼저 도착합니다. 답장하지 않아도 괜찮습니다. 천천히 읽은 뒤, 기억에 남은 장면에서 당신의 이야기를 시작합니다.",
+    introGreeting: "이곳을 지나간 사람이 남긴 안부가 준비되어 있으면 먼저 도착합니다. 아직 없을 때는 프로젝트가 준비한 첫 안부로 시작합니다. 답장하지 않아도 괜찮습니다. 천천히 읽은 뒤, 기억에 남은 장면에서 당신의 이야기를 시작합니다.",
     introAudience: "전문 예술가가 아니어도 괜찮습니다. 만들고, 기획하고, 가르치고, 배우고, 생활 속에서 참여하거나 관객으로 함께해온 경험까지 듣습니다.",
     introRecord: "질문은 서른 개 남짓이고, 중간에 두어 번은 당신이 쓴 문장에서 이어지는 질문이 옵니다. 스무 해, 서른 해의 시간을 몇 개의 항목으로 줄이지 않기 위해서입니다. 남긴 이야기는 참여 기록으로 정리해 직접 읽고 다듬을 수 있고, 모인 기록은 문화예술 정책을 이야기하는 자리로 이어집니다.",
     introAi: "이야기를 남기시는 동안, AI가 필요한 경우 두세 번까지 질문을 더 건넬 수 있습니다. 참여 기록의 초안은 AI가 정리하고, 당신이 직접 읽어보며 문장을 다듬을 수 있습니다.",
@@ -45,6 +45,9 @@ const copy = {
     continuationHelp: "안부를 읽은 것만으로도 오늘의 참여를 마칠 수 있어요.",
     outgoingSaved: "다음 사람을 위한 안부를 맡겼습니다.",
     outgoingSavedHelp: "남긴 문장은 아직 만나지 않은 다음 참여자에게 한 번만 전해집니다.",
+    outgoingPending: "안부를 아직 맡기지 못했습니다.",
+    outgoingPendingHelp: "쓰신 문장은 이 기기에 보관되어 있어요. 연결이 회복되거나 이 페이지를 다시 열면 자동으로 다시 전해집니다.",
+    outgoingPendingHelpNoStorage: "이 브라우저는 저장이 막혀 있어, 이 화면을 닫기 전에 연결이 회복되어야 문장이 전해집니다.",
   },
   en: {
     projectMeta: "Research · participation record · greeting",
@@ -52,7 +55,7 @@ const copy = {
     introTitleLead: "Begin with one person’s greeting,",
     introTitleMain: "then tell us your story.",
     introLead: "Tell us, at an unhurried pace, about your time with arts and culture.",
-    introGreeting: "A greeting left by someone who passed through here arrives first. You do not have to reply to it. Read it slowly, then begin your own story from a scene you remember.",
+    introGreeting: "If a greeting left by someone who passed through here is waiting, it arrives first. When none is waiting yet, you begin with the first greeting prepared by the project. You do not have to reply to it. Read it slowly, then begin your own story from a scene you remember.",
     introAudience: "You do not need to be a professional artist. We listen to experiences of making, planning, teaching, learning, taking part in everyday life, and sharing as an audience member.",
     introRecord: "There are about thirty questions, and once or twice along the way a question will follow from a sentence you have written. This is so that twenty or thirty years are not reduced to a handful of checkboxes. What you leave is gathered into a participation record you can read and revise yourself, and together those records carry into conversations about arts and cultural policy.",
     introAi: "While you are leaving your story, AI may ask one or two further questions where they are needed. AI drafts the participation record, and you read it yourself and adjust the wording.",
@@ -84,6 +87,9 @@ const copy = {
     continuationHelp: "Reading the greeting is enough to complete your participation today.",
     outgoingSaved: "Your greeting has been entrusted to the next person.",
     outgoingSavedHelp: "Your words will be delivered once to a future participant you have not met.",
+    outgoingPending: "The greeting has not been entrusted yet.",
+    outgoingPendingHelp: "Your sentence is kept on this device. It is sent again automatically when the connection returns or when you open this page again.",
+    outgoingPendingHelpNoStorage: "This browser blocks storage, so the sentence can only be sent if the connection returns before you close this screen.",
   },
   ja: {
     projectMeta: "リサーチ · 参加記録 · あいさつ",
@@ -110,6 +116,9 @@ const copy = {
     unavailableTitle: "あいさつを読み込めませんでした。", unavailableHelp: "接続が一時的に不安定でも、調査と参加記録はそのまま続けられます。", continueWithoutGreeting: "あなたの話を始める",
     continuationTitle: "このあいさつを読んで、どのようにつなげますか？", continuationPrimary: "次の人へあいさつを残す", continuationSecondary: "ここで終える", continuationHelp: "あいさつを読んだだけで、今日の参加を終えても大丈夫です。",
     outgoingSaved: "次の人へのあいさつを預けました。", outgoingSavedHelp: "残した言葉は、まだ会っていない次の参加者へ一度だけ届きます。",
+    outgoingPending: "便りはまだ託せていません。",
+    outgoingPendingHelp: "書かれた文章はこの端末に保管されています。接続が戻るか、このページを再び開くと自動で送り直されます。",
+    outgoingPendingHelpNoStorage: "このブラウザは保存が制限されているため、この画面を閉じる前に接続が戻った場合のみ送ることができます。",
   },
   "zh-Hans": {
     projectMeta: "研究 · 参与记录 · 问候", introEyebrow: "与文化艺术相伴的时光，继续传递的问候", introTitleLead: "从一个人的问候开始，", introTitleMain: "请讲述你的故事。",
@@ -119,6 +128,9 @@ const copy = {
     greetingLoading: "正在送来先抵达的问候。", greetingLoadingHelp: "请稍候。研究问题会在你读完问候后开始。", receivedTitle: "一则问候抵达了。", receivedHelp: "这是先经过这里的一位参与者留下的句子。请慢慢读。", seedHelp: "这是项目为开启这段传递而准备的第一则问候。请慢慢读。", randomNote: "从已经在问候箱中等待的句子里，随机送来了一则。", seedNote: "项目准备的第一则问候", beginStory: "现在开始你的故事",
     waitingTitle: "目前还没有先抵达的问候。", waitingHelp: "我们不会编造问候。你可以先讲述自己的故事，在修改参与记录后，为下一位留下问候。", unavailableTitle: "暂时无法载入问候。", unavailableHelp: "即使问候连接暂时不顺畅，你仍可继续问卷与参与记录。", continueWithoutGreeting: "开始你的故事",
     continuationTitle: "读完这则问候后，你想怎样继续？", continuationPrimary: "给下一位留下问候", continuationSecondary: "在这里结束", continuationHelp: "只读完这则问候，也可以结束今天的参与。", outgoingSaved: "问候已托付给下一位。", outgoingSavedHelp: "你留下的句子只会传递一次，给一位尚未见面的未来参与者。",
+    outgoingPending: "问候尚未托付。",
+    outgoingPendingHelp: "您写的句子已保存在此设备上。网络恢复或再次打开此页面时会自动重新发送。",
+    outgoingPendingHelpNoStorage: "此浏览器已阻止存储，只有在关闭此屏幕之前网络恢复，句子才能送出。",
   },
   "zh-Hant": {
     projectMeta: "研究 · 參與記錄 · 問候", introEyebrow: "與文化藝術相伴的時光，繼續傳遞的問候", introTitleLead: "從一個人的問候開始，", introTitleMain: "請說說你的故事。",
@@ -128,6 +140,9 @@ const copy = {
     greetingLoading: "正在送來先抵達的問候。", greetingLoadingHelp: "請稍候。研究問題會在你讀完問候後開始。", receivedTitle: "一則問候抵達了。", receivedHelp: "這是先經過這裡的一位參與者留下的句子。請慢慢讀。", seedHelp: "這是專案為開啟這段傳遞而準備的第一則問候。請慢慢讀。", randomNote: "從已經在問候箱中等待的句子裡，隨機送來了一則。", seedNote: "專案準備的第一則問候", beginStory: "現在開始你的故事",
     waitingTitle: "目前還沒有先抵達的問候。", waitingHelp: "我們不會編造問候。你可以先說自己的故事，在修改參與記錄後，為下一位留下問候。", unavailableTitle: "暫時無法載入問候。", unavailableHelp: "即使問候連線暫時不順暢，你仍可繼續問卷與參與記錄。", continueWithoutGreeting: "開始你的故事",
     continuationTitle: "讀完這則問候後，你想怎樣繼續？", continuationPrimary: "給下一位留下問候", continuationSecondary: "在這裡結束", continuationHelp: "只讀完這則問候，也可以結束今天的參與。", outgoingSaved: "問候已託付給下一位。", outgoingSavedHelp: "你留下的句子只會傳遞一次，給一位尚未見面的未來參與者。",
+    outgoingPending: "問候尚未託付。",
+    outgoingPendingHelp: "您寫的句子已保存在此裝置上。網路恢復或再次開啟此頁面時會自動重新發送。",
+    outgoingPendingHelpNoStorage: "此瀏覽器已封鎖儲存，只有在關閉此畫面之前網路恢復，句子才能送出。",
   },
   fr: {
     projectMeta: "Recherche · récit de participation · salutation", introEyebrow: "Le temps vécu avec les arts et la culture, une salutation transmise", introTitleLead: "Commencez par la salutation d’une personne,", introTitleMain: "puis racontez-nous votre histoire.",
@@ -137,6 +152,9 @@ const copy = {
     greetingLoading: "Nous faisons venir la salutation arrivée en premier.", greetingLoadingHelp: "Un instant, s’il vous plaît. Les questions commencent après sa lecture.", receivedTitle: "Une salutation est arrivée.", receivedHelp: "Ces mots ont été laissés par une personne passée ici avant vous. Prenez le temps de les lire.", seedHelp: "Cette première salutation a été préparée par le projet pour lancer la chaîne. Prenez le temps de la lire.", randomNote: "Une des salutations déjà en attente dans la boîte a été transmise au hasard.", seedNote: "La première salutation préparée par le projet", beginStory: "Commencer maintenant votre histoire",
     waitingTitle: "Aucune salutation n’attend encore.", waitingHelp: "Nous ne fabriquons pas de fausse salutation. Vous pouvez commencer par votre histoire puis, après avoir affiné votre récit, laisser une salutation à la personne suivante.", unavailableTitle: "La salutation n’a pas pu être chargée.", unavailableHelp: "Même si la liaison est momentanément indisponible, vous pouvez poursuivre le questionnaire et votre récit.", continueWithoutGreeting: "Commencer votre histoire",
     continuationTitle: "Après avoir lu cette salutation, comment souhaitez-vous continuer ?", continuationPrimary: "Laisser une salutation à la personne suivante", continuationSecondary: "Terminer ici", continuationHelp: "Lire cette salutation suffit pour terminer votre participation aujourd’hui.", outgoingSaved: "Votre salutation a été confiée à la personne suivante.", outgoingSavedHelp: "Vos mots seront transmis une seule fois à une future personne que vous ne connaissez pas encore.",
+    outgoingPending: "Le message n’a pas encore été confié.",
+    outgoingPendingHelp: "Votre phrase est conservée sur cet appareil. Elle sera renvoyée automatiquement lorsque la connexion reviendra ou quand vous rouvrirez cette page.",
+    outgoingPendingHelpNoStorage: "Ce navigateur bloque le stockage : la phrase ne pourra partir que si la connexion revient avant la fermeture de cet écran.",
   },
   es: {
     projectMeta: "Investigación · registro de participación · saludo", introEyebrow: "El tiempo vivido con el arte y la cultura, un saludo que continúa", introTitleLead: "Empiece con el saludo de una persona,", introTitleMain: "y cuéntenos su historia.",
@@ -146,6 +164,9 @@ const copy = {
     greetingLoading: "Estamos trayendo el saludo que llegó primero.", greetingLoadingHelp: "Espere un momento. Las preguntas comienzan después de leerlo.", receivedTitle: "Ha llegado un saludo.", receivedHelp: "Estas palabras las dejó alguien que pasó por aquí antes. Léalas con calma.", seedHelp: "Este primer saludo fue preparado por el proyecto para iniciar la cadena. Léalas con calma.", randomNote: "Se entregó al azar uno de los saludos que ya esperaba en el buzón.", seedNote: "El primer saludo preparado por el proyecto", beginStory: "Ahora empiece su historia",
     waitingTitle: "Todavía no hay un saludo esperando.", waitingHelp: "No creamos saludos falsos. Puede empezar con su historia y, después de ajustar el registro, dejar un saludo para la siguiente persona.", unavailableTitle: "No pudimos cargar un saludo.", unavailableHelp: "Aunque la conexión esté temporalmente indisponible, puede continuar con la encuesta y el registro.", continueWithoutGreeting: "Empezar su historia",
     continuationTitle: "Después de leer este saludo, ¿cómo desea continuar?", continuationPrimary: "Dejar un saludo para la siguiente persona", continuationSecondary: "Terminar aquí", continuationHelp: "Leer el saludo es suficiente para terminar su participación de hoy.", outgoingSaved: "Su saludo quedó confiado a la siguiente persona.", outgoingSavedHelp: "Sus palabras se entregarán una sola vez a una futura persona que aún no conoce.",
+    outgoingPending: "El saludo aún no ha sido confiado.",
+    outgoingPendingHelp: "Su frase se guarda en este dispositivo. Se enviará de nuevo automáticamente cuando vuelva la conexión o cuando abra esta página otra vez.",
+    outgoingPendingHelpNoStorage: "Este navegador bloquea el almacenamiento: la frase solo podrá enviarse si la conexión vuelve antes de cerrar esta pantalla.",
   },
   nl: {
     projectMeta: "Onderzoek · participatieverslag · groet", introEyebrow: "Tijd met kunst en cultuur, een groet die verdergaat", introTitleLead: "Begin met de groet van één persoon,", introTitleMain: "en vertel ons uw verhaal.",
@@ -155,6 +176,9 @@ const copy = {
     greetingLoading: "We halen de groet op die als eerste aankwam.", greetingLoadingHelp: "Een ogenblik. De onderzoeksvragen beginnen nadat u de groet hebt gelezen.", receivedTitle: "Er is een groet aangekomen.", receivedHelp: "Deze woorden zijn achtergelaten door iemand die hier eerder langskwam. Lees ze rustig.", seedHelp: "Deze eerste groet is door het project voorbereid om de keten te beginnen. Lees hem rustig.", randomNote: "Een van de groeten die al in de groetenbox wachtte, is willekeurig bezorgd.", seedNote: "De eerste groet, voorbereid door het project", beginStory: "Nu uw verhaal beginnen",
     waitingTitle: "Er wacht nog geen groet.", waitingHelp: "We maken geen verzonnen groet. U kunt met uw verhaal beginnen en na het bijwerken van uw verslag een groet voor de volgende persoon achterlaten.", unavailableTitle: "We konden geen groet laden.", unavailableHelp: "Ook als de verbinding tijdelijk niet werkt, kunt u doorgaan met de vragenlijst en uw verslag.", continueWithoutGreeting: "Uw verhaal beginnen",
     continuationTitle: "Hoe wilt u na het lezen van deze groet verdergaan?", continuationPrimary: "Een groet achterlaten voor de volgende persoon", continuationSecondary: "Hier afronden", continuationHelp: "Alleen de groet lezen is genoeg om uw deelname vandaag af te ronden.", outgoingSaved: "Uw groet is toevertrouwd aan de volgende persoon.", outgoingSavedHelp: "Uw woorden worden één keer bezorgd aan een toekomstige deelnemer die u nog niet kent.",
+    outgoingPending: "De groet is nog niet toevertrouwd.",
+    outgoingPendingHelp: "Uw zin wordt op dit apparaat bewaard. Hij wordt automatisch opnieuw verzonden zodra de verbinding terugkeert of wanneer u deze pagina opnieuw opent.",
+    outgoingPendingHelpNoStorage: "Deze browser blokkeert opslag: de zin kan alleen worden verzonden als de verbinding terugkeert voordat u dit scherm sluit.",
   },
   ms: {
     projectMeta: "Penyelidikan · rekod penyertaan · salam", introEyebrow: "Masa bersama seni dan budaya, salam yang diteruskan", introTitleLead: "Mulakan dengan salam daripada seseorang,", introTitleMain: "kemudian ceritakan kisah anda.",
@@ -164,6 +188,9 @@ const copy = {
     greetingLoading: "Kami sedang membawa salam yang tiba dahulu.", greetingLoadingHelp: "Sila tunggu sebentar. Soalan penyelidikan bermula selepas anda membacanya.", receivedTitle: "Satu salam telah tiba.", receivedHelp: "Kata-kata ini ditinggalkan oleh seseorang yang melalui tempat ini lebih dahulu. Bacalah perlahan-lahan.", seedHelp: "Salam pertama ini disediakan oleh projek untuk memulakan rantaian. Bacalah perlahan-lahan.", randomNote: "Satu salam daripada yang sedia menunggu di peti salam telah dihantar secara rawak.", seedNote: "Salam pertama yang disediakan oleh projek", beginStory: "Mulakan kisah anda sekarang",
     waitingTitle: "Belum ada salam yang menunggu.", waitingHelp: "Kami tidak mencipta salam palsu. Anda boleh bermula dengan kisah anda dan, selepas memperhalus rekod, tinggalkan salam untuk orang seterusnya.", unavailableTitle: "Kami tidak dapat memuatkan salam.", unavailableHelp: "Walaupun sambungan salam terganggu buat sementara, anda masih boleh meneruskan soal selidik dan rekod penyertaan.", continueWithoutGreeting: "Mulakan kisah anda",
     continuationTitle: "Selepas membaca salam ini, bagaimana anda mahu meneruskannya?", continuationPrimary: "Tinggalkan salam untuk orang seterusnya", continuationSecondary: "Tamat di sini", continuationHelp: "Membaca salam ini sahaja sudah memadai untuk menamatkan penyertaan hari ini.", outgoingSaved: "Salam anda telah diamanahkan kepada orang seterusnya.", outgoingSavedHelp: "Kata-kata anda akan dihantar sekali kepada peserta akan datang yang belum anda kenali.",
+    outgoingPending: "Salam belum sempat diamanahkan.",
+    outgoingPendingHelp: "Ayat anda disimpan pada peranti ini. Ia akan dihantar semula secara automatik apabila sambungan pulih atau apabila anda membuka halaman ini semula.",
+    outgoingPendingHelpNoStorage: "Pelayar ini menyekat storan: ayat hanya dapat dihantar jika sambungan pulih sebelum skrin ini ditutup.",
   },
 };
 

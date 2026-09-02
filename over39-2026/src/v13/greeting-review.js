@@ -19,7 +19,7 @@ const esc = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;");
+  .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 if (!root || !reviewAllowed) {
   if (root) root.innerHTML = `<main class="relay-layout"><section class="relay-card"><h1>TEST REVIEW unavailable</h1><p class="relay-lead">This route is available only in the isolated over39 test build while both public gates remain off.</p></section></main>`;

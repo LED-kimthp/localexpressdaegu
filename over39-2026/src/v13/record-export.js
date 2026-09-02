@@ -98,7 +98,7 @@ const PHASE_RANK = Object.freeze({
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
-const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 /** 연락처로 읽힐 수 있는 필드인지. 이름 규칙 하나로 payload 어디서든 같게 판단한다. */
 export function isContactField(name) {
@@ -239,6 +239,12 @@ function orphanNarratives(payload, shown) {
     if (typeof value !== "string" || value.trim().length < 12) continue;
     if (NON_NARRATIVE_FIELD.test(field) || NON_NARRATIVE_VALUE.test(value.trim())) continue;
     push(field, value);
+  }
+  // 회수함: 답을 바꾸며 화면에서 물러났지만 보존된 문장. 활성 답이 아니라 표에는
+  // 없어도, 연구자가 원문을 읽는 이 묶음에는 보여야 한다(flow.js가 한 약속).
+  for (const [field, value] of Object.entries(payload?.answers?.withdrawn_answers || {})) {
+    if (typeof value !== "string") continue;
+    push(`회수됨 · ${field}`, value);
   }
   return rows;
 }

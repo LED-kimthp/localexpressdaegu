@@ -161,7 +161,7 @@ const esc = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;");
+  .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 const array = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
@@ -286,6 +286,9 @@ function continuitySection(answers = {}, english = false) {
   if (clean(answers.invisible_continuity_text)) lines.push(clean(answers.invisible_continuity_text));
   else if (answers.invisible_continuity_state === "NO") lines.push(english ? "It is difficult to name an interest that continued during the period of fewer visits." : (isAudience(answers) ? "관람이 줄었던 때에도 이어진 관심은 지금 떠올리기 어렵다고 답했다." : "밖으로 드러나지 않았던 때에 이어진 활동을 지금은 떠올리기 어렵다고 답했다."));
   else if (answers.invisible_continuity_state === "UNSURE") lines.push(english ? "The continuity of interest at that time remains difficult to describe clearly." : (isAudience(answers) ? "관람이 줄었던 때의 관심을 지금은 분명하게 말하기 어렵다고 답했다." : "밖에서 잘 보이지 않았던 활동의 이어짐을 지금은 분명하게 말하기 어렵다고 답했다."));
+  // 「그렇게 보이지 않던 시기는 따로 없었어요」는 다섯 상태 가운데 유일하게 문서에서
+  // 무언(無言)이었다. 계속 드러난 채 이어왔다는 것도 이 사람의 진술이다.
+  else if (answers.invisible_continuity_state === "NO_SUCH_PERIOD") lines.push(english ? "There was no period when the activity was less visible; it has stayed in view and continued." : (isAudience(answers) ? "찾고 보는 일이 크게 줄었던 시기는 따로 없이 계속 이어져 왔다고 답했다." : "밖에서 보이지 않던 시기는 따로 없이, 드러난 채로 계속 이어져 왔다고 답했다."));
   return lines;
 }
 

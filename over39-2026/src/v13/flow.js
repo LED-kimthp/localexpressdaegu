@@ -117,13 +117,21 @@ export function normalizedDScope(answers = {}) {
 // 가려낸다 — 한국어 서술에는 공백이 있고, 없더라도 40자를 넘지 않는 코드는 없다.
 
 function looksLikeWriting(value) {
-  return typeof value === "string" && Boolean(value.trim()) && (/\s/.test(value) || value.length > 40);
+  // "육아", "코로나"처럼 공백 없는 짧은 한 단어도 그 사람의 발화다. 버리는 쪽을
+  // 좁게 잡는다: 선택지 코드 모양(대문자·숫자·밑줄뿐, 40자 이하)만 글이 아니라고 본다.
+  if (typeof value !== "string" || !value.trim()) return false;
+  return !(/^[A-Z][A-Z0-9_]*$/.test(value.trim()) && value.trim().length <= 40);
 }
 
 export function withdrawAnswer(target, field) {
   const value = target?.[field];
   if (looksLikeWriting(value)) {
-    target[WITHDRAWN_KEY] = { ...(target[WITHDRAWN_KEY] || {}), [field]: value };
+    const withdrawn = { ...(target[WITHDRAWN_KEY] || {}) };
+    // 같은 칸을 두 번 회수해도 먼저 회수한 글을 덮어쓰지 않는다.
+    let key = field;
+    while (key in withdrawn && withdrawn[key] !== value) key = `${key}~`;
+    withdrawn[key] = value;
+    target[WITHDRAWN_KEY] = withdrawn;
   }
   delete target[field];
   return target;
@@ -279,7 +287,9 @@ export function fixedQuestionIdsForScreen(screen, answers = {}, { adaptive = fal
     PRACTICE_PUBLIC_STATE: adaptive ? ["P14", "P15"] : [],
     STATE_BACKGROUND: adaptive ? ["P16"] : [],
     TRANSITION: adaptive ? ["P11", ...(hasSubstantiveTransition(answers) ? ["P12"] : [])] : [],
-    CONTINUITY: adaptive && needsContinuityQuestion(answers) ? ["P13", ...(["YES", "MIXED"].includes(answers.invisible_continuity_state) ? ["P13_TEXT"] : [])] : [],
+    // 화면 목록(buildAdaptiveScreens)과 같은 게이트를 써야 진행률 분자·분모가 맞는다.
+    // P13 승격 때 화면 쪽만 showsContinuityQuestion으로 넓혀 진행률이 1~2문항 모자랐다.
+    CONTINUITY: adaptive && showsContinuityQuestion(answers) ? ["P13", ...(["YES", "MIXED"].includes(answers.invisible_continuity_state) ? ["P13_TEXT"] : [])] : [],
     SUPPORT_CONDITIONS: adaptive ? ["P19", ...(Array.isArray(answers.support_conditions) && answers.support_conditions.some((value) => value !== "NONE") ? ["P19_TEXT"] : [])] : [],
     M01: ["M01"], NO_RECALL_RELATION: ["NO_RECALL_RELATION"], M02: ["M02"], M03: ["M03"], M03_RECONNECT: ["M03"], M10_VERIFY: ["M10"], M04: adaptive ? ["M04", "M04_TEXT"] : ["M04"], M05: ["M05"],
     MEMORY_TIME: ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],

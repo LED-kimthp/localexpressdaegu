@@ -670,7 +670,7 @@
         "m_declared"
       ],
       "notes": "점수형 산정이 아닌 직접 자기보고 앵커",
-      "text_no_recall": "지금 문화예술과의 거리가 생긴 이유는 무엇인가요?",
+      "text_no_recall": "지금 특별한 대상이 떠오르지 않는 이유는 무엇에 가까운가요?",
       "options_no_recall": [
         [
           "M1",
@@ -1742,7 +1742,7 @@
         "support_conditions_text"
       ],
       "text_audience": "그 조건이 실제로 작동한 장면을 들려주세요.",
-      "help_audience": "누구와 함께했는지, 무엇을 보고 다시 찾았는지, 어떤 정보가 도움이 되었는지 적어주세요.",
+      "help_audience": "누구와 함께했는지, 무엇이 관심을 이어가게 했는지, 어떤 정보가 도움이 되었는지 적어주세요.",
       "notes": "RC2 fixed optional narrative; adaptive-v2 does not attach an AI follow-up."
     },
     {
@@ -1958,9 +1958,9 @@
       "module": "CONSENT_RESEARCH",
       "type": "notice",
       "required": false,
-      "text": "연락처를 입력하는 경우 연구 응답과 분리해 저장합니다. 자료 보유기간과 철회 방법은 정식 운영 전에 별도로 안내합니다.",
+      "text": "연락처를 입력하는 경우 연구 응답과 분리해 저장합니다. 응답은 연구 자료로 계속 보관하며, 철회를 원하시면 언제든 over39@localexpressdaegu.org 로 요청할 수 있습니다.",
       "store": [],
-      "notes": "체크박스가 아니라 안내. 보유기간 placeholder 상태로 배포 금지"
+      "notes": "체크박스가 아니라 안내. 보유기간은 2026-08-30 TK 결정: 계속 보관, 철회 요청 시 개별 처리"
     },
     {
       "id": "P01",
@@ -3573,11 +3573,11 @@
   "open_decisions": [
     {
       "id": "OD01",
-      "priority": "BLOCKER",
+      "priority": "RESOLVED",
       "topic": "연구자료 보유기간",
-      "decision": "운영·법률 검토 후 정확한 기간 확정",
+      "decision": "계속 보관(무기한). 철회 요청이 오면 개별 처리. 2026-08-30 TK 확정",
       "owner": "주최·주관/운영",
-      "codex_action": "환경설정 필수값으로 두고 비어 있으면 공개 배포 차단"
+      "codex_action": "동의 화면 「저장과 보관」 안내와 RC03_INFO에 반영 완료"
     },
     {
       "id": "OD02",

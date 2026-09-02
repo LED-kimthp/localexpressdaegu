@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=rc2-preproduction-20260813-landing-r3";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v5-20260830-r1";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "cec2de6d1480-dirty 2026-08-30T02:55:24.607Z";
+const buildStamp = "8395cef3d488-dirty 2026-09-02T02:11:55.270Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -85,7 +85,7 @@ const esc = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;");
+  .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 const values = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const question = (id) => localizeQuestion(state.language, schema.questions.find((item) => item.id === id));
@@ -97,13 +97,19 @@ const optionValue = (option) => Array.isArray(option) ? option[0] : option?.valu
 const depthOutcomeFields = ["depth_plan", "depth_source", "depth_m", "depth_m_text", "depth_s", "depth_s_text", "depth_d", "depth_d_text", "depth_summary", "depth_ai_runs", "adaptive_turns", "adaptive_checkpoint_status", "adaptive_ai_runs", "adaptive_detected_language", "reflection_action", "participant_revision", "synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"];
 function clearDepthOutcome() { depthOutcomeFields.forEach((field) => delete state.answers[field]); }
 function clearReflectionOutcome() {
+  // 앞의 답을 고치거나 정리문을 다시 만들면 확인·승인 상태는 무효가 되지만, 참여자가
+  // 손으로 쓴 정리문까지 지울 이유는 없다. 회수함으로 옮겨 두었다가 다시
+  // 고쳐쓰기를 고르면 그대로 되살린다.
+  withdrawAnswer(state.answers, "participant_revision");
   ["depth_summary", "depth_ai_runs", "reflection_action", "participant_revision", "synthesis_confirmation_ack", "synthesis_confirmation", "participant_approved_text", "participant_approved_text_ko", "participant_approved_provenance", "participant_approved_translation_provenance", "participant_m", "participant_s", "participant_d", "coordinate_snapshots", "document_confirmation_ack", "document_confirmed_at", "response_document_draft"].forEach((field) => delete state.answers[field]);
 }
 function clearAdaptiveAnchor(checkpoint, { clearReflection = true } = {}) {
   if (!isRc2) { clearDepthOutcome(); return; }
   const removedTurns = adaptiveTurns().filter((turn) => turn.checkpoint === checkpoint);
   removedTurns.forEach((turn) => {
-    if (turn.answer_field) delete state.answers[turn.answer_field];
+    // 「질문 다시 준비하기」나 앞 답 변경으로 이 후속질문이 사라져도, 참여자가 그 칸에
+    // 이미 쓴 문장은 지우지 않고 회수함으로 옮긴다 — skip-adaptive와 같은 원칙.
+    if (turn.answer_field) withdrawAnswer(state.answers, turn.answer_field);
     if (turn.self_check_field) delete state.answers[turn.self_check_field];
   });
   const keptTurns = adaptiveTurns().filter((turn) => turn.checkpoint !== checkpoint);
@@ -297,7 +303,7 @@ const CHOICE_COPY_KO = {
     MEMORY: "오래 남은 기억 — 기억에 남은 작품과 질문이 관심과 활동을 이어가는 기반이 되었습니다.",
     SELF_PACE: "스스로 지킨 속도 — 자신의 상황에 맞추어 조절한 속도와 선택이 지속의 기반이 되었습니다.",
     TIME_COST_MOVE: "일정과 비용, 이동 — 일정과 비용, 이동의 여유가 문화예술 참여를 이어가는 기반이 되었습니다.",
-    GUIDE: "정보와 안내 — 이해하기 쉬운 정보와 안내가 문화예술을 다시 찾는 기반이 되었습니다.",
+    GUIDE: "정보와 안내 — 이해하기 쉬운 정보와 안내가 문화예술을 이어가는 기반이 되었습니다.",
     ONLINE_MEDIA: "온라인과 매체 — 온라인과 출판, 영상이 문화예술을 이어서 만나는 기반이 되었습니다.",
     RECOMMENDATION: "다른 사람의 추천 — 다른 사람이 건넨 추천이 새로운 작품과 공간을 만나는 계기가 되었습니다.",
     NONE: "지금은 떠오르지 않음 — 현재는 특별히 떠오르는 기반을 정하기 어렵습니다.",
@@ -985,6 +991,12 @@ function renderConsent() {
         <h3>${esc(t("AI 사용"))}</h3>
         ${renderChoices("RC02", [["YES", local.consentAi]])}
         <p class="ai-use-note" role="note">${esc(t("후속 질문과 참여 기록 초안을 만드는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다."))}</p>
+      </section>
+      <section class="consent-choice-block">
+        <h3>${esc(t("저장과 보관"))}</h3>
+        <p class="ai-use-note" role="note">${esc(t("설문 중간의 두 지점에서도 그때까지의 응답이 저장됩니다. 도중에 멈추셔도 그 지점까지의 이야기는 남습니다."))}</p>
+        <p class="ai-use-note" role="note">${esc(t("참여를 시작한 시각과 저장을 마친 시각, 그때 사용한 설문 앱의 버전이 응답과 함께 기록됩니다."))}</p>
+        <p class="ai-use-note" role="note">${esc(t("응답은 연구 자료로 계속 보관합니다. 철회를 원하시면 언제든 다음 주소로 요청할 수 있습니다."))} <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p>
       </section>`;
   }
   return `${screenHeading("이 조사의 목적과 참여 방식을 확인해 주세요.", "기억은 사라진 이름과 장면을 다시 불러오는 시작입니다.")}
@@ -1048,7 +1060,7 @@ function renderSupportConditions() {
   const audience = isAudienceContext();
   const title = contextAwareCopy(state.answers, state.language).p19;
   const help = audience
-    ? "작품과 프로그램을 다시 찾게 한 사람, 기억, 정보와 환경을 기록해요. 최대 다섯 가지까지 고를 수 있어요."
+    ? "작품과 프로그램을 찾게 한 사람, 기억, 정보와 환경을 기록해요. 최대 다섯 가지까지 고를 수 있어요."
     : "활동을 실제로 지탱한 사람, 공간, 소득, 기록과 관계를 남겨요. 최대 다섯 가지까지 고를 수 있어요.";
   return `${screenHeading(title, help)}
     ${renderChoices("P19", audience ? p19.options_audience : p19.options_professional, { multi: true, max: 5, exclusive: ["NONE"] })}
@@ -1210,15 +1222,15 @@ function renderContinuity() {
   const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.invisible_continuity_state;
   const placeholder = audience
-    ? "계속 보거나 기억한 것, 다시 찾게 된 계기와 달라진 관계를 적어주세요."
+    ? "계속 보거나 기억한 것, 관심이 이어진 경로와 달라진 관계를 적어주세요."
     : kind === "EVERYDAY"
       ? "연습, 모임, 배움, 돌봄, 관계, 휴식처럼 가까운 표현으로 적어주세요."
       : "작업, 기록, 공부, 돌봄, 관계, 거리두기, 휴식처럼 가까운 표현으로 적어주세요.";
   const help = audience
-    ? "전시장에 자주 가지 않는 때에도 영화, 공연, 만화, 웹툰, 디자인, 온라인 이미지처럼 다른 경로로 관심이 이어질 수 있어요."
+    ? "전시장에 자주 가지 않던 때가 있었다면, 영화, 공연, 만화, 웹툰, 디자인, 온라인 이미지처럼 다른 경로로 관심이 이어졌을 수 있어요."
     : kind === "EVERYDAY"
-      ? "공연이나 발표가 적었던 때에도 연습, 모임, 배움과 관계가 다른 모습으로 이어질 수 있어요."
-      : "발표가 적었던 때에도 작업, 조사, 관계와 생각이 다른 모습으로 이어질 수 있어요.";
+      ? "공연이나 발표가 적었던 때가 있었다면, 연습, 모임, 배움과 관계가 다른 모습으로 이어졌을 수 있어요."
+      : "발표가 적었던 때가 있었다면, 작업, 조사, 관계와 생각이 다른 모습으로 이어졌을 수 있어요.";
   return `${screenHeading(copy.p13, help)}
     ${renderChoices("P13", p13.options)}
     ${shouldShowP13Text(stateValue) ? renderText("P13_TEXT", { field: "invisible_continuity_text", value: state.answers.invisible_continuity_text || "", placeholder, label: audience ? p13Text.text_audience : p13Text.text }) : ""}`;
@@ -1431,12 +1443,13 @@ function clearDepthAfter(axis) {
   ["M", "S", "D"].slice(axisIndex + 1).forEach((nextAxis) => {
     const key = `depth_${nextAxis.toLowerCase()}`;
     delete state.answers[key];
-    delete state.answers[`${key}_text`];
+    // 심화 답의 서술도 참여자의 글이다. 지우지 않고 회수함으로 옮긴다.
+    withdrawAnswer(state.answers, `${key}_text`);
   });
   state.answers.depth_plan = values(state.answers.depth_plan).filter((item) => ["M", "S", "D"].indexOf(item.axis) <= axisIndex);
   delete state.answers.depth_summary;
   delete state.answers.reflection_action;
-  delete state.answers.participant_revision;
+  withdrawAnswer(state.answers, "participant_revision");
   delete state.answers.participant_m;
   delete state.answers.participant_s;
   delete state.answers.participant_d;
@@ -1645,7 +1658,9 @@ function renderAdaptiveCheckpoint(checkpoint) {
   // 않은 사람에게 남은 길은 창을 닫는 것뿐이었다. 그러면 그때까지 쓴 이야기가 서버에
   // 닿지 못한다. 약속한 문을 실제로 만든다.
   const skip = `<button class="text-button adaptive-skip" type="button" data-action="skip-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("이 질문은 건너뛸게요"))}</button>`;
-  return `${screenHeading(stage().followingQuestion, ui().deepQuestionLead, turn.intent || "")}
+  // 폴백 질문은 방금 쓴 글을 읽고 만든 것이 아니다. 「읽었어요」라고 말하지 않는다.
+  const questionLead = turn.source === "motif" ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead;
+  return `${screenHeading(stage().followingQuestion, questionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
@@ -2498,10 +2513,13 @@ function createConnectionUpdate() {
   // It never turns a response ID, contact detail, or full profile into public
   // greeting data.
   const publicDisplayLabel = safeReferrerLabel(research.response_document?.participant?.display_name || "", "");
+  // 익명을 고른 사람의 role·region은 브라우저를 떠나기 전에 이미 비운다. 서버도
+  // 같은 소거를 하지만(publicSenderContext), 한 층이 무너져도 다른 층이 지키게 한다.
+  const senderIsAnonymous = connection.sender_visibility === "ANONYMOUS";
   const senderPublicContext = {
     display_label: connection.sender_visibility === "NAMED" && publicDisplayLabel ? publicDisplayLabel : null,
-    role: profile.role || null,
-    region: profile.region || null,
+    role: senderIsAnonymous ? null : profile.role || null,
+    region: senderIsAnonymous ? null : profile.region || null,
   };
   return {
     ...research,
@@ -2692,10 +2710,16 @@ function renderRc2Complete(response) {
     : copy.otherLead;
   const connection = getConnection();
   const greetingFirstLocal = greetingFirst();
-  const greetingChoiceSaved = ["confirmed", "local_only", "unverified", "failed"].includes(state.connectionStatus);
+  // 서버가 받았다고 확인한 경우에만 「맡겼습니다」라고 말한다. 실패·대기 상태에
+  // 성공 문구를 쓰면, 안부가 전해졌다고 믿고 떠난 사람의 문장이 조용히 사라진다.
+  const greetingChoiceSaved = state.connectionStatus === "confirmed";
+  const greetingChoicePending = ["local_only", "unverified", "failed"].includes(state.connectionStatus);
+  const greetingHasText = Boolean(String(connection.message_text || "").trim());
   const greetingChoice = globalGreetingsEnabled
-    ? greetingChoiceSaved && Boolean(String(connection.message_text || "").trim())
+    ? greetingChoiceSaved && greetingHasText
       ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.outgoingSaved)}</h2><p>${esc(greetingFirstLocal.outgoingSavedHelp)}</p></div>`
+      : greetingChoicePending && greetingHasText
+      ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.outgoingPending)}</h2><p>${esc(state.storageBlocked ? greetingFirstLocal.outgoingPendingHelpNoStorage : greetingFirstLocal.outgoingPendingHelp)}</p></div>`
       // `여기에서 마치기`를 한 번 누르면 안부 버튼이 사라져, 이 응답에서는 안부를 남길
       // 방법이 영영 없어졌다. 되돌리는 길이 `restart`(기록 전체 초기화)뿐이었고 확인
       // 대화도 없었다. 랜딩이 `04 다음 사람에게`로 약속한 마지막 단계다. 마친 뒤에도
@@ -2977,9 +3001,22 @@ function renderGreetingChoice() {
   return `<main class="first-greeting-layout greeting-choice-layout"><section class="first-greeting-card greeting-choice-card"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingChoiceTitle)}</h1><p>${esc(local.greetingChoiceHelp)}</p><div class="greeting-choice-actions"><button class="primary-button" type="button" data-action="choose-first-greeting">${esc(local.greetingChoicePrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="skip-first-greeting">${esc(local.greetingChoiceSecondary)}</button></div></section></main>`;
 }
 
+// 완료 화면에 도착했을 때 부가 항목(연락처 등)이 대기열에 남아 있으면 한 번 더 보낸다.
+// 완주한 참여자는 보통 다시 오지 않으므로, 이 화면이 마지막 재시도 기회다.
+function retryQueuedAuxOnComplete() {
+  if (state.auxRetryScheduled || !submitFunctionUrl) return;
+  state.auxRetryScheduled = true;
+  try {
+    if (readOutbox().some((item) => item.kind && item.kind !== "research_submission")) {
+      setTimeout(() => { retryOutbox({ endpoint: submitFunctionUrl, anonKey: supabaseAnonKey }).catch(() => {}); }, 4000);
+    }
+  } catch { /* 저장소가 막힌 브라우저에서는 대기열 자체가 없다 */ }
+}
+
 function render(focusHeading = false) {
   const scrollPosition = { x: window.scrollX, y: window.scrollY };
   document.documentElement.lang = state.language;
+  if (state.phase === "complete") retryQueuedAuxOnComplete();
   const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "greeting-choice" ? renderGreetingChoice() : state.phase === "greeting-first" ? renderFirstGreeting() : state.phase === "saving" ? renderSavePending() : state.phase === "save_failed" ? renderSaveFailed() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderRetiredRc1ExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
   root.innerHTML = `<div class="site-shell phase-${esc(state.phase)}">${header()}${content}${footer()}</div>`;
   const legacyAgeGate = root.querySelector('[data-exhibition-field="eligibility_ack"]')?.closest(".connection-section");
@@ -3037,7 +3074,16 @@ function changeChoice(id, value, multi, max, exclusive) {
     if (id === "D02" && !/^D[1-4]$/.test(String(value))) withdrawAnswer(state.answers, "desired_change_text");
     if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => withdrawAnswer(state.answers, key));
     if (id === "reflection_action") {
-      delete state.answers.participant_revision;
+      // 고쳐쓰기 ↔ 그대로 쓰기를 오가도 쓰던 문장은 잃지 않는다. 떠날 때 회수함으로
+      // 옮기고, 고쳐쓰기로 돌아오면 회수함에서 그대로 되살린다.
+      withdrawAnswer(state.answers, "participant_revision");
+      if (["EDIT", "REWRITE"].includes(value)) {
+        const withdrawn = state.answers.withdrawn_answers || {};
+        const revisionKeys = Object.keys(withdrawn).filter((key) => key === "participant_revision" || key.startsWith("participant_revision~"));
+        // 같은 칸이 여러 번 회수됐다면 가장 최근 것(~가 가장 긴 키)을 되살린다.
+        const latest = revisionKeys.sort((a, b) => a.length - b.length).pop();
+        if (latest) state.answers.participant_revision = withdrawn[latest];
+      }
       clearDocumentConfirmation();
     }
     reconcileIfResearchEdit(id);
@@ -3051,8 +3097,10 @@ function changeChoice(id, value, multi, max, exclusive) {
     else if (exclusive.includes(value)) selected = [value];
     else { selected = selected.filter((itemValue) => !exclusive.includes(itemValue)); if (!max || selected.length < max) selected.push(value); }
     state.answers[field] = selected;
-    if (id === "P19" && selected.length === 1 && selected[0] === "NONE") delete state.answers.support_conditions_text;
-    if (id === "P16" && selected.some((item) => ["NONE", "UNSURE"].includes(item))) delete state.answers.pause_context_other;
+    // 「떠오르는 조건 없음」 한 번의 탭이 이미 쓴 기반 이야기를 파기하고 있었다.
+    // 다른 곳과 같은 원칙: 지우지 않고 회수함으로 옮긴다.
+    if (id === "P19" && selected.length === 1 && selected[0] === "NONE") withdrawAnswer(state.answers, "support_conditions_text");
+    if (id === "P16" && selected.some((item) => ["NONE", "UNSURE"].includes(item))) withdrawAnswer(state.answers, "pause_context_other");
     if (!["depth_m", "depth_s", "depth_d"].includes(id) && !String(id).startsWith("adaptive_check_")) reconcileIfResearchEdit(id);
   }
   if (isRc2 && ["depth_m", "depth_s"].includes(id)) clearDepthAfter(id === "depth_m" ? "M" : "S");
@@ -3504,7 +3552,13 @@ document.addEventListener("click", (event) => {
       const checkpoint = adaptiveScreenCheckpoint[id];
       if (state.adaptiveGenerating) return;
       const turn = currentAdaptiveTurn(checkpoint);
-      if (turn) setAdaptiveStatus(checkpoint, turn.source === "motif" ? "complete_motif" : "complete_fallback");
+      if (turn) {
+        // 건너뛴 화면에 돌아왔다가 답 없이 다음을 누르면 「건너뜀」이 「완료」로
+        // 덮여 사라졌다. 제안받고 사양했다는 사실도 연구 기록이다 — 새 답을
+        // 쓴 경우에만 완료로 바꾼다.
+        const answered = turn.answer_field && String(state.answers[turn.answer_field] || "").trim();
+        if (answered || adaptiveStatus(checkpoint) !== "skipped_by_participant") setAdaptiveStatus(checkpoint, turn.source === "motif" ? "complete_motif" : "complete_fallback");
+      }
       state.step += 1;
       saveDraft();
       render(true);
@@ -3695,6 +3749,17 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("input", (event) => {
   const input = event.target;
+  // maxlength는 붙여넣기·타이핑을 소리 없이 자른다. 한도에 닿는 순간, 잘렸다는 사실과
+  // 갈 곳을 알려준다. 재렌더 없이 안내 줄만 바꿔 초점과 커서를 지킨다.
+  if (input.tagName === "TEXTAREA" && input.maxLength > 0 && input.classList.contains("text-input")) {
+    const meta = input.closest(".text-field")?.querySelector(".text-field-meta");
+    if (meta) {
+      if (!meta.dataset.baseText) { meta.dataset.baseText = meta.textContent; meta.setAttribute("role", "status"); }
+      meta.textContent = input.value.length >= input.maxLength
+        ? `${meta.dataset.baseText} · ${t("최대 글자 수에 닿았어요. 이어서 쓰실 이야기는 다음 질문이나 마지막 칸에 남겨주세요.")}`
+        : meta.dataset.baseText;
+    }
+  }
   if (input.matches("[data-research-contact]")) {
     state.researchContact = { ...(state.researchContact || {}), [input.dataset.researchContact]: input.value, status: null };
     saveDraft();

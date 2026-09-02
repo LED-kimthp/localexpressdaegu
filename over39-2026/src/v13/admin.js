@@ -8,8 +8,8 @@ const anonKey = String(window.OVER39_SUPABASE_ANON_KEY || "");
 const relayEndpoint = String(window.OVER39_SUPABASE_RELAY_URL || "");
 const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
-const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false };
+const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
 
 // 매직링크가 돌아올 주소. 토큰은 프래그먼트로 오므로 `#`을, 표본 쿼리가 붙은 채 열렸을
 // 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
@@ -86,19 +86,24 @@ const INSIGHT_ROW_LIMIT = 20000;
 async function loadResearchInsights() {
   state.view = "research-insights";
   state.insightsError = "";
+  state.insightsNote = "";
   render();
   try {
     const codedIds = Object.keys(CODED_QUESTIONS).join(",");
+    // 단발 `limit=20000`은 서버의 Max rows(호스팅 기본 1,000)에 조용히 잘린다 — 오류
+    // 없이 일부 표본만 세게 된다. 내보내기와 같은 페이지네이션으로 전량을 받는다.
     const [sessions, codedAnswers, narrativeRows, profiles, axes] = await Promise.all([
-      api("over39_sessions", "?select=response_id,sample_type,status,include_in_policy_statistics,route&limit=5000"),
-      api("over39_fixed_answers", `?select=response_id,question_id,answer,created_at&question_id=in.(${codedIds})&limit=${INSIGHT_ROW_LIMIT}`),
-      api("over39_fixed_answers", `?select=response_id,question_id,answer,created_at&question_id=in.(${NARRATIVE_QUESTION_IDS.join(",")})&limit=${INSIGHT_ROW_LIMIT}`),
-      api("over39_response_snapshots", `?select=${PROFILE_SELECT}&order=created_at.asc&limit=${INSIGHT_ROW_LIMIT}`).catch(() => []),
+      fetchAllRows("over39_sessions", { select: "response_id,sample_type,status,include_in_policy_statistics,route" }),
+      fetchAllRows("over39_fixed_answers", { select: "response_id,question_id,answer,created_at", extra: `&question_id=in.(${codedIds})` }),
+      fetchAllRows("over39_fixed_answers", { select: "response_id,question_id,answer,created_at", extra: `&question_id=in.(${NARRATIVE_QUESTION_IDS.join(",")})` }),
       // 좌표는 status(complete / mixed / pending_review / insufficient)를 구분해야 한다.
       // 이 표를 읽지 않으면 집계 모듈이 좌표 블록을 만들지 않는다 — status 구분 없는
       // 합산을 만들지 않으려는 설계이므로, 읽어서 넘기는 것이 배선의 몫이다.
-      api("over39_axis_snapshots", `?select=response_id,stage,status,m_primary,s_primary,d_primary,coordinate_number,coordinate_candidate,created_at&limit=${INSIGHT_ROW_LIMIT}`).catch(() => []),
+      fetchAllRows("over39_response_snapshots", { select: PROFILE_SELECT, orderKey: "created_at.asc,id.asc" }).catch(() => []),
+      fetchAllRows("over39_axis_snapshots", { select: "response_id,stage,status,m_primary,s_primary,d_primary,coordinate_number,coordinate_candidate,created_at" }).catch(() => []),
     ]);
+    const truncated = [sessions, codedAnswers, narrativeRows, profiles, axes].some((rows) => rows.truncated);
+    if (truncated) state.insightsNote = "자료가 안전 상한에서 잘렸습니다. 아래 숫자는 일부 표본 기준입니다.";
     // 원문은 여기서 길이로 바뀌고 버려진다. state에는 글자 수만 남는다.
     state.insights = { sessions, codedAnswers, narratives: narrativeLengths(narrativeRows), profiles, axes };
   } catch (error) {
@@ -106,6 +111,65 @@ async function loadResearchInsights() {
     state.insightsError = error.message === "ADMIN_ACCESS_DENIED" ? "이 계정으로는 연구 지표를 볼 수 없습니다." : "연구 지표를 불러오지 못했습니다.";
   }
   render();
+}
+
+// ── 철회·알림 관리 (TK 결정 2026-08-30) ─────────────────────────────────────
+async function relayAdminCall(action, payload = {}) {
+  if (!relayEndpoint) throw new Error("RELAY_NOT_CONFIGURED");
+  const response = await fetch(relayEndpoint, { method: "POST", headers: { "Content-Type": "application/json", apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` }, body: JSON.stringify({ action, ...payload }) });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.ok) throw new Error(result.error_code || "RELAY_ADMIN_CALL_FAILED");
+  return result;
+}
+
+async function loadCare() {
+  state.view = "care";
+  state.careError = "";
+  render();
+  try {
+    const withdrawals = await api("over39_withdrawal_requests", "?select=*&order=requested_at.desc&limit=200");
+    let notifications = null;
+    let notificationsError = "";
+    try {
+      const digest = await relayAdminCall("admin_notification_digest");
+      notifications = digest.rows || [];
+    } catch (error) {
+      notificationsError = error.message === "UNKNOWN_ACTION"
+        ? "알림 현황은 중계 기능(over39-relay) 새 버전을 배포한 뒤에 보입니다."
+        : "알림 현황을 불러오지 못했습니다.";
+    }
+    state.care = { withdrawals, notifications, notificationsError };
+  } catch {
+    state.care = null;
+    state.careError = "철회 요청 목록을 불러오지 못했습니다. 관리자 권한을 확인해 주세요.";
+  }
+  render();
+}
+
+function careTime(value) { return value ? String(value).slice(0, 16).replace("T", " ") : ""; }
+
+function renderCare() {
+  if (state.careError) return `<section class="admin-detail-section"><h2>철회·알림 관리</h2><p class="error">${esc(state.careError)}</p></section>`;
+  if (!state.care) return `<section class="admin-detail-section"><h2>철회·알림 관리</h2><p>불러오는 중입니다.</p></section>`;
+  const withdrawals = state.care.withdrawals || [];
+  const openCount = withdrawals.filter((row) => !row.resolved_at).length;
+  const withdrawalRows = withdrawals.map((row) => `<tr><th scope="row">${esc(row.response_id)}</th><td>${esc(careTime(row.requested_at))}</td><td>${esc(row.research_status || "requested")}</td><td>${row.resolved_at ? `처리 완료 · ${esc(careTime(row.resolved_at))}` : `<button class="secondary-button" data-admin-action="care-resolve" data-response-id="${esc(row.response_id)}">처리 완료로 표시</button>`}</td></tr>`).join("");
+  const notifications = state.care.notifications || [];
+  const pendingCount = notifications.filter((row) => row.pending).length;
+  const notificationRows = notifications.map((row) => `<tr><th scope="row">${esc(row.email)}</th><td>${esc(row.response_id)}</td><td>${esc(row.status)}</td><td>${row.pending ? `새 안부 ${esc(String(row.pending))}건` : "—"}</td><td>${esc(careTime(row.notified_at) || "아직 없음")}</td><td><button class="secondary-button" data-admin-action="care-mint-link" data-response-id="${esc(row.response_id)}" ${row.pending ? "" : "disabled"}>메일용 링크</button> <button class="secondary-button" data-admin-action="care-mark-sent" data-response-id="${esc(row.response_id)}">보냄 표시</button></td></tr>`).join("");
+  return `<section class="admin-detail-section"><h2>철회 요청 <span>${openCount}건 미처리</span></h2>
+    <p>철회를 접수하면 그 순간부터 이 참여자에게는 안부가 전달되지 않습니다. 응답 자료는 자동으로 지워지지 않습니다 — 어디까지 지울지는 사람이 정합니다. 정리를 마친 뒤 「처리 완료로 표시」를 누르세요. <strong>처리 완료로 표시하면 안부 차단이 풀립니다.</strong></p>
+    <label for="care-withdraw-id">철회 접수 · 응답 ID</label>
+    <input id="care-withdraw-id" class="text-input text-input-single" placeholder="예: RC2-…" />
+    <button class="secondary-button" data-admin-action="care-withdraw-record">철회 접수하기</button>
+    ${state.careStatus ? `<p class="ai-health-note" role="status">${esc(state.careStatus)}</p>` : ""}
+    <table class="ai-health-table"><thead><tr><th scope="col">응답 ID</th><th scope="col">요청 시각</th><th scope="col">상태</th><th scope="col">처리</th></tr></thead><tbody>${withdrawalRows || `<tr><td colspan="4">철회 요청 없음</td></tr>`}</tbody></table>
+  </section>
+  <section class="admin-detail-section"><h2>안부 알림 <span>${pendingCount}명 대기</span></h2>
+    <p>참여자가 남긴 알림용 이메일과, 마지막 알림 이후 도착해 아직 열리지 않은 안부 수입니다. 「메일용 링크」로 새 편지함 링크를 만들어 알림 메일에 붙이고, 보낸 뒤 「보냄 표시」를 누르세요. 이메일은 이 화면과 발송 계정 밖으로 나가지 않습니다.</p>
+    ${state.care.notificationsError ? `<p class="error">${esc(state.care.notificationsError)}</p>` : `<table class="ai-health-table"><thead><tr><th scope="col">이메일</th><th scope="col">응답 ID</th><th scope="col">상태</th><th scope="col">대기</th><th scope="col">마지막 알림</th><th scope="col">동작</th></tr></thead><tbody>${notificationRows || `<tr><td colspan="6">알림 신청 없음</td></tr>`}</tbody></table>`}
+    ${state.careLink ? `<p class="admin-relay-link">메일용 링크 (${esc(state.careLink.response_id)}): <a href="${esc(state.careLink.url)}" target="_blank" rel="noreferrer">${esc(state.careLink.url)}</a></p>` : ""}
+  </section>`;
 }
 
 async function loadDetail(responseId) {
@@ -364,7 +428,7 @@ function renderResearchInsights() {
     <h3 style="margin:26px 0 6px;font-size:15px;">지금 계산할 수 없는 지표</h3>
     <p class="ai-health-note">문항이 없어서 비어 있는 칸입니다. 파일럿을 넓히기 전에 질문지에서 결정해야 합니다.</p>
     <ul class="ai-health-errors">${summary.gaps.map((gap) => `<li><strong>${esc(gap.title)}</strong> — ${esc(gap.detail)}</li>`).join("")}</ul>
-    <p class="ai-health-note">고정문항 최근 ${INSIGHT_ROW_LIMIT.toLocaleString("ko-KR")}행, 응답 최근 5,000건 기준입니다.</p>
+    <p class="ai-health-note">고정문항과 응답 전체를 페이지 단위로 받아 계산합니다.${state.insightsNote ? ` ${esc(state.insightsNote)}` : ""}</p>
   </section>`;
 }
 
@@ -389,7 +453,7 @@ function renderDashboard() {
   const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
   // 큐 머리의 숫자 하나가 가장 많이 읽힌다. 잘렸을 때는 그 자리에서 "500 / 전체"로 보여준다.
   const queueCount = Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? `${koNum(totals.all)} / ${koNum(state.sessionsTotal)}` : koNum(totals.all);
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">비식별 JSON</button><button class="secondary-button" data-admin-action="export-csv">비식별 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
 }
 
 function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
@@ -401,7 +465,10 @@ function download(filename, content, type) { const blob = new Blob([content], { 
 function csvValue(value) { const text = String(value ?? ""); return `"${text.replaceAll('"', '""')}"`; }
 // `over39_response_snapshots`가 빠져 있었다. 참여자가 쓴 서술 원문과 참여 기록 문서가
 // 전부 그 payload 안에 있으므로, 이 내보내기로는 가장 중요한 연구 데이터를 받을 수 없었다.
-const exportTables = ["over39_sessions", "over39_response_snapshots", "over39_fixed_answers", "over39_axis_snapshots", "over39_depth_questions", "over39_depth_answers", "over39_ai_runs", "over39_participant_revisions", "over39_consent_events", "over39_connection_profiles", "over39_institution_feedback", "over39_operational_events", "over39_greetings"];
+// 안부 답장 원문은 `over39_relay_messages`에만 있다. 이 목록에서 빠지면 이번 회차의
+// 대화 릴레이 답장이 유일한 백업에서 통째로 빠진다. 연락처가 든 표(notifications,
+// contacts)는 설계대로 백업에 넣지 않는다.
+const exportTables = ["over39_sessions", "over39_response_snapshots", "over39_fixed_answers", "over39_axis_snapshots", "over39_depth_questions", "over39_depth_answers", "over39_ai_runs", "over39_participant_revisions", "over39_consent_events", "over39_connection_profiles", "over39_institution_feedback", "over39_operational_events", "over39_greetings", "over39_relay_proposals", "over39_relay_threads", "over39_relay_messages"];
 
 // 예전에는 테이블마다 `limit=5000`을 한 번 걸고 끝냈다. `over39_fixed_answers`는 한 사람이
 // 문항 32개 × 스냅샷 2단계로 약 60행을 남기므로 **80명 남짓에서 상한에 걸려 조용히 잘렸다.**
@@ -419,11 +486,11 @@ const SNAPSHOT_PAGE_SIZE = 200;
 const TABLE_ORDER_KEY = { over39_sessions: "response_id", over39_connection_profiles: "response_id" };
 const orderKeyFor = (table) => TABLE_ORDER_KEY[table] || "id";
 
-async function fetchAllRows(table, { pageSize = EXPORT_PAGE_SIZE, onPage = null } = {}) {
+async function fetchAllRows(table, { pageSize = EXPORT_PAGE_SIZE, onPage = null, select = "*", extra = "", orderKey = null } = {}) {
   const rows = [];
   let received = 0;
   for (let offset = 0; ; offset += pageSize) {
-    const page = await api(table, `?select=*&order=${orderKeyFor(table)}.asc&limit=${pageSize}&offset=${offset}`);
+    const page = await api(table, `?select=${select}${extra}&order=${orderKey || `${orderKeyFor(table)}.asc`}&limit=${pageSize}&offset=${offset}`);
     received += page.length;
     if (onPage) onPage(page);
     else rows.push(...page);
@@ -447,7 +514,9 @@ async function loadNonPiiExport() {
 function exportSummaryRows(bundle) {
   return (bundle.over39_sessions || []).map((session) => {
     const axes = bundle.over39_axis_snapshots.filter((row) => row.response_id === session.response_id);
-    const final = axes.find((row) => row.stage === "participant_final") || axes.find((row) => row.stage === "research_derived") || {};
+    // research_derived는 스냅샷마다 쌓이므로, 아무 행이 아니라 가장 최근 것을 집는다.
+    const latestDerived = axes.filter((row) => row.stage === "research_derived").sort((a, b) => String(a.created_at || "").localeCompare(String(b.created_at || ""))).pop();
+    const final = axes.find((row) => row.stage === "participant_final") || latestDerived || {};
     const revision = bundle.over39_participant_revisions.find((row) => row.response_id === session.response_id) || {};
     const connection = bundle.over39_connection_profiles.find((row) => row.response_id === session.response_id) || {};
     return { ...session, coordinate_scope: final.coordinate_scope || session.coordinate_scope || "", m_primary: final.m_primary || "", s_primary: final.s_primary || "", d_primary: final.d_primary || "", coordinate_status: final.status || "", participant_action: revision.participant_action || "", relationship_opt_in: connection.opted_in ?? "", has_institution_feedback: bundle.over39_institution_feedback.some((row) => row.response_id === session.response_id || row.source_response_id === session.response_id) };
@@ -489,6 +558,42 @@ document.addEventListener("click", async (event) => {
   if (!button) return;
   if (button.dataset.adminAction === "ai-health") return loadAiRuns();
   if (button.dataset.adminAction === "research-insights") return loadResearchInsights();
+  if (button.dataset.adminAction === "care") return loadCare();
+  if (button.dataset.adminAction === "care-withdraw-record") {
+    const responseId = document.querySelector("#care-withdraw-id")?.value.trim();
+    const submitEndpoint = String(window.OVER39_SUPABASE_SUBMIT_URL || "");
+    if (!responseId) { state.careStatus = "응답 ID를 입력해 주세요."; render(); return; }
+    if (!submitEndpoint) { state.careStatus = "저장 기능 주소가 설정되지 않았습니다."; render(); return; }
+    const response = await fetch(submitEndpoint, { method: "POST", headers: { "Content-Type": "application/json", apikey: anonKey, Authorization: `Bearer ${anonKey}` }, body: JSON.stringify({ kind: "withdrawal_request", idempotency_key: `withdrawal:${responseId}:${Date.now()}`, payload: { response_id: responseId } }) });
+    const result = await response.json().catch(() => ({}));
+    state.careStatus = response.ok && result.ok
+      ? `${responseId} 철회를 접수했습니다. 이 참여자에게는 이제 안부가 전달되지 않습니다.`
+      : "철회 접수에 실패했습니다. 응답 ID를 확인해 주세요.";
+    return loadCare();
+  }
+  if (button.dataset.adminAction === "care-resolve") {
+    try {
+      await relayAdminCall("admin_resolve_withdrawal", { response_id: button.dataset.responseId });
+      state.careStatus = `${button.dataset.responseId} 철회를 처리 완료로 표시했습니다. 안부 차단이 풀렸습니다.`;
+    } catch { state.careStatus = "처리 완료 표시에 실패했습니다. 중계 기능 배포와 권한을 확인해 주세요."; }
+    return loadCare();
+  }
+  if (button.dataset.adminAction === "care-mark-sent") {
+    try {
+      await relayAdminCall("admin_mark_notification", { response_id: button.dataset.responseId, status: "SENT" });
+      state.careStatus = "알림을 보냄으로 표시했습니다.";
+    } catch { state.careStatus = "보냄 표시에 실패했습니다."; }
+    return loadCare();
+  }
+  if (button.dataset.adminAction === "care-mint-link") {
+    try {
+      const result = await relayAdminCall("admin_mint_notification_link", { response_id: button.dataset.responseId });
+      state.careLink = /^https:\/\//.test(String(result.relay_url || "")) ? { response_id: button.dataset.responseId, url: result.relay_url } : null;
+      state.careStatus = state.careLink ? "메일용 편지함 링크를 만들었습니다. 알림 메일에 붙여 보내세요." : "링크 형식이 예상과 다릅니다.";
+    } catch (error) { state.careStatus = error.message === "NOTIFICATION_NO_PENDING_GREETING" ? "이 참여자에게 아직 열리지 않은 새 안부가 없습니다." : "메일용 링크를 만들지 못했습니다."; }
+    render();
+    return;
+  }
   // 표본을 바꾸는 것은 다시 집계하는 일이므로 재요청 없이 화면만 다시 그린다.
   if (button.dataset.insightsSample) { state.insightsIncludeTest = button.dataset.insightsSample === "with-test"; render(); return; }
   if (button.dataset.responseId) { state.view = "responses"; return loadDetail(button.dataset.responseId); }
@@ -519,6 +624,8 @@ document.addEventListener("click", async (event) => {
     const response = await fetch(relayEndpoint, { method: "POST", headers: { "Content-Type": "application/json", apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` }, body: JSON.stringify({ action: "admin_create_proposal", from_response_id: state.selected, to_response_id: toResponseId, message, match_reason: matchReason, source_language: "ko" }) });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok) { state.relayError = "전달 링크를 만들지 못했습니다. 중계 기능 배포와 관리자 권한을 확인해 주세요."; render(); return; }
+    // 링크를 href로 그대로 심으므로, https가 아닌 값은 화면에 걸지 않는다.
+    if (!/^https:\/\//.test(String(result.relay_url || ""))) { state.relayError = "받은 링크 형식이 예상과 다릅니다."; render(); return; }
     state.relayResult = result.relay_url;
     state.relayError = "";
     render();
@@ -545,13 +652,14 @@ document.addEventListener("click", async (event) => {
   }
   if (button.dataset.adminAction === "export-json") {
     const bundle = await loadNonPiiExport();
-    download("over39-rc1-non-pii.json", JSON.stringify(bundle, null, 2), "application/json");
+    // "non-pii"라는 이름은 오해를 부른다 — 연락처는 없지만 서술 원문이 그대로 담긴다.
+    download(`over39-research-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(bundle, null, 2), "application/json");
   }
   if (button.dataset.adminAction === "export-csv") {
     const bundle = await loadNonPiiExport();
     const rows = exportSummaryRows(bundle);
-    const fields = ["response_id", "sample_type", "institution_code", "route", "coordinate_scope", "status", "questionnaire_version", "classification_version", "source_language", "m_primary", "s_primary", "d_primary", "coordinate_status", "participant_action", "relationship_opt_in", "has_institution_feedback", "completed_at"];
-    download("over39-rc1-non-pii.csv", [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n"), "text/csv;charset=utf-8");
+    const fields = ["response_id", "sample_type", "include_in_policy_statistics", "institution_code", "route", "coordinate_scope", "status", "questionnaire_version", "classification_version", "source_language", "m_primary", "s_primary", "d_primary", "coordinate_status", "participant_action", "relationship_opt_in", "has_institution_feedback", "completed_at"];
+    download(`over39-research-summary-${new Date().toISOString().slice(0, 10)}.csv`, [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n"), "text/csv;charset=utf-8");
   }
 });
 
