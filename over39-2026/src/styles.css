@@ -5316,7 +5316,11 @@ body,
 .greeting-first-journey-map { position: relative; }
 .greeting-first-journey-track {
   position: absolute;
-  top: 20px;
+  /* 단계 동그라미의 중심선. `.stage-marker`의 padding-top 2px + 번호 높이 + gap 8px를
+     지나 동그라미(4px) 중심에 닿는 값이라, 브라우저에서 재서 넣었다(2026-09-07).
+     20px일 때는 선이 동그라미 4px 위를 스쳐 지나가 어긋나 보였다. 번호 글자 크기나
+     gap을 바꾸면 이 값도 함께 재야 한다. */
+  top: 24px;
   left: 12.5%;
   right: 12.5%;
   height: 1px;
@@ -5326,8 +5330,9 @@ body,
   position: absolute;
   top: 0;
   left: 0;
-  width: 5px;
-  height: 5px;
+  /* 지나가는 동그라미는 단계 동그라미와 같은 4px. 5px일 때는 혼자 커서 튀었다. */
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: var(--red);
   transform: translate(-50%, -50%);
@@ -5492,7 +5497,9 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   .greeting-first-journey .stage-marker { grid-row: 1 / span 2; min-height: 0; justify-items: start; align-content: start; padding-top: 3px; }
   .greeting-first-journey li > strong { min-height: 0; margin-top: 0; }
   .greeting-first-journey li > p { margin-top: 3px; }
-  .greeting-first-journey-track { top: 21px; bottom: 18px; left: 2px; right: auto; width: 1px; height: auto; border-top: 0; border-left: 1px dotted rgba(102, 104, 98, .42); }
+  /* 세로선도 같은 이유로 어긋나 있었다(번호 글자를 12px로 키운 뒤). 첫 동그라미 중심
+     25px에서 시작해 마지막 동그라미 중심에서 끝나도록 브라우저에서 재서 넣었다. */
+  .greeting-first-journey-track { top: 25px; bottom: 20px; left: 2px; right: auto; width: 1px; height: auto; border-top: 0; border-left: 1px dotted rgba(102, 104, 98, .42); }
   .greeting-first-journey-track > span { top: 0; left: 0; animation-name: greeting-quiet-descend; }
   .rc2-intro .intro-disclosure p { grid-template-columns: 1fr; gap: 7px; }
   .rc2-intro .intro-ready-note { padding-left: 0; }
