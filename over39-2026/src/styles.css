@@ -1082,9 +1082,21 @@ h2:focus {
   max-width: 1440px;
   margin: 38px auto 0;
   padding-top: 16px;
-  border-top: 1px solid var(--line-dark);
+  /* 거의 검정(--line-dark)이라 조용한 페이지 아래에 무겁게 떨어져 보였다. 페이지의 다른
+     모든 헤어라인과 같은 색으로 맞춘다(2026-09-07). */
+  border-top: 1px solid var(--line);
   color: var(--muted);
 }
+
+/* 연락처는 크레딧과 같은 라벨+값 모양이고, 링크만 조용한 밑줄로 구분한다.
+   브라우저 기본 밑줄은 이 편집물 결에서 날것으로 보였다. */
+.footer-credits .footer-contact a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(102, 104, 98, .35);
+}
+.footer-credits .footer-contact a:hover,
+.footer-credits .footer-contact a:focus-visible { border-bottom-color: var(--ink); }
 
 .footer-project {
   display: grid;
@@ -1121,10 +1133,24 @@ h2:focus {
 
 .footer-credits {
   display: grid;
-  /* auto-fit so the row stays balanced whatever the credit count is; a fixed five
-     columns left a visible empty cell once the credits settled at four. */
+  /* 같은 폭의 칸에 길이가 크게 다른 값이 들어가 들쭉날쭉했다(2026-09-07 측정: 주최·주관은
+     칸의 99%를 쓰는데 총괄기획은 20%, 「이생강」 뒤로 117px이 비었다). 칸을 글자 길이에
+     맞추고 남는 폭을 항목 사이로 고르게 나누면, 왼쪽 끝과 오른쪽 끝이 위의 여정 블록·
+     연구 카드와 맞아떨어진다. 주최·주관은 두 줄로 깨지기 2px 전이었던 문제도 사라진다. */
   grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 16px 20px;
+}
+
+/* 넓은 화면에서만 칸을 글자 길이에 맞춘다. 좁은 화면에는 아래에 「3칸」·「2칸」 규칙이
+   따로 있어서, 여기서 한 줄로 밀면 항목이 폭 0으로 짜부라지고 마지막 항목이 footer
+   밖으로 삐져나갔다(2026-09-07 375px 실측). 그래서 1081px 이상에만 적용한다. */
+@media (min-width: 1081px) {
+  .footer-credits {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    justify-content: space-between;
+  }
 }
 
 .footer-credits span {
@@ -5261,7 +5287,9 @@ body,
 /* Greeting-first landing · editorial text, line, dot, and whitespace only. */
 .rc2-intro-main {
   width: min(1160px, 100%);
-  padding-bottom: 72px;
+  /* 표지에도 푸터가 보이게 된 뒤로 연구 카드와 푸터 선 사이가 72px 비어, 푸터가 페이지에서
+     떨어져 나간 것처럼 보였다. 답답하지 않을 만큼만 남긴다(2026-09-07). */
+  padding-bottom: 40px;
 }
 .rc2-intro h1 {
   max-width: 1100px;

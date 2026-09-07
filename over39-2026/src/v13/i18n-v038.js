@@ -390,7 +390,7 @@ Object.assign(extraCopy.en || (extraCopy.en = {}), {
 // v0.4.0: balanced credits and sentence-based conceptual choices
 const v040Copy = {
   en: {
-    "주최·주관": "Organized by", "총괄기획": "Lead planning", "후원": "Supported by",
+    "주최·주관": "Organized by", "총괄기획": "Lead planning", "후원": "Supported by", "문의": "Contact",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Knock, knock—are you still working there?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "We welcome work you are continuing, work you have kept for a long time, and work you would like to bring out again.",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Feeling and atmosphere — The colours, sounds, atmosphere of the space, and emotions from that moment have stayed with me.",
@@ -399,7 +399,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "People and society — Relationships with people and meanings connected to place and society have remained in my memory."
   },
   ja: {
-    "주최·주관": "主催・主管", "총괄기획": "総括企画", "후원": "助成",
+    "주최·주관": "主催・主管", "총괄기획": "総括企画", "후원": "助成", "문의": "お問い合わせ",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "トントン、そこでは今も制作を続けていますか？",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "今続けている作品、長く大切にしてきた作品、もう一度取り出したい作品をお待ちしています。",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "感覚と雰囲気 — 色や音、空間の雰囲気、その時に感じた気持ちが長く残っています。",
@@ -408,7 +408,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "人と社会 — 人との関係、地域や社会に関する意味が記憶に残っています。"
   },
   zh: {
-    "주최·주관": "主辦・承辦", "총괄기획": "總策劃", "후원": "支持",
+    "주최·주관": "主辦・承辦", "총괄기획": "總策劃", "후원": "支持", "문의": "联系",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "叩、叩、叩，您還在那裡持續創作嗎？",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "我們期待您正在持續的作品、長久珍藏的作品，以及想再次取出的作品。",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "感受與氛圍 — 色彩、聲音、空間氛圍與當時的情感長久留在記憶中。",
@@ -417,7 +417,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "人與社會 — 與人的關係，以及關於地方與社會的意義留在記憶中。"
   },
   nl: {
-    "주최·주관": "Organisatie", "총괄기획": "Algemene leiding", "후원": "Ondersteund door",
+    "주최·주관": "Organisatie", "총괄기획": "Algemene leiding", "후원": "Ondersteund door", "문의": "Contact",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Klop, klop—werkt u daar nog steeds?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "We verwelkomen werk waaraan u doorgaat, werk dat u lang hebt bewaard en werk dat u opnieuw wilt tonen.",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Gevoel en sfeer — De kleuren, geluiden, sfeer van de ruimte en emoties van dat moment zijn lang gebleven.",
@@ -426,7 +426,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Mensen en samenleving — Relaties met mensen en betekenissen rond plaats en samenleving zijn in mijn herinnering gebleven."
   },
   es: {
-    "주최·주관": "Organiza", "총괄기획": "Dirección general", "후원": "Con el apoyo de",
+    "주최·주관": "Organiza", "총괄기획": "Dirección general", "후원": "Con el apoyo de", "문의": "Contacto",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Toc, toc, ¿todavía sigue trabajando ahí?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Esperamos obras que continúa desarrollando, obras que ha guardado durante mucho tiempo y obras que desea volver a mostrar.",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Sensación y atmósfera — Los colores, sonidos, la atmósfera del espacio y las emociones de aquel momento han permanecido.",
@@ -435,7 +435,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Personas y sociedad — Han quedado en mi memoria las relaciones con otras personas y los sentidos vinculados al lugar y la sociedad."
   },
   fr: {
-    "주최·주관": "Organisation", "총괄기획": "Direction générale", "후원": "Avec le soutien de",
+    "주최·주관": "Organisation", "총괄기획": "Direction générale", "후원": "Avec le soutien de", "문의": "Contact",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Toc, toc, travaillez-vous encore là-bas ?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Nous attendons les œuvres que vous poursuivez, celles que vous avez longtemps gardées et celles que vous souhaitez ressortir.",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Sensation et atmosphère — Les couleurs, les sons, l’atmosphère du lieu et les émotions de ce moment sont restés longtemps.",
@@ -444,7 +444,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Personnes et société — Les relations humaines et les significations liées au territoire et à la société sont restées dans ma mémoire."
   },
   ms: {
-    "주최·주관": "Penganjur", "총괄기획": "Perancangan keseluruhan", "후원": "Dengan sokongan",
+    "주최·주관": "Penganjur", "총괄기획": "Perancangan keseluruhan", "후원": "Dengan sokongan", "문의": "Hubungi",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Tok, tok, tok—adakah anda masih berkarya di sana?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Kami menantikan karya yang masih anda teruskan, karya yang lama disimpan, dan karya yang ingin anda keluarkan semula.",
     "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Perasaan dan suasana — Warna, bunyi, suasana ruang dan emosi ketika itu kekal lama dalam ingatan.",
