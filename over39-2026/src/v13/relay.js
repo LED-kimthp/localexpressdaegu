@@ -52,15 +52,15 @@ const receiptCopy = {
 };
 
 const task10a4ReceiptCopy = {
-  ko: { receivedTitle: "안부 한 통이 도착했습니다.", receivedHelp: "먼저 이곳을 지나간 한 사람이 남긴 문장입니다. 천천히 읽어보세요.", receivedHelpSeed: "프로젝트가 준비한 첫 안부입니다. 천천히 읽어보세요.", receivedHelpResearcher: "연구팀이 확인해 전달한 문장입니다. 천천히 읽어보세요.", reasonSummary: "두 기록에 함께 남은 현재의 흐름과 관계의 단서를 바탕으로 이어진 안부입니다. 이번 기록에서 읽힌 맥락이라 시간이 지나면 달라질 수 있습니다." },
-  en: { receivedTitle: "A greeting has arrived.", receivedHelp: "This sentence was left by someone who passed through here before you. Take your time reading it.", receivedHelpSeed: "This is the first greeting prepared by the project. Read it slowly.", receivedHelpResearcher: "This sentence was checked and passed on by the research team. Read it slowly.", reasonSummary: "This greeting was connected through clues about the present flow and relationships that remained in both records. It is context read in these records and may change over time." },
-  ja: { receivedTitle: "あいさつが一通届きました。", receivedHelp: "先にここを通った一人が残した文章です。ゆっくり読んでみてください。", receivedHelpSeed: "プロジェクトが用意した最初の便りです。ゆっくりお読みください。", receivedHelpResearcher: "研究チームが確認して届けた文章です。ゆっくりお読みください。", reasonSummary: "二つの記録にともに残った現在の流れと関係の手がかりをもとにつながったあいさつです。今回の記録から読まれた文脈なので、時間がたてば変わることがあります。" },
-  "zh-Hans": { receivedTitle: "一则问候已经抵达。", receivedHelp: "这是先前经过这里的一位参与者留下的句子。请慢慢阅读。", receivedHelpSeed: "这是项目准备的第一封问候。请慢慢读。", receivedHelpResearcher: "这是研究团队确认后转达的句子。请慢慢读。", reasonSummary: "这则问候根据两份记录中共同留下的当下脉络与关系线索相连。这是从本次记录中读到的语境，日后可能发生变化。" },
-  "zh-Hant": { receivedTitle: "一則問候已經抵達。", receivedHelp: "這是先前經過這裡的一位參與者留下的句子。請慢慢閱讀。", receivedHelpSeed: "這是專案準備的第一封問候。請慢慢讀。", receivedHelpResearcher: "這是研究團隊確認後轉達的句子。請慢慢讀。", reasonSummary: "這則問候根據兩份記錄中共同留下的當下脈絡與關係線索相連。這是從本次記錄中讀到的脈絡，日後可能發生變化。" },
-  fr: { receivedTitle: "Une salutation est arrivée.", receivedHelp: "Cette phrase a été laissée par une personne passée ici avant vous. Prenez le temps de la lire.", receivedHelpSeed: "C’est le premier message préparé par le projet. Lisez-le lentement.", receivedHelpResearcher: "Cette phrase a été vérifiée et transmise par l’équipe de recherche. Lisez-la lentement.", reasonSummary: "Cette salutation relie des indices du mouvement présent et des relations restés dans les deux récits. Ce contexte est lu dans ces récits et peut changer avec le temps." },
-  es: { receivedTitle: "Ha llegado un saludo.", receivedHelp: "Esta frase la dejó una persona que pasó por aquí antes. Léala con calma.", receivedHelpSeed: "Este es el primer saludo preparado por el proyecto. Léalo con calma.", receivedHelpResearcher: "Esta frase fue revisada y transmitida por el equipo de investigación. Léala con calma.", reasonSummary: "Este saludo se conectó a partir de pistas del curso actual y de las relaciones presentes en ambos registros. Es un contexto leído en estos registros y puede cambiar con el tiempo." },
-  nl: { receivedTitle: "Er is een groet aangekomen.", receivedHelp: "Deze zin is achtergelaten door iemand die hier eerder langskwam. Neem de tijd om hem te lezen.", receivedHelpSeed: "Dit is de eerste groet die het project heeft voorbereid. Lees hem rustig.", receivedHelpResearcher: "Deze zin is gecontroleerd en doorgegeven door het onderzoeksteam. Lees hem rustig.", reasonSummary: "Deze groet is verbonden via aanwijzingen over de huidige beweging en relaties die in beide records staan. Deze context is in de records gelezen en kan met de tijd veranderen." },
-  ms: { receivedTitle: "Satu salam telah tiba.", receivedHelp: "Ayat ini ditinggalkan oleh seseorang yang melalui tempat ini lebih awal. Bacalah dengan perlahan.", receivedHelpSeed: "Ini salam pertama yang disediakan oleh projek. Bacalah perlahan-lahan.", receivedHelpResearcher: "Ayat ini disemak dan disampaikan oleh pasukan penyelidik. Bacalah perlahan-lahan.", reasonSummary: "Salam ini dihubungkan melalui petunjuk tentang aliran semasa dan hubungan yang kekal dalam kedua-dua rekod. Konteks ini dibaca daripada rekod semasa dan boleh berubah mengikut masa." },
+  ko: { receivedTitle: "안부 한 통이 도착했습니다.", receivedHelp: "먼저 이곳을 지나간 한 사람이 남긴 문장입니다. 천천히 읽어보세요.", receivedHelpSeed: "프로젝트가 준비한 첫 안부입니다. 천천히 읽어보세요.", receivedHelpResearcher: "연구팀이 확인해 전달한 문장입니다. 천천히 읽어보세요.", arrivalReasonLabel: "이 안부가 닿은 이유", arrivalReason: "앞서 지나간 한 사람이 '다음 사람'에게 맡긴 문장이고, 그 다음 사람이 당신이 되었어요.", arrivalReasonSeed: "지금 당신에게 전할 수 있는, 앞서 남겨진 안부가 아직 없어 이 문장으로 시작합니다. 당신이 마지막에 남기는 한 문장은 다음 사람에게 먼저 도착하는 안부가 될 수 있어요.", reasonSummary: "두 기록에 함께 남은 현재의 흐름과 관계의 단서를 바탕으로 이어진 안부입니다. 이번 기록에서 읽힌 맥락이라 시간이 지나면 달라질 수 있습니다." },
+  en: { receivedTitle: "A greeting has arrived.", receivedHelp: "This sentence was left by someone who passed through here before you. Take your time reading it.", receivedHelpSeed: "This is the first greeting prepared by the project. Read it slowly.", receivedHelpResearcher: "This sentence was checked and passed on by the research team. Read it slowly.", arrivalReasonLabel: "Why this greeting reached you", arrivalReason: "Someone who passed through before you entrusted this sentence to 'the next person' — and that next person turned out to be you.", arrivalReasonSeed: "No greeting left by an earlier participant can reach you yet, so you begin with this one. The sentence you leave at the end may become the first greeting the next person receives.", reasonSummary: "This greeting was connected through clues about the present flow and relationships that remained in both records. It is context read in these records and may change over time." },
+  ja: { receivedTitle: "あいさつが一通届きました。", receivedHelp: "先にここを通った一人が残した文章です。ゆっくり読んでみてください。", receivedHelpSeed: "プロジェクトが用意した最初の便りです。ゆっくりお読みください。", receivedHelpResearcher: "研究チームが確認して届けた文章です。ゆっくりお読みください。", arrivalReasonLabel: "この便りが届いた理由", arrivalReason: "先にここを通った一人が「次の人」に託した文章で、その次の人があなたになりました。", arrivalReasonSeed: "いま届けられる、先に残された便りがまだないので、この文章から始めます。あなたが最後に残す一文が、次の人に最初に届く便りになるかもしれません。", reasonSummary: "二つの記録にともに残った現在の流れと関係の手がかりをもとにつながったあいさつです。今回の記録から読まれた文脈なので、時間がたてば変わることがあります。" },
+  "zh-Hans": { receivedTitle: "一则问候已经抵达。", receivedHelp: "这是先前经过这里的一位参与者留下的句子。请慢慢阅读。", receivedHelpSeed: "这是项目准备的第一封问候。请慢慢读。", receivedHelpResearcher: "这是研究团队确认后转达的句子。请慢慢读。", arrivalReasonLabel: "这封问候抵达您的原因", arrivalReason: "先前经过这里的一位参与者把这句话托付给了“下一个人”，而那个人正是您。", arrivalReasonSeed: "目前还没有先前留下、可以送达您的问候，所以从这句话开始。您最后留下的一句话，可能成为下一位参与者最先收到的问候。", reasonSummary: "这则问候根据两份记录中共同留下的当下脉络与关系线索相连。这是从本次记录中读到的语境，日后可能发生变化。" },
+  "zh-Hant": { receivedTitle: "一則問候已經抵達。", receivedHelp: "這是先前經過這裡的一位參與者留下的句子。請慢慢閱讀。", receivedHelpSeed: "這是專案準備的第一封問候。請慢慢讀。", receivedHelpResearcher: "這是研究團隊確認後轉達的句子。請慢慢讀。", arrivalReasonLabel: "這封問候抵達您的原因", arrivalReason: "先前經過這裡的一位參與者把這句話託付給了「下一個人」，而那個人正是您。", arrivalReasonSeed: "目前還沒有先前留下、可以送達您的問候，所以從這句話開始。您最後留下的一句話，可能成為下一位參與者最先收到的問候。", reasonSummary: "這則問候根據兩份記錄中共同留下的當下脈絡與關係線索相連。這是從本次記錄中讀到的脈絡，日後可能發生變化。" },
+  fr: { receivedTitle: "Une salutation est arrivée.", receivedHelp: "Cette phrase a été laissée par une personne passée ici avant vous. Prenez le temps de la lire.", receivedHelpSeed: "C’est le premier message préparé par le projet. Lisez-le lentement.", receivedHelpResearcher: "Cette phrase a été vérifiée et transmise par l’équipe de recherche. Lisez-la lentement.", arrivalReasonLabel: "Pourquoi ce message vous est parvenu", arrivalReason: "Une personne passée avant vous a confié cette phrase à « la personne suivante » — et cette personne, c’est vous.", arrivalReasonSeed: "Aucun message laissé plus tôt ne peut encore vous parvenir, alors vous commencez par celui-ci. La phrase que vous laisserez à la fin pourra être le premier message que recevra la personne suivante.", reasonSummary: "Cette salutation relie des indices du mouvement présent et des relations restés dans les deux récits. Ce contexte est lu dans ces récits et peut changer avec le temps." },
+  es: { receivedTitle: "Ha llegado un saludo.", receivedHelp: "Esta frase la dejó una persona que pasó por aquí antes. Léala con calma.", receivedHelpSeed: "Este es el primer saludo preparado por el proyecto. Léalo con calma.", receivedHelpResearcher: "Esta frase fue revisada y transmitida por el equipo de investigación. Léala con calma.", arrivalReasonLabel: "Por qué le llegó este saludo", arrivalReason: "Alguien que pasó antes que usted confió esta frase a «la siguiente persona», y esa persona resultó ser usted.", arrivalReasonSeed: "Todavía no hay un saludo dejado antes que pueda llegarle, así que comienza con este. La frase que deje al final puede ser el primer saludo que reciba la siguiente persona.", reasonSummary: "Este saludo se conectó a partir de pistas del curso actual y de las relaciones presentes en ambos registros. Es un contexto leído en estos registros y puede cambiar con el tiempo." },
+  nl: { receivedTitle: "Er is een groet aangekomen.", receivedHelp: "Deze zin is achtergelaten door iemand die hier eerder langskwam. Neem de tijd om hem te lezen.", receivedHelpSeed: "Dit is de eerste groet die het project heeft voorbereid. Lees hem rustig.", receivedHelpResearcher: "Deze zin is gecontroleerd en doorgegeven door het onderzoeksteam. Lees hem rustig.", arrivalReasonLabel: "Waarom deze groet u bereikte", arrivalReason: "Iemand die hier eerder langskwam vertrouwde deze zin toe aan 'de volgende persoon' — en die persoon bent u geworden.", arrivalReasonSeed: "Er is nog geen eerder achtergelaten groet die u kan bereiken, dus u begint met deze. De zin die u aan het einde achterlaat, kan de eerste groet worden die de volgende persoon ontvangt.", reasonSummary: "Deze groet is verbonden via aanwijzingen over de huidige beweging en relaties die in beide records staan. Deze context is in de records gelezen en kan met de tijd veranderen." },
+  ms: { receivedTitle: "Satu salam telah tiba.", receivedHelp: "Ayat ini ditinggalkan oleh seseorang yang melalui tempat ini lebih awal. Bacalah dengan perlahan.", receivedHelpSeed: "Ini salam pertama yang disediakan oleh projek. Bacalah perlahan-lahan.", receivedHelpResearcher: "Ayat ini disemak dan disampaikan oleh pasukan penyelidik. Bacalah perlahan-lahan.", arrivalReasonLabel: "Sebab salam ini sampai kepada anda", arrivalReason: "Seseorang yang melalui laman ini lebih awal mengamanahkan ayat ini kepada 'orang seterusnya' — dan orang itu ialah anda.", arrivalReasonSeed: "Belum ada salam yang ditinggalkan lebih awal yang dapat sampai kepada anda, jadi anda bermula dengan yang ini. Ayat yang anda tinggalkan pada akhirnya mungkin menjadi salam pertama yang diterima orang seterusnya.", reasonSummary: "Salam ini dihubungkan melalui petunjuk tentang aliran semasa dan hubungan yang kekal dalam kedua-dua rekod. Konteks ini dibaca daripada rekod semasa dan boleh berubah mengikut masa." },
 };
 
 // Retire the older direct-reply wording at runtime while retaining the
@@ -121,17 +121,29 @@ function reasonDetails(thread) {
   // 익명이면 발신자 표시를 비운다.
   // 예전 스냅샷에는 sender_visibility 필드가 아예 없다. 없으면 익명으로 취급한다 —
   // 발신자 표시는 명시적으로 공개를 고른 기록이 있을 때만 한다.
-  if (reason.sender_visibility !== "NAMED" && reason.sender_visibility !== "CONTEXTUAL") {
+  // 발신자 표시는 참여자가 「이름 또는 선택한 표기」를 명시적으로 고르고 그 표기가 실제로
+  // 있을 때만 한다. 역할 문장("작업을 만드는 참여자")은 어떤 판본에서도 그리지 않는다 —
+  // 대구 16명 회차에서 역할 하나는 사실상 지목이다. 옛 스냅샷(필드 없음)·CONTEXTUAL·
+  // ANONYMOUS는 전부 표시 없음. "이런 사람이 보냈다"는 발신자가 문장 안에 스스로 쓴다.
+  if (reason.sender_visibility !== "NAMED" || !reason.sender_display_label) {
     return { sender: "", summary: task10a4Receipt().reasonSummary, evidence: [] };
   }
-  const sender = structured
-    ? (reason.sender_visibility === "ANONYMOUS" ? "" : (reason.sender_visibility === "NAMED" && reason.sender_display_label ? reason.sender_display_label : localized.sender[reason.sender_context_code]))
-    : reason.sender_context;
+  const sender = String(reason.sender_display_label);
   const summary = task10a4Receipt().reasonSummary;
   const evidence = structured
     ? (reason.evidence_codes || []).slice(0, 2).map((item) => localized[item?.type]).filter(Boolean)
     : [];
   return { sender, summary, evidence };
+}
+// 「왜 나에게 왔나」의 참된 답은 유사성이 아니라 순서다 — 앞사람이 '다음 사람'에게 맡겼고,
+// 그 다음 사람이 당신이다. 무작위 배달에서도 100% 사실이고 발신자 정보는 0이다.
+// 연구팀이 직접 전달한 문장에는 붙이지 않는다.
+function arrivalReasonSection(thread, firstMessage) {
+  if (!firstMessage || firstMessage.sender_kind === "researcher") return "";
+  const reason = thread.connection_reason || {};
+  const isSeed = reason.sender_context_code === "PROJECT_SEED" || reason.summary_key === "PROJECT_FIRST_GREETING";
+  const receipt = task10a4Receipt();
+  return `<aside class="relay-arrival-reason"><span>${text(receipt.arrivalReasonLabel)}</span><p>${text(isSeed ? receipt.arrivalReasonSeed : receipt.arrivalReason)}</p></aside>`;
 }
 function senderContextSection(thread) {
   const { sender } = reasonDetails(thread);
@@ -163,7 +175,7 @@ function render() {
   const firstMessage = messages[0] || null;
   const laterMessages = messages.slice(1);
   const receivedGreeting = firstMessage
-    ? `<section class="relay-messages relay-received-message">${messageCard(firstMessage)}</section>${senderContextSection(thread)}${messageLanguage(firstMessage)}`
+    ? `<section class="relay-messages relay-received-message">${messageCard(firstMessage)}</section>${senderContextSection(thread)}${arrivalReasonSection(thread, firstMessage)}${messageLanguage(firstMessage)}`
     : "";
   const laterThread = laterMessages.length
     ? `<section class="relay-messages relay-later-messages">${laterMessages.map((message) => `${messageCard(message)}${messageLanguage(message)}`).join("")}</section>`
@@ -172,7 +184,9 @@ function render() {
   // 발신자 맥락 라벨과 머리말이 서로 모순되지 않게 한다.
   const reasonMeta = thread.connection_reason || {};
   const isSeedGreeting = reasonMeta.sender_context_code === "PROJECT_SEED" || reasonMeta.summary_key === "PROJECT_FIRST_GREETING";
-  const receivedHelpText = isSeedGreeting ? simplified.receivedHelpSeed : firstMessage?.sender_kind === "researcher" ? simplified.receivedHelpResearcher : simplified.receivedHelp;
+  // 시드·연구팀 머리말은 편지함 사전(task10a4Receipt)에 있다. simplified(안부 단순화 사전)에는
+  // 그 키가 없어 빈 문장이 나왔다 — 심사가 잡아낸 버그.
+  const receivedHelpText = isSeedGreeting ? task10a4Receipt().receivedHelpSeed : firstMessage?.sender_kind === "researcher" ? task10a4Receipt().receivedHelpResearcher : simplified.receivedHelp;
   const receivedHeading = firstMessage
     ? `<h1>${text(simplified.receivedTitle)}</h1><p class="relay-lead">${text(receivedHelpText)}</p>`
     : `<h1>${text(simplified.featureName)}</h1>`;

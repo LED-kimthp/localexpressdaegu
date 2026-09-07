@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v5-20260830-r1";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v6-20260907-r1";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "8395cef3d488-dirty 2026-09-02T02:11:55.270Z";
+const buildStamp = "3bfb20601b7f-dirty 2026-09-07T05:36:51.888Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2363,6 +2363,11 @@ async function beginFirstGreeting() {
       original_language: reservation.receipt.greeting.original_language || "ko",
       original_text: reservation.receipt.greeting.original_text,
       origin: reservation.receipt.greeting.origin || "participant",
+      // 발신자가 「이름 또는 선택한 표기」를 명시적으로 고른 경우에만 표기를 보관한다.
+      // 역할 문장·스냅샷 원문은 브라우저에 들이지 않는다. (표시 여부는 TK 결정 A1)
+      sender_label: reservation.receipt.greeting.connection_reason_snapshot?.sender_visibility === "NAMED"
+        ? String(reservation.receipt.greeting.connection_reason_snapshot?.sender_display_label || "").slice(0, 80) || null
+        : null,
       received_at: new Date().toISOString(),
     };
   } else if (reservation.status === "not_active" || reservation.error) {
@@ -2883,7 +2888,7 @@ function renderIntro() {
             <div class="entry-route-actions"><button class="primary-button" type="button" data-action="${startAction}">${esc(startLabel)} <span aria-hidden="true">→</span></button></div></div>
           </article>
         </section>
-        ${creditBlock("intro")}
+        ${""/* 기관 표기는 표지 하단 4칸 그리드 대신 다른 화면과 같은 푸터에 둔다(2026-09-07, TK: 표지 감각). */}
       </section>
     </main>`;
   }
@@ -2990,7 +2995,7 @@ function renderFirstGreeting() {
   }
   if (greeting.status === "received") {
     const isSeed = greeting.origin === "core_seed";
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}<div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(local.beginStory)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(local.beginStory)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   const unavailable = greeting.status === "unavailable";
   return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(unavailable ? local.unavailableHelp : local.waitingHelp)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(local.continueWithoutGreeting)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;

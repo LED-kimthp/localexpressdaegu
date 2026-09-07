@@ -156,7 +156,7 @@ function renderCare() {
   const withdrawalRows = withdrawals.map((row) => `<tr><th scope="row">${esc(row.response_id)}</th><td>${esc(careTime(row.requested_at))}</td><td>${esc(row.research_status || "requested")}</td><td>${row.resolved_at ? `처리 완료 · ${esc(careTime(row.resolved_at))}` : `<button class="secondary-button" data-admin-action="care-resolve" data-response-id="${esc(row.response_id)}">처리 완료로 표시</button>`}</td></tr>`).join("");
   const notifications = state.care.notifications || [];
   const pendingCount = notifications.filter((row) => row.pending).length;
-  const notificationRows = notifications.map((row) => `<tr><th scope="row">${esc(row.email)}</th><td>${esc(row.response_id)}</td><td>${esc(row.status)}</td><td>${row.pending ? `새 안부 ${esc(String(row.pending))}건` : "—"}</td><td>${esc(careTime(row.notified_at) || "아직 없음")}</td><td><button class="secondary-button" data-admin-action="care-mint-link" data-response-id="${esc(row.response_id)}" ${row.pending ? "" : "disabled"}>메일용 링크</button> <button class="secondary-button" data-admin-action="care-mark-sent" data-response-id="${esc(row.response_id)}">보냄 표시</button></td></tr>`).join("");
+  const notificationRows = notifications.map((row) => `<tr><th scope="row">${esc(row.email)}</th><td>${esc(row.response_id)}</td><td>${esc(row.status)}</td><td>${row.pending ? `새 안부 ${esc(String(row.pending))}건` : "—"}</td><td>${esc(careTime(row.notified_at) || "아직 없음")}</td><td><button class="secondary-button" data-admin-action="care-send-mail" data-response-id="${esc(row.response_id)}" ${row.pending ? "" : "disabled"}>알림 메일 보내기</button> <button class="secondary-button" data-admin-action="care-mint-link" data-response-id="${esc(row.response_id)}" ${row.pending ? "" : "disabled"}>메일용 링크</button> <button class="secondary-button" data-admin-action="care-mark-sent" data-response-id="${esc(row.response_id)}">보냄 표시</button></td></tr>`).join("");
   return `<section class="admin-detail-section"><h2>철회 요청 <span>${openCount}건 미처리</span></h2>
     <p>철회를 접수하면 그 순간부터 이 참여자에게는 안부가 전달되지 않습니다. 응답 자료는 자동으로 지워지지 않습니다 — 어디까지 지울지는 사람이 정합니다. 정리를 마친 뒤 「처리 완료로 표시」를 누르세요. <strong>처리 완료로 표시하면 안부 차단이 풀립니다.</strong></p>
     <label for="care-withdraw-id">철회 접수 · 응답 ID</label>
@@ -583,6 +583,19 @@ document.addEventListener("click", async (event) => {
       await relayAdminCall("admin_mark_notification", { response_id: button.dataset.responseId, status: "SENT" });
       state.careStatus = "알림을 보냄으로 표시했습니다.";
     } catch { state.careStatus = "보냄 표시에 실패했습니다."; }
+    return loadCare();
+  }
+  if (button.dataset.adminAction === "care-send-mail") {
+    // 서버가 직접 보낸다(RESEND_API_KEY 설정 시). 설정 전에는 링크만 만들어 준다.
+    try {
+      const result = await relayAdminCall("admin_send_notification", { response_id: button.dataset.responseId });
+      state.careStatus = result.sent ? `${button.dataset.responseId}에게 알림 메일을 보냈습니다.` : "보냈다는 확인을 받지 못했습니다.";
+    } catch (error) {
+      state.careStatus = error.message === "NOTIFY_NOT_CONFIGURED"
+        ? "서버 발송이 아직 설정되지 않았습니다(RESEND_API_KEY). 「메일용 링크」로 직접 보내세요."
+        : error.message === "NOTIFICATION_NO_PENDING_GREETING" ? "이 참여자에게 아직 열리지 않은 새 안부가 없습니다."
+          : error.message === "NOTIFY_SEND_FAILED" ? "발송 서비스가 거절했습니다. 상태를 FAILED로 표시했습니다." : "알림 메일을 보내지 못했습니다.";
+    }
     return loadCare();
   }
   if (button.dataset.adminAction === "care-mint-link") {

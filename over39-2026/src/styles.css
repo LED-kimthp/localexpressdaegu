@@ -1141,9 +1141,7 @@ h2:focus {
   font-style: normal;
 }
 
-.phase-intro .site-footer {
-  display: none;
-}
+/* 2026-09-07: 표지에서도 푸터를 보인다 — 기관 표기를 표지 하단 4칸 그리드에서 푸터(다른 화면과 같은 자리)로 옮겼다. */
 
 .phase-survey .site-footer {
   grid-template-columns: 1fr;
@@ -6188,4 +6186,53 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-preview .response-document-section-head h3 { font-size: 12.5px; }
   .response-document-preview .response-document-translation span,
   .response-document-preview .response-document-translation small { font-size: 10.5px; color: #6e7069; }
+}
+
+/* ── 2026-09-07 · 안부가 닿은 이유 (첫 안부 화면·편지함) ──────────────────────
+   안부 본문보다 작고 조용하게. 발신자 정보는 담지 않는다 — 순서만 말한다. */
+.first-greeting-arrival-reason,
+.relay-arrival-reason { margin: 18px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); }
+.first-greeting-arrival-reason span,
+.relay-arrival-reason span { display: block; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; margin-bottom: 6px; }
+.first-greeting-arrival-reason p,
+.relay-arrival-reason p { margin: 0; color: var(--ink-soft, var(--muted)); font-size: 15px; line-height: 1.65; word-break: keep-all; }
+
+/* ── 2026-09-07 · 표지 여정을 종이 넷으로 ────────────────────────────────────
+   글자·문구·순서는 하나도 바꾸지 않고, 네 단계를 책상 위 종이처럼 보이게 한다.
+   01 먼저 도착한 안부 = 줄 그은 편지지 / 02·03 = 기록 카드 / 04 다음 사람에게 =
+   아직 비어 있는 쪽지(참여자가 마지막에 직접 채울 자리).
+   안부의 '글자'는 한 자도 싣지 않는다 — 종이의 형식만 보인다.
+   겹쳐 쌓은 봉투 무리·도착 개수는 만들지 않는다. */
+.rc2-intro .greeting-first-journey li {
+  padding: 18px 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--surface, #fffefa);
+  text-align: left;
+}
+.rc2-intro .greeting-first-journey .stage-marker { justify-content: flex-start; }
+/* 01 — 줄 그은 편지지. 봉인 점 하나. */
+.rc2-intro .greeting-first-journey li.greeting-stage:first-child {
+  background:
+    linear-gradient(var(--surface, #fffefa) 0 0) padding-box,
+    repeating-linear-gradient(to bottom, transparent 0, transparent 21px, rgba(102, 104, 98, .13) 21px, rgba(102, 104, 98, .13) 22px);
+  background-clip: padding-box, border-box;
+}
+.rc2-intro .greeting-first-journey li.greeting-stage:first-child::after {
+  content: ""; display: block; width: 7px; height: 7px; margin: 12px 0 0;
+  border-radius: 50%; background: rgba(163, 72, 57, .5);
+}
+/* 04 — 아직 비어 있는 쪽지. 위쪽에 종이테이프 한 조각. */
+.rc2-intro .greeting-first-journey li.greeting-stage:last-child {
+  position: relative;
+  background: var(--surface-soft, #f7f5ef);
+  border-style: dashed;
+}
+.rc2-intro .greeting-first-journey li.greeting-stage:last-child::before {
+  content: ""; position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
+  width: 46px; height: 13px; background: rgba(102, 104, 98, .1);
+  border-left: 1px solid rgba(102, 104, 98, .16); border-right: 1px solid rgba(102, 104, 98, .16);
+}
+@media (max-width: 720px) {
+  .rc2-intro .greeting-first-journey li { padding: 16px 14px 18px; }
 }
