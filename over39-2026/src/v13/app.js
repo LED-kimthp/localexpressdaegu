@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260908-r2";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260908-r3";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "afedf5dfcd3a-dirty 2026-09-08T07:42:44.017Z";
+const buildStamp = "f22f87879c1e-dirty 2026-09-08T08:24:03.544Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1864,7 +1864,9 @@ function renderCoordinateModel() {
   const dLabel = axisLabels[position.d];
   const axes = [mLabel, sLabel, dLabel].filter(Boolean).join(" × ") || t("응답을 바탕으로 세 방향을 정리하는 중");
   const explanation = [mLabel && t("기억에서는 ‘{value}’").replace("{value}", mLabel), sLabel && t("현재에서는 ‘{value}’").replace("{value}", sLabel), dLabel && t("이어가기 위한 조건에서는 ‘{value}’").replace("{value}", dLabel)].filter(Boolean).join(", ");
-  return `<div class="coordinate-model" role="img" aria-label="${esc(axes)}"><div class="coordinate-symbol"><div class="coordinate-stack">${layers}</div></div><div class="coordinate-model-copy"><span class="coordinate-kicker">${esc(t("기억의 의미 × 현재의 흐름 × 이어가기 위한 조건"))}</span><strong>${esc(axes)}</strong>${explanation ? `<p>${esc(t("{explanation}이 이번 기록에서 함께 나타났습니다.").replace("{explanation}", explanation))}</p>` : ""}</div></div>`;
+  // `layers` 는 만들어 두되 화면에 붙이지 않는다. 좌표 계산과 저장은 그대로다.
+  void layers;
+  return `<div class="coordinate-model coordinate-model-plain"><div class="coordinate-model-copy"><span class="coordinate-kicker">${esc(t("기억의 의미 × 현재의 흐름 × 이어가기 위한 조건"))}</span><strong>${esc(axes)}</strong>${explanation ? `<p>${esc(t("{explanation}. 이번 기록에서 읽은 방향입니다.").replace("{explanation}", explanation))}</p>` : ""}</div></div>`;
 }
 
 function renderSubmit() {
@@ -2669,8 +2671,17 @@ function renderComplete() {
 }
 
 function rc2AxisValue(response, axis) {
+  const key = axis.toLowerCase();
   const profile = buildConnectionProfile(response, getConnection());
-  const value = profile.coordinate?.axes?.[axis.toLowerCase()] || response.axes?.[`${axis.toLowerCase()}_primary`] || null;
+  // 참여자가 「세 방향 확인」에서 직접 고른 값을 스냅샷 다음 순서로 읽는다. 스냅샷은
+  // `reflection_action` 이 ACCEPT·EDIT·OTHER_DIRECTION 일 때만 만들어지므로 그 밖의
+  // 경로에서는 비어 있고, 그러면 참여자가 방금 확인한 좌표가 완료 화면에서
+  // 「여러 방향이 함께 남아 있습니다」로 되돌아왔다 — 세 칸이 같은 문장이 되어
+  // 고장처럼 보였다(2026-09-08 실측: participant_m=M1, s=S2, d=D1인데도 셋 다 그랬다).
+  const value = profile.coordinate?.axes?.[key]
+    || response.axes?.[`${key}_primary`]
+    || response.answers?.[`participant_${key}`]
+    || null;
   return responseDocumentFrame(state.language).axis[value] || greetingFirst().coordinateMixed;
 }
 

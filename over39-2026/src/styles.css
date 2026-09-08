@@ -709,7 +709,10 @@ h2:focus {
   align-items: flex-start;
   width: 100%;
   min-height: 60px;
-  padding: 14px var(--space-2);
+  /* 위에 선이 있으므로 위쪽을 더 준다. 14px일 때 선에서 글자까지 15.5px, 글자 아래는
+     25.5px이어서 글자가 선에 붙어 보였다. 19px에서 선까지 23.5px / 아래 19.5px로
+     균형이 맞는다(2026-09-08 브라우저 실측). */
+  padding: 19px var(--space-2) 14px;
   border: 0;
   border-top: 1px solid var(--line);
   background: var(--surface);
@@ -772,6 +775,14 @@ h2:focus {
   display: grid;
   gap: var(--space-3);
 }
+
+/* 선택지 목록은 아래에 선을 갖는다. 그 바로 뒤에 오는 입력칸이 여백 없이 붙으면
+   라벨이 선에 닿는다(2026-09-08 실측: 0px). 선과 글 사이를 띄운다. */
+.choice-list + .text-field,
+.choice-list + .text-field-group,
+.choice-list + .text-input,
+.choice-list + p,
+.choice-list + label { margin-top: var(--space-4); }
 
 .text-field-label {
   color: var(--ink);
@@ -1092,11 +1103,15 @@ h2:focus {
    브라우저 기본 밑줄은 이 편집물 결에서 날것으로 보였다. */
 .footer-credits .footer-contact a {
   color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(102, 104, 98, .35);
+  /* border-bottom 은 글자에서 1.9px 떨어진 자리에 그려져 밑줄이 글자에 붙어 보였다.
+     text-decoration 은 간격을 지정할 수 있다(2026-09-08 확인). */
+  text-decoration: underline;
+  text-decoration-color: rgba(102, 104, 98, .35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
 }
 .footer-credits .footer-contact a:hover,
-.footer-credits .footer-contact a:focus-visible { border-bottom-color: var(--ink); }
+.footer-credits .footer-contact a:focus-visible { text-decoration-color: var(--ink); }
 
 .footer-project {
   display: grid;
@@ -1133,24 +1148,13 @@ h2:focus {
 
 .footer-credits {
   display: grid;
-  /* 같은 폭의 칸에 길이가 크게 다른 값이 들어가 들쭉날쭉했다(2026-09-07 측정: 주최·주관은
-     칸의 99%를 쓰는데 총괄기획은 20%, 「이생강」 뒤로 117px이 비었다). 칸을 글자 길이에
-     맞추고 남는 폭을 항목 사이로 고르게 나누면, 왼쪽 끝과 오른쪽 끝이 위의 여정 블록·
-     연구 카드와 맞아떨어진다. 주최·주관은 두 줄로 깨지기 2px 전이었던 문제도 사라진다. */
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  /* 칸 폭에 맞춰 스스로 접힌다. 화면 폭으로 판단하면 안 되는데, 푸터가 놓이는 칸의
+     폭은 페이지마다 다르기 때문이다 — 표지에서 창은 1900px인데 푸터 칸은 642px이다.
+     「화면이 넓으면 한 줄로」 규칙을 뒀을 때 그 차이 때문에 칸이 112px로 쪼개져 문의
+     주소가 두 줄로 꺾이고 칸을 44px 넘쳤다(2026-09-08 실측).
+     최소 폭 168px은 가장 긴 항목(문의 주소 156px)이 한 줄에 들어갈 크기다. */
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
   gap: 16px 20px;
-}
-
-/* 넓은 화면에서만 칸을 글자 길이에 맞춘다. 좁은 화면에는 아래에 「3칸」·「2칸」 규칙이
-   따로 있어서, 여기서 한 줄로 밀면 항목이 폭 0으로 짜부라지고 마지막 항목이 footer
-   밖으로 삐져나갔다(2026-09-07 375px 실측). 그래서 1081px 이상에만 적용한다. */
-@media (min-width: 1081px) {
-  .footer-credits {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: max-content;
-    justify-content: space-between;
-  }
 }
 
 .footer-credits span {
@@ -5093,7 +5097,9 @@ body,
   justify-content: space-between;
   gap: 18px;
   margin: 24px 0 22px;
-  padding-bottom: 14px;
+  /* 이 카드 안의 다른 줄들과 같은 좌우 여백. 이것만 0이어서 「CONTEXT 1/3」과 단계
+     동그라미가 카드 선에 1px로 붙어 있었다(2026-09-08 확인). */
+  padding: 0 42px 14px;
   border-bottom: 1px solid var(--line);
 }
 .context-internal-progress > span {
@@ -5827,7 +5833,8 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
 .completion-coordinate + .rc2-greeting-hub {
   display: block;
   margin-top: 0;
-  padding: clamp(38px, 5vw, 56px) 0;
+  /* 좌우를 0으로 두어 글자가 칸의 왼쪽 선에 붙어 있었다(2026-09-08 실측). */
+  padding: clamp(38px, 5vw, 56px) clamp(28px, 4vw, 48px);
   border-top: 0;
   background: transparent;
   box-shadow: none;
@@ -6110,6 +6117,8 @@ select:focus-visible {
    왼쪽 붉은 막대가 이미 하고 있으므로, 여백까지 겹쳐 줄 이유가 없다. */
 .record-confirm {
   margin-top: var(--space-6);
+  /* 좌우 여백은 0을 지킨다. 이 칸은 위 선택지 세 줄 바로 아래에 네 번째 줄처럼 붙어,
+     여백을 주면 안쪽 체크칸만 오른쪽으로 밀린다(1280px에서 254 대 273 실측). */
   padding: var(--space-4) 0 var(--space-2);
   border: 1px solid var(--line);
   border-left: 3px solid var(--red);
