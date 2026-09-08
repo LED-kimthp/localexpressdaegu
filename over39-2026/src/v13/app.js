@@ -4,7 +4,7 @@ import { buildConnectionProfile, connectionTopics } from "./connection.js";
 import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js";
 import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js";
 import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, translateResponseSummary } from "./depth.js";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js";
 import { QUESTION_METADATA } from "./question-map.js";
 import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js";
 import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js";
@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260908-r1";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260908-r2";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "4096820fa51f-dirty 2026-09-08T04:30:55.053Z";
+const buildStamp = "afedf5dfcd3a-dirty 2026-09-08T07:42:44.017Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -46,7 +46,7 @@ const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
 const referralEnabled = window.OVER39_REFERRAL_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
-const isApiDepthSource = (source) => ["openai", "motif", "api"].includes(source);
+const isApiDepthSource = (source) => isLiveModelSource(source) || source === "api";
 const query = new URLSearchParams(window.location.search);
 const interfaceLanguageKey = "over39-interface-language";
 // 이 줄은 모듈 최상단이다. 사파리에서 「모든 쿠키 차단」을 켠 참여자는 `localStorage`
@@ -606,7 +606,7 @@ function restoreLegacySynthesisConfirmation(answers = {}) {
     kind: "participant-confirmed",
     approval_scope: "participant_synthesis_text_only",
     excludes: ["system_derived_axes", "coordinate", "project_explanatory_text", "raw_answers"],
-    source_draft_kind: answers.participant_approved_provenance?.source_draft_kind || answers.depth_summary?.provenance?.kind || (answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
+    source_draft_kind: answers.participant_approved_provenance?.source_draft_kind || answers.depth_summary?.provenance?.kind || (isLiveModelSource(answers.depth_summary?.source) ? "ai-generated" : "fixed"),
     action: answers.reflection_action || "ACCEPT",
     final_text: approvedText,
     confirmed_at: confirmedAt,
@@ -883,7 +883,7 @@ function confirmParticipantSynthesis() {
     kind: "participant-confirmed",
     approval_scope: "participant_synthesis_text_only",
     excludes: ["system_derived_axes", "coordinate", "project_explanatory_text", "raw_answers"],
-    source_draft_kind: state.answers.depth_summary?.provenance?.kind || (state.answers.depth_summary?.source === "motif" ? "ai-generated" : "fixed"),
+    source_draft_kind: state.answers.depth_summary?.provenance?.kind || (isLiveModelSource(state.answers.depth_summary?.source) ? "ai-generated" : "fixed"),
     action: state.answers.reflection_action || "ACCEPT",
     final_text: finalText,
     confirmed_at: confirmedAt,
@@ -949,7 +949,7 @@ async function prepareApprovedTranslation() {
   const translated = await translateResponseSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, text: original, sourceLanguage });
   state.answers.participant_approved_text_ko = translated.translation_ko || "";
   state.answers.participant_approved_translation_provenance = {
-    kind: translated.run?.source === "motif" ? "ai-translated" : "fixed",
+    kind: isLiveModelSource(translated.run?.source) ? "ai-translated" : "fixed",
     original_language: sourceLanguage,
     displayed_language: "ko",
     original_text: original,
@@ -1688,12 +1688,12 @@ async function prepareAdaptiveSummary() {
     request_id: summary.request_id || summary.run?.request_id || null,
     provider: summary.run?.provider || null,
     provenance: {
-      kind: summary.source === "motif" ? "ai-generated" : "fixed",
+      kind: isLiveModelSource(summary.source) ? "ai-generated" : "fixed",
       original_language: responseSourceLanguage(),
       displayed_language: responseSourceLanguage(),
       original_text: summary.summary,
       translated_text: summary.summary_ko || null,
-      translation_kind: summary.source === "motif" && responseSourceLanguage() !== "ko" && summary.summary_ko ? "ai-translated" : "fixed",
+      translation_kind: isLiveModelSource(summary.source) && responseSourceLanguage() !== "ko" && summary.summary_ko ? "ai-translated" : "fixed",
     },
   };
   const mBlocked = state.answers.memory_type === "NO_RECALL" || ["MIXED", "UNSURE"].includes(state.answers.m_declared);
@@ -2161,7 +2161,7 @@ function createResponse(submissionPhase = "final") {
         .filter((checkpoint) => !ANCHOR_ORDER.includes(checkpoint)),
       turns: values(cleanedAnswers.adaptive_turns).map((turn) => ({
         id: turn.id, checkpoint: turn.checkpoint, anchor_id: turn.anchor_id || turn.checkpoint, axis: turn.axis, focus: turn.focus, prompt: turn.prompt,
-        intent: turn.intent, source: turn.source, provider: turn.provider || null, model: turn.model || null, language: turn.language, provenance: turn.provenance || { kind: turn.source === "motif" ? "ai-generated" : "fixed" },
+        intent: turn.intent, source: turn.source, provider: turn.provider || null, model: turn.model || null, language: turn.language, provenance: turn.provenance || { kind: isLiveModelSource(turn.source) ? "ai-generated" : "fixed" },
         request_id: turn.request_id || null, client_request_id: turn.client_request_id || null, client_request_id_sent: turn.client_request_id_sent || turn.client_request_id || null, client_request_id_returned: turn.client_request_id_returned || null, client_request_id_match: turn.client_request_id_match === true, context_fingerprint: turn.context_fingerprint || null, dom_match: turn.dom_match === true,
         need_decision: turn.need_decision || null, need_reason: turn.need_reason || null, adaptive_policy_version: turn.adaptive_policy_version || ADAPTIVE_POLICY_VERSION,
         answer_text: cleanedAnswers[turn.answer_field]?.trim() || null,

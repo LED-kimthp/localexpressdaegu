@@ -1,3 +1,5 @@
+import { isLiveModelSource } from "./depth.js";
+
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
 export const ACTIVE_ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "D02_TEXT"];
@@ -440,7 +442,7 @@ function makeTurn({ anchorId, questionText, source, language, run, context, serv
     self_check_field: null,
     source,
     provenance: {
-      kind: source === "motif" ? "ai-generated" : "fixed",
+      kind: isLiveModelSource(source) ? "ai-generated" : "fixed",
       original_language: language,
       displayed_language: language,
       original_question_text: serverQuestionText || questionText,

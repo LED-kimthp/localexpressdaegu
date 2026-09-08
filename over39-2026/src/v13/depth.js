@@ -2,7 +2,15 @@ import { safeFinalSummaryFailure } from "./integration-r2-helpers.js";
 import { compactParticipantContext } from "./participant-context.js";
 
 const AXES = ["M", "S", "D"];
-const API_SOURCES = new Set(["openai", "motif"]);
+// 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
+// skipped_low_information, api)은 사람이 쓴 것도 모델이 쓴 것도 아니다.
+// 제공자를 새로 붙일 때 이 한 줄만 고치면 된다. 이름을 여러 곳에 흩어 놓았던 것이
+// 2026-09-08에 cerebras를 붙였을 때 요약의 출처를 "fixed"로 기록하게 만든 원인이었다.
+const API_SOURCES = new Set(["openai", "motif", "cerebras", "groq", "morph", "motif3", "mistral"]);
+
+export function isLiveModelSource(source) {
+  return API_SOURCES.has(String(source || "").toLowerCase());
+}
 const VALID_AXIS_VALUES = {
   M: new Set(["M1", "M2", "M3", "M4", "MIXED", "UNKNOWN", "SKIP"]),
   S: new Set(["S1", "S2", "S3", "S4", "MIXED", "UNKNOWN", "SKIP"]),
@@ -1072,7 +1080,9 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
     const serverSource = String(body.source || provider || "api").toLowerCase();
     const requestId = body.request_id || adaptiveResult.request_id || null;
     const effectiveClientRequestId = repairAttempted ? repairClientRequestId : clientRequestId;
-    const verifiedMotif = provider === "motif" && serverSource === "motif";
+    // 살아 있는 모델이 답했고, 서버가 말한 출처가 제공자와 일치하는가. motif 하나만
+    // 보던 검사를 이름 목록으로 일반화한 것이고, 저장되는 값은 모든 경우에 전과 같다.
+    const verifiedModel = API_SOURCES.has(provider) && serverSource === provider;
     return {
       summary,
       summary_ko: body.summary_ko || body.korean_translation || (context.response_language === "ko" ? summary : null),
@@ -1080,11 +1090,11 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       secondary_axes: body.secondary_axes || {},
       evidence: body.evidence || {},
       uncertainty: body.uncertainty || null,
-      source: verifiedMotif ? "motif" : serverSource,
+      source: verifiedModel ? provider : serverSource,
       request_id: requestId,
       run: {
         status: "success",
-        source: verifiedMotif ? "motif" : serverSource,
+        source: verifiedModel ? provider : serverSource,
         provider,
         model: body.model || null,
         request_id: requestId,
@@ -1103,7 +1113,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
         http_status: adaptiveResult.status,
         latency_ms: repairAttempted ? Math.round(performance.now() - started) : (body.latency_ms ?? Math.round(performance.now() - started)),
         usage: body.usage || null,
-        real_motif_pass: Boolean(verifiedMotif && requestId && effectiveClientRequestId && body.client_request_id === effectiveClientRequestId),
+        real_motif_pass: Boolean(verifiedModel && provider === "motif" && requestId && effectiveClientRequestId && body.client_request_id === effectiveClientRequestId),
       },
     };
   } catch (error) {
@@ -1145,12 +1155,14 @@ export async function translateResponseSummary({ endpoint, anonKey, mode = "fall
     if (!translation) throw new Error("AI_INVALID_TRANSLATION");
     const provider = String(body.provider || "api").toLowerCase();
     const serverSource = String(body.source || provider || "api").toLowerCase();
-    const verifiedMotif = provider === "motif" && serverSource === "motif";
+    // 살아 있는 모델이 답했고, 서버가 말한 출처가 제공자와 일치하는가. motif 하나만
+    // 보던 검사를 이름 목록으로 일반화한 것이고, 저장되는 값은 모든 경우에 전과 같다.
+    const verifiedModel = API_SOURCES.has(provider) && serverSource === provider;
     return {
       translation_ko: translation,
       run: {
         status: "success",
-        source: verifiedMotif ? "motif" : serverSource,
+        source: verifiedModel ? provider : serverSource,
         provider,
         model: body.model || null,
         prompt_version: body.prompt_version || ADAPTIVE_PROMPT_VERSION,

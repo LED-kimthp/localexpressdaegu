@@ -1,3 +1,4 @@
+import { isLiveModelSource } from "./depth.js";
 // Reads `over39_ai_runs` and answers one question: is it safe to widen the distribution?
 //
 // A rate-limited or failed AI call is invisible to the participant - the follow-up simply
@@ -67,7 +68,10 @@ export function aiHealthSummary(runs = []) {
     if (Number.isFinite(attempts) && attempts > 1) bucket.retried += 1;
     if (Number.isFinite(row?.latency_ms)) bucket.latencies.push(row.latency_ms);
     if (row?.status !== "success") bucket.failed += 1;
-    else if (row?.source && row.source !== "motif") bucket.degraded += 1;
+    // 「motif가 아니면 성능 저하」는 제공자를 하나로 가정한 계산이었다. 두 번째
+    // 제공자가 받아낸 응답은 저하가 아니라 정상 배달이다 — 인계 사실은 fallback_reason에
+    // 따로 남으므로 여기서 저하로 세면 같은 사건을 두 번 세게 된다.
+    else if (row?.source && !isLiveModelSource(row.source)) bucket.degraded += 1;
     else bucket.delivered += 1;
   }
 
