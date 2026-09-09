@@ -794,11 +794,11 @@ export function renderResponseDocument(document = {}) {
         const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
         return `<div class="response-document-axis"><dt><span class="response-document-axis-code">${esc(axis.code)}</span> <strong>${esc(axis.label)}</strong> <small>${esc(axis.title)}</small>${secondary}</dt>${evidence ? `<dd><ul class="response-document-evidence">${evidence}</ul></dd>` : ""}</div>`;
       }).join("");
-      const foot = [
-        layer.reading_source ? `${esc(frame.readingSourceLabel)} ${esc(layer.reading_source)}` : "",
-        layer.uncertainty ? esc(layer.uncertainty) : "",
-      ].filter(Boolean).join(" · ");
-      body += `<dl class="response-document-axes">${axisBody}</dl>${foot ? `<p class="response-document-axes-foot">${foot}</p>` : ""}`;
+      // 「정리 출처 Motif 3 · …」 줄은 종이에서 뺐다(TK 2026-09-10). 제공자 이름은
+      // 500장에 같은 값이고, 불확실성이 말하던 「두 흐름이 함께」는 축 줄의
+      // 「함께 · S4 거리와 한계」가 이미 값으로 보여준다. 두 값 모두 응답 스냅샷
+      // (depth_summary.source · uncertainty)에 남는다 — 연구 자료에서 지운 것이 아니다.
+      body += `<dl class="response-document-axes">${axisBody}</dl>`;
     }
     if (array(layer.rows).length) {
       // 선택형 답은 표로 놓는다. 문장인 척하지 않으므로 어색함이 없고, 칸마다 자기
@@ -838,8 +838,10 @@ export function renderResponseDocument(document = {}) {
   const archive = document.archive
     ? `<div class="response-document-archive"><div class="response-document-archive-head"><span>${esc(document.archive.kind)}</span><strong>${esc(document.archive.study)}</strong>${document.archive.version ? `<em>${esc(document.archive.version)}</em>` : ""}</div><dl class="response-document-archive-credits">${array(document.archive.credits).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl></div>`
     : "";
-  const archiveStatement = document.archive?.statement
-    ? `<p class="response-document-archive-statement">${esc(document.archive.statement)}</p>`
-    : "";
+  // 수록 근거 문단은 종이에서 뺐다(TK 2026-09-10). 문서가 무엇인지는 머리의 연구
+  // 이름·기록 코드·기관 표기가 이미 밝히고, 승인 경계는 절 제목이 말하며, 활용
+  // 범위는 바로 위에 값으로 있다. 같은 문단이 500장에 500번 나올 이유가 없다.
+  // 값 자체는 document.archive.statement 에 그대로 남는다 — 지운 것은 인쇄면뿐이다.
+  const archiveStatement = "";
   return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }
