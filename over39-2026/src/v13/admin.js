@@ -469,7 +469,7 @@ function renderDashboard() {
   const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
   // 큐 머리의 숫자 하나가 가장 많이 읽힌다. 잘렸을 때는 그 자리에서 "500 / 전체"로 보여준다.
   const queueCount = Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? `${koNum(totals.all)} / ${koNum(state.sessionsTotal)}` : koNum(totals.all);
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
 }
 
 function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
@@ -628,6 +628,28 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.responseId) { state.view = "responses"; return loadDetail(button.dataset.responseId); }
   if (button.dataset.adminFilter) { state.filter = button.dataset.adminFilter; render(); return; }
   if (button.dataset.adminAction === "logout") { clearSession(); state.status = "ready"; render(); return; }
+  if (button.dataset.adminAction === "set-password") {
+    // 여기서 정하면 다음부터 메일 없이 들어올 수 있다. 이 화면에는 참여자가 쓴 이야기
+    // 전부가 있으므로, 짧거나 다른 곳에서 쓰던 비밀번호를 그대로 받지 않는다.
+    const next = window.prompt("새 비밀번호 (12자 이상, 여기서만 쓰는 것으로)");
+    if (next === null) return;
+    if (next.length < 12) { window.alert("비밀번호가 12자보다 짧습니다. 이 화면에는 참여자들의 이야기가 모두 있어, 이 한 줄이 유일한 문이 됩니다."); return; }
+    const again = window.prompt("한 번 더 넣어주세요");
+    if (again === null) return;
+    if (again !== next) { window.alert("두 번 넣은 비밀번호가 다릅니다."); return; }
+    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      method: "PUT",
+      headers: { apikey: anonKey, Authorization: `Bearer ${state.session.access_token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: next }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      window.alert(`비밀번호를 바꾸지 못했습니다 (HTTP ${response.status}${body?.error_code ? ` · ${body.error_code}` : ""}${body?.msg ? ` · ${body.msg}` : ""}).`);
+    } else {
+      window.alert("비밀번호를 정했습니다. 다음부터는 메일 없이 이메일과 비밀번호로 들어올 수 있습니다.");
+    }
+    return;
+  }
   if (button.dataset.adminAction === "login") {
     const email = document.querySelector("#admin-email")?.value.trim();
     if (!email) return;
