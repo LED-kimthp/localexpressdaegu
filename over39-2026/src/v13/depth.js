@@ -1110,6 +1110,11 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
         repair_request_id: repairRequestId,
         network_calls: repairAttempted ? 2 : 1,
         prompt_version: body.prompt_version || ADAPTIVE_PROMPT_VERSION,
+        // 정리문과 좌표를 다른 모델에서 받을 수 있다(TK 결정 2026-09-09). 어느 판단이
+        // 어느 모델의 것인지 연구 기록에서 가릴 수 있어야 한다.
+        axes_provider: body.axes_provider || null,
+        axes_model: body.axes_model || null,
+        axes_error: body.axes_error || null,
         http_status: adaptiveResult.status,
         latency_ms: repairAttempted ? Math.round(performance.now() - started) : (body.latency_ms ?? Math.round(performance.now() - started)),
         usage: body.usage || null,
