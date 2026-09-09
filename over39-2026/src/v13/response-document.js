@@ -421,6 +421,40 @@ export function buildResponseDocument({
 
   // ⑥ 참여자가 허락한 활용 범위. 부록을 읽는 사람이 인용해도 되는지를 알 수 있어야
   // 한다 — 지금은 문서에 없어서 별도 자료를 찾아봐야 했다(2026-09-09).
+  // 선택형 답을 「항목 : 값」으로 놓는다. 서술형은 위쪽 원문 절에 한 번만 둔다.
+  const structureRows = (() => {
+    if (frameLanguage !== "ko" && frameLanguage !== "en") return [];
+    const row = (label, value) => (clean(value) ? [[label, clean(value)]] : []);
+    const many = (label, values, labels) => {
+      const list = array(values).map((v) => documentLabel(labels, v, english)).filter(Boolean);
+      return list.length ? [[label, list.join(" · ")]] : [];
+    };
+    const L = english
+      ? { route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions",
+          memory: "What the memory is of", activity: "Current activity", creative: "Creative work", visibility: "Visibility",
+          public: "Public activity", pauseMeaning: "How the pause is read", support: "Conditions that supported it",
+          gap: "What is most lacking now", change: "Change wanted first", position: "Response position", scope: "Coordinate scope" }
+      : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
+          memory: "기억의 대상", activity: "현재 활동 상태", creative: "작품 제작 상태", visibility: "드러나는 정도",
+          public: "공개 활동 상태", pauseMeaning: "멈춤을 읽는 방식", support: "지지해 온 조건",
+          gap: "지금 가장 비어 있는 것", change: "먼저 달라졌으면 하는 것", position: "응답 위치", scope: "좌표 범위" };
+    return [
+      ...row(L.route, documentLabel(english ? EN_ROUTE_LABELS : ROUTE_LABELS, answers.route, english)),
+      ...row(L.role, roleText(answers, english)),
+      ...many(L.roles, answers.roles_parallel, english ? ROLE_LABELS_EN : ROLE_LABELS),
+      ...row(L.memory, documentLabel(MEMORY_TYPE_LABELS, answers.memory_type, english)),
+      ...row(L.activity, documentLabel(ACTIVITY_STATE_LABELS, answers.activity_state, english)),
+      ...row(L.creative, documentLabel(CREATIVE_STATE_LABELS, answers.creative_work_state, english)),
+      ...row(L.visibility, documentLabel(VISIBILITY_STATE_LABELS, answers.visibility_state, english)),
+      ...row(L.public, documentLabel(PUBLIC_STATE_LABELS, answers.public_activity_state, english)),
+      ...row(L.pauseMeaning, documentLabel(PAUSE_MEANING_LABELS, answers.pause_meaning, english)),
+      ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
+      // d_current_gap · d_desired_change_primary · response_position · d_scope 는
+      // 사람이 읽을 라벨 사전이 없어 코드값(NO_MAJOR_GAP 등)이 그대로 찍힌다. 부록에
+      // 기계 코드를 남기지 않는다 — 그 내용은 서술형 답과 정리문에 이미 담겨 있다.
+    ];
+  })();
+
   const scopeLines = [
     ["policy_research_use", frame.scopeAnalysis],
     ["policy_quote_use", frame.scopeQuote],
@@ -490,6 +524,20 @@ export function buildResponseDocument({
       [frameLanguage === "ko" ? "활동 또는 참여 지역" : frameLanguage === "en" ? "Place of activity or participation" : frame.place, locationText(answers, frame)],
       [frameLanguage === "ko" ? "기록 언어" : frameLanguage === "en" ? "Record language" : frame.language, sourceLabel],
     ],
+    // 문서 한 장만 떼어 보아도 어느 연구의 무엇인지 알 수 있게 한다. 500장을 결과
+    // 보고서 부록으로 붙이므로, 이 표기가 없으면 낱장의 출처를 가릴 수 없다(2026-09-09).
+    archive: {
+      kind: frame.archiveKind,
+      study: frame.archiveStudy,
+      version: releaseVersion ? `${frame.archiveVersion} ${releaseVersion}` : "",
+      statement: frame.archiveStatement,
+      credits: [
+        [frame.archiveHost, frame.archiveHostValue],
+        [frame.archiveLead, frame.archiveLeadValue],
+        [frame.archiveResearch, frame.archiveResearchValue],
+        [frame.archiveFunder, frame.archiveFunderValue],
+      ].filter(([label, value]) => clean(label) && clean(value)),
+    },
     coordinate: { m: coordinate.m || null, s: coordinate.s || null, d: coordinate.d || null },
     // `sections` remains for old analysis/export consumers. Participant UI
     // uses `layers`, whose approval metadata matches what was actually read
@@ -506,23 +554,22 @@ export function buildResponseDocument({
         paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true,
         approval_scope: "participant_synthesis_text_only", participant_approved: Boolean(original),
       },
-      // ③ 선택형 답을 문장으로 풀어낸 절들. 지금까지 `sections` 에만 있어 화면과
-      // 인쇄에 한 번도 나오지 않았다(렌더러가 `layers.length ? layeredBody : sections`
-      // 이므로 layers 가 있으면 버려진다). 구조화된 연구 자료의 대부분이 여기다.
-      // 참여자가 확인한 것은 아래 정리문뿐이므로 research_derived 로 표시한다.
-      ...legacySections
-        .filter((section) => ["origin", "present", "background", "continuity", "support", "needs"].includes(section.id))
-        .filter((section) => array(section.paragraphs).some((paragraph) => clean(typeof paragraph === "string" ? paragraph : paragraph?.text)))
-        .map((section) => ({
-          id: `research_structure_${section.id}`,
-          title: section.title,
-          description: frame.researchStructureNote,
-          paragraphs: section.paragraphs,
-          source_kind: "research_derived",
-          editable: false,
-          approval_scope: "excluded",
-          participant_approved: false,
-        })),
+      // ③ 선택형 답. TK 결정(2026-09-09): 산문 절이 아니라 표로 놓는다.
+      // 산문으로 풀었을 때 세 가지가 잘못됐다 — 문장인 척하는 틀에서 나온 기계 문장
+      // (「~의 조건이 함께 작용했다」), 위쪽 원문 절과 겹치는 서술형 답, 그리고 기억
+      // 문장이 「지지하는 조건」 아래로 들어가는 잘못된 배치. 표는 문장인 척하지 않고
+      // 칸마다 자기 값만 담으므로 세 문제가 함께 사라진다. 정책연구 부록의 표준
+      // 형식이기도 하다. 참여자가 확인한 것은 정리문뿐이므로 research_derived 로 둔다.
+      ...(structureRows.length ? [{
+        id: "research_structure",
+        title: frame.structureTitle,
+        description: frame.researchStructureNote,
+        rows: structureRows,
+        source_kind: "research_derived",
+        editable: false,
+        approval_scope: "excluded",
+        participant_approved: false,
+      }] : []),
       {
         id: "research_reading", title: task7.researchTitle, description: task7.researchHelp,
         paragraphs: coordinateLine, source_kind: "research_derived", editable: false,
@@ -568,6 +615,11 @@ export function renderResponseDocument(document = {}) {
     } else {
       body = array(layer.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
     }
+    if (array(layer.rows).length) {
+      // 선택형 답은 표로 놓는다. 문장인 척하지 않으므로 어색함이 없고, 칸마다 자기
+      // 값만 담기므로 값이 엉뚱한 절로 들어가는 일도 없다(2026-09-09).
+      body = `<dl class="response-document-rows">${array(layer.rows).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
+    }
     return `<section class="response-document-layer response-document-layer-${esc(layer.id)}" data-source-kind="${esc(layer.source_kind)}" data-approval-scope="${esc(layer.approval_scope)}"><header><h3>${esc(layer.title)}</h3><p>${esc(layer.description)}</p></header><div class="response-document-layer-body">${body}</div></section>`;
   }).join("") : "";
   const projectNote = document.project_note
@@ -580,5 +632,12 @@ export function renderResponseDocument(document = {}) {
     return `<section class="response-document-section response-document-section-${esc(section.id)}"><div class="response-document-section-head"><span>${esc(section.number)}</span><h3>${esc(section.title)}</h3></div><div class="response-document-section-body">${body}</div></section>`;
   }).join("");
   const metadata = array(document.metadata).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");
-  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${layers.length ? `${layeredBody}${projectNote}` : sections}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
+  // 낱장의 출처를 밝히는 표기. 인쇄될 때 이것이 문서의 공신력을 세운다.
+  const archive = document.archive
+    ? `<div class="response-document-archive"><div class="response-document-archive-head"><span>${esc(document.archive.kind)}</span><strong>${esc(document.archive.study)}</strong>${document.archive.version ? `<em>${esc(document.archive.version)}</em>` : ""}</div><dl class="response-document-archive-credits">${array(document.archive.credits).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl></div>`
+    : "";
+  const archiveStatement = document.archive?.statement
+    ? `<p class="response-document-archive-statement">${esc(document.archive.statement)}</p>`
+    : "";
+  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layeredBody}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }
