@@ -22,7 +22,19 @@ function clearSession() { state.session = null; sessionStorage.removeItem(sessio
 function captureAuthCallback() {
   const params = new URLSearchParams(location.hash.replace(/^#/, ""));
   const accessToken = params.get("access_token");
-  if (!accessToken) return;
+  if (!accessToken) {
+    // 링크가 죽어 돌아오면 프래그먼트에 이유가 실려 온다. 이걸 버리면 화면은 그냥
+    // 로그인 폼으로 보이고, 왜 안 되는지 알 방법이 없다(2026-09-09 실측:
+    // #error=access_denied&error_code=otp_expired).
+    const code = params.get("error_code");
+    if (code) {
+      state.error = code === "otp_expired"
+        ? "로그인 링크가 이미 쓰였거나 만료됐습니다. 메일 앱이 링크를 미리 열어보면 이렇게 됩니다 — 아래에서 숫자 코드로 들어가세요."
+        : (params.get("error_description") || "").replace(/\+/g, " ") || "로그인을 마치지 못했습니다.";
+      history.replaceState({}, "", location.pathname);
+    }
+    return;
+  }
   saveSession({ access_token: accessToken, refresh_token: params.get("refresh_token"), expires_at: Date.now() + Number(params.get("expires_in") || 3600) * 1000 });
   history.replaceState({}, "", location.pathname);
 }
@@ -203,7 +215,7 @@ async function otpFailureMessage(response) {
 
 function renderLogin() {
   const configured = Boolean(supabaseUrl && anonKey);
-  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1><p>${configured ? "등록된 관리자 이메일로 일회용 로그인 링크를 받습니다." : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}</p>${configured ? `<label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" class="text-input text-input-single" placeholder="research@example.com" /><button class="primary-button" data-admin-action="login">로그인 링크 받기</button><p class="ai-health-note" style="margin:12px 0 0;">이 주소가 Supabase의 Authentication → URL Configuration → Redirect URLs에 등록되어 있어야 링크가 이 화면으로 돌아옵니다: <code>${esc(adminRedirectUrl())}</code></p>` : ""}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
+  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1><p>${configured ? "등록된 관리자 이메일로 일회용 로그인 링크를 받습니다." : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}</p>${configured ? `<label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" class="text-input text-input-single" placeholder="research@example.com" /><button class="primary-button" data-admin-action="login">로그인 코드 받기</button><label for="admin-code" style="margin-top:18px;">메일로 받은 숫자 코드</label><input id="admin-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="text-input text-input-single" placeholder="6자리 숫자" /><button class="secondary-button" data-admin-action="verify-code">코드로 들어가기</button><p class="ai-health-note" style="margin:12px 0 0;">이 주소가 Supabase의 Authentication → URL Configuration → Redirect URLs에 등록되어 있어야 링크가 이 화면으로 돌아옵니다: <code>${esc(adminRedirectUrl())}</code></p>` : ""}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
 function statusLabel(item) { return item.status === "completed" ? "완료" : item.status === "in_progress" ? "중단·진행 중" : item.status; }
@@ -627,6 +639,32 @@ document.addEventListener("click", async (event) => {
     const response = await fetch(`${supabaseUrl}/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`, { method: "POST", headers: { apikey: anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
     state.error = response.ok ? otpSentMessage(redirectTo) : await otpFailureMessage(response);
     render();
+    return;
+  }
+  if (button.dataset.adminAction === "verify-code") {
+    const email = document.querySelector("#admin-email")?.value.trim();
+    const token = document.querySelector("#admin-code")?.value.replace(/\s/g, "");
+    if (!email || !token) { state.error = "이메일과 숫자 코드를 모두 넣어주세요."; render(); return; }
+    // 링크는 메일 앱이 미리 열어보며 소진시키지만 숫자 코드는 그럴 수 없다. type은
+    // 매직링크·OTP 모두 `email` 이다.
+    const response = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+      method: "POST",
+      headers: { apikey: anonKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ email, token, type: "email" }),
+    });
+    if (!response.ok) { state.error = await otpFailureMessage(response); render(); return; }
+    const body = await response.json().catch(() => null);
+    if (!body?.access_token) { state.error = "코드를 확인했지만 로그인 정보를 받지 못했습니다."; render(); return; }
+    saveSession({ access_token: body.access_token, refresh_token: body.refresh_token || null, expires_at: Date.now() + Number(body.expires_in || 3600) * 1000 });
+    state.error = "";
+    state.status = "loading";
+    render();
+    loadSessions().catch((error) => {
+      clearSession();
+      state.error = error.message === "ADMIN_NOT_REGISTERED" ? "이 계정은 관리자 목록에 등록되지 않았습니다." : "관리자 권한을 확인하지 못했습니다.";
+      state.status = "ready";
+      render();
+    });
     return;
   }
   if (button.dataset.adminAction === "prepare-relay") {
