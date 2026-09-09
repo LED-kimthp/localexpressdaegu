@@ -6480,14 +6480,14 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   }
 
   .response-document-final .response-document-layer {
-    margin: 3.4mm 0 0 !important;
+    margin: 2.4mm 0 0 !important;
     padding: 0 !important;
     border-top: 0 !important;
   }
   .response-document-final .response-document-title-screen { display: none !important; }
   .response-document-final .response-document-title-appendix { display: inline !important; }
   .response-document-final .response-document-layer > header h3 {
-    margin: 0 0 1.4mm !important;
+    margin: 0 0 1mm !important;
     font-size: 7.4pt !important;
     font-weight: 700 !important;
     letter-spacing: 0.03em;
@@ -6495,18 +6495,34 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final .response-document-layer-body blockquote,
   .response-document-final .response-document-layer-body p {
     font-size: 8.6pt !important;
-    line-height: 1.58 !important;
+    line-height: 1.44 !important;
   }
-  .response-document-final .response-document-translation p { font-size: 9pt !important; line-height: 1.6 !important; }
-  .response-document-final .response-document-exchange { margin: 0 0 2.1mm !important; }
-  .response-document-final .response-document-cite { font-size: 6.1pt !important; margin: 0 0 0.5mm !important; }
-  .response-document-final .response-document-asked { font-size: 7pt !important; margin: 0 0 0.8mm !important; }
+  .response-document-final .response-document-translation p { font-size: 9pt !important; line-height: 1.48 !important; }
+  .response-document-final .response-document-asked { font-size: 7pt !important; margin: 0 0 0.6mm !important; }
+
+  /* 인용 주소를 여백으로 내보낸다. 실측(2026-09-10): 주소 여덟 개가 각각 한 줄씩
+     차지해 20mm 가까이 먹고 있었다. 여백에 두면 세로 자리를 쓰지 않으면서 눈으로
+     찾기는 오히려 쉬워진다 — 보고서 본문의 인용 표시와 같은 자리다. */
+  .response-document-final .response-document-main .response-document-exchange {
+    position: relative;
+    padding-left: 14mm;
+    margin: 0 0 1.5mm !important;
+  }
+  .response-document-final .response-document-main .response-document-cite {
+    position: absolute;
+    left: 0;
+    top: 0.3mm;
+    width: 12.5mm;
+    margin: 0 !important;
+    font-size: 6.1pt !important;
+  }
+  .response-document-final .response-document-side .response-document-cite { font-size: 6.4pt !important; }
 
   /* 오른쪽 단은 좁으므로 더 작게. 코드형 값이라 좁은 폭을 견딘다. */
-  .response-document-final .response-document-axis { padding: 1.6mm 0 !important; }
+  .response-document-final .response-document-axis { padding: 1.3mm 0 !important; }
   .response-document-final .response-document-axis dt { font-size: 8pt !important; line-height: 1.4 !important; }
   .response-document-final .response-document-axis dt small { font-size: 6.4pt !important; }
-  .response-document-final .response-document-evidence > li { font-size: 7pt !important; line-height: 1.5 !important; margin: 0 0 1.2mm !important; }
+  .response-document-final .response-document-evidence > li { font-size: 7pt !important; line-height: 1.4 !important; margin: 0 0 0.9mm !important; }
   .response-document-final .response-document-axes-foot { font-size: 6.4pt !important; }
   .response-document-final .response-document-rows > div {
     grid-template-columns: 21mm minmax(0, 1fr) !important;
@@ -6541,19 +6557,24 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 
   /* 발: 활용 범위와 수록 근거. 인용하기 전에 마지막으로 보는 줄이다. */
   .response-document-final .response-document-layer-use_scope {
-    margin-top: 3.4mm !important;
-    padding-top: 1.6mm !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 3.5mm;
+    margin-top: 2.4mm !important;
+    padding-top: 1.4mm !important;
     border-top: 0.5pt solid #000 !important;
   }
+  .response-document-final .response-document-layer-use_scope > header { margin: 0 !important; }
   .response-document-final .response-document-layer-use_scope .response-document-layer-body {
     display: flex !important;
     flex-wrap: wrap;
-    gap: 0 4.5mm;
+    gap: 0 3.5mm;
   }
   .response-document-final .response-document-layer-use_scope p { font-size: 7pt !important; margin: 0 !important; }
   .response-document-final .response-document-archive-statement {
-    margin: 1.4mm 0 0 !important;
+    margin: 1.1mm 0 0 !important;
     font-size: 6.4pt !important;
-    line-height: 1.5 !important;
+    line-height: 1.4 !important;
   }
 }
