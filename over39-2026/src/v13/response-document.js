@@ -415,6 +415,22 @@ const QUESTION_ID_FIELDS = Object.freeze(Object.fromEntries(
   Object.entries(FIELD_QUESTION_IDS).map(([field, id]) => [id, field]),
 ));
 
+// 부록에 「정리 출처 morph」라고 찍혀 있었다(라이브 통과, 2026-09-09). morph 는 제공자
+// 경로의 내부 이름이고 정책연구 부록을 읽는 사람에게는 아무 뜻이 없다. 사람이 읽을
+// 이름으로 바꾼다. rules 는 모델이 아니라 규칙 조립이므로 그렇다고 밝힌다 — 어느 쪽이
+// 정리했는지가 연구 자료의 출처다.
+const READING_SOURCE_NAMES = Object.freeze({
+  morph: "Motif 3", motif3: "Motif 3", motif: "Motif",
+  groq: "Groq", cerebras: "Cerebras", mistral: "Mistral", openai: "OpenAI",
+});
+
+function readingSourceName(source, frame) {
+  const key = clean(source);
+  if (!key) return "";
+  if (key === "rules" || key === "mock_api" || key === "api") return frame.readingSourceRules || key;
+  return READING_SOURCE_NAMES[key] || key;
+}
+
 function resolveEvidenceId(id, answers = {}) {
   const key = clean(id);
   if (!key) return null;
@@ -545,7 +561,7 @@ export function buildResponseDocument({
       evidence: axisEvidence(answers, axis),
     }];
   });
-  const readingSource = clean(depthSummary.source);
+  const readingSource = readingSourceName(depthSummary.source, frame);
   const readingUncertainty = clean(depthSummary.uncertainty);
 
   // ⑥ 참여자가 허락한 활용 범위. 부록을 읽는 사람이 인용해도 되는지를 알 수 있어야
