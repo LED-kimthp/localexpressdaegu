@@ -166,8 +166,30 @@ const esc = (value) => String(value ?? "")
 const array = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
+// memory_branch_followup 은 자유 서술이 아니라 선택지다(app.js renderBranch 는 renderChoices 만
+// 쓴다). 값이 선택지 문구 그대로여서 문장처럼 보이므로 이 목록에 섞여 있었고, 부록의
+// 「내가 실제로 남긴 말」에 「최근 또는 다음 작업」 같은 조각이 참여자가 쓴 문장으로 실렸다.
+// 고른 답이므로 표로 옮긴다(2026-09-09).
+// M03 은 memory_type 마다 다른 것을 묻는다("무엇을 먼저 보고 싶나요" / "어떤 의미로 남아
+// 있나요" / "지금도 이어지는 부분은"). 표의 칸 이름은 실제로 물은 것을 따라간다 — 하나의
+// 뭉뚱그린 이름을 쓰면 무엇에 대한 답인지 알 수 없다(2026-09-09).
+const BRANCH_FOLLOWUP_LABELS = {
+  ARTIST: "다시 보고 싶은 것", WORK_OBJECT: "다시 살필 때 궁금한 것",
+  SPACE: "먼저 찾아보고 싶은 것", EXHIBITION: "다시 살필 때 궁금한 것",
+  SCENE: "먼저 확인하고 싶은 것", PHRASE: "그 문장이 지금 남은 의미",
+  SENSATION: "먼저 붙이고 싶은 단서", PRACTICE: "지금도 이어지는 부분",
+  NO_RECALL: "지금 가장 가까운 상태",
+};
+const BRANCH_FOLLOWUP_LABELS_EN = {
+  ARTIST: "What to see again first", WORK_OBJECT: "What is most curious on a second look",
+  SPACE: "What to look for first", EXHIBITION: "What is most curious on a second look",
+  SCENE: "What to check first", PHRASE: "What the phrase means now",
+  SENSATION: "The first clue to attach", PRACTICE: "What still continues from it",
+  NO_RECALL: "Closest state right now",
+};
+
 const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
-  "memory_clue_text", "no_recall_relation_text", "memory_meaning_text", "memory_branch_followup",
+  "memory_clue_text", "no_recall_relation_text", "memory_meaning_text",
   "transition_text", "pause_context_text", "invisible_continuity_text", "support_conditions_text",
   "desired_change_text", "d_context_impact_text", "coordinate_feedback_text",
   "role_primary_other", "roles_parallel_other", "field_other", "participation_mode_other",
@@ -431,11 +453,11 @@ export function buildResponseDocument({
     };
     const L = english
       ? { route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions",
-          memory: "What the memory is of", activity: "Current activity", creative: "Creative work", visibility: "Visibility",
+          memory: "What the memory is of", branch: "Follow-up about the memory", activity: "Current activity", creative: "Creative work", visibility: "Visibility",
           public: "Public activity", pauseMeaning: "How the pause is read", support: "Conditions that supported it",
           gap: "What is most lacking now", change: "Change wanted first", position: "Response position", scope: "Coordinate scope" }
       : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
-          memory: "기억의 대상", activity: "현재 활동 상태", creative: "작품 제작 상태", visibility: "드러나는 정도",
+          memory: "기억의 대상", branch: "기억에서 이어 고른 답", activity: "현재 활동 상태", creative: "작품 제작 상태", visibility: "드러나는 정도",
           public: "공개 활동 상태", pauseMeaning: "멈춤을 읽는 방식", support: "지지해 온 조건",
           gap: "지금 가장 비어 있는 것", change: "먼저 달라졌으면 하는 것", position: "응답 위치", scope: "좌표 범위" };
     return [
@@ -443,6 +465,7 @@ export function buildResponseDocument({
       ...row(L.role, roleText(answers, english)),
       ...many(L.roles, answers.roles_parallel, english ? ROLE_LABELS_EN : ROLE_LABELS),
       ...row(L.memory, documentLabel(MEMORY_TYPE_LABELS, answers.memory_type, english)),
+      ...row((english ? BRANCH_FOLLOWUP_LABELS_EN : BRANCH_FOLLOWUP_LABELS)[answers.memory_type] || L.branch, answers.memory_branch_followup),
       ...row(L.activity, documentLabel(ACTIVITY_STATE_LABELS, answers.activity_state, english)),
       ...row(L.creative, documentLabel(CREATIVE_STATE_LABELS, answers.creative_work_state, english)),
       ...row(L.visibility, documentLabel(VISIBILITY_STATE_LABELS, answers.visibility_state, english)),
