@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260908-r3";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260909-r3";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "0d9cf8f9c98e-dirty 2026-09-09T06:58:25.456Z";
+const buildStamp = "fbabb26eee28-dirty 2026-09-09T07:16:48.100Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2678,7 +2678,12 @@ function rc2AxisValue(response, axis) {
   // 경로에서는 비어 있고, 그러면 참여자가 방금 확인한 좌표가 완료 화면에서
   // 「여러 방향이 함께 남아 있습니다」로 되돌아왔다 — 세 칸이 같은 문장이 되어
   // 고장처럼 보였다(2026-09-08 실측: participant_m=M1, s=S2, d=D1인데도 셋 다 그랬다).
-  const value = profile.coordinate?.axes?.[key]
+  // connection.js 의 coordinateInsight 는 축을 덩어리로 돌려준다
+  // ({ code: "M1", label, sentence }). 여기서는 사전을 찾을 글자가 필요한데 덩어리를
+  // 그대로 넣어 axis["[object Object]"] 를 찾고 있었다 — 늘 없으므로 세 축이 모두
+  // 「여러 방향이 함께 남아 있습니다」로 떨어졌다. 게다가 덩어리는 값이 있는 것으로
+  // 세어져 뒤의 대안까지 내려가지도 못했다(2026-09-09 실측).
+  const value = profile.coordinate?.axes?.[key]?.code
     || response.axes?.[`${key}_primary`]
     || response.answers?.[`participant_${key}`]
     || null;
