@@ -176,15 +176,22 @@ const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
 
 export function rawParticipantWords(answers = {}) {
   const fields = [...RAW_PARTICIPANT_TEXT_FIELDS];
+  // AI가 이어서 물은 질문은 답과 짝을 이룰 때만 읽을 수 있다. 답만 남기면 부록에서
+  // 그 문장이 무슨 질문에 대한 답인지 알 수 없다(2026-09-09).
+  const asked = new Map();
   for (const turn of array(answers.adaptive_turns)) {
-    if (turn?.answer_field) fields.push(turn.answer_field);
+    if (!turn?.answer_field) continue;
+    fields.push(turn.answer_field);
+    const question = clean(turn.question_text || turn.prompt);
+    if (question) asked.set(turn.answer_field, question);
   }
   const seen = new Set();
   return fields.flatMap((field) => {
     const value = clean(answers[field]);
     if (!value || seen.has(value)) return [];
     seen.add(value);
-    return [{ field, text: value, source_kind: "participant_raw", editable: "at_source_question", participant_approved: false }];
+    const question = asked.get(field) || null;
+    return [{ field, text: value, question, source_kind: "participant_raw", editable: "at_source_question", participant_approved: false }];
   });
 }
 
@@ -359,6 +366,7 @@ export function buildResponseDocument({
   createdAt = new Date().toISOString(),
   confirmedAt = null,
   final = false,
+  participantCode = "",
 } = {}) {
   // The answer's original language and the visible document frame are
   // intentionally separate: switching interface language must not rewrite
@@ -403,7 +411,25 @@ export function buildResponseDocument({
   const coordinate = recordCoordinate(answers);
   const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
   const coordinateAxes = [axisText[coordinate.m], axisText[coordinate.s], axisText[coordinate.d]].filter(Boolean).join(" × ");
-  const coordinateLine = [coordinateAxes || copy.coordinatePending, copy.coordinateText];
+  const coordinateLine = [
+    coordinateAxes || copy.coordinatePending,
+    // 좌표 번호는 부록과 분석 결과를 짝지을 때 쓰인다. 축 이름만으로는 64칸 가운데
+    // 어디인지 가릴 수 없다(2026-09-09).
+    ...(coordinate.number ? [frame.coordinateNumber.replace("{n}", String(coordinate.number))] : []),
+    copy.coordinateText,
+  ];
+
+  // ⑥ 참여자가 허락한 활용 범위. 부록을 읽는 사람이 인용해도 되는지를 알 수 있어야
+  // 한다 — 지금은 문서에 없어서 별도 자료를 찾아봐야 했다(2026-09-09).
+  const scopeLines = [
+    ["policy_research_use", frame.scopeAnalysis],
+    ["policy_quote_use", frame.scopeQuote],
+    ["public_archive_interest", frame.scopePublic],
+  ].flatMap(([field, label]) => {
+    const value = clean(answers[field]);
+    if (!value) return [];
+    return [`${label} · ${frame[value] || value}`];
+  });
   const rawWords = rawParticipantWords(answers);
   const sectionTitles = english
     ? { origin: audience ? "A remembered encounter" : "Where this record begins", present: audience ? "Arts and culture in the present" : "Current practice and arts and culture", background: "Conditions in the background", continuity: "What has continued", support: "What has supported it", needs: "Conditions for continuing" }
@@ -455,7 +481,11 @@ export function buildResponseDocument({
       display_name: participantName,
     },
     metadata: [
+      // 500장을 결과보고서 부록으로 붙일 때 어느 응답인지 가릴 표기다. 문서 밖의
+      // 카드에만 있어 인쇄에서 빠졌다(2026-09-09 실측).
+      ...(clean(participantCode) ? [[frame.recordCode, clean(participantCode)]] : []),
       [frameLanguage === "ko" ? "작성일" : frameLanguage === "en" ? "Date" : frame.date, dateLabel(createdAt, frameLanguage)],
+      ...(confirmedAt ? [[frame.confirmedAt, dateLabel(confirmedAt, frameLanguage)]] : []),
       [frameLanguage === "ko" ? "참여자 표기" : frameLanguage === "en" ? "Participant" : frame.participant, participantName],
       [frameLanguage === "ko" ? "활동 또는 참여 지역" : frameLanguage === "en" ? "Place of activity or participation" : frame.place, locationText(answers, frame)],
       [frameLanguage === "ko" ? "기록 언어" : frameLanguage === "en" ? "Record language" : frame.language, sourceLabel],
@@ -476,11 +506,39 @@ export function buildResponseDocument({
         paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true,
         approval_scope: "participant_synthesis_text_only", participant_approved: Boolean(original),
       },
+      // ③ 선택형 답을 문장으로 풀어낸 절들. 지금까지 `sections` 에만 있어 화면과
+      // 인쇄에 한 번도 나오지 않았다(렌더러가 `layers.length ? layeredBody : sections`
+      // 이므로 layers 가 있으면 버려진다). 구조화된 연구 자료의 대부분이 여기다.
+      // 참여자가 확인한 것은 아래 정리문뿐이므로 research_derived 로 표시한다.
+      ...legacySections
+        .filter((section) => ["origin", "present", "background", "continuity", "support", "needs"].includes(section.id))
+        .filter((section) => array(section.paragraphs).some((paragraph) => clean(typeof paragraph === "string" ? paragraph : paragraph?.text)))
+        .map((section) => ({
+          id: `research_structure_${section.id}`,
+          title: section.title,
+          description: frame.researchStructureNote,
+          paragraphs: section.paragraphs,
+          source_kind: "research_derived",
+          editable: false,
+          approval_scope: "excluded",
+          participant_approved: false,
+        })),
       {
         id: "research_reading", title: task7.researchTitle, description: task7.researchHelp,
         paragraphs: coordinateLine, source_kind: "research_derived", editable: false,
         approval_scope: "excluded", participant_approved: false,
       },
+      // ⑥ 참여자가 직접 고른 활용 범위. 부록을 읽는 사람이 인용 가능 여부를 여기서 안다.
+      ...(scopeLines.length ? [{
+        id: "use_scope",
+        title: frame.useScopeTitle,
+        description: frame.useScopeNote,
+        paragraphs: scopeLines,
+        source_kind: "participant_declared",
+        editable: false,
+        approval_scope: "excluded",
+        participant_approved: false,
+      }] : []),
     ],
     project_note: {
       title: copy.promiseTitle, paragraphs: copy.promise, source_kind: "project_information",
@@ -501,7 +559,9 @@ export function renderResponseDocument(document = {}) {
     let body = "";
     if (layer.id === "raw_participant_words") {
       body = array(layer.entries).length
-        ? array(layer.entries).map((entry) => `<blockquote>${esc(entry.text)}</blockquote>`).join("")
+        ? array(layer.entries).map((entry) => entry.question
+          ? `<div class="response-document-exchange"><p class="response-document-asked">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
+          : `<blockquote>${esc(entry.text)}</blockquote>`).join("")
         : `<p class="response-document-empty">${esc(task7.rawEmpty)}</p>`;
     } else if (layer.id === "participant_confirmed_synthesis") {
       body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;

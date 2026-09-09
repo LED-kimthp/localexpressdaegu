@@ -776,6 +776,17 @@ h2:focus {
   gap: var(--space-3);
 }
 
+/* AI가 이어서 물은 질문과 그 답을 한 덩어리로 묶는다. 답만 남기면 결과보고서 부록에서
+   무슨 질문에 대한 답인지 알 수 없다(TK, 2026-09-09). */
+.response-document-exchange { margin: 0 0 18px; }
+.response-document-asked {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.response-document-asked::before { content: "물음 · "; font-weight: 700; }
+
 /* 선택지 목록은 아래에 선을 갖는다. 그 바로 뒤에 오는 입력칸이 여백 없이 붙으면
    라벨이 선에 닿는다(2026-09-08 실측: 0px). 선과 글 사이를 띄운다. */
 .choice-list + .text-field,
@@ -3363,6 +3374,10 @@ h2:focus {
   .response-document-layer-body blockquote,
   .response-document-layer-body > p,
   .response-document-translation { break-inside: avoid; orphans: 2; widows: 2; }
+  /* 물음과 답은 떨어지면 둘 다 읽을 수 없게 된다. 한 덩어리로 붙들어 둔다.
+     결과보고서 부록으로 500장을 붙이므로 한 장이라도 갈리면 그만큼 자료를 잃는다. */
+  .response-document-exchange { break-inside: avoid; }
+  .response-document-asked { break-after: avoid; }
 }
 
 /* Production identity · compact header and card marks */
