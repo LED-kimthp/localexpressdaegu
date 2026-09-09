@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260909-r7";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260909-r8";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "1891fd2a5a56-dirty 2026-09-09T10:12:38.096Z";
+const buildStamp = "710205a9fdb6-dirty 2026-09-09T13:59:57.307Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -3101,7 +3101,7 @@ function changeChoice(id, value, multi, max, exclusive) {
     if (id === "P11" && ["SKIP", "UNSURE"].includes(value)) withdrawAnswer(state.answers, "transition_text");
     if (id === "P13" && !["YES", "MIXED"].includes(value)) withdrawAnswer(state.answers, "invisible_continuity_text");
     if (id === "D02" && !/^D[1-4]$/.test(String(value))) withdrawAnswer(state.answers, "desired_change_text");
-    if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_tags_other", "d_context_impact_text"].forEach((key) => withdrawAnswer(state.answers, key));
+    if (id === "D_FOCUS") ["d_current_gap", "d_desired_change_primary", "desired_change_text", "d_context_tags", "d_context_other", "d_context_evidence_text", "d_context_impact_text"].forEach((key) => withdrawAnswer(state.answers, key));
     if (id === "reflection_action") {
       // 고쳐쓰기 ↔ 그대로 쓰기를 오가도 쓰던 문장은 잃지 않는다. 떠날 때 회수함으로
       // 옮기고, 고쳐쓰기로 돌아오면 회수함에서 그대로 되살린다.

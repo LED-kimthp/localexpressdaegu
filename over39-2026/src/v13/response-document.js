@@ -1,4 +1,7 @@
 import { responseDocumentFrame } from "./response-document-i18n.js";
+// 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
+// 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js";
 import { task7Copy } from "./task7-i18n.js";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
@@ -191,10 +194,43 @@ const BRANCH_FOLLOWUP_LABELS_EN = {
 const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
   "memory_clue_text", "no_recall_relation_text", "memory_meaning_text",
   "transition_text", "pause_context_text", "invisible_continuity_text", "support_conditions_text",
-  "desired_change_text", "d_context_impact_text", "coordinate_feedback_text",
+  // D04 는 스키마 store 가 d_context_evidence_text 다(app.js:3844 도 그 이름을 쓴다).
+  // 부록은 옛 이름만 읽어서 참여자가 D04 에 쓴 문장이 한 줄도 실리지 않았다 — 부록에서
+  // 빠진 것은 그만큼 잃은 연구 자료다. 옛 이름은 지난 응답을 위해 함께 둔다(2026-09-09).
+  "d_context_evidence_text", "d_context_impact_text",
+  "desired_change_text", "coordinate_feedback_text",
+  // 「기타」로 직접 적은 문장도 참여자가 쓴 글이다. 표의 many() 는 OTHER 텍스트를 붙이지
+  // 않으므로 이 목록에 없으면 인쇄에서 사라진다(2026-09-09).
+  "support_conditions_other", "pause_context_other", "d_context_other",
+  "witness_role_other", "roles_previous_other", "role_primary_local_title",
   "role_primary_other", "roles_parallel_other", "field_other", "participation_mode_other",
   "activity_form_other", "participation_unit_other", "depth_m_text", "depth_s_text", "depth_d_text",
 ]);
+
+// 부록에서 문항 ID 는 인용 주소다. 보고서 본문에 「참여 기록 코드 · 문항 ID」로 적으면
+// over39_fixed_answers.question_id 와 그대로 맞물린다. 그래서 서술형 답에는 선택형 문항이
+// 아니라 서술형 문항의 ID 를 붙여야 한다 — M04 는 선택(m_declared), 원문은 M04_TEXT 다.
+// 이 표는 스키마의 store 이름에서 나온다. appendix-document.test.js 가 스키마 JSON 을 직접
+// 읽어 어긋나면 깨뜨린다(2026-09-09).
+const FIELD_QUESTION_IDS = Object.freeze({
+  memory_clue_text: "M02",
+  memory_meaning_text: "M04_TEXT",
+  no_recall_relation_text: "NO_RECALL_RELATION",
+  transition_text: "P12",
+  invisible_continuity_text: "P13_TEXT",
+  support_conditions_text: "P19_TEXT",
+  desired_change_text: "D02_TEXT",
+  d_context_evidence_text: "D04",
+  pause_context_text: "P18",
+  // 「기타」로 직접 적은 문장은 그 문항의 답이다. 주소가 없으면 부록에서 출처를 잃는다.
+  support_conditions_other: "P19",
+  pause_context_other: "P16",
+  d_context_other: "D03",
+  witness_role_other: "M10",
+  roles_previous_other: "P04",
+  role_primary_local_title: "P02",
+  roles_parallel_other: "P03",
+});
 
 export function rawParticipantWords(answers = {}) {
   const fields = [...RAW_PARTICIPANT_TEXT_FIELDS];
@@ -213,7 +249,8 @@ export function rawParticipantWords(answers = {}) {
     if (!value || seen.has(value)) return [];
     seen.add(value);
     const question = asked.get(field) || null;
-    return [{ field, text: value, question, source_kind: "participant_raw", editable: "at_source_question", participant_approved: false }];
+    const questionId = FIELD_QUESTION_IDS[field] || (asked.has(field) ? "AI" : null);
+    return [{ field, question_id: questionId, text: value, question, source_kind: "participant_raw", editable: "at_source_question", participant_approved: false }];
   });
 }
 
@@ -260,7 +297,11 @@ function locationText(answers = {}, frame = responseDocumentFrame("ko")) {
   const residence = [clean(answers.residence_country_code), clean(answers.residence_city)].filter(Boolean).join(" · ");
   if (residence) places.push(residence);
   for (const item of array(answers.activity_locations)) {
-    const label = clean(item?.label || item);
+    // 덩어리를 그대로 문자열로 만들면 부록에 「[object Object]」가 찍힌다. 완료 화면의
+    // 좌표에서 이미 한 번 그렇게 됐다 — 500장짜리 부록에서는 알아차릴 계기가 없으므로
+    // 읽을 수 있는 모양(문자열 또는 label)일 때만 넣는다(2026-09-09).
+    const raw = typeof item === "string" || typeof item === "number" ? item : item?.label;
+    const label = clean(raw);
     if (label) places.push(label);
   }
   return [...new Set(places)].join(" · ") || frame.unspecified;
@@ -363,6 +404,51 @@ function recordCoordinate(answers = {}) {
   return { m, s, d, number };
 }
 
+// 모델은 축을 판단할 때 「참여자의 어느 답이 근거인가」를 함께 돌려준다(edge 프롬프트
+// index.ts:1019 — 실제 입력에 있는 ID 만 쓰도록 지시한다). 그 값은 depth_summary.evidence
+// 에 저장되는데 부록은 읽지 않아, 「연구에서 읽는 세 방향」이 500장 모두 같은 붙박이
+// 문장이었다. 지어내지 않고 이미 있는 것을 되돌린다(2026-09-09).
+//
+// 승인 경계: 참여자가 확인한 것은 정리문 한 절뿐이다. 축 배정과 근거 선택은 참여자가
+// 확인한 대상이 아니므로 research_derived 로만 남기고, 인용되는 문장 자체는 원문이다.
+const QUESTION_ID_FIELDS = Object.freeze(Object.fromEntries(
+  Object.entries(FIELD_QUESTION_IDS).map(([field, id]) => [id, field]),
+));
+
+function resolveEvidenceId(id, answers = {}) {
+  const key = clean(id);
+  if (!key) return null;
+  // ① AI 가 이어서 물은 턴
+  for (const turn of array(answers.adaptive_turns)) {
+    if (turn?.id !== key && turn?.question_id !== key) continue;
+    const text = clean(answers[turn.answer_field]);
+    if (!text) return null;
+    return { question_id: "AI", field: turn.answer_field, question: clean(turn.question_text || turn.prompt) || null, text };
+  }
+  // ② 서술형 고정문항
+  const field = QUESTION_ID_FIELDS[key];
+  if (field) {
+    const text = clean(answers[field]);
+    if (text) return { question_id: key, field, question: null, text };
+  }
+  return null;
+}
+
+function axisEvidence(answers = {}, axis = "m") {
+  const summary = answers.depth_summary || {};
+  const ids = array(summary.evidence?.[axis]);
+  const seen = new Set();
+  const found = [];
+  for (const id of ids) {
+    const item = resolveEvidenceId(id, answers);
+    if (!item || seen.has(item.field)) continue;
+    seen.add(item.field);
+    found.push(item);
+    if (found.length >= 2) break;
+  }
+  return found;
+}
+
 function safeSection(id, number, title, lines, emptyText) {
   const paragraphs = array(lines).map(clean).filter(Boolean);
   return {
@@ -438,8 +524,29 @@ export function buildResponseDocument({
     // 좌표 번호는 부록과 분석 결과를 짝지을 때 쓰인다. 축 이름만으로는 64칸 가운데
     // 어디인지 가릴 수 없다(2026-09-09).
     ...(coordinate.number ? [frame.coordinateNumber.replace("{n}", String(coordinate.number))] : []),
-    copy.coordinateText,
   ];
+
+  // 축마다 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」를 붙인다. 붙박이 문장
+  // 하나로는 500장에서 아무것도 말하지 못한다(2026-09-09).
+  const depthSummary = answers.depth_summary || {};
+  const axisReadings = ["m", "s", "d"].flatMap((axis) => {
+    const code = coordinate[axis];
+    const label = axisText[code];
+    if (!code || !label) return [];
+    const secondaryCode = clean(depthSummary.secondary_axes?.[axis]);
+    return [{
+      axis: axis.toUpperCase(),
+      title: frame[`axisTitle${axis.toUpperCase()}`] || "",
+      code,
+      label,
+      secondary: secondaryCode && axisText[secondaryCode]
+        ? { code: secondaryCode, label: axisText[secondaryCode] }
+        : null,
+      evidence: axisEvidence(answers, axis),
+    }];
+  });
+  const readingSource = clean(depthSummary.source);
+  const readingUncertainty = clean(depthSummary.uncertainty);
 
   // ⑥ 참여자가 허락한 활용 범위. 부록을 읽는 사람이 인용해도 되는지를 알 수 있어야
   // 한다 — 지금은 문서에 없어서 별도 자료를 찾아봐야 했다(2026-09-09).
@@ -453,28 +560,36 @@ export function buildResponseDocument({
     };
     const L = english
       ? { route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions",
-          memory: "What the memory is of", branch: "Follow-up about the memory", activity: "Current activity", creative: "Creative work", visibility: "Visibility",
-          public: "Public activity", pauseMeaning: "How the pause is read", support: "Conditions that supported it",
-          gap: "What is most lacking now", change: "Change wanted first", position: "Response position", scope: "Coordinate scope" }
+          memory: "What the memory is of", branch: "Follow-up about the memory",
+          creative: "Creative work", public: "Public activity",
+          reality: "Conditions acting on the present", transition: "When conditions shifted",
+          invisible: "What continued while unseen", support: "Conditions that supported it" }
       : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
-          memory: "기억의 대상", branch: "기억에서 이어 고른 답", activity: "현재 활동 상태", creative: "작품 제작 상태", visibility: "드러나는 정도",
-          public: "공개 활동 상태", pauseMeaning: "멈춤을 읽는 방식", support: "지지해 온 조건",
-          gap: "지금 가장 비어 있는 것", change: "먼저 달라졌으면 하는 것", position: "응답 위치", scope: "좌표 범위" };
+          memory: "기억의 대상", branch: "기억에서 이어 고른 답",
+          creative: "작품 제작 상태", public: "공개 활동 상태",
+          reality: "현재에 작용하는 현실", transition: "조건이 달라진 시점",
+          invisible: "안 보이던 때 이어진 것", support: "지지해 온 조건" };
     return [
       ...row(L.route, documentLabel(english ? EN_ROUTE_LABELS : ROUTE_LABELS, answers.route, english)),
       ...row(L.role, roleText(answers, english)),
       ...many(L.roles, answers.roles_parallel, english ? ROLE_LABELS_EN : ROLE_LABELS),
       ...row(L.memory, documentLabel(MEMORY_TYPE_LABELS, answers.memory_type, english)),
       ...row((english ? BRANCH_FOLLOWUP_LABELS_EN : BRANCH_FOLLOWUP_LABELS)[answers.memory_type] || L.branch, answers.memory_branch_followup),
-      ...row(L.activity, documentLabel(ACTIVITY_STATE_LABELS, answers.activity_state, english)),
       ...row(L.creative, documentLabel(CREATIVE_STATE_LABELS, answers.creative_work_state, english)),
-      ...row(L.visibility, documentLabel(VISIBILITY_STATE_LABELS, answers.visibility_state, english)),
       ...row(L.public, documentLabel(PUBLIC_STATE_LABELS, answers.public_activity_state, english)),
-      ...row(L.pauseMeaning, documentLabel(PAUSE_MEANING_LABELS, answers.pause_meaning, english)),
+      // P16 은 이 연구의 전제를 직접 잡는 칸이다 — 보기 가운데
+      // AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가 〈만 39세 이상〉이 물으려는
+      // 바로 그것이다. 수집하고 저장하면서 부록에는 싣지 않고 있었다(2026-09-09).
+      ...many(L.reality, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags),
+      ...row(L.transition, RESEARCH_LABELS.transition_state?.[answers.transition_state] || ""),
+      ...row(L.invisible, RESEARCH_LABELS.invisible_continuity_state?.[answers.invisible_continuity_state] || ""),
       ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
-      // d_current_gap · d_desired_change_primary · response_position · d_scope 는
-      // 사람이 읽을 라벨 사전이 없어 코드값(NO_MAJOR_GAP 등)이 그대로 찍힌다. 부록에
-      // 기계 코드를 남기지 않는다 — 그 내용은 서술형 답과 정리문에 이미 담겨 있다.
+      // activity_state(P06) · visibility_state(P07) · pause_meaning(P17) 은 RC2 에서 묻지
+      // 않는다(flow.js:5-11 — Task 4·5 가 중복 판단을 걷어냈다). 칸을 두면 500장 전부
+      // 빈칸이므로 뺀다. 대신 RC2 가 실제로 묻는 P16·P11·P13 을 넣었다.
+      // d_current_gap · d_desired_change_primary · response_position · d_scope 는 라벨이
+      // 역할·범위마다 다른 은행(role_question_bank / d_scope_bank)에서 나오므로 평면
+      // 사전으로는 틀린 값을 찍는다. 그 내용은 서술형 답과 정리문에 담겨 있다.
     ];
   })();
 
@@ -568,12 +683,12 @@ export function buildResponseDocument({
     sections: legacySections,
     layers: [
       {
-        id: "raw_participant_words", title: task7.rawTitle, description: task7.rawHelp,
+        id: "raw_participant_words", title: task7.rawTitle, appendix_title: frame.appendixRawTitle, description: task7.rawHelp,
         entries: rawWords, source_kind: "participant_raw", editable: "at_source_question",
         approval_scope: "excluded", participant_approved: false,
       },
       {
-        id: "participant_confirmed_synthesis", title: task7.synthesisTitle, description: task7.synthesisHelp,
+        id: "participant_confirmed_synthesis", title: task7.synthesisTitle, appendix_title: frame.appendixSynthesisTitle, description: task7.synthesisHelp,
         paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true,
         approval_scope: "participant_synthesis_text_only", participant_approved: Boolean(original),
       },
@@ -595,7 +710,12 @@ export function buildResponseDocument({
       }] : []),
       {
         id: "research_reading", title: task7.researchTitle, description: task7.researchHelp,
-        paragraphs: coordinateLine, source_kind: "research_derived", editable: false,
+        paragraphs: coordinateLine,
+        // 근거는 참여자의 원문을 그대로 인용한다. 배정과 선택은 연구 측 표시다.
+        axes: axisReadings,
+        reading_source: readingSource || null,
+        uncertainty: readingUncertainty || null,
+        source_kind: "research_derived", editable: false,
         approval_scope: "excluded", participant_approved: false,
       },
       // ⑥ 참여자가 직접 고른 활용 범위. 부록을 읽는 사람이 인용 가능 여부를 여기서 안다.
@@ -625,26 +745,69 @@ export function renderResponseDocument(document = {}) {
   const frame = responseDocumentFrame(document.display_language || document.source_language);
   const task7 = task7Copy(document.display_language || document.source_language);
   const layers = array(document.layers);
+  // 부록 인쇄에서 왼쪽(참여자가 쓰고 확인한 것)과 오른쪽(연구 장치)은 서로 다른
+  // 높이로 자란다. 격자 칸을 짝지으면 짧은 쪽 아래에 빈틈이 생기므로 각각을 한
+  // 묶음으로 감싸 독립된 단이 되게 한다. 화면에서는 차례대로 놓인다(2026-09-09).
+  const SIDE_LAYERS = new Set(["research_reading", "research_structure"]);
   const layeredBody = layers.length ? layers.map((layer) => {
     let body = "";
     if (layer.id === "raw_participant_words") {
+      // 문항 ID 는 인용 주소다. 보고서 본문에 「참여 기록 코드 · 문항 ID」로 적으면
+      // over39_fixed_answers.question_id 와 맞물린다. 없으면 부록의 인용문은 어느
+      // 물음에 대한 답인지 알 수 없는 조각이 된다(2026-09-09).
       body = array(layer.entries).length
-        ? array(layer.entries).map((entry) => entry.question
-          ? `<div class="response-document-exchange"><p class="response-document-asked">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
-          : `<blockquote>${esc(entry.text)}</blockquote>`).join("")
+        ? array(layer.entries).map((entry) => {
+          const cite = entry.question_id ? `<span class="response-document-cite">${esc(entry.question_id)}</span>` : "";
+          return entry.question
+            ? `<div class="response-document-exchange">${cite}<p class="response-document-asked">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
+            : `<div class="response-document-exchange">${cite}<blockquote>${esc(entry.text)}</blockquote></div>`;
+        }).join("")
         : `<p class="response-document-empty">${esc(task7.rawEmpty)}</p>`;
     } else if (layer.id === "participant_confirmed_synthesis") {
       body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
     } else {
       body = array(layer.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
     }
+    if (array(layer.axes).length) {
+      // 축 하나에 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」를 붙인다.
+      // 근거로 인용되는 문장은 참여자의 원문이고, 배정과 선택은 연구 측 표시다.
+      const axisBody = array(layer.axes).map((axis) => {
+        const secondary = axis.secondary
+          ? `<span class="response-document-axis-secondary">${esc(axis.secondary.code)} ${esc(axis.secondary.label)}</span>`
+          : "";
+        const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
+        return `<div class="response-document-axis"><dt><span class="response-document-axis-code">${esc(axis.code)}</span> <strong>${esc(axis.label)}</strong> <small>${esc(axis.title)}</small>${secondary}</dt>${evidence ? `<dd><ul class="response-document-evidence">${evidence}</ul></dd>` : ""}</div>`;
+      }).join("");
+      const foot = [
+        layer.reading_source ? `${esc(frame.readingSourceLabel)} ${esc(layer.reading_source)}` : "",
+        layer.uncertainty ? esc(layer.uncertainty) : "",
+      ].filter(Boolean).join(" · ");
+      body += `<dl class="response-document-axes">${axisBody}</dl>${foot ? `<p class="response-document-axes-foot">${foot}</p>` : ""}`;
+    }
     if (array(layer.rows).length) {
       // 선택형 답은 표로 놓는다. 문장인 척하지 않으므로 어색함이 없고, 칸마다 자기
       // 값만 담기므로 값이 엉뚱한 절로 들어가는 일도 없다(2026-09-09).
       body = `<dl class="response-document-rows">${array(layer.rows).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
     }
-    return `<section class="response-document-layer response-document-layer-${esc(layer.id)}" data-source-kind="${esc(layer.source_kind)}" data-approval-scope="${esc(layer.approval_scope)}"><header><h3>${esc(layer.title)}</h3><p>${esc(layer.description)}</p></header><div class="response-document-layer-body">${body}</div></section>`;
-  }).join("") : "";
+    return `<section class="response-document-layer response-document-layer-${esc(layer.id)}" data-source-kind="${esc(layer.source_kind)}" data-approval-scope="${esc(layer.approval_scope)}"><header><h3>${layer.appendix_title ? `<span class="response-document-title-screen">${esc(layer.title)}</span><span class="response-document-title-appendix">${esc(layer.appendix_title)}</span>` : esc(layer.title)}</h3><p>${esc(layer.description)}</p></header><div class="response-document-layer-body">${body}</div></section>`;
+  }).join("|||SPLIT|||") : "";
+  const layerGroups = (() => {
+    if (!layers.length) return "";
+    const rendered = layeredBody.split("|||SPLIT|||");
+    const main = [];
+    const side = [];
+    layers.forEach((layer, index) => {
+      (SIDE_LAYERS.has(layer.id) ? side : main).push(rendered[index]);
+    });
+    // use_scope 는 발로 내려가므로 어느 단에도 넣지 않는다.
+    const foot = [];
+    const mainOnly = [];
+    layers.forEach((layer, index) => {
+      if (SIDE_LAYERS.has(layer.id)) return;
+      (layer.id === "use_scope" ? foot : mainOnly).push(rendered[index]);
+    });
+    return `<div class="response-document-main">${mainOnly.join("")}</div><div class="response-document-side">${side.join("")}</div>${foot.join("")}`;
+  })();
   const projectNote = document.project_note
     ? `<aside class="response-document-project-note" data-source-kind="project_information"><h3>${esc(document.project_note.title)}</h3>${array(document.project_note.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("")}</aside>`
     : "";
@@ -662,5 +825,5 @@ export function renderResponseDocument(document = {}) {
   const archiveStatement = document.archive?.statement
     ? `<p class="response-document-archive-statement">${esc(document.archive.statement)}</p>`
     : "";
-  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layeredBody}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
+  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }
