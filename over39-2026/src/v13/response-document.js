@@ -284,6 +284,17 @@ function displayName(answers = {}, frame = responseDocumentFrame("ko")) {
   return clean(answers.display_name) || frame.unnamed;
 }
 
+// 부록에서는 답을 남긴 사람이 주인공이다 — 「참여자」가 아니라 그가 적어둔 이름을 쓴다
+// (TK 2026-09-10). 익명으로 낸 사람은 이름이 없으므로 「참여자」에 기록 번호 앞자리를
+// 붙인다. 그냥 「참여자」로 두면 익명 수백 장의 제목이 모두 같아져, 보고서 본문에서
+// [기록 번호 · 문항 ID]로 인용해두고도 부록에서 그 장을 제목으로 찾을 수 없다.
+function appendixSubject(answers = {}, frame = responseDocumentFrame("ko"), participantCode = "") {
+  const named = answers.display_name_mode !== "ANONYMOUS" && clean(answers.display_name);
+  if (named) return named;
+  const tag = clean(participantCode).split("-")[0];
+  return tag ? `${frame.unnamed} ${tag}` : frame.unnamed;
+}
+
 function roleText(answers = {}, english = false) {
   if (!answers.role_primary) return "";
   const roleLabels = english ? ROLE_LABELS_EN : ROLE_LABELS;
@@ -522,6 +533,10 @@ export function buildResponseDocument({
   const original = clean(approvedOriginal);
   const korean = clean(approvedKorean) || (sourceLanguage === "ko" ? original : "");
   const participantName = displayName(answers, frame);
+  // 부록에서 이 문서의 주인공. 이름을 남긴 사람은 그 이름, 익명은 「참여자 + 기록
+  // 번호 앞자리」다(TK 2026-09-10 · ②안).
+  const subject = appendixSubject(answers, frame, participantCode);
+  const named = (template) => clean(template).replace("{name}", subject);
   const sourceLabel = LANGUAGE_LABELS[sourceLanguage] || sourceLanguage || frame.unspecified;
   const isKoreanSource = sourceLanguage === "ko";
   const audience = isAudience(answers);
@@ -657,6 +672,9 @@ export function buildResponseDocument({
     release_version: releaseVersion || null,
     response_id: responseId || "미발급",
     title: copy.title,
+    // 부록에서는 답을 남긴 사람이 제목이 된다. 화면은 참여자가 자기 기록을 읽는
+    // 자리라 연구 이름이 제목인 것이 맞다(TK 2026-09-10).
+    appendix_title: named(frame.appendixDocumentTitle),
     subtitle: copy.subtitle,
     description: documentDescription,
     status: final ? "confirmed" : "draft",
@@ -674,7 +692,9 @@ export function buildResponseDocument({
       ...(clean(participantCode) ? [[frame.recordCode, clean(participantCode)]] : []),
       [frameLanguage === "ko" ? "작성일" : frameLanguage === "en" ? "Date" : frame.date, dateLabel(createdAt, frameLanguage)],
       ...(confirmedAt ? [[frame.confirmedAt, dateLabel(confirmedAt, frameLanguage)]] : []),
-      [frameLanguage === "ko" ? "참여자 표기" : frameLanguage === "en" ? "Participant" : frame.participant, participantName],
+      // 이름은 제목으로 올라갔다. 인쇄에서는 이 줄을 빼되(같은 값이 두 번 나온다)
+      // 화면에는 남긴다 — 참여자가 자기 표기를 확인하는 자리다(TK 2026-09-10).
+      [frameLanguage === "ko" ? "참여자 표기" : frameLanguage === "en" ? "Participant" : frame.participant, participantName, "participant_name"],
       [frameLanguage === "ko" ? "활동 또는 참여 지역" : frameLanguage === "en" ? "Place of activity or participation" : frame.place, locationText(answers, frame)],
       [frameLanguage === "ko" ? "기록 언어" : frameLanguage === "en" ? "Record language" : frame.language, sourceLabel],
     ],
@@ -699,12 +719,12 @@ export function buildResponseDocument({
     sections: legacySections,
     layers: [
       {
-        id: "raw_participant_words", title: task7.rawTitle, appendix_title: frame.appendixRawTitle, description: task7.rawHelp,
+        id: "raw_participant_words", title: task7.rawTitle, appendix_title: named(frame.appendixRawTitle), description: task7.rawHelp,
         entries: rawWords, source_kind: "participant_raw", editable: "at_source_question",
         approval_scope: "excluded", participant_approved: false,
       },
       {
-        id: "participant_confirmed_synthesis", title: task7.synthesisTitle, appendix_title: frame.appendixSynthesisTitle, description: task7.synthesisHelp,
+        id: "participant_confirmed_synthesis", title: task7.synthesisTitle, appendix_title: named(frame.appendixSynthesisTitle), description: task7.synthesisHelp,
         paragraphs: summaryParagraphs, source_kind: "participant_confirmed_synthesis", editable: true,
         approval_scope: "participant_synthesis_text_only", participant_approved: Boolean(original),
       },
@@ -717,6 +737,7 @@ export function buildResponseDocument({
       ...(structureRows.length ? [{
         id: "research_structure",
         title: frame.structureTitle,
+        appendix_title: frame.appendixStructureTitle,
         description: frame.researchStructureNote,
         rows: structureRows,
         source_kind: "research_derived",
@@ -725,7 +746,7 @@ export function buildResponseDocument({
         participant_approved: false,
       }] : []),
       {
-        id: "research_reading", title: task7.researchTitle, description: task7.researchHelp,
+        id: "research_reading", title: task7.researchTitle, appendix_title: frame.appendixReadingTitle, description: task7.researchHelp,
         paragraphs: coordinateLine,
         // 근거는 참여자의 원문을 그대로 인용한다. 배정과 선택은 연구 측 표시다.
         axes: axisReadings,
@@ -738,6 +759,7 @@ export function buildResponseDocument({
       ...(scopeLines.length ? [{
         id: "use_scope",
         title: frame.useScopeTitle,
+        appendix_title: frame.appendixScopeTitle,
         description: frame.useScopeNote,
         paragraphs: scopeLines,
         source_kind: "participant_declared",
@@ -833,7 +855,7 @@ export function renderResponseDocument(document = {}) {
       : array(section.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
     return `<section class="response-document-section response-document-section-${esc(section.id)}"><div class="response-document-section-head"><span>${esc(section.number)}</span><h3>${esc(section.title)}</h3></div><div class="response-document-section-body">${body}</div></section>`;
   }).join("");
-  const metadata = array(document.metadata).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");
+  const metadata = array(document.metadata).map(([label, value, kind]) => `<div${kind ? ` data-metadata="${esc(kind)}"` : ""}><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");
   // 낱장의 출처를 밝히는 표기. 인쇄될 때 이것이 문서의 공신력을 세운다.
   const archive = document.archive
     ? `<div class="response-document-archive"><div class="response-document-archive-head"><span>${esc(document.archive.kind)}</span><strong>${esc(document.archive.study)}</strong>${document.archive.version ? `<em>${esc(document.archive.version)}</em>` : ""}</div><dl class="response-document-archive-credits">${array(document.archive.credits).map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl></div>`
@@ -843,5 +865,5 @@ export function renderResponseDocument(document = {}) {
   // 범위는 바로 위에 값으로 있다. 같은 문단이 500장에 500번 나올 이유가 없다.
   // 값 자체는 document.archive.statement 에 그대로 남는다 — 지운 것은 인쇄면뿐이다.
   const archiveStatement = "";
-  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
+  return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${document.appendix_title ? `<span class="response-document-title-screen">${esc(document.title)}</span><span class="response-document-title-appendix">${esc(document.appendix_title)}</span>` : esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }
