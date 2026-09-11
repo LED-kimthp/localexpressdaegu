@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r12";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r13";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c79be5d6632c-dirty 2026-09-11T07:35:40.685Z";
+const buildStamp = "6baf7d0f2359-dirty 2026-09-11T12:20:33.885Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -66,6 +66,10 @@ const requestedLanguage = String(query.get("lang") || readStoredLanguage() || "k
 const OFFERED_LANGUAGES = Object.freeze(["ko", "en", "nl", "es", "fr", "ms"]);
 const RETIRED_LANGUAGES = Object.freeze(["ja", "zh-Hans", "zh-Hant"]);
 const initialLanguage = OFFERED_LANGUAGES.includes(requestedLanguage) ? requestedLanguage : "ko";
+// 주소에 ?lang= 을 적어 들어온 것은 분명한 요청이다. 초안을 이어갈 때 초안에 적힌 언어가
+// 그것을 덮으면, 링크로 언어를 지정해도 지난번 언어로 열린다 — 언어별 확인 통과에서
+// 네덜란드어 링크가 영어로 열려 드러났다(2026-09-11 실측).
+const urlLanguage = OFFERED_LANGUAGES.includes(String(query.get("lang") || "")) ? String(query.get("lang")) : "";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
 // 초대 링크를 사람마다 다르게 보내기 위한 표식(`?pid=A01`). 참여자 화면에는 아무 영향이
@@ -3296,7 +3300,7 @@ document.addEventListener("click", (event) => {
       const responseId = draft.responseId || `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`;
       const firstGreeting = draft.firstGreeting || loadFirstGreeting(responseId);
       const resumedPhase = ["greeting-choice", "greeting-first"].includes(draft.phase) ? draft.phase : "survey";
-      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, sessionStartedAt: draft.sessionStartedAt || null, language: draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
+      state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, sessionStartedAt: draft.sessionStartedAt || null, language: urlLanguage || draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
     }
     render(true);
     if (state.phase === "greeting-first" && state.firstGreeting?.status === "loading") beginFirstGreeting();
