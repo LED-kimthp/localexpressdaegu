@@ -1,4 +1,4 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260911-r17";
 
 // Task 7 participant-facing copy. Korean is the semantic source. Each
 // supported language is explicit so the completion/record/greeting path never

@@ -1,6 +1,6 @@
 // Additive participant context for the pre-production cultural-arts model.
 // These codes never replace R01–R20, route, or any M/S/D value.
-import { participantContextDHints, participantContextLabels, participantContextualCopy } from "./participant-context-i18n.js";
+import { participantContextDHints, participantContextLabels, participantContextualCopy } from "./participant-context-i18n.js?v=v7-20260911-r17";
 export const PARTICIPANT_CONTEXT_VERSION = "over39-participant-context-v1-2026-08-13";
 export const LEGACY_MAPPING_VERSION = "context_to_legacy_v1";
 
