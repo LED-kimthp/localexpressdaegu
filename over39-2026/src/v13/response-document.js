@@ -2,6 +2,8 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
 import { LABELS as RESEARCH_LABELS } from "./research-insights.js";
+import { normalizedDScope } from "./flow.js";
+import { stage1Copy } from "./stage1-i18n.js";
 import { task7Copy } from "./task7-i18n.js";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
@@ -487,6 +489,49 @@ function readingSourceName(source, frame) {
   return READING_SOURCE_NAMES[key] || key;
 }
 
+// D01(지금 비어 있는 것) · D02(먼저 달라지면 좋을 것) · D03(현실 맥락)의 보기 문구는
+// 평면 사전에 없다. 역할과 범위마다 다른 은행에서 나오기 때문이다 — 시각예술가에게 보인
+// D01 보기와 기획자에게 보인 D01 보기가 다르다. 평면 사전으로 찍으면 엉뚱한 문구가
+// 나오므로, 앱이 보기를 만드는 방식(app.js dOptions · realityOptions)을 그대로 따른다.
+// 스키마는 실행 중에 받아오므로 문서를 만들 때 넘겨받는다(2026-09-11).
+function dConditionLabel(kind, value, answers = {}, schema = null, language = "ko") {
+  const code = clean(value);
+  if (!code || !schema) return "";
+  const scope = normalizedDScope(answers);
+  if (scope === "SELF_ROLE") {
+    const bank = schema.role_question_bank?.[answers.role_primary];
+    const labels = array(bank?.[kind === "gap" ? "d01_options" : "d02_options"]).slice(0, 4);
+    const index = Number(code.replace("D", ""));
+    if (index >= 1 && index <= labels.length) return clean(labels[index - 1]);
+    const local = stage1Copy(language).task5 || {};
+    if (code === "NO_MAJOR_GAP") return clean(local.dNoGap);
+    if (code === "NO_SPECIFIC_CHANGE") return clean(local.dNoChange);
+    if (code === "UNSURE") return clean(local.dUnsure);
+    return "";
+  }
+  const pairs = array(schema.d_scope_bank?.[scope]?.[kind]);
+  const hit = pairs.find((pair) => Array.isArray(pair) && pair[0] === code);
+  return hit ? clean(hit[1]) : "";
+}
+
+function realityLabels(values, answers = {}, schema = null) {
+  if (!schema) return [];
+  const scope = normalizedDScope(answers);
+  const key = scope === "SELF_ROLE" ? answers.role_primary || "OTHER" : scope;
+  const bank = array(schema.role_reality_indicator_bank?.[key]).length
+    ? array(schema.role_reality_indicator_bank?.[key])
+    : array(schema.role_reality_indicator_bank?.OTHER);
+  // 앱이 「기타 … 직접」 보기를 걸러내고 번호를 매기므로 여기서도 같게 걸러야 번호가 맞는다.
+  const indicators = bank.filter((label) => !/기타.*직접/.test(String(label)));
+  return array(values).map((value) => {
+    const code = clean(value);
+    if (code === "NONE") return "해당 없음";
+    if (code === "OTHER") return clean(answers.d_context_other) || "기타";
+    const index = Number(code.slice(-2));
+    return index >= 1 && index <= indicators.length ? clean(indicators[index - 1]) : "";
+  }).filter(Boolean);
+}
+
 function resolveEvidenceId(id, answers = {}) {
   const key = clean(id);
   if (!key) return null;
@@ -547,6 +592,7 @@ export function buildResponseDocument({
   confirmedAt = null,
   final = false,
   participantCode = "",
+  schema = null,
 } = {}) {
   // The answer's original language and the visible document frame are
   // intentionally separate: switching interface language must not rewrite
@@ -648,7 +694,8 @@ export function buildResponseDocument({
       : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
           memory: "기억의 대상", branch: "기억에서 이어 고른 답",
           creative: "작품 제작 상태", public: "공개 활동 상태", duration: "활동 기간", reconnect: "이어지면 좋을 방식",
-          reality: "현재에 작용하는 현실", transition: "조건이 달라진 시점",
+          gap: "지금 가장 비어 있는 것", change: "먼저 달라지면 좋을 것", reality: "조건이 놓인 현실",
+          realityNow: "현재에 작용하는 현실", transition: "조건이 달라진 시점",
           invisible: "안 보이던 때 이어진 것", support: "지지해 온 조건" };
     return [
       ...row(L.route, documentLabel(english ? EN_ROUTE_LABELS : ROUTE_LABELS, answers.route, english)),
@@ -661,11 +708,18 @@ export function buildResponseDocument({
       // P16 은 이 연구의 전제를 직접 잡는 칸이다 — 보기 가운데
       // AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가 〈만 39세 이상〉이 물으려는
       // 바로 그것이다. 수집하고 저장하면서 부록에는 싣지 않고 있었다(2026-09-09).
-      ...many(L.reality, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags),
+      ...many(L.realityNow, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags),
       ...row(L.transition, RESEARCH_LABELS.transition_state?.[answers.transition_state] || ""),
       ...row(L.invisible, RESEARCH_LABELS.invisible_continuity_state?.[answers.invisible_continuity_state] || ""),
       ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
       ...row(L.duration, ACTIVITY_DURATION_LABELS[answers.activity_duration_band] || ""),
+      // D01·D02·D03 은 역할·범위마다 보기가 다른 은행에서 나온다. 평면 사전으로 찍으면
+      // 엉뚱한 문구가 나오므로 앱과 같은 방식으로 푼다(2026-09-11).
+      ...row(L.gap, dConditionLabel("gap", answers.d_current_gap, answers, schema, frameLanguage)),
+      ...row(L.change, dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, frameLanguage)),
+      ...(realityLabels(answers.d_context_tags, answers, schema).length
+        ? [[L.reality, realityLabels(answers.d_context_tags, answers, schema).join(" · ")]]
+        : []),
       // R01 은 설문이 심층인터뷰 대상을 고르는 통로다. 부록에 없으면 500장을 다시
       // 뒤져야 한다 — 「인터뷰」를 고른 사람이 그 후보다(2026-09-11).
       ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS),
