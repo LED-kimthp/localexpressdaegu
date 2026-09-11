@@ -839,6 +839,18 @@ h2:focus {
 
 /* 축마다 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」. 붙박이 문장 하나로는
    500장에서 아무것도 말하지 못한다(2026-09-09). */
+/* 64칸 좌표 판. 4행(M) × 16열(S 안의 D). 판은 모든 장에 같고 찍힌 칸만 다르므로,
+   500장을 넘길 때 분포가 눈에 들어온다(2026-09-11). */
+.response-document-grid { display: grid; gap: 2px; margin: 10px 0 0; }
+.response-document-grid-row { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; }
+.response-document-grid i {
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  background: transparent;
+}
+.response-document-grid i.is-here { background: #1c1a17; border-color: #1c1a17; }
+
 .response-document-axes { display: grid; gap: 0; margin: 14px 0 0; }
 .response-document-axis { padding: 11px 0; border-top: 1px solid var(--line); }
 .response-document-axis:last-child { border-bottom: 1px solid var(--line); }
@@ -6543,6 +6555,9 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final .response-document-side .response-document-cite { font-size: 6.4pt !important; }
 
   /* 오른쪽 단은 좁으므로 더 작게. 코드형 값이라 좁은 폭을 견딘다. */
+  .response-document-final .response-document-grid { gap: 0.35mm !important; margin: 1.6mm 0 0 !important; }
+  .response-document-final .response-document-grid-row { gap: 0.35mm !important; }
+  .response-document-final .response-document-grid i { border-width: 0.25pt !important; }
   .response-document-final .response-document-axis { padding: 1.3mm 0 !important; }
   .response-document-final .response-document-axis dt { font-size: 8pt !important; line-height: 1.4 !important; }
   .response-document-final .response-document-axis dt small { font-size: 6.4pt !important; }

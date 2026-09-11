@@ -191,6 +191,51 @@ const BRANCH_FOLLOWUP_LABELS_EN = {
   NO_RECALL: "Closest state right now",
 };
 
+// RC2 가 묻지만 부록에 한 번도 닿지 않던 칸들(2026-09-11 실측). 기억 모듈 전체가
+// 그랬다 — 이 연구가 「누구의 기억과 어떤 기록이 다시 확인하게 하는가」를 묻는데
+// 정작 그 답(언제·어디서·어떻게 경험했는가·누가 확인해 줄 수 있는가)이 빠져 있었다.
+// 값은 스키마의 보기 문구를 그대로 쓴다. appendix-document.test.js 가 스키마 JSON 을
+// 직접 읽어 어긋나면 깨뜨린다.
+const MEMORY_TIME_LABELS = {
+  LT1: "최근 1년", Y1_3: "1~3년 전", Y3_5: "3~5년 전", Y5_10: "5~10년 전",
+  Y10_20: "10~20년 전", Y20PLUS: "20년 이상", MULTIPLE: "여러 시기에 걸쳐 이어짐",
+  UNKNOWN: "정확히 기억나지 않음",
+};
+const MEMORY_MODE_LABELS = {
+  DIRECT: "현장에서 직접 경험했다", HEARD: "작가나 관계자를 통해 들었다",
+  RECORD: "사진·도록·기사·영상으로 접했다", ONLINE: "온라인에서 접했다",
+  MIXED: "직접 경험과 기록을 함께 가지고 있다", UNCLEAR: "오래되어 분명하게 구분하기 어렵다",
+};
+const MEMORY_RELATION_LABELS = {
+  OWN_ACTIVITY: "나의 활동이나 작업과 직접 연결", COLLAB: "함께 작업하거나 협업",
+  PEER: "동료나 같은 현장의 관계로 지켜봄", EDU_RESEARCH_MEDIA: "교육·연구·취재 과정에서 접함",
+  AUDIENCE: "관객이나 참여자로 경험", RECORD_ONLY: "기록이나 다른 사람의 말을 통해",
+  PERSONAL: "개인적인 관계가 있다", MIXED: "한 가지로 말하기 어렵다",
+};
+const WITNESS_ROLE_LABELS = {
+  ARTIST_SELF: "작가 본인", PEER: "동료", CURATOR: "기획자", SPACE: "공간 운영자",
+  CRITIC_RESEARCHER: "비평가·연구자", AUDIENCE: "관객", FAMILY_FRIEND: "가족·지인",
+  INSTITUTION: "기관 관계자", OTHER: "기타", NONE: "지금은 떠오르지 않음",
+};
+const MEMORY_SUPPORT_LABELS = {
+  WORK: "작품이나 이미지", ATTITUDE: "작가의 태도", DIALOGUE: "당시 나눈 대화",
+  SPACE: "공간의 분위기", PEOPLE: "함께 있었던 사람", RECORD: "사진·도록·포스터·기사",
+  SOCIAL: "지역이나 사회의 상황", LIFE: "당시의 내 삶", SENSORY: "설명하기 어려운 감각",
+  UNKNOWN: "잘 모르겠다",
+};
+const ACTIVITY_DURATION_LABELS = {
+  LT1: "1년 미만", Y1_3: "1~3년", Y3_5: "3~5년", Y5_10: "5~10년",
+  Y10_20: "10~20년", Y20_30: "20~30년", Y30_PLUS: "30년 이상",
+  DIFFICULT: "정확한 시기를 말하기 어려움", SKIP: "응답하지 않음",
+};
+// R01 은 설문이 심층인터뷰 대상을 고르는 통로다 — INTERVIEW 를 고른 사람이 그 후보다.
+const RECONNECT_LABELS = {
+  INTERVIEW: "인터뷰", EXHIBITION: "전시", PUBLICATION: "출판",
+  CRITIC_RESEARCH: "비평·연구", ARCHIVE: "온라인 아카이브", ROUNDTABLE: "라운드테이블",
+  AUDIO_VIDEO: "음성·영상 기록", INTERNATIONAL_DIALOGUE: "다른 지역·국가의 사람과의 대화",
+  UNKNOWN: "아직 잘 모르겠다",
+};
+
 const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
   "memory_clue_text", "no_recall_relation_text", "memory_meaning_text",
   "transition_text", "pause_context_text", "invisible_continuity_text", "support_conditions_text",
@@ -576,6 +621,11 @@ export function buildResponseDocument({
       evidence: axisEvidence(answers, axis),
     }];
   });
+  // 「11 / 64」는 숫자만으로는 어디인지 알 수 없다. 4행(M) × 16열(S 안의 D) 판에
+  // 이 기록의 칸을 찍으면, 500장을 넘길 때 분포가 눈에 들어온다(TK 2026-09-11).
+  const coordinateGrid = coordinate.number
+    ? Array.from({ length: 4 }, (_, mi) => Array.from({ length: 16 }, (_, rest) => mi * 16 + rest + 1))
+    : [];
   const readingSource = readingSourceName(depthSummary.source, frame);
   const readingUncertainty = clean(depthSummary.uncertainty);
 
@@ -597,7 +647,7 @@ export function buildResponseDocument({
           invisible: "What continued while unseen", support: "Conditions that supported it" }
       : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
           memory: "기억의 대상", branch: "기억에서 이어 고른 답",
-          creative: "작품 제작 상태", public: "공개 활동 상태",
+          creative: "작품 제작 상태", public: "공개 활동 상태", duration: "활동 기간", reconnect: "이어지면 좋을 방식",
           reality: "현재에 작용하는 현실", transition: "조건이 달라진 시점",
           invisible: "안 보이던 때 이어진 것", support: "지지해 온 조건" };
     return [
@@ -615,12 +665,42 @@ export function buildResponseDocument({
       ...row(L.transition, RESEARCH_LABELS.transition_state?.[answers.transition_state] || ""),
       ...row(L.invisible, RESEARCH_LABELS.invisible_continuity_state?.[answers.invisible_continuity_state] || ""),
       ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
+      ...row(L.duration, ACTIVITY_DURATION_LABELS[answers.activity_duration_band] || ""),
+      // R01 은 설문이 심층인터뷰 대상을 고르는 통로다. 부록에 없으면 500장을 다시
+      // 뒤져야 한다 — 「인터뷰」를 고른 사람이 그 후보다(2026-09-11).
+      ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS),
       // activity_state(P06) · visibility_state(P07) · pause_meaning(P17) 은 RC2 에서 묻지
       // 않는다(flow.js:5-11 — Task 4·5 가 중복 판단을 걷어냈다). 칸을 두면 500장 전부
       // 빈칸이므로 뺀다. 대신 RC2 가 실제로 묻는 P16·P11·P13 을 넣었다.
       // d_current_gap · d_desired_change_primary · response_position · d_scope 는 라벨이
       // 역할·범위마다 다른 은행(role_question_bank / d_scope_bank)에서 나오므로 평면
       // 사전으로는 틀린 값을 찍는다. 그 내용은 서술형 답과 정리문에 담겨 있다.
+    ];
+  })();
+
+  // 기억 모듈은 통째로 부록에 닿지 않고 있었다. 이 연구가 「누구의 기억과 어떤 기록이
+  // 다시 확인하게 하는가」를 묻는데, 그 답이 빠져 있으면 부록으로 답할 수 없다.
+  const memoryRows = (() => {
+    if (frameLanguage !== "ko") return [];
+    const row = (label, value) => (clean(value) ? [[label, clean(value)]] : []);
+    const many = (label, values, labels) => {
+      const list = array(values).map((v) => labels[v]).filter(Boolean);
+      return list.length ? [[label, list.join(" · ")]] : [];
+    };
+    const places = array(answers.memory_locations)
+      .map((item) => clean(typeof item === "string" || typeof item === "number" ? item : item?.label))
+      .filter(Boolean);
+    const year = clean(answers.memory_year_optional);
+    const time = MEMORY_TIME_LABELS[answers.memory_time_band] || "";
+    return [
+      ...row("시기", year ? `${time}${time ? " · " : ""}${year}` : time),
+      ...row("지역", [...new Set(places)].join(" · ")),
+      ...many("경험 방식", answers.memory_experience_modes, MEMORY_MODE_LABELS),
+      ...row("기억과의 관계", MEMORY_RELATION_LABELS[answers.memory_relationship] || ""),
+      ...row("확인해 줄 수 있는 사람", answers.witness_role === "OTHER"
+        ? clean(answers.witness_role_other) || WITNESS_ROLE_LABELS.OTHER
+        : WITNESS_ROLE_LABELS[answers.witness_role] || ""),
+      ...many("함께 남은 것", answers.m_support_tags, MEMORY_SUPPORT_LABELS),
     ];
   })();
 
@@ -745,11 +825,24 @@ export function buildResponseDocument({
         approval_scope: "excluded",
         participant_approved: false,
       }] : []),
+      ...(memoryRows.length ? [{
+        id: "memory_evidence",
+        title: "기억의 단서",
+        appendix_title: "기억의 단서",
+        description: "기억을 언제·어디서·어떻게 경험했는지와, 그 기억을 함께 확인해 줄 수 있는 관계입니다.",
+        rows: memoryRows,
+        source_kind: "research_derived",
+        editable: false,
+        approval_scope: "excluded",
+        participant_approved: false,
+      }] : []),
       {
         id: "research_reading", title: task7.researchTitle, appendix_title: frame.appendixReadingTitle, description: task7.researchHelp,
         paragraphs: coordinateLine,
         // 근거는 참여자의 원문을 그대로 인용한다. 배정과 선택은 연구 측 표시다.
         axes: axisReadings,
+        coordinate_grid: coordinateGrid,
+        coordinate_number: coordinate.number || null,
         reading_source: readingSource || null,
         uncertainty: readingUncertainty || null,
         source_kind: "research_derived", editable: false,
@@ -786,7 +879,7 @@ export function renderResponseDocument(document = {}) {
   // 부록 인쇄에서 왼쪽(참여자가 쓰고 확인한 것)과 오른쪽(연구 장치)은 서로 다른
   // 높이로 자란다. 격자 칸을 짝지으면 짧은 쪽 아래에 빈틈이 생기므로 각각을 한
   // 묶음으로 감싸 독립된 단이 되게 한다. 화면에서는 차례대로 놓인다(2026-09-09).
-  const SIDE_LAYERS = new Set(["research_reading", "research_structure"]);
+  const SIDE_LAYERS = new Set(["research_reading", "research_structure", "memory_evidence"]);
   const layeredBody = layers.length ? layers.map((layer) => {
     let body = "";
     if (layer.id === "raw_participant_words") {
@@ -805,6 +898,11 @@ export function renderResponseDocument(document = {}) {
       body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
     } else {
       body = array(layer.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
+    }
+    if (array(layer.coordinate_grid).length) {
+      // 판 자체는 모든 장에 같고, 찍힌 칸만 다르다. 그래서 넘겨볼 때 분포가 보인다.
+      const cells = array(layer.coordinate_grid).map((row) => `<div class="response-document-grid-row">${array(row).map((n) => `<i${n === layer.coordinate_number ? ' class="is-here"' : ""}></i>`).join("")}</div>`).join("");
+      body += `<div class="response-document-grid" aria-hidden="true">${cells}</div>`;
     }
     if (array(layer.axes).length) {
       // 축 하나에 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」를 붙인다.
