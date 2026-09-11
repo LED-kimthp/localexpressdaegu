@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r1";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r2";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "e404ee0abe39-dirty 2026-09-11T01:39:21.194Z";
+const buildStamp = "552017acb081-dirty 2026-09-11T01:47:59.452Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -913,6 +913,9 @@ function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}
     // 500장을 결과보고서 부록으로 붙일 때 어느 응답인지 가릴 표기다. 문서 밖의 카드에만
     // 있어 인쇄에서 빠졌다(2026-09-09 실측).
     participantCode: state.participantReference?.code || "",
+    // D01·D02·D03 의 보기 문구는 역할·범위마다 다른 은행에서 나온다. 스키마를 넘겨야
+    // 부록이 참여자가 실제로 본 문구를 찍는다(2026-09-11).
+    schema,
   });
 }
 
@@ -2085,6 +2088,7 @@ function createResponse(submissionPhase = "final") {
     final: submissionPhase === "final",
     // 제출본 문서에도 같은 표기를 남긴다 — 이 문서가 부록으로 인쇄된다.
     participantCode: participantReference?.code || state.participantReference?.code || "",
+    schema,
   });
   const fixedQuestionIds = applicableFixedQuestionIds(cleanedAnswers, { adaptive: isRc2 });
   const coordinateScope = deriveCoordinateScope(cleanedAnswers);

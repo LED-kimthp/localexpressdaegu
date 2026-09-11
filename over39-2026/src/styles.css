@@ -6473,7 +6473,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   /* 두 단: 왼쪽은 참여자의 것, 오른쪽은 연구 장치. */
   .response-document-final .response-document-sheet {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 60mm;
+    grid-template-columns: minmax(0, 1fr) 72mm;
     column-gap: 6.5mm;
     align-content: start;
   }
@@ -6564,12 +6564,12 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final .response-document-evidence > li { font-size: 7pt !important; line-height: 1.4 !important; margin: 0 0 0.9mm !important; }
   .response-document-final .response-document-axes-foot { font-size: 6.4pt !important; }
   .response-document-final .response-document-rows > div {
-    grid-template-columns: 21mm minmax(0, 1fr) !important;
-    gap: 0 2mm !important;
-    padding: 1.1mm 0 !important;
+    grid-template-columns: 24mm minmax(0, 1fr) !important;
+    gap: 0 2.2mm !important;
+    padding: 0.78mm 0 !important;
   }
   .response-document-final .response-document-rows dt { font-size: 6.6pt !important; }
-  .response-document-final .response-document-rows dd { font-size: 7.2pt !important; line-height: 1.42 !important; }
+  .response-document-final .response-document-rows dd { font-size: 7.2pt !important; line-height: 1.38 !important; }
 
 
   /* 오른쪽 단의 근거는 주소만 남긴다 — 같은 문장을 한 쪽에 두 번 찍지 않는다.
