@@ -3,6 +3,9 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
 import { LABELS as RESEARCH_LABELS } from "./research-insights.js";
 import { normalizedDScope } from "./flow.js";
+// 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
+// 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
+import { translate } from "./i18n.js";
 import { stage1Copy } from "./stage1-i18n.js";
 import { task7Copy } from "./task7-i18n.js";
 
@@ -346,6 +349,18 @@ function dateLabel(value, language = "ko") {
   if (Number.isNaN(date.getTime())) return clean(value) || "—";
   const locale = { ko: "ko-KR", en: "en-GB", ja: "ja-JP", "zh-Hans": "zh-CN", "zh-Hant": "zh-TW", fr: "fr-FR", es: "es-ES", nl: "nl-NL", ms: "ms-MY" }[language] || "en-GB";
   return new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+}
+
+// 값의 말은 사슬로 찾는다: 한국어 → (영어면) 손으로 쓴 영어 → 설문 사전 → 비움.
+// translate() 는 옮긴 말이 없으면 한국어를 그대로 돌려주므로, 그 경우 칸을 비운다.
+// 한국어를 다른 언어 문서에 섞는 것보다 비우는 것이 맞다 — 사전이 채워지면 함께 채워진다.
+function localizedValue(koreanLabel, language, englishLabel = "") {
+  const ko = clean(koreanLabel);
+  if (!ko) return "";
+  if (language === "ko") return ko;
+  if (language === "en" && clean(englishLabel)) return clean(englishLabel);
+  const moved = clean(translate(language, ko));
+  return moved && moved !== ko ? moved : "";
 }
 
 function documentLabel(labels, value, english = false) {
@@ -752,87 +767,81 @@ export function buildResponseDocument({
   // 한다 — 지금은 문서에 없어서 별도 자료를 찾아봐야 했다(2026-09-09).
   // 선택형 답을 「항목 : 값」으로 놓는다. 서술형은 위쪽 원문 절에 한 번만 둔다.
   const structureRows = (() => {
-    if (frameLanguage !== "ko" && frameLanguage !== "en") return [];
-    const row = (label, value) => (clean(value) ? [[label, clean(value)]] : []);
-    const many = (label, values, labels) => {
-      const list = array(values).map((v) => documentLabel(labels, v, english)).filter(Boolean);
-      return list.length ? [[label, list.join(" · ")]] : [];
+    const L = frame.rowLabels || {};
+    const row = (label, value) => (clean(label) && clean(value) ? [[clean(label), clean(value)]] : []);
+    // 값은 한국어 사전을 원본으로 두고 사슬로 옮긴다. 옮긴 말이 없는 칸은 비운다.
+    const one = (label, dict, value, enDict) => row(label, localizedValue(dict?.[value], frameLanguage, enDict?.[value]));
+    const many = (label, values, dict, enDict) => {
+      const list = array(values)
+        .map((v) => localizedValue(dict?.[v], frameLanguage, enDict?.[v]))
+        .filter(Boolean);
+      return list.length ? [[clean(label), list.join(" · ")]] : [];
     };
-    const L = english
-      ? { route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions",
-          memory: "What the memory is of", branch: "Follow-up about the memory",
-          creative: "Creative work", public: "Public activity",
-          realityNow: "Conditions acting on the present", transition: "When conditions shifted",
-          invisible: "What continued while unseen", support: "Conditions that supported it",
-          duration: "Years active", reconnect: "How it could continue",
-          gap: "What is most lacking now", change: "What would help first",
-          reality: "The reality these conditions sit in" }
-      : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
-          memory: "기억의 대상", branch: "기억에서 이어 고른 답",
-          creative: "작품 제작 상태", public: "공개 활동 상태", duration: "활동 기간", reconnect: "이어지면 좋을 방식",
-          gap: "지금 가장 비어 있는 것", change: "먼저 달라지면 좋을 것", reality: "조건이 놓인 현실",
-          realityNow: "현재에 작용하는 현실", transition: "조건이 달라진 시점",
-          invisible: "안 보이던 때 이어진 것", support: "지지해 온 조건" };
+    const branchLabel = (english ? BRANCH_FOLLOWUP_LABELS_EN : BRANCH_FOLLOWUP_LABELS)[answers.memory_type];
     return [
-      ...row(L.route, documentLabel(english ? EN_ROUTE_LABELS : ROUTE_LABELS, answers.route, english)),
-      ...row(L.role, roleText(answers, english)),
-      ...many(L.roles, answers.roles_parallel, english ? ROLE_LABELS_EN : ROLE_LABELS),
-      ...row(L.memory, documentLabel(MEMORY_TYPE_LABELS, answers.memory_type, english)),
-      ...row((english ? BRANCH_FOLLOWUP_LABELS_EN : BRANCH_FOLLOWUP_LABELS)[answers.memory_type] || L.branch, answers.memory_branch_followup),
-      ...row(L.creative, documentLabel(CREATIVE_STATE_LABELS, answers.creative_work_state, english)),
-      ...row(L.public, documentLabel(PUBLIC_STATE_LABELS, answers.public_activity_state, english)),
-      // P16 은 이 연구의 전제를 직접 잡는 칸이다 — 보기 가운데
-      // AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가 〈만 39세 이상〉이 물으려는
-      // 바로 그것이다. 수집하고 저장하면서 부록에는 싣지 않고 있었다(2026-09-09).
-      ...many(L.realityNow, answers.pause_context_tags, english ? EN_PAUSE_REASON_LABELS : RESEARCH_LABELS.pause_context_tags),
-      ...row(L.transition, (english ? EN_TRANSITION_STATE_LABELS : RESEARCH_LABELS.transition_state || {})[answers.transition_state] || ""),
-      ...row(L.invisible, (english ? EN_INVISIBLE_STATE_LABELS : RESEARCH_LABELS.invisible_continuity_state || {})[answers.invisible_continuity_state] || ""),
-      ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
-      ...row(L.duration, (english ? EN_ACTIVITY_DURATION_LABELS : ACTIVITY_DURATION_LABELS)[answers.activity_duration_band] || ""),
-      // D01·D02·D03 은 역할·범위마다 보기가 다른 은행에서 나온다. 평면 사전으로 찍으면
-      // 엉뚱한 문구가 나오므로 앱과 같은 방식으로 푼다(2026-09-11).
-      // D01·D02·D03 의 보기 문구는 스키마 은행에 한국어로만 있다. 영어 판에 그대로 넣으면
-      // 한국어가 섞이므로 비운다 — 그 내용은 서술형 답(D04·D02_TEXT)에 담겨 있다.
-      ...(english ? [] : row(L.gap, dConditionLabel("gap", answers.d_current_gap, answers, schema, frameLanguage))),
-      ...(english ? [] : row(L.change, dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, frameLanguage))),
-      ...(english || !realityLabels(answers.d_context_tags, answers, schema).length
-        ? []
-        : [[L.reality, realityLabels(answers.d_context_tags, answers, schema).join(" · ")]]),
-      // R01 은 설문이 심층인터뷰 대상을 고르는 통로다. 부록에 없으면 500장을 다시
-      // 뒤져야 한다 — 「인터뷰」를 고른 사람이 그 후보다(2026-09-11).
-      ...many(L.reconnect, answers.reconnect_preferences, english ? EN_RECONNECT_LABELS : RECONNECT_LABELS),
+      ...one(L.route, ROUTE_LABELS, answers.route, EN_ROUTE_LABELS),
+      // roleText() 는 주 역할과 겸임을 한 문장으로 합치는데, 겸임은 아래 칸에 따로 있어
+      // 같은 값이 두 줄로 나왔다. 주 역할만 두고, 참여자가 직접 적은 직함은 그 말대로
+      // 둔다 — 참여자의 글은 옮기지 않는다(2026-09-11).
+      ...row(L.role, answers.role_primary === "OTHER"
+        ? clean(answers.role_primary_local_title) || localizedValue(ROLE_LABELS.OTHER, frameLanguage, ROLE_LABELS_EN.OTHER)
+        : localizedValue(ROLE_LABELS[answers.role_primary], frameLanguage, ROLE_LABELS_EN[answers.role_primary])),
+      ...many(L.roles, answers.roles_parallel, ROLE_LABELS, ROLE_LABELS_EN),
+      ...one(L.memory, MEMORY_TYPE_LABELS, answers.memory_type, EN_LABELS),
+      // M03 은 대상마다 다른 것을 묻는다. 칸 이름은 실제로 물은 것을 따라가고, 그 이름이
+      // 없는 언어에서는 「기억에서 이어 고른 답」으로 둔다.
+      ...row(frameLanguage === "ko" || english ? (branchLabel || L.branch) : L.branch,
+        localizedValue(answers.memory_branch_followup, frameLanguage, english ? answers.memory_branch_followup : "")),
+      ...one(L.creative, CREATIVE_STATE_LABELS, answers.creative_work_state, EN_LABELS),
+      ...one(L.public, PUBLIC_STATE_LABELS, answers.public_activity_state, EN_LABELS),
+      // P16 의 보기 가운데 AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가
+      // 〈만 39세 이상〉이 물으려는 바로 그것이다.
+      ...many(L.realityNow, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags, EN_PAUSE_REASON_LABELS),
+      ...one(L.transition, RESEARCH_LABELS.transition_state, answers.transition_state, EN_TRANSITION_STATE_LABELS),
+      ...one(L.invisible, RESEARCH_LABELS.invisible_continuity_state, answers.invisible_continuity_state, EN_INVISIBLE_STATE_LABELS),
+      ...many(L.support, answers.support_conditions, SUPPORT_LABELS, EN_LABELS),
+      ...one(L.duration, ACTIVITY_DURATION_LABELS, answers.activity_duration_band, EN_ACTIVITY_DURATION_LABELS),
+      // R01 은 설문이 심층인터뷰 대상을 고르는 통로다.
+      ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS, EN_RECONNECT_LABELS),
+      // D01·D02·D03 의 보기 문구는 스키마 은행에서 나온다(역할·범위마다 다르다). 그 문구도
+      // 같은 사슬로 옮기므로, 옮긴 말이 없는 언어에서는 저절로 비워진다.
+      ...row(L.gap, localizedValue(dConditionLabel("gap", answers.d_current_gap, answers, schema, "ko"), frameLanguage)),
+      ...row(L.change, localizedValue(dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, "ko"), frameLanguage)),
+      ...(() => {
+        const list = realityLabels(answers.d_context_tags, answers, schema)
+          .map((value) => localizedValue(value, frameLanguage)).filter(Boolean);
+        return list.length && clean(L.reality) ? [[clean(L.reality), list.join(" · ")]] : [];
+      })(),
       // activity_state(P06) · visibility_state(P07) · pause_meaning(P17) 은 RC2 에서 묻지
-      // 않는다(flow.js:5-11 — Task 4·5 가 중복 판단을 걷어냈다). 칸을 두면 500장 전부
-      // 빈칸이므로 뺀다. 대신 RC2 가 실제로 묻는 P16·P11·P13 을 넣었다.
-      // d_current_gap · d_desired_change_primary · response_position · d_scope 는 라벨이
-      // 역할·범위마다 다른 은행(role_question_bank / d_scope_bank)에서 나오므로 평면
-      // 사전으로는 틀린 값을 찍는다. 그 내용은 서술형 답과 정리문에 담겨 있다.
+      // 않는다(flow.js:5-11). 칸을 두면 500장 전부 빈칸이므로 넣지 않는다.
     ];
   })();
 
   // 기억 모듈은 통째로 부록에 닿지 않고 있었다. 이 연구가 「누구의 기억과 어떤 기록이
   // 다시 확인하게 하는가」를 묻는데, 그 답이 빠져 있으면 부록으로 답할 수 없다.
   const memoryRows = (() => {
-    if (frameLanguage !== "ko") return [];
-    const row = (label, value) => (clean(value) ? [[label, clean(value)]] : []);
-    const many = (label, values, labels) => {
-      const list = array(values).map((v) => labels[v]).filter(Boolean);
-      return list.length ? [[label, list.join(" · ")]] : [];
+    const L = frame.rowLabels || {};
+    const row = (label, value) => (clean(label) && clean(value) ? [[clean(label), clean(value)]] : []);
+    const one = (label, dict, value) => row(label, localizedValue(dict?.[value], frameLanguage));
+    const many = (label, values, dict) => {
+      const list = array(values).map((v) => localizedValue(dict?.[v], frameLanguage)).filter(Boolean);
+      return list.length ? [[clean(label), list.join(" · ")]] : [];
     };
-    const places = array(answers.memory_locations)
+    // 지역은 참여자가 적은 말이므로 옮기지 않는다.
+    const places = [...new Set(array(answers.memory_locations)
       .map((item) => clean(typeof item === "string" || typeof item === "number" ? item : item?.label))
-      .filter(Boolean);
+      .filter(Boolean))];
     const year = clean(answers.memory_year_optional);
-    const time = MEMORY_TIME_LABELS[answers.memory_time_band] || "";
+    const time = localizedValue(MEMORY_TIME_LABELS[answers.memory_time_band], frameLanguage);
     return [
-      ...row("시기", year ? `${time}${time ? " · " : ""}${year}` : time),
-      ...row("지역", [...new Set(places)].join(" · ")),
-      ...many("경험 방식", answers.memory_experience_modes, MEMORY_MODE_LABELS),
-      ...row("기억과의 관계", MEMORY_RELATION_LABELS[answers.memory_relationship] || ""),
-      ...row("확인해 줄 수 있는 사람", answers.witness_role === "OTHER"
-        ? clean(answers.witness_role_other) || WITNESS_ROLE_LABELS.OTHER
-        : WITNESS_ROLE_LABELS[answers.witness_role] || ""),
-      ...many("함께 남은 것", answers.m_support_tags, MEMORY_SUPPORT_LABELS),
+      ...row(L.mTime, year ? `${time}${time ? " · " : ""}${year}` : time),
+      ...row(L.mPlace, places.join(" · ")),
+      ...many(L.mMode, answers.memory_experience_modes, MEMORY_MODE_LABELS),
+      ...one(L.mRelation, MEMORY_RELATION_LABELS, answers.memory_relationship),
+      ...row(L.mWitness, answers.witness_role === "OTHER"
+        ? clean(answers.witness_role_other)
+        : localizedValue(WITNESS_ROLE_LABELS[answers.witness_role], frameLanguage)),
+      ...many(L.mSupport, answers.m_support_tags, MEMORY_SUPPORT_LABELS),
     ];
   })();
 
@@ -959,9 +968,9 @@ export function buildResponseDocument({
       }] : []),
       ...(memoryRows.length ? [{
         id: "memory_evidence",
-        title: "기억의 단서",
-        appendix_title: "기억의 단서",
-        description: "기억을 언제·어디서·어떻게 경험했는지와, 그 기억을 함께 확인해 줄 수 있는 관계입니다.",
+        title: frame.rowLabels?.memoryTitle || "기억의 단서",
+        appendix_title: frame.rowLabels?.memoryTitle || "기억의 단서",
+        description: frame.rowLabels?.memoryNote || "",
         rows: memoryRows,
         source_kind: "research_derived",
         editable: false,
