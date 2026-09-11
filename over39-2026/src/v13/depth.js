@@ -1013,6 +1013,39 @@ export function isTranscriptLikeAdaptiveSummary(summary, context = {}) {
   return copiedNarratives.length >= 2;
 }
 
+const SUMMARY_LANGUAGE_NAMES = Object.freeze({
+  en: "English", nl: "Dutch (Nederlands)", es: "Spanish (Español)",
+  fr: "French (Français)", ms: "Malay (Bahasa Melayu)", ja: "Japanese",
+  "zh-hans": "Simplified Chinese", "zh-hant": "Traditional Chinese",
+});
+
+// 참여자가 한국어가 아닌 말로 썼는데 정리문이 한글로 돌아오는 일이 있다(말레이어에서
+// 확인, 2026-09-11). 그 글은 참여자가 읽고 확인할 수 없으므로 정리문으로 쓸 수 없다.
+export function isWrongLanguageAdaptiveSummary(summary, context = {}) {
+  const language = String(context.response_language || "ko").toLowerCase();
+  if (!language || language.startsWith("ko")) return false;
+  const text = String(summary || "");
+  const letters = text.match(/\p{L}/gu) || [];
+  if (letters.length < 20) return false;
+  const hangul = text.match(/[\uAC00-\uD7A3]/gu) || [];
+  return hangul.length / letters.length > 0.3;
+}
+
+export function adaptiveSummaryRepairReason(summary, context = {}) {
+  if (isWrongLanguageAdaptiveSummary(summary, context)) return "wrong_language";
+  if (isTranscriptLikeAdaptiveSummary(summary, context)) return "transcript_like";
+  return null;
+}
+
+function summaryRepairInstruction(reason, context = {}) {
+  if (reason !== "wrong_language") {
+    return "Preserve every supported fact, but rewrite the record as new sentences instead of copying the participant's source sentences.";
+  }
+  const code = String(context.response_language || "").toLowerCase();
+  const name = SUMMARY_LANGUAGE_NAMES[code] || code || "the participant's language";
+  return `Write the summary in ${name} (language code ${code || "unknown"}), the same language the participant wrote in. Do not answer in Korean. Keep every supported fact.`;
+}
+
 export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallback", context, answers = {}, turns = [], fetchImpl = fetch, timeoutMs = 20000 }) {
   if (mode === "mock") return { ...buildAdaptiveRuleSummary({ answers, turns }), source: "mock_api", run: { status: "success", provider: "mock", operation: "summarize_adaptive", real_motif_pass: false } };
   if (mode !== "live" || !endpoint) return safeFinalSummaryFailure("FINAL_SUMMARY_NOT_CONFIGURED");
@@ -1022,6 +1055,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
   let initialRequestId = null;
   let repairRequestId = null;
   let repairClientRequestId = null;
+  let repairedReason = null;
   try {
     let requestContext = context;
     let adaptiveResult = await requestAiJson({ endpoint, anonKey, operation: "summarize_adaptive", context: requestContext, fetchImpl, timeoutMs });
@@ -1048,17 +1082,19 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
 
     let summary = String(body.summary || "").trim();
     if (summary.length < 20 || !/[\p{L}\p{N}]/u.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY");
-    if (isTranscriptLikeAdaptiveSummary(summary, context) && effectiveOperation === "summarize_adaptive") {
+    let repairReason = adaptiveSummaryRepairReason(summary, context);
+    if (repairReason && effectiveOperation === "summarize_adaptive") {
       repairAttempted = true;
+      repairedReason = repairReason;
       initialRequestId = body.request_id || adaptiveResult.request_id || null;
       repairClientRequestId = crypto.randomUUID();
       requestContext = {
         ...context,
         client_request_id: repairClientRequestId,
         summary_revision: {
-          reason: "transcript_like",
+          reason: repairReason,
           rejected_summary: summary,
-          instruction: "Preserve every supported fact, but rewrite the record as new sentences instead of copying the participant's source sentences.",
+          instruction: summaryRepairInstruction(repairReason, context),
         },
       };
       adaptiveResult = await requestAiJson({ endpoint, anonKey, operation: "summarize_adaptive", context: requestContext, fetchImpl, timeoutMs });
@@ -1067,8 +1103,12 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       repairRequestId = body.request_id || adaptiveResult.request_id || null;
       summary = String(body.summary || "").trim();
       if (summary.length < 20 || !/[\p{L}\p{N}]/u.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY_REPAIR");
-      if (isTranscriptLikeAdaptiveSummary(summary, context)) throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE_AFTER_REPAIR");
-    } else if (isTranscriptLikeAdaptiveSummary(summary, context)) {
+      repairReason = adaptiveSummaryRepairReason(summary, context);
+      if (repairReason === "wrong_language") throw new Error("AI_SUMMARY_WRONG_LANGUAGE_AFTER_REPAIR");
+      if (repairReason === "transcript_like") throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE_AFTER_REPAIR");
+    } else if (repairReason === "wrong_language") {
+      throw new Error("AI_SUMMARY_WRONG_LANGUAGE");
+    } else if (repairReason === "transcript_like") {
       throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE");
     }
     const axes = Object.fromEntries(["m", "s", "d"].map((key) => {
@@ -1105,7 +1145,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
         operation: effectiveOperation,
         compatibility_mode: compatibilityMode,
         repair_attempted: repairAttempted,
-        repair_reason: repairAttempted ? "transcript_like" : null,
+        repair_reason: repairedReason,
         initial_request_id: initialRequestId,
         repair_request_id: repairRequestId,
         network_calls: repairAttempted ? 2 : 1,
@@ -1132,7 +1172,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       latency_ms: Math.round(performance.now() - started),
       operation: "summarize_adaptive",
       repair_attempted: repairAttempted,
-      repair_reason: repairAttempted ? "transcript_like" : null,
+      repair_reason: repairedReason,
       initial_request_id: initialRequestId,
       repair_request_id: repairRequestId,
       network_calls: repairAttempted ? 2 : 1,
