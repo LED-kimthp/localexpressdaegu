@@ -238,6 +238,45 @@ const RECONNECT_LABELS = {
   UNKNOWN: "아직 잘 모르겠다",
 };
 
+// 영어 판 라벨. 앞서 P16·P11·P13·P05·R01 을 한국어 사전만 보고 넣어, 영어 문서에
+// 한국어 값이 찍히고 칸 이름은 undefined 가 됐다(2026-09-11 실측). 스키마 보기 문구를
+// 옮긴 것이며, appendix-document.test.js 가 한국어 사전과 열쇠가 맞는지 대조한다.
+const EN_PAUSE_REASON_LABELS = {
+  LIVELIHOOD: "Livelihood and other work", CARE: "Care and family time",
+  HEALTH: "Health and recovery", COST: "Production, presentation and travel costs",
+  SPACE: "Studio, rehearsal and storage space", ADMIN: "Administration and role burden",
+  OPPORTUNITY: "Opportunities to exhibit, present and take part",
+  AGE_ELIGIBILITY_END: "End of the young-artist funding age limit",
+  RELATIONSHIP: "Networks and terms of collaboration", REGION: "Region and mobility",
+  DIRECTION: "Time to consider direction", CHOICE: "Personal choice and priorities",
+  DAILY_SCHEDULE: "Daily life, study and work time", COST_MOVE: "Cost and travel",
+  COMPANION: "Someone to go with", INFORMATION: "Information about works and programmes",
+  LANGUAGE_GUIDE: "Language and how things are explained",
+  COMFORT: "Feeling at ease entering the space", ONLINE: "Ways of meeting it online",
+  OTHER: "Other", NONE: "No particular condition at present", UNSURE: "Not sure yet",
+};
+const EN_TRANSITION_STATE_LABELS = {
+  CLEAR: "There was a clear moment", GRADUAL: "It changed gradually",
+  MULTIPLE: "It changed several times", CONTINUED: "It continued in a similar flow",
+  UNSURE: "Not sure", SKIP: "Skipped",
+};
+const EN_INVISIBLE_STATE_LABELS = {
+  YES: "Something was continuing", MIXED: "Continuing and pausing together",
+  NO: "Hard to recall", NO_SUCH_PERIOD: "No such less-visible period", UNSURE: "Not sure",
+};
+const EN_ACTIVITY_DURATION_LABELS = {
+  LT1: "Under 1 year", Y1_3: "1–3 years", Y3_5: "3–5 years", Y5_10: "5–10 years",
+  Y10_20: "10–20 years", Y20_30: "20–30 years", Y30_PLUS: "Over 30 years",
+  DIFFICULT: "Hard to say exactly", SKIP: "Not answered",
+};
+const EN_RECONNECT_LABELS = {
+  INTERVIEW: "Interview", EXHIBITION: "Exhibition", PUBLICATION: "Publication",
+  CRITIC_RESEARCH: "Criticism and research", ARCHIVE: "Online archive",
+  ROUNDTABLE: "Roundtable", AUDIO_VIDEO: "Audio and video record",
+  INTERNATIONAL_DIALOGUE: "Dialogue with people in other regions or countries",
+  UNKNOWN: "Not sure yet",
+};
+
 const RAW_PARTICIPANT_TEXT_FIELDS = Object.freeze([
   "memory_clue_text", "no_recall_relation_text", "memory_meaning_text",
   "transition_text", "pause_context_text", "invisible_continuity_text", "support_conditions_text",
@@ -723,8 +762,11 @@ export function buildResponseDocument({
       ? { route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions",
           memory: "What the memory is of", branch: "Follow-up about the memory",
           creative: "Creative work", public: "Public activity",
-          reality: "Conditions acting on the present", transition: "When conditions shifted",
-          invisible: "What continued while unseen", support: "Conditions that supported it" }
+          realityNow: "Conditions acting on the present", transition: "When conditions shifted",
+          invisible: "What continued while unseen", support: "Conditions that supported it",
+          duration: "Years active", reconnect: "How it could continue",
+          gap: "What is most lacking now", change: "What would help first",
+          reality: "The reality these conditions sit in" }
       : { route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치",
           memory: "기억의 대상", branch: "기억에서 이어 고른 답",
           creative: "작품 제작 상태", public: "공개 활동 상태", duration: "활동 기간", reconnect: "이어지면 좋을 방식",
@@ -742,21 +784,23 @@ export function buildResponseDocument({
       // P16 은 이 연구의 전제를 직접 잡는 칸이다 — 보기 가운데
       // AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가 〈만 39세 이상〉이 물으려는
       // 바로 그것이다. 수집하고 저장하면서 부록에는 싣지 않고 있었다(2026-09-09).
-      ...many(L.realityNow, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags),
-      ...row(L.transition, RESEARCH_LABELS.transition_state?.[answers.transition_state] || ""),
-      ...row(L.invisible, RESEARCH_LABELS.invisible_continuity_state?.[answers.invisible_continuity_state] || ""),
+      ...many(L.realityNow, answers.pause_context_tags, english ? EN_PAUSE_REASON_LABELS : RESEARCH_LABELS.pause_context_tags),
+      ...row(L.transition, (english ? EN_TRANSITION_STATE_LABELS : RESEARCH_LABELS.transition_state || {})[answers.transition_state] || ""),
+      ...row(L.invisible, (english ? EN_INVISIBLE_STATE_LABELS : RESEARCH_LABELS.invisible_continuity_state || {})[answers.invisible_continuity_state] || ""),
       ...many(L.support, answers.support_conditions, SUPPORT_LABELS),
-      ...row(L.duration, ACTIVITY_DURATION_LABELS[answers.activity_duration_band] || ""),
+      ...row(L.duration, (english ? EN_ACTIVITY_DURATION_LABELS : ACTIVITY_DURATION_LABELS)[answers.activity_duration_band] || ""),
       // D01·D02·D03 은 역할·범위마다 보기가 다른 은행에서 나온다. 평면 사전으로 찍으면
       // 엉뚱한 문구가 나오므로 앱과 같은 방식으로 푼다(2026-09-11).
-      ...row(L.gap, dConditionLabel("gap", answers.d_current_gap, answers, schema, frameLanguage)),
-      ...row(L.change, dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, frameLanguage)),
-      ...(realityLabels(answers.d_context_tags, answers, schema).length
-        ? [[L.reality, realityLabels(answers.d_context_tags, answers, schema).join(" · ")]]
-        : []),
+      // D01·D02·D03 의 보기 문구는 스키마 은행에 한국어로만 있다. 영어 판에 그대로 넣으면
+      // 한국어가 섞이므로 비운다 — 그 내용은 서술형 답(D04·D02_TEXT)에 담겨 있다.
+      ...(english ? [] : row(L.gap, dConditionLabel("gap", answers.d_current_gap, answers, schema, frameLanguage))),
+      ...(english ? [] : row(L.change, dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, frameLanguage))),
+      ...(english || !realityLabels(answers.d_context_tags, answers, schema).length
+        ? []
+        : [[L.reality, realityLabels(answers.d_context_tags, answers, schema).join(" · ")]]),
       // R01 은 설문이 심층인터뷰 대상을 고르는 통로다. 부록에 없으면 500장을 다시
       // 뒤져야 한다 — 「인터뷰」를 고른 사람이 그 후보다(2026-09-11).
-      ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS),
+      ...many(L.reconnect, answers.reconnect_preferences, english ? EN_RECONNECT_LABELS : RECONNECT_LABELS),
       // activity_state(P06) · visibility_state(P07) · pause_meaning(P17) 은 RC2 에서 묻지
       // 않는다(flow.js:5-11 — Task 4·5 가 중복 판단을 걷어냈다). 칸을 두면 500장 전부
       // 빈칸이므로 뺀다. 대신 RC2 가 실제로 묻는 P16·P11·P13 을 넣었다.
