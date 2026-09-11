@@ -480,6 +480,18 @@ export const extraCopy = {
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않습니다.": "〈Over 39〉 is a name that starts from the time arts and culture practice has accumulated and the conditions for continuing it. The open call does not sort participants by a number.",
     // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 1개.
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈Over 39〉 is a name that starts from the time arts and culture practice has accumulated and the conditions for continuing it. The open call does not sort participants by a number; it reads the time each practice has passed through together with the questions it holds now.",
+    // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
+    "답변을 정리하고 있어요": "Organising your answers",
+    "응답을 정리하고 있어요": "Organising your response",
+    "응답을 정리하고 있어요.": "Organising your response.",
+    "답변을 읽고 있어요": "Reading your answer",
+    "질문을 준비하고 있습니다": "Preparing the question",
+    "정리하고 있습니다": "Organising",
+    "기록을 정리하고 있습니다": "Organising the record",
+    "기록을 저장하고 있습니다": "Saving the record",
+    "공모 신청을 저장하고 있어요.": "Saving your application.",
+    "안부를 불러오고 있습니다": "Bringing in a greeting",
+    "이 답변에서 이어가기": "Continue from this answer",
   },
   nl: {
     "참여 안내": "Informatie over deelname",
@@ -922,6 +934,18 @@ export const extraCopy = {
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않습니다.": "〈39 jaar en ouder〉 is een naam die vertrekt van de tijd die kunst- en cultuurpraktijk heeft opgebouwd en van de voorwaarden om door te gaan. De open call sorteert deelnemers niet op een getal.",
     // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 1개.
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈39 jaar en ouder〉 is een naam die vertrekt van de tijd die kunst- en cultuurpraktijk heeft opgebouwd en van de voorwaarden om door te gaan. De open call sorteert deelnemers niet op een getal, maar leest de tijd die elke praktijk heeft doorlopen samen met de vragen die zij nu draagt.",
+    // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
+    "답변을 정리하고 있어요": "Uw antwoorden worden geordend",
+    "응답을 정리하고 있어요": "Uw reactie wordt geordend",
+    "응답을 정리하고 있어요.": "Uw reactie wordt geordend.",
+    "답변을 읽고 있어요": "We lezen uw antwoord",
+    "질문을 준비하고 있습니다": "De vraag wordt voorbereid",
+    "정리하고 있습니다": "Wordt geordend",
+    "기록을 정리하고 있습니다": "Het verslag wordt geordend",
+    "기록을 저장하고 있습니다": "Het verslag wordt opgeslagen",
+    "공모 신청을 저장하고 있어요.": "Uw aanmelding wordt opgeslagen.",
+    "안부를 불러오고 있습니다": "Een groet wordt opgehaald",
+    "이 답변에서 이어가기": "Verdergaan vanaf dit antwoord",
   },
   es: {
     "이전":"Anterior","다음":"Siguiente","기억":"Memoria","현재":"Presente","조건":"Condiciones","참여 기록":"Registro de participación","연결 질문":"Pregunta de seguimiento","문화예술 경험 기록":"Registro de experiencias artísticas y culturales","전시 참여 공모":"Convocatoria para la exposición","설문 시작하기":"Comenzar la encuesta","공모요강과 신청서 열기":"Abrir bases y solicitud","오늘 어디에서 이야기를 시작할까요?":"¿Desde dónde le gustaría comenzar hoy?","나의 활동과 지속":"Mi práctica y su continuidad","기억하는 작가·작품·공간":"Un artista, una obra o un espacio que recuerdo","관객·시민의 문화예술 경험":"Mi experiencia artística y cultural como público o ciudadanía","지금 떠오르는 사람, 작품, 공간 또는 장면은 무엇인가요?":"¿Qué persona, obra, espacio o escena le viene ahora a la mente?","그 경험에서 지금도 떠오르는 장면은 무엇인가요?":"¿Qué escena de aquella experiencia sigue recordando?","이 기억이 지금까지 남아 있는 이유는 무엇인가요?":"¿Por qué ha permanecido este recuerdo?","이 일은 언제쯤이었나요?":"¿Cuándo ocurrió, aproximadamente?","지금 가장 먼저 살펴보고 싶은 조건은 무엇인가요?":"¿Qué condición le gustaría examinar primero?","인터뷰":"Entrevista","전시":"Exposición","출판":"Publicación","온라인 아카이브":"Archivo en línea","라운드테이블":"Mesa redonda","기타":"Otro","없음":"Ninguno","응답하지 않음":"Prefiero no responder",
@@ -1344,6 +1368,18 @@ export const extraCopy = {
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않습니다.": "〈Mayores de 39〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra.",
     // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 1개.
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈Mayores de 39〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra: lee el tiempo que ha recorrido cada práctica junto con las preguntas que sostiene ahora.",
+    // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
+    "답변을 정리하고 있어요": "Estamos organizando sus respuestas",
+    "응답을 정리하고 있어요": "Estamos organizando su respuesta",
+    "응답을 정리하고 있어요.": "Estamos organizando su respuesta.",
+    "답변을 읽고 있어요": "Estamos leyendo su respuesta",
+    "질문을 준비하고 있습니다": "Estamos preparando la pregunta",
+    "정리하고 있습니다": "Organizando",
+    "기록을 정리하고 있습니다": "Estamos organizando el registro",
+    "기록을 저장하고 있습니다": "Estamos guardando el registro",
+    "공모 신청을 저장하고 있어요.": "Estamos guardando su solicitud.",
+    "안부를 불러오고 있습니다": "Estamos trayendo un saludo",
+    "이 답변에서 이어가기": "Continuar desde esta respuesta",
   },
   fr: {
     "이전":"Précédent","다음":"Suivant","기억":"Mémoire","현재":"Présent","조건":"Conditions","참여 기록":"Récit de participation","연결 질문":"Question de suivi","문화예술 경험 기록":"Récit d’expériences artistiques et culturelles","전시 참여 공모":"Appel à projets pour l’exposition","설문 시작하기":"Commencer le questionnaire","공모요강과 신청서 열기":"Ouvrir l’appel et le formulaire","오늘 어디에서 이야기를 시작할까요?":"Par où souhaitez-vous commencer aujourd’hui ?","나의 활동과 지속":"Ma pratique et sa continuité","기억하는 작가·작품·공간":"Un artiste, une œuvre ou un lieu dont je me souviens","관객·시민의 문화예술 경험":"Mon expérience de l’art et de la culture comme public ou citoyen·ne","지금 떠오르는 사람, 작품, 공간 또는 장면은 무엇인가요?":"Quelle personne, œuvre, lieu ou scène vous vient à l’esprit ?","그 경험에서 지금도 떠오르는 장면은 무엇인가요?":"Quelle scène de cette expérience vous revient encore ?","이 기억이 지금까지 남아 있는 이유는 무엇인가요?":"Pourquoi ce souvenir est-il resté ?","이 일은 언제쯤이었나요?":"À peu près quand cela s’est-il passé ?","지금 가장 먼저 살펴보고 싶은 조건은 무엇인가요?":"Quelle condition souhaitez-vous examiner en premier ?","인터뷰":"Entretien","전시":"Exposition","출판":"Publication","온라인 아카이브":"Archives en ligne","라운드테이블":"Table ronde","기타":"Autre","없음":"Aucun","응답하지 않음":"Je préfère ne pas répondre",
@@ -1766,6 +1802,18 @@ export const extraCopy = {
     "제도와 기관이 내 역할을 충분히 다루지 못했다": "Les dispositifs et les institutions ne prenaient pas assez en compte mon rôle",
     "역할이 복합적이어서 한 직군으로 설명하기 어려웠다": "Mon rôle étant composite, il était difficile de le décrire par un seul métier",
     "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈Plus de 39 ans〉 est un nom qui part du temps accumulé dans la pratique artistique et des conditions pour la poursuivre. L'appel à participation ne trie pas les personnes par un chiffre : il lit le temps traversé par chaque pratique en même temps que les questions qu'elle porte aujourd'hui.",
+    // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
+    "답변을 정리하고 있어요": "Vos réponses sont en cours d’organisation",
+    "응답을 정리하고 있어요": "Votre réponse est en cours d’organisation",
+    "응답을 정리하고 있어요.": "Votre réponse est en cours d’organisation.",
+    "답변을 읽고 있어요": "Nous lisons votre réponse",
+    "질문을 준비하고 있습니다": "La question est en préparation",
+    "정리하고 있습니다": "En cours d’organisation",
+    "기록을 정리하고 있습니다": "Le récit est en cours d’organisation",
+    "기록을 저장하고 있습니다": "Le récit est en cours d’enregistrement",
+    "공모 신청을 저장하고 있어요.": "Votre candidature est en cours d’enregistrement.",
+    "안부를 불러오고 있습니다": "Une salutation est en cours de chargement",
+    "이 답변에서 이어가기": "Continuer à partir de cette réponse",
   },
   ms: {
     "이전":"Sebelumnya","다음":"Seterusnya","기억":"Ingatan","현재":"Keadaan semasa","조건":"Keadaan yang diperlukan","참여 기록":"Rekod penyertaan","연결 질문":"Soalan susulan","문화예술 경험 기록":"Rekod pengalaman seni dan budaya","전시 참여 공모":"Panggilan terbuka pameran","설문 시작하기":"Mulakan soal selidik","공모요강과 신청서 열기":"Buka garis panduan dan permohonan","오늘 어디에서 이야기를 시작할까요?":"Dari mana anda mahu memulakan cerita hari ini?","나의 활동과 지속":"Amalan saya dan cara ia diteruskan","기억하는 작가·작품·공간":"Seniman, karya atau ruang yang saya ingati","관객·시민의 문화예술 경험":"Pengalaman seni dan budaya saya sebagai penonton atau warga","지금 떠오르는 사람, 작품, 공간 또는 장면은 무엇인가요?":"Siapa, karya, ruang atau adegan apakah yang terlintas sekarang?","그 경험에서 지금도 떠오르는 장면은 무엇인가요?":"Adegan apakah daripada pengalaman itu yang masih anda ingati?","이 기억이 지금까지 남아 있는 이유는 무엇인가요?":"Mengapakah ingatan ini kekal hingga sekarang?","이 일은 언제쯤이었나요?":"Bilakah perkara ini berlaku, lebih kurang?","지금 가장 먼저 살펴보고 싶은 조건은 무엇인가요?":"Keadaan manakah yang mahu anda lihat dahulu?","인터뷰":"Temu bual","전시":"Pameran","출판":"Penerbitan","온라인 아카이브":"Arkib dalam talian","라운드테이블":"Meja bulat","기타":"Lain-lain","없음":"Tiada","응답하지 않음":"Tidak mahu menjawab",
@@ -2189,6 +2237,18 @@ export const extraCopy = {
     "함께 일하고 대화할 관계가 부족했다": "Hubungan untuk bekerja dan berbual bersama tidak mencukupi",
     "제도와 기관이 내 역할을 충분히 다루지 못했다": "Dasar dan institusi kurang menangani peranan saya",
     "역할이 복합적이어서 한 직군으로 설명하기 어려웠다": "Peranan saya bergabung sehingga sukar dijelaskan sebagai satu bidang kerja",
+    // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
+    "답변을 정리하고 있어요": "Menyusun jawapan anda",
+    "응답을 정리하고 있어요": "Menyusun respons anda",
+    "응답을 정리하고 있어요.": "Menyusun respons anda.",
+    "답변을 읽고 있어요": "Membaca jawapan anda",
+    "질문을 준비하고 있습니다": "Menyediakan soalan",
+    "정리하고 있습니다": "Sedang menyusun",
+    "기록을 정리하고 있습니다": "Menyusun rekod",
+    "기록을 저장하고 있습니다": "Menyimpan rekod",
+    "공모 신청을 저장하고 있어요.": "Menyimpan permohonan anda.",
+    "안부를 불러오고 있습니다": "Memuatkan salam",
+    "이 답변에서 이어가기": "Teruskan daripada jawapan ini",
   }
 };
 
