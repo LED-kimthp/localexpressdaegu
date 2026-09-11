@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r9";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r10";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "7895bf984c1a-dirty 2026-09-11T06:26:38.015Z";
+const buildStamp = "06698407c866-dirty 2026-09-11T06:35:44.933Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -54,7 +54,18 @@ const interfaceLanguageKey = "over39-interface-language";
 // 된다. 「불러오는 중입니다」조차 나오지 않는다. 저장소는 언제든 없을 수 있다고 보고 읽는다.
 const readStoredLanguage = () => { try { return localStorage.getItem(interfaceLanguageKey); } catch { return null; } };
 const requestedLanguage = String(query.get("lang") || readStoredLanguage() || "ko");
-const initialLanguage = ["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"].includes(requestedLanguage) ? requestedLanguage : "ko";
+// 단추에 내놓는 언어. 여기 한 곳에서만 정한다 — 목록이 두 벌이면 단추에서 내린 언어가
+// ?lang= 이나 저장된 선택으로 되살아난다.
+//
+// 일본어·중국어(간체·번체)는 내렸다(TK 2026-09-11). 사전 분량이 다른 언어의 4분의 1
+// 이어서(en 857 · nl 694 · es·fr·ms 646 대 ja 171 · zh-Hans 177 · zh-Hant 160) 그 언어로
+// 들어온 참여자는 RC2 질문 28개 중 11개, 보기 129개 중 67개를 한국어로 보고 있었다.
+// 반쯤 한국어인 설문을 25분 동안 내놓는 것보다 고르지 않게 하는 것이 정직하다.
+// 사전과 문구는 지우지 않는다 — 그 언어로 들어온 지난 응답이 그대로 읽혀야 하고,
+// 사전을 채우면 OFFERED_LANGUAGES 에 코드를 되돌리는 것으로 다시 열 수 있다.
+const OFFERED_LANGUAGES = Object.freeze(["ko", "en", "nl", "es", "fr", "ms"]);
+const RETIRED_LANGUAGES = Object.freeze(["ja", "zh-Hans", "zh-Hant"]);
+const initialLanguage = OFFERED_LANGUAGES.includes(requestedLanguage) ? requestedLanguage : "ko";
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
 // 초대 링크를 사람마다 다르게 보내기 위한 표식(`?pid=A01`). 참여자 화면에는 아무 영향이
@@ -127,17 +138,12 @@ function clearAdaptiveAnchor(checkpoint, { clearReflection = true } = {}) {
 
 
 // The local language comes first. The remaining languages follow ISO language-code order.
-const languages = [
-  ["ko", "한국어"],
-  ["en", "English"],
-  ["ja", "日本語"],
-  ["zh-Hans", "简体中文"],
-  ["zh-Hant", "繁體中文"],
-  ["nl", "Nederlands"],
-  ["es", "Español"],
-  ["fr", "Français"],
-  ["ms", "Bahasa Melayu"],
-];
+// 내린 언어의 이름표도 남겨둔다 — 다시 열 때 OFFERED_LANGUAGES 만 고치면 된다.
+const LANGUAGE_LABELS = Object.freeze({
+  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文",
+  nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
+});
+const languages = OFFERED_LANGUAGES.map((code) => [code, LANGUAGE_LABELS[code]]);
 const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
