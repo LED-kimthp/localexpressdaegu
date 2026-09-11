@@ -12,7 +12,7 @@ import { responseDocumentFrame } from "./response-document-i18n.js";
 import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js";
 import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js";
 import { greetingUiCopy } from "./greetings-ui-i18n.js";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r6";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r7";
 import { completionCopy } from "./completion-i18n.js";
 import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js";
 import { greetingFirstCopy } from "./greeting-first-i18n.js";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "dafc4d279fcc-dirty 2026-09-11T05:22:39.812Z";
+const buildStamp = "117885e11d5a-dirty 2026-09-11T05:38:13.221Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2897,6 +2897,10 @@ function renderIntro() {
             <p>${esc(local.introGreeting)}</p>
             <p>${esc(local.introAudience)}</p>
             <p>${esc(local.introRecord)}</p>
+            <!-- 이 연구가 기록을 어떻게 읽는지 먼저 밝힌다. 예순네 자리는 마지막 화면의
+                 좌표 번호로 처음 나타나던 것인데, 그때는 설명이 아니라 결과였다
+                 (TK 2026-09-11). -->
+            <p>${esc(local.introFrame)}</p>
           </div>
           <section class="greeting-first-journey" aria-label="${esc(local.journeyLabel)}">
             <div class="greeting-first-journey-heading"><span>${esc(local.journeyTitle)}</span></div>
