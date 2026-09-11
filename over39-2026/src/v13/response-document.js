@@ -673,7 +673,12 @@ export function buildResponseDocument({
     { screen: coordinateAxes || copy.coordinatePending, appendix: coordinateAxesCodebook || copy.coordinatePending },
     // 좌표 번호는 부록과 분석 결과를 짝지을 때 쓰인다. 축 이름만으로는 64칸 가운데
     // 어디인지 가릴 수 없다(2026-09-09).
-    ...(coordinate.number ? [frame.coordinateNumber.replace("{n}", String(coordinate.number))] : []),
+    // 화면에서는 번호가 무엇인지 한 줄로 밝히고, 부록에서는 번호만 둔다 — 부록을 읽는
+    // 사람에게는 보고서 서문이 그 일을 한다(TK 2026-09-11).
+    ...(coordinate.number ? [{
+      screen: `${frame.coordinateNumber.replace("{n}", String(coordinate.number))} · ${frame.coordinateNumberNote}`,
+      appendix: frame.coordinateNumber.replace("{n}", String(coordinate.number)),
+    }] : []),
   ];
 
   // 축마다 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」를 붙인다. 붙박이 문장
