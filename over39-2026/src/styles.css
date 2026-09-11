@@ -6455,7 +6455,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
     border: 0 !important;
     border-top: 0.25pt solid #999 !important;
     text-align: center;
-    font-size: 6.4pt !important;
+    font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
   .response-document-final .response-document-archive-head { display: none !important; }
@@ -6468,7 +6468,12 @@ input[type="checkbox"] { width: 20px; height: 20px; }
     display: inline-flex !important;
     align-items: baseline;
     gap: 1.2mm;
-    font-size: 6.4pt !important;
+    line-height: 1.2 !important;
+  }
+  .response-document-final div.response-document-archive .response-document-archive-credits dt,
+  .response-document-final div.response-document-archive .response-document-archive-credits dd {
+    margin: 0 !important;
+    font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
 
@@ -6602,10 +6607,10 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final section.response-document-layer-use_scope {
     display: block !important;
     margin: 0 !important;
-    padding: 1.7mm 0 1.7mm !important;
+    padding: 3mm 0 1.7mm !important;
     border-top: 0.5pt solid #000 !important;
     text-align: center;
-    font-size: 7pt !important;
+    font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
   .response-document-final .response-document-layer-use_scope > header {
@@ -6616,6 +6621,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
     display: inline;
     margin: 0 !important;
     padding: 0 3.5mm 0 0 !important;
+    font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
   .response-document-final .response-document-layer-use_scope .response-document-layer-body {
@@ -6626,7 +6632,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
     display: inline;
     margin: 0 !important;
     padding: 0 3.5mm 0 0 !important;
-    font-size: 7pt !important;
+    font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
   .response-document-final section.response-document-layer-use_scope p:last-child { padding-right: 0 !important; }

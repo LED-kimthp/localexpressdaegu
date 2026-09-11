@@ -331,6 +331,26 @@ function displayName(answers = {}, frame = responseDocumentFrame("ko")) {
   return clean(answers.display_name) || frame.unnamed;
 }
 
+// 한국어 주격 조사는 이름의 끝소리를 따른다 — 「한지수가」지만 「김철민이」다. 좌표
+// 문장에서 이 문제로 한 번 틀렸고(952fabb) 그때는 「의」만 써서 피했는데, 절 제목이
+// 「쓴 글」·「확인한 글」이라 주격이 필요하다. 끝소리를 실제로 본다.
+//   · 한글 음절: 받침이 있으면 (code - 0xAC00) % 28 !== 0
+//   · 라틴 글자: 한국어로 읽었을 때 받침이 있는 것은 L(엘)·M(엠)·N(엔)·R(알)뿐이다
+//     (에스·엑스·에이 등은 받침이 없다)
+//   · 숫자: 일·삼·육·칠·팔에 받침이 있다
+const FINAL_CONSONANT_LATIN = new Set(["L", "M", "N", "R"]);
+const FINAL_CONSONANT_DIGIT = new Set(["1", "3", "6", "7", "8"]);
+
+export function hasFinalConsonant(word) {
+  const last = clean(word).slice(-1).toUpperCase();
+  if (!last) return false;
+  const code = last.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) return (code - 0xAC00) % 28 !== 0;
+  if (FINAL_CONSONANT_LATIN.has(last)) return true;
+  if (FINAL_CONSONANT_DIGIT.has(last)) return true;
+  return false;
+}
+
 // 부록에서는 답을 남긴 사람이 주인공이다 — 「참여자」가 아니라 그가 적어둔 이름을 쓴다
 // (TK 2026-09-10). 익명으로 낸 사람은 이름이 없으므로 「참여자」에 기록 번호 앞자리를
 // 붙인다. 그냥 「참여자」로 두면 익명 수백 장의 제목이 모두 같아져, 보고서 본문에서
@@ -627,7 +647,9 @@ export function buildResponseDocument({
   // 부록에서 이 문서의 주인공. 이름을 남긴 사람은 그 이름, 익명은 「참여자 + 기록
   // 번호 앞자리」다(TK 2026-09-10 · ②안).
   const subject = appendixSubject(answers, frame, participantCode);
-  const named = (template) => clean(template).replace("{name}", subject);
+  const named = (template) => clean(template)
+    .replace("{이가}", hasFinalConsonant(subject) ? "이" : "가")
+    .replace("{name}", subject);
   const sourceLabel = LANGUAGE_LABELS[sourceLanguage] || sourceLanguage || frame.unspecified;
   const isKoreanSource = sourceLanguage === "ko";
   const audience = isAudience(answers);
