@@ -640,9 +640,15 @@ export function buildResponseDocument({
   if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation in preparation" : copy.translationPending), status: korean ? copy.translationReady : copy.translationPending });
   const coordinate = recordCoordinate(answers);
   const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
+  // 참여자가 화면에서 본 이름과 코드북 이름이 다르다 — 「느낌과 분위기」 대 「감각·정서」.
+  // 화면은 참여자가 방금 고른 말이 맞고, 부록은 코드북 말이 맞다(TK 2026-09-11).
+  const codebookText = frameLanguage === "ko"
+    ? { ...RESEARCH_LABELS.m_primary, ...RESEARCH_LABELS.s_primary, ...RESEARCH_LABELS.d_primary }
+    : axisText;
   const coordinateAxes = [axisText[coordinate.m], axisText[coordinate.s], axisText[coordinate.d]].filter(Boolean).join(" × ");
+  const coordinateAxesCodebook = [codebookText[coordinate.m], codebookText[coordinate.s], codebookText[coordinate.d]].filter(Boolean).join(" × ");
   const coordinateLine = [
-    coordinateAxes || copy.coordinatePending,
+    { screen: coordinateAxes || copy.coordinatePending, appendix: coordinateAxesCodebook || copy.coordinatePending },
     // 좌표 번호는 부록과 분석 결과를 짝지을 때 쓰인다. 축 이름만으로는 64칸 가운데
     // 어디인지 가릴 수 없다(2026-09-09).
     ...(coordinate.number ? [frame.coordinateNumber.replace("{n}", String(coordinate.number))] : []),
@@ -661,8 +667,9 @@ export function buildResponseDocument({
       title: frame[`axisTitle${axis.toUpperCase()}`] || "",
       code,
       label,
+      codebook: codebookText[code] || label,
       secondary: secondaryCode && axisText[secondaryCode]
-        ? { code: secondaryCode, label: axisText[secondaryCode] }
+        ? { code: secondaryCode, label: axisText[secondaryCode], codebook: codebookText[secondaryCode] || axisText[secondaryCode] }
         : null,
       evidence: axisEvidence(answers, axis),
     }];
@@ -951,7 +958,9 @@ export function renderResponseDocument(document = {}) {
     } else if (layer.id === "participant_confirmed_synthesis") {
       body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
     } else {
-      body = array(layer.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
+      body = array(layer.paragraphs).map((paragraph) => (paragraph && typeof paragraph === "object"
+        ? `<p><span class="response-document-title-screen">${esc(paragraph.screen)}</span><span class="response-document-title-appendix">${esc(paragraph.appendix)}</span></p>`
+        : `<p>${esc(paragraph)}</p>`)).join("");
     }
     if (array(layer.coordinate_grid).length) {
       // 판 자체는 모든 장에 같고, 찍힌 칸만 다르다. 그래서 넘겨볼 때 분포가 보인다.
@@ -963,10 +972,15 @@ export function renderResponseDocument(document = {}) {
       // 근거로 인용되는 문장은 참여자의 원문이고, 배정과 선택은 연구 측 표시다.
       const axisBody = array(layer.axes).map((axis) => {
         const secondary = axis.secondary
-          ? `<span class="response-document-axis-secondary">${esc(axis.secondary.code)} ${esc(axis.secondary.label)}</span>`
+          ? `<span class="response-document-axis-secondary">${esc(axis.secondary.code)} ${axis.secondary.codebook && axis.secondary.codebook !== axis.secondary.label
+              ? `<span class="response-document-title-screen">${esc(axis.secondary.label)}</span><span class="response-document-title-appendix">${esc(axis.secondary.codebook)}</span>`
+              : esc(axis.secondary.label)}</span>`
           : "";
         const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
-        return `<div class="response-document-axis"><dt><span class="response-document-axis-code">${esc(axis.code)}</span> <strong>${esc(axis.label)}</strong> <small>${esc(axis.title)}</small>${secondary}</dt>${evidence ? `<dd><ul class="response-document-evidence">${evidence}</ul></dd>` : ""}</div>`;
+        const name = axis.codebook && axis.codebook !== axis.label
+          ? `<span class="response-document-title-screen">${esc(axis.label)}</span><span class="response-document-title-appendix">${esc(axis.codebook)}</span>`
+          : esc(axis.label);
+        return `<div class="response-document-axis"><dt><span class="response-document-axis-code">${esc(axis.code)}</span> <strong>${name}</strong> <small>${esc(axis.title)}</small>${secondary}</dt>${evidence ? `<dd><ul class="response-document-evidence">${evidence}</ul></dd>` : ""}</div>`;
       }).join("");
       // 「정리 출처 Motif 3 · …」 줄은 종이에서 뺐다(TK 2026-09-10). 제공자 이름은
       // 500장에 같은 값이고, 불확실성이 말하던 「두 흐름이 함께」는 축 줄의
