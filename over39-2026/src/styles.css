@@ -6451,13 +6451,19 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   /* 기관 표기는 발로 내린다. 낱장이 떨어져 나가도 출처를 밝히는 몫은 그대로다. */
   .response-document-final div.response-document-archive {
     margin: 0 !important;
-    padding: 1.7mm 0 0 !important;
+    padding: 1.5mm 0 0 !important;
     border: 0 !important;
-    border-top: 0.25pt solid #999 !important;
     text-align: center;
     font-size: 6.8pt !important;
     line-height: 1.2 !important;
   }
+  /* 인쇄 블록이 문서 안의 모든 글자를 #000 으로 눕히므로 여기서 다시 세운다. */
+  .response-document-final div.response-document-archive .response-document-archive-credits dt,
+  .response-document-final div.response-document-archive .response-document-archive-credits dd {
+    color: #5b5751 !important;
+  }
+  .response-document-final section.response-document-layer-use_scope > header h3 { color: #000 !important; }
+  .response-document-final section.response-document-layer-use_scope p { color: #2a2723 !important; }
   .response-document-final .response-document-archive-head { display: none !important; }
   .response-document-final .response-document-archive-credits {
     display: block !important;
@@ -6607,7 +6613,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final section.response-document-layer-use_scope {
     display: block !important;
     margin: 0 !important;
-    padding: 3mm 0 1.7mm !important;
+    padding: 3mm 0 0 !important;
     border-top: 0.5pt solid #000 !important;
     text-align: center;
     font-size: 6.8pt !important;
