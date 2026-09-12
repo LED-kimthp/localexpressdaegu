@@ -1,5 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r29";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r29";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r30";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r30";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260913-r30";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1060,15 +1061,31 @@ export function hasForeignWordsAdaptiveSummary(summary, context = {}) {
   // 밑줄이 붙은 라틴 문자는 그 언어의 낱말이 아니라 모델이 흘린 기계 문자열이다
   // (일본어 통과 중 「助成の_age制限」, 2026-09-13). 길이와 무관하게 잡는다.
   if (/_[A-Za-z]|[A-Za-z]_/u.test(text)) return true;
-  // 세 글자 이하는 PDF·AI·SNS 처럼 그 언어에서도 그대로 쓰는 말이다.
-  const words = text.match(/[A-Za-z]{4,}/gu) || [];
+  const words = text.match(/[A-Za-z]+/gu) || [];
   if (!words.length) return false;
   const source = participantSourceText(context);
-  return words.some((word) => !source.includes(word.toLowerCase()));
+  return words.some((word) => {
+    if (source.includes(word.toLowerCase())) return false;
+    // PDF·AI·SNS 는 짧아서 통과하는 것이 아니라 약칭이라 대문자로 쓰기 때문이다.
+    // 소문자 짧은 낱말은 약칭이 아니다 — 간체 정리문이 他/她 대신 「ta」를 썼다(2026-09-13).
+    return !(word.length <= 3 && word === word.toUpperCase());
+  });
+}
+
+// 간체를 고른 사람에게 번체가, 번체를 고른 사람에게 간체가 섞여 오면 그것은 어색한
+// 정도가 아니라 잘못 쓴 글로 읽힌다. 참여자가 직접 쓴 글자는 그대로 둔다 — 고유명사가
+// 그렇게 들어온다.
+export function hasWrongChineseScriptAdaptiveSummary(summary, context = {}) {
+  const language = String(context.response_language || "");
+  const wrong = language === "zh-Hant" ? SIMPLIFIED_ONLY : language === "zh-Hans" ? TRADITIONAL_ONLY : null;
+  if (!wrong) return false;
+  const source = participantSourceText(context);
+  return [...String(summary || "")].some((character) => wrong.has(character) && !source.includes(character));
 }
 
 export function adaptiveSummaryRepairReason(summary, context = {}) {
   if (isWrongLanguageAdaptiveSummary(summary, context)) return "wrong_language";
+  if (hasWrongChineseScriptAdaptiveSummary(summary, context)) return "chinese_script";
   if (hasForeignWordsAdaptiveSummary(summary, context)) return "foreign_words";
   if (isTranscriptLikeAdaptiveSummary(summary, context)) return "transcript_like";
   return null;
@@ -1079,6 +1096,10 @@ function summaryRepairInstruction(reason, context = {}) {
   const name = SUMMARY_LANGUAGE_NAMES[code] || code || "the participant's language";
   if (reason === "wrong_language") {
     return `Write the summary in ${name} (language code ${code || "unknown"}), the same language the participant wrote in. Do not answer in Korean. Keep every supported fact.`;
+  }
+  if (reason === "chinese_script") {
+    const script = code === "zh-hant" ? "Traditional Chinese (繁體字, Taiwan usage)" : "Simplified Chinese (简体字)";
+    return `The summary mixed the wrong Chinese script. Write every character in ${script}. Keep every supported fact.`;
   }
   if (reason === "foreign_words") {
     return `The summary mixed English words into ${name}. Write every word in ${name}; use no English except terms the participant wrote themselves. Keep every supported fact.`;
