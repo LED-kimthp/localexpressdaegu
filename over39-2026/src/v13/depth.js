@@ -1,5 +1,5 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260912-r18";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260912-r18";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260912-r19";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260912-r19";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1031,19 +1031,48 @@ export function isWrongLanguageAdaptiveSummary(summary, context = {}) {
   return hangul.length / letters.length > 0.3;
 }
 
+// 정리문에 참여자가 쓰지 않은 영어 낱말이 섞여 나오는 일이 있다(간체로 통과하던 중
+// 「手 trembled 的记忆」, 2026-09-12). 일본어·중국어는 라틴 문자를 거의 쓰지 않으므로,
+// 원문에 없던 영어 낱말은 모델이 말을 바꾼 자리다. 참여자가 읽을 때 걸리는 흠이다.
+const SOURCE_TEXT_FIELDS = ["fixed_narratives", "depth_answers"];
+function participantSourceText(context = {}) {
+  const pieces = [];
+  for (const field of SOURCE_TEXT_FIELDS) {
+    for (const item of Array.isArray(context[field]) ? context[field] : []) {
+      pieces.push(String(item?.text || item?.response_text || ""));
+    }
+  }
+  return pieces.join(" ").toLowerCase();
+}
+
+export function hasForeignWordsAdaptiveSummary(summary, context = {}) {
+  const language = String(context.response_language || "").toLowerCase();
+  // 라틴 문자로 쓰는 언어는 영어 낱말이 섞여도 이상하지 않다.
+  if (!/^(ja|zh)/u.test(language)) return false;
+  // 세 글자 이하는 PDF·AI·SNS 처럼 그 언어에서도 그대로 쓰는 말이다.
+  const words = String(summary || "").match(/[A-Za-z]{4,}/gu) || [];
+  if (!words.length) return false;
+  const source = participantSourceText(context);
+  return words.some((word) => !source.includes(word.toLowerCase()));
+}
+
 export function adaptiveSummaryRepairReason(summary, context = {}) {
   if (isWrongLanguageAdaptiveSummary(summary, context)) return "wrong_language";
+  if (hasForeignWordsAdaptiveSummary(summary, context)) return "foreign_words";
   if (isTranscriptLikeAdaptiveSummary(summary, context)) return "transcript_like";
   return null;
 }
 
 function summaryRepairInstruction(reason, context = {}) {
-  if (reason !== "wrong_language") {
-    return "Preserve every supported fact, but rewrite the record as new sentences instead of copying the participant's source sentences.";
-  }
   const code = String(context.response_language || "").toLowerCase();
   const name = SUMMARY_LANGUAGE_NAMES[code] || code || "the participant's language";
-  return `Write the summary in ${name} (language code ${code || "unknown"}), the same language the participant wrote in. Do not answer in Korean. Keep every supported fact.`;
+  if (reason === "wrong_language") {
+    return `Write the summary in ${name} (language code ${code || "unknown"}), the same language the participant wrote in. Do not answer in Korean. Keep every supported fact.`;
+  }
+  if (reason === "foreign_words") {
+    return `The summary mixed English words into ${name}. Write every word in ${name}; use no English except terms the participant wrote themselves. Keep every supported fact.`;
+  }
+  return "Preserve every supported fact, but rewrite the record as new sentences instead of copying the participant's source sentences.";
 }
 
 export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallback", context, answers = {}, turns = [], fetchImpl = fetch, timeoutMs = 20000 }) {
@@ -1105,9 +1134,12 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       if (summary.length < 20 || !/[\p{L}\p{N}]/u.test(summary)) throw new Error("AI_INVALID_ADAPTIVE_SUMMARY_REPAIR");
       repairReason = adaptiveSummaryRepairReason(summary, context);
       if (repairReason === "wrong_language") throw new Error("AI_SUMMARY_WRONG_LANGUAGE_AFTER_REPAIR");
+      if (repairReason === "foreign_words") throw new Error("AI_SUMMARY_FOREIGN_WORDS_AFTER_REPAIR");
       if (repairReason === "transcript_like") throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE_AFTER_REPAIR");
     } else if (repairReason === "wrong_language") {
       throw new Error("AI_SUMMARY_WRONG_LANGUAGE");
+    } else if (repairReason === "foreign_words") {
+      throw new Error("AI_SUMMARY_FOREIGN_WORDS");
     } else if (repairReason === "transcript_like") {
       throw new Error("AI_SUMMARY_TRANSCRIPT_LIKE");
     }

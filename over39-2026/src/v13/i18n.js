@@ -1,4 +1,4 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r18";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r19";
 
 const copy = {
   en: {
