@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260912-r20";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260912-r20";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260912-r20";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260912-r20";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260912-r20";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260912-r20";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260912-r20";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260912-r20";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260912-r20";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260912-r20";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260912-r20";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260912-r20";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260912-r20";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260912-r20";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260912-r20";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260912-r20";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260912-r20";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260912-r20";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260912-r20";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260912-r20";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260912-r20";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260912-r20";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260912-r20";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260912-r21";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260912-r21";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260912-r21";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260912-r21";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260912-r21";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260912-r21";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260912-r21";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260912-r21";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260912-r21";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260912-r21";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260912-r21";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260912-r21";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260912-r21";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260912-r21";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260912-r21";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260912-r21";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260912-r21";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260912-r21";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260912-r21";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260912-r21";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260912-r21";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260912-r21";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260912-r21";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "e16228214435-dirty 2026-09-12T08:58:25.587Z";
+const buildStamp = "f141361628a3-dirty 2026-09-12T09:41:27.049Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -151,7 +151,19 @@ const languages = OFFERED_LANGUAGES.map((code) => [code, LANGUAGE_LABELS[code]])
 const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
-const creditRows = [["주최·주관", "북성로사진관 · 대안공간 모호주택"], ["총괄기획", "이생강"], ["연구 협력", "Local Express Daegu"], ["후원", "한국문화예술위원회"]];
+// 크레디트는 이름표만 번역되고 기관 이름은 한국어로 남아 있었다 — 영어 화면에
+// 「Lead planning / 이생강 / Supported by / 한국문화예술위원회」처럼 섞여 나왔다.
+// 부록이 이미 언어별 표기를 갖고 있으므로 같은 곳에서 가져온다. 한 기관의 이름이
+// 화면과 인쇄물에서 다르면 같은 곳인지 알 수 없다.
+const creditRows = () => {
+  const frame = responseDocumentFrame(state.language);
+  return [
+    [frame.archiveHost, frame.archiveHostValue],
+    [frame.archiveLead, frame.archiveLeadValue],
+    [frame.archiveResearch, frame.archiveResearchValue],
+    [frame.archiveFunder, frame.archiveFunderValue],
+  ].filter(([role, name]) => role && name);
+};
 const t = (text) => rc2UiPhrase(state.language, text) || translate(state.language, text);
 const ui = () => rc2UiCopy(state.language);
 const stage = () => stage1Copy(state.language);
@@ -2435,7 +2447,7 @@ async function verifyResearchStorage(responseId) {
 function creditBlock(variant = "default") {
   const className = variant === "intro" ? "intro-credit-grid" : "credit-block";
   const rowClass = variant === "intro" ? "intro-credit-item" : "credit-row";
-  return `<section class="${className}" aria-label="프로젝트 크레디트">${creditRows.map(([role, name]) => `<div class="${rowClass}"><span>${esc(t(role))}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
+  return `<section class="${className}" aria-label="${esc(t("프로젝트 크레디트"))}">${creditRows().map(([role, name]) => `<div class="${rowClass}"><span>${esc(role)}</span><strong>${esc(name)}</strong></div>`).join("")}</section>`;
 }
 
 function header() {
@@ -2457,8 +2469,8 @@ function footer() {
   // 이메일이 프로젝트 이름 아래에 라벨 없이 붙어 있어, 옆 크레딧들과 종류가 다른 것이
   // 섞여 보였다(2026-09-07 TK). 왼쪽은 「이건 무엇인가」만 두고, 연락처는 크레딧과 같은
   // 모양(작은 라벨 + 값)으로 마지막 항목에 넣어 다섯이 한 규칙을 따르게 한다.
-  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}<span class="footer-contact"><em>${esc(t("문의"))}</em><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></span></div></footer>`;
-  return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>PUBLIC MEMORY RESEARCH · INSTITUTION RC1</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows.map(([role, name]) => `<span><em>${esc(t(role))}</em>${esc(name)}</span>`).join("")}</div></footer>`;
+  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span></div><div class="footer-credits">${creditRows().map(([role, name]) => `<span><em>${esc(role)}</em>${esc(name)}</span>`).join("")}<span class="footer-contact"><em>${esc(t("문의"))}</em><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></span></div></footer>`;
+  return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>PUBLIC MEMORY RESEARCH · INSTITUTION RC1</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows().map(([role, name]) => `<span><em>${esc(role)}</em>${esc(name)}</span>`).join("")}</div></footer>`;
 }
 
 function renderAnalysisCard(response) {

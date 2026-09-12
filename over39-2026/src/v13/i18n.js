@@ -1,4 +1,5 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r20";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r21";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260912-r21";
 
 const copy = {
   en: {
@@ -272,14 +273,14 @@ const questions = {
     P02G: { text: "今回の回答に最も近い大きな役割を選んでください。", options: { CREATION: "創作", CURATING: "企画・プロデュース", CRITICISM: "批評・研究", MEDIA: "報道・メディア", ARCHIVE: "記録・出版・コミュニケーション", SPACE: "空間・機関の運営", EDUCATION: "教育・行政・政策", PRODUCTION: "制作・保存・流通" } },
     P02: { text: "その中で、今回の回答に最も近い主な役割を選んでください。" },
     P03: { text: "この役割と並行している別の役割はありますか？" },
-    P05: { text_professional: "文化芸術に関わる役割で活動を始めてから、どのくらいですか？", text_audience: "自ら文化芸術を探したり、展覧会やプログラムに参加し始めてから、どのくらいですか？" },
+    P05: { text_professional: "今お話しいただいた文化芸術の活動を始めてから、どのくらい経ちましたか？", text_audience: "自分から文化芸術を探したり、展覧会やプログラムに参加したりするようになってから、どのくらい経ちましたか？" },
     P05_YEAR: { text: "覚えていれば、始めた年を入力してください。" },
     P06: { text: "現在の文化芸術活動に最も近い状態はどれですか？" },
     P07: { text: "近年の実際の活動と外部からの見え方に最も近いものはどれですか？" },
     P08: { text: "年齢層を選んでください。" },
     P09: { text: "現在主に生活している国と都市を教えてください。" },
     P10: { text_professional: "現在主に活動している国と都市を教えてください。", text_audience: "文化芸術に主に出会う国と都市を教えてください。" },
-    M01: { text: "今日、最初に思い浮かぶものは何ですか？", options: { ARTIST: "一人の作家", WORK: "一つの作品・物・イメージ", SPACE: "一つの空間", EXHIBITION: "一つの展覧会", SCENE: "一つの場面", SENTENCE: "残っている言葉", SENSATION: "名前をつけにくい感覚", NO_RECALL: "今は特に思い浮かぶ対象がない" } }
+    M01: { text: "今日、文化芸術に関して最初に思い浮かぶものは何ですか？正確な名前が分からなくても大丈夫です。", options: { ARTIST: "一人の作家", WORK: "一つの作品・物・イメージ", SPACE: "一つの空間", EXHIBITION: "一つの展覧会", SCENE: "一つの場面", SENTENCE: "残っている言葉", SENSATION: "名前をつけにくい感覚", NO_RECALL: "今は特に思い浮かぶ対象がない" } }
   },
   zh: {
     P01: { text: "這次您想從哪一個位置開始談起？", options: { SELF: "我自己的創作與持續實踐的經驗", MEMORY: "我記得的藝術家、空間、展覽或現場", BOTH: "我的實踐與對他人的記憶一起談", AUDIENCE: "作為觀眾或市民所經驗的文化藝術" } },
@@ -287,14 +288,14 @@ const questions = {
     P02G: { text: "請選擇最接近這次回覆的大類角色。", options: { CREATION: "創作", CURATING: "策展與製作", CRITICISM: "評論與研究", MEDIA: "新聞與媒體", ARCHIVE: "記錄、出版與溝通", SPACE: "空間與機構營運", EDUCATION: "教育、行政與政策", PRODUCTION: "製作、保存與流通" } },
     P02: { text: "請在這個類別中選擇最接近這次回覆的主要角色。" },
     P03: { text: "您是否同時承擔其他角色？" },
-    P05: { text_professional: "您開始從事與文化藝術相關的角色至今有多久？", text_audience: "您開始主動接觸文化藝術或參與展覽、活動至今有多久？" },
+    P05: { text_professional: "您剛才說的這項文化藝術活動，開始到現在有多久了？", text_audience: "您開始主動接觸文化藝術、參與展覽和活動，到現在有多久了？" },
     P05_YEAR: { text: "若記得，請填寫開始的年份。" },
     P06: { text: "哪一項最接近您目前的文化藝術活動狀態？" },
     P07: { text: "哪一項最接近您近年的實際活動與對外可見程度？" },
     P08: { text: "請選擇您的年齡層。" },
     P09: { text: "請告訴我們您目前主要生活的國家與城市。" },
     P10: { text_professional: "請告訴我們您目前主要活動的國家與城市。", text_audience: "請告訴我們您主要接觸文化藝術的國家與城市。" },
-    M01: { text: "今天最先浮現的是什麼？", options: { ARTIST: "一位藝術家", WORK: "一件作品、物件或影像", SPACE: "一個空間", EXHIBITION: "一個展覽", SCENE: "一個場景", SENTENCE: "留在心中的一句話", SENSATION: "難以命名的感覺", NO_RECALL: "此刻沒有特別浮現的對象" } }
+    M01: { text: "今天想到文化藝術，最先浮現的是什麼？不知道確切名稱也沒有關係。", options: { ARTIST: "一位藝術家", WORK: "一件作品、物件或影像", SPACE: "一個空間", EXHIBITION: "一個展覽", SCENE: "一個場景", SENTENCE: "留在心中的一句話", SENSATION: "難以命名的感覺", NO_RECALL: "此刻沒有特別浮現的對象" } }
   }
 };
 
@@ -319,20 +320,19 @@ export function localizeQuestion(language, item) {
   return deepTranslate(key, result);
 }
 
-// v0.4.8: 간체 잔여 보정. 위 `simplifyChinese` 표에 없는 번체 글자가 `questions`
-// 계열에 남아 있어, 간체를 고른 참여자에게 P01·P08·P09·P10·M01·P05·P01_CONTEXT 의
-// 문항과 선택지가 「什麼」「告訴我們」「年齡層」처럼 번체 섞인 채로 보였다. 모두
-// 1:1 대응이라 기존 표는 건드리지 않고 뒤에서 한 번 더 훑는다.
-const zhHansResidualPairs = [
-  ["談", "谈"], ["對", "对"], ["為", "为"], ["眾", "众"], ["齡", "龄"], ["層", "层"],
-  ["訴", "诉"], ["們", "们"], ["觸", "触"], ["麼", "么"], ["織", "织"], ["踐", "践"],
-  ["庫", "库"], ["夥", "伙"],
-  // 2026-09-12: 「回覆」가 P02G·P02 의 간체 화면에 그대로 남아 있었다. 覆 는 간체에도
-  // 있는 글자라(覆盖) 한 글자로 바꾸면 안 되고, 낱말째 바꾼다.
-  ["回覆", "回复"],
-];
+// 간체는 번체에서 치환표를 돌려 만든다. 손으로 쓴 표는 네 번 글자를 흘렸다 —
+// v0.4.8 의 보정 한 벌, 사전 19곳, P02G·P02 의 「回覆」, 그리고 번체를 고치자
+// 따라오지 못한 確·剛(2026-09-12). 이제 OpenCC 에서 뽑은 표를 통째로 쓴다.
+// 번체 전용 글자만 바꾸므로 두 글자체가 함께 쓰는 글자는 건드리지 않는다.
+//
+// 낱말째 바꿔야 하는 것은 글자 대응으로 안 된다. 覆 는 간체에도 있는 글자라
+// 한 글자로 바꾸면 覆盖 가 깨진다 — 그래서 回覆 는 낱말로 따로 둔다.
+const zhHansWordPairs = [["回覆", "回复"]];
 const applyZhHansResidual = (value) => {
-  if (typeof value === "string") return zhHansResidualPairs.reduce((text, [from, to]) => text.replaceAll(from, to), value);
+  if (typeof value === "string") {
+    const word = zhHansWordPairs.reduce((text, [from, to]) => text.replaceAll(from, to), value);
+    return [...word].map((character) => TO_SIMPLIFIED.get(character) || character).join("");
+  }
   if (Array.isArray(value)) return value.map(applyZhHansResidual);
   if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, applyZhHansResidual(item)]));
   return value;
