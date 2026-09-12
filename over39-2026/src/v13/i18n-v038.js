@@ -9995,3 +9995,15 @@ Object.assign(extraCopy.ms || (extraCopy.ms = {}), {
   "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "Keadaan saya dahulu — kami memegang kedua-dua aliran, dengan sedikit lebih berat pada apa yang anda perlukan untuk meneruskan.",
   "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "Pertemuan semula dahulu — kami memegang kedua-dua aliran, dengan sedikit lebih berat pada bertemu semula orang dan tempat yang anda ingat.",
 });
+
+// 2026-09-13: P04 의 질문이 여덟 언어 모두에서 한국어였다. 활동 형태를 「역할의 변화」로
+// 답한 참여자에게만 뜨는 자리라(app.js renderActivity) 어느 검사에도 걸리지 않았다.
+// 보기(역할 이름)는 사전에 있었고 질문 한 문장만 빠져 있었다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Is there another role you held for a long time before this?" });
+Object.assign(extraCopy.ja || (extraCopy.ja = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "以前に長く経験した別の役割はありますか？" });
+Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "在此之前，您是否长期担任过其他角色？" });
+Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "在此之前，您是否長期擔任過其他角色？" });
+Object.assign(extraCopy.nl || (extraCopy.nl = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Is er een andere rol die u daarvoor lang hebt vervuld?" });
+Object.assign(extraCopy.es || (extraCopy.es = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "¿Hay otro papel que usted haya desempeñado durante mucho tiempo antes de este?" });
+Object.assign(extraCopy.fr || (extraCopy.fr = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Y a-t-il un autre rôle que vous avez tenu longtemps auparavant ?" });
+Object.assign(extraCopy.ms || (extraCopy.ms = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Adakah peranan lain yang pernah anda pegang lama sebelum ini?" });
