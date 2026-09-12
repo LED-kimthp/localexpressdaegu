@@ -3038,8 +3038,17 @@ h2:focus {
   background: transparent;
 }
 
-.adaptive-retry {
+/* 「질문 다시 준비하기」와 「이 질문은 건너뛸게요」가 x 좌표 222 에서 정확히 맞닿아
+   있었다(2026-09-13 파일럿 실측). 서로 다른 일을 하는 단추 둘이 붙어 있으면 누르다
+   잘못 누른다. 둘을 한 줄로 묶고 사이를 띄운다. */
+.adaptive-retry,
+.adaptive-skip {
   margin-top: 12px;
+}
+
+.adaptive-retry + .adaptive-skip,
+.adaptive-skip + .adaptive-retry {
+  margin-left: 16px;
 }
 
 .gentle-note {

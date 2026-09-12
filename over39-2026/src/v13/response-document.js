@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260913-r24";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260913-r25";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260913-r24";
-import { normalizedDScope } from "./flow.js?v=v7-20260913-r24";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260913-r25";
+import { normalizedDScope } from "./flow.js?v=v7-20260913-r25";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260913-r24";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260913-r24";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260913-r24";
+import { translate } from "./i18n.js?v=v7-20260913-r25";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260913-r25";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260913-r25";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -654,6 +654,18 @@ function safeSection(id, number, title, lines, emptyText) {
   };
 }
 
+// 판 이름에는 개발 중의 이정표가 섞여 있다(rc2-v0.6.1-task9-live-data-local-2026-08-18).
+// 코드 안에서는 그 이름이 어느 회차인지 가리키는 표식이라 쓸모가 있지만, 이 문자열은
+// 참여 기록의 「문서 판」으로 찍혀 결과보고서 부록 500장에 들어간다. 참여자에게
+// 「task9-live-data-local」은 아무 뜻이 없고 실수처럼 보인다(2026-09-13 파일럿).
+//
+// 저장되는 값은 그대로 두고 — 연구팀이 낱장의 출처를 가리는 근거다 — 보이는 자리에서만
+// 이정표 이름을 걷어낸다. 회차·판·날짜는 남는다.
+const MILESTONE_SEGMENT = /-task\d+[a-z]*(?:-[a-z]+)*(?=-\d{4}-\d{2}-\d{2}$|$)/iu;
+export function participantFacingVersion(version) {
+  return String(version || "").replace(MILESTONE_SEGMENT, "");
+}
+
 export function buildResponseDocument({
   responseId,
   answers = {},
@@ -924,7 +936,7 @@ export function buildResponseDocument({
     archive: {
       kind: frame.archiveKind,
       study: frame.archiveStudy,
-      version: releaseVersion ? `${frame.archiveVersion} ${releaseVersion}` : "",
+      version: releaseVersion ? `${frame.archiveVersion} ${participantFacingVersion(releaseVersion)}` : "",
       statement: frame.archiveStatement,
       credits: [
         [frame.archiveHost, frame.archiveHostValue],
