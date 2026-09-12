@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260911-r17";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260911-r17";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260911-r17";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260911-r17";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260911-r17";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260911-r17";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260911-r17";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260911-r17";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260911-r17";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260911-r17";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260911-r17";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260911-r17";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260911-r17";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260911-r17";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260911-r17";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260911-r17";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260911-r17";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260911-r17";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260911-r17";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260911-r17";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260911-r17";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260911-r17";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260911-r17";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260912-r18";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260912-r18";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260912-r18";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260912-r18";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260912-r18";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260912-r18";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260912-r18";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260912-r18";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260912-r18";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260912-r18";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260912-r18";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260912-r18";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260912-r18";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260912-r18";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260912-r18";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260912-r18";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260912-r18";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260912-r18";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260912-r18";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260912-r18";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260912-r18";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260912-r18";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260912-r18";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "5ebb51235bb5-dirty 2026-09-11T23:12:36.672Z";
+const buildStamp = "3485ed313b8d-dirty 2026-09-12T04:40:19.812Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -57,14 +57,14 @@ const requestedLanguage = String(query.get("lang") || readStoredLanguage() || "k
 // 단추에 내놓는 언어. 여기 한 곳에서만 정한다 — 목록이 두 벌이면 단추에서 내린 언어가
 // ?lang= 이나 저장된 선택으로 되살아난다.
 //
-// 일본어·중국어(간체·번체)는 내렸다(TK 2026-09-11). 사전 분량이 다른 언어의 4분의 1
-// 이어서(en 857 · nl 694 · es·fr·ms 646 대 ja 171 · zh-Hans 177 · zh-Hant 160) 그 언어로
-// 들어온 참여자는 RC2 질문 28개 중 11개, 보기 129개 중 67개를 한국어로 보고 있었다.
-// 반쯤 한국어인 설문을 25분 동안 내놓는 것보다 고르지 않게 하는 것이 정직하다.
-// 사전과 문구는 지우지 않는다 — 그 언어로 들어온 지난 응답이 그대로 읽혀야 하고,
-// 사전을 채우면 OFFERED_LANGUAGES 에 코드를 되돌리는 것으로 다시 열 수 있다.
-const OFFERED_LANGUAGES = Object.freeze(["ko", "en", "nl", "es", "fr", "ms"]);
-const RETIRED_LANGUAGES = Object.freeze(["ja", "zh-Hans", "zh-Hant"]);
+// 일본어·중국어(간체·번체)는 사전이 다른 언어의 4분의 1이어서 한때 내렸다가
+// (TK 2026-09-11), 사전을 채우고 다시 올렸다(TK 2026-09-12 「2개언어도 살려보자」).
+// 되돌린 근거는 수치다 — 세 언어 모두 참여자가 볼 한국어가 0/738 이 되었고,
+// 그 언어로 끝까지 통과해 화면에 실제로 나오는 한국어가 없음을 확인했다.
+// 다시 내려야 할 일이 생기면 코드를 RETIRED_LANGUAGES 로 옮기면 된다. 사전과
+// 문구는 어느 쪽이든 지우지 않는다 — 그 언어로 들어온 지난 응답이 읽혀야 한다.
+const OFFERED_LANGUAGES = Object.freeze(["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"]);
+const RETIRED_LANGUAGES = Object.freeze([]);
 const initialLanguage = OFFERED_LANGUAGES.includes(requestedLanguage) ? requestedLanguage : "ko";
 // 주소에 ?lang= 을 적어 들어온 것은 분명한 요청이다. 초안을 이어갈 때 초안에 적힌 언어가
 // 그것을 덮으면, 링크로 언어를 지정해도 지난번 언어로 열린다 — 언어별 확인 통과에서

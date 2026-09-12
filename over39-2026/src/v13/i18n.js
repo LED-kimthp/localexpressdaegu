@@ -1,4 +1,4 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260911-r17";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r18";
 
 const copy = {
   en: {
@@ -327,6 +327,9 @@ const zhHansResidualPairs = [
   ["談", "谈"], ["對", "对"], ["為", "为"], ["眾", "众"], ["齡", "龄"], ["層", "层"],
   ["訴", "诉"], ["們", "们"], ["觸", "触"], ["麼", "么"], ["織", "织"], ["踐", "践"],
   ["庫", "库"], ["夥", "伙"],
+  // 2026-09-12: 「回覆」가 P02G·P02 의 간체 화면에 그대로 남아 있었다. 覆 는 간체에도
+  // 있는 글자라(覆盖) 한 글자로 바꾸면 안 되고, 낱말째 바꾼다.
+  ["回覆", "回复"],
 ];
 const applyZhHansResidual = (value) => {
   if (typeof value === "string") return zhHansResidualPairs.reduce((text, [from, to]) => text.replaceAll(from, to), value);
