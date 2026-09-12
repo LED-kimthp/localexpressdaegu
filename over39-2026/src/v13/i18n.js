@@ -1,5 +1,5 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r22";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260912-r22";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r23";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260912-r23";
 
 const copy = {
   en: {
@@ -51,7 +51,7 @@ const copy = {
     "지금의 생활과 활동 범위를 알려주세요.": "Tell us about where you live and work now.",
     "원하지 않는 항목은 건너뛸 수 있습니다.": "You may skip anything you prefer not to answer.",
     "현재 머무는 나라 (선택)": "Country where you live now (optional)",
-    "오늘 가장 먼저 떠오르는 것은 무엇인가요?": "What comes to mind first today?",
+    "오늘 가장 먼저 떠오르는 것은 무엇인가요?": "What comes to mind first about arts and culture today?",
     "이름이나 연도가 선명하지 않아도 괜찮습니다. 남아 있는 장면 하나에서, 이야기를 천천히 시작해 주세요.": "Names and dates do not need to be exact. Let us begin gently with one remaining scene.",
     "이전": "Back",
     "다음": "Next",
@@ -265,7 +265,7 @@ const questions = {
     P08: { text: "Please choose your age group." },
     P09: { text: "Please tell us the country and city where you mostly live now." },
     P10: { text_professional: "Please tell us the country and city where you mainly work.", text_audience: "Please tell us the country and city where you most often encounter arts and culture." },
-    M01: { text: "What comes to mind first today?", options: { ARTIST: "An artist", WORK: "A work, object, or image", SPACE: "A space", EXHIBITION: "An exhibition", SCENE: "A scene", SENTENCE: "A sentence that remains", SENSATION: "A feeling that is hard to name", NO_RECALL: "Nothing in particular comes to mind right now" } }
+    M01: { text: "What comes to mind first about arts and culture today?", options: { ARTIST: "An artist", WORK: "A work, object, or image", SPACE: "A space", EXHIBITION: "An exhibition", SCENE: "A scene", SENTENCE: "A sentence that remains", SENSATION: "A feeling that is hard to name", NO_RECALL: "Nothing in particular comes to mind right now" } }
   },
   ja: {
     P01: { text: "今回は、どの立場から話を始めたいですか？", options: { SELF: "自分の活動と続けるための経験", MEMORY: "記憶に残る作家・空間・展覧会・現場", BOTH: "自分の活動と、他者についての記憶の両方", AUDIENCE: "鑑賞者・市民として出会った文化芸術" } },
