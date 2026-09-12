@@ -57,7 +57,7 @@ const copy = {
     projectMeta: "Research · participation record · greeting",
     introEyebrow: "Time with arts and culture, a greeting carried onward",
     introTitleLead: "Begin with one person’s greeting,",
-    introTitleMain: "Tell us your story.",
+    introTitleMain: "then tell us your story.",
     introLead: "Tell us, in your own time, about the years you have spent with arts and culture.",
     introGreeting: "If a greeting from someone who came this way before you is waiting, that comes first. If none is waiting yet, you will start with the greeting the project wrote to begin the chain. You do not have to reply to it. Read it in your own time, then begin your own story from a scene you remember.",
     introAudience: "You do not need to be a professional artist. We want to hear about making, planning, teaching, learning, taking part in everyday life, or simply being there as a member of an audience.",

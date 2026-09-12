@@ -1,5 +1,5 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r23";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260912-r23";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260913-r24";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260913-r24";
 
 const copy = {
   en: {
@@ -253,9 +253,9 @@ export function translate(language, text) {
 
 const questions = {
   en: {
-    P01: { text: "Where would you like to begin this conversation?", options: { SELF: "My own practice and the conditions for continuing it", MEMORY: "An artist, space, exhibition, or scene I remember", BOTH: "My practice together with a memory of someone else", AUDIENCE: "Arts and culture as I have encountered it as an audience member or citizen" } },
-    P01_CONTEXT: { text: "From which position are you mainly speaking about this memory?", options: { PROFESSIONAL: "Through my professional practice or field experience", AUDIENCE: "Through my experience as an audience member or citizen", PERSONAL: "Through personal relationships and life experience", MIXED: "Several positions are present", SKIP: "Prefer not to answer" } },
-    P02G: { text: "Choose the broad role that feels closest to this response.", options: { CREATION: "Creative practice", CURATING: "Curating and producing", CRITICISM: "Criticism and research", MEDIA: "Journalism and media", ARCHIVE: "Documentation, publishing, and communication", SPACE: "Operating spaces and institutions", EDUCATION: "Education, administration, and policy", PRODUCTION: "Production, conservation, and distribution" } },
+    P01: { text: "Where would you like to begin this conversation?", },
+    P01_CONTEXT: { text: "From which position are you mainly speaking about this memory?", },
+    P02G: { text: "Choose the broad role that feels closest to this response.", },
     P02: { text: "Within that group, choose the role closest to this response." },
     P03: { text: "Do you hold any other roles alongside this one?" },
     P05: { text_professional: "How long has it been since you began the arts and culture activity you just described?", text_audience: "How long has it been since you began seeking out arts and culture or taking part in exhibitions and programmes?" },
@@ -265,12 +265,12 @@ const questions = {
     P08: { text: "Please choose your age group." },
     P09: { text: "Please tell us the country and city where you mostly live now." },
     P10: { text_professional: "Please tell us the country and city where you mainly work.", text_audience: "Please tell us the country and city where you most often encounter arts and culture." },
-    M01: { text: "What comes to mind first about arts and culture today?", options: { ARTIST: "An artist", WORK: "A work, object, or image", SPACE: "A space", EXHIBITION: "An exhibition", SCENE: "A scene", SENTENCE: "A sentence that remains", SENSATION: "A feeling that is hard to name", NO_RECALL: "Nothing in particular comes to mind right now" } }
+    M01: { text: "What comes to mind first about arts and culture today?", }
   },
   ja: {
-    P01: { text: "今回は、どの立場から話を始めたいですか？", options: { SELF: "自分の活動と続けるための経験", MEMORY: "記憶に残る作家・空間・展覧会・現場", BOTH: "自分の活動と、他者についての記憶の両方", AUDIENCE: "鑑賞者・市民として出会った文化芸術" } },
-    P01_CONTEXT: { text: "この記憶を、主にどの立場から語っていますか？", options: { PROFESSIONAL: "専門的な活動や現場での経験から", AUDIENCE: "鑑賞者・市民としての経験から", PERSONAL: "個人的な関係や生活経験から", MIXED: "複数の立場が重なっている", SKIP: "回答しない" } },
-    P02G: { text: "今回の回答に最も近い大きな役割を選んでください。", options: { CREATION: "創作", CURATING: "企画・プロデュース", CRITICISM: "批評・研究", MEDIA: "報道・メディア", ARCHIVE: "記録・出版・コミュニケーション", SPACE: "空間・機関の運営", EDUCATION: "教育・行政・政策", PRODUCTION: "制作・保存・流通" } },
+    P01: { text: "今回は、どの立場から話を始めたいですか？", },
+    P01_CONTEXT: { text: "この記憶を、主にどの立場から語っていますか？", },
+    P02G: { text: "今回の回答に最も近い大きな役割を選んでください。", },
     P02: { text: "その中で、今回の回答に最も近い主な役割を選んでください。" },
     P03: { text: "この役割と並行している別の役割はありますか？" },
     P05: { text_professional: "今お話しいただいた文化芸術の活動を始めてから、どのくらい経ちましたか？", text_audience: "自分から文化芸術を探したり、展覧会やプログラムに参加したりするようになってから、どのくらい経ちましたか？" },
@@ -280,12 +280,12 @@ const questions = {
     P08: { text: "年齢層を選んでください。" },
     P09: { text: "現在主に生活している国と都市を教えてください。" },
     P10: { text_professional: "現在主に活動している国と都市を教えてください。", text_audience: "文化芸術に主に出会う国と都市を教えてください。" },
-    M01: { text: "今日、文化芸術に関して最初に思い浮かぶものは何ですか？正確な名前が分からなくても大丈夫です。", options: { ARTIST: "一人の作家", WORK: "一つの作品・物・イメージ", SPACE: "一つの空間", EXHIBITION: "一つの展覧会", SCENE: "一つの場面", SENTENCE: "残っている言葉", SENSATION: "名前をつけにくい感覚", NO_RECALL: "今は特に思い浮かぶ対象がない" } }
+    M01: { text: "今日、文化芸術に関して最初に思い浮かぶものは何ですか？正確な名前が分からなくても大丈夫です。", }
   },
   zh: {
-    P01: { text: "這次您想從哪一個位置開始談起？", options: { SELF: "我自己的創作與持續實踐的經驗", MEMORY: "我記得的藝術家、空間、展覽或現場", BOTH: "我的實踐與對他人的記憶一起談", AUDIENCE: "作為觀眾或市民所經驗的文化藝術" } },
-    P01_CONTEXT: { text: "您主要從什麼位置談這段記憶？", options: { PROFESSIONAL: "從專業實踐或現場經驗出發", AUDIENCE: "從觀眾或市民的經驗出發", PERSONAL: "從個人關係與生活經驗出發", MIXED: "有多個位置交織在一起", SKIP: "不回答" } },
-    P02G: { text: "請選擇最接近這次回覆的大類角色。", options: { CREATION: "創作", CURATING: "策展與製作", CRITICISM: "評論與研究", MEDIA: "新聞與媒體", ARCHIVE: "記錄、出版與溝通", SPACE: "空間與機構營運", EDUCATION: "教育、行政與政策", PRODUCTION: "製作、保存與流通" } },
+    P01: { text: "這次您想從哪一個位置開始談起？", },
+    P01_CONTEXT: { text: "您主要從什麼位置談這段記憶？", },
+    P02G: { text: "請選擇最接近這次回覆的大類角色。", },
     P02: { text: "請在這個類別中選擇最接近這次回覆的主要角色。" },
     P03: { text: "您是否同時承擔其他角色？" },
     P05: { text_professional: "您剛才說的這項文化藝術活動，開始到現在有多久了？", text_audience: "您開始主動接觸文化藝術、參與展覽和活動，到現在有多久了？" },
@@ -295,7 +295,7 @@ const questions = {
     P08: { text: "請選擇您的年齡層。" },
     P09: { text: "請告訴我們您目前主要生活的國家與城市。" },
     P10: { text_professional: "請告訴我們您目前主要活動的國家與城市。", text_audience: "請告訴我們您主要接觸文化藝術的國家與城市。" },
-    M01: { text: "今天想到文化藝術，最先浮現的是什麼？不知道確切名稱也沒有關係。", options: { ARTIST: "一位藝術家", WORK: "一件作品、物件或影像", SPACE: "一個空間", EXHIBITION: "一個展覽", SCENE: "一個場景", SENTENCE: "留在心中的一句話", SENSATION: "難以命名的感覺", NO_RECALL: "此刻沒有特別浮現的對象" } }
+    M01: { text: "今天想到文化藝術，最先浮現的是什麼？不知道確切名稱也沒有關係。", }
   }
 };
 

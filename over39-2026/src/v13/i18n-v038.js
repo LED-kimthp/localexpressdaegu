@@ -3999,7 +3999,7 @@ Object.assign(extraCopy.en || (extraCopy.en = {}), {
   "지금까지의 응답을 한곳에 모았습니다.": "We have brought your responses together.",
   "겹치거나 반복되는 내용을 정리한 초안입니다. 읽어보고 뜻이 어긋난 문장은 직접 다듬어주세요.": "This draft brings together overlapping or repeated points. Read it and revise anything that does not match what you meant.",
   "이 내용이 가까워요": "This feels close", "일부 문장을 고칠게요": "I would like to edit a few sentences", "새 문장으로 적을게요": "I would like to write a new summary"
-  ,"색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Colour, sound, the atmosphere of a place, and feelings from that time have remained with you."
+  ,"색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Colour, sound, the atmosphere of a place, and feelings from that time have remained with me."
   ,"개인의 경험과 관계, 삶의 변화가 기억의 중심에 있습니다.": "Personal experience, relationships, and changes in life are central to this memory."
   ,"형식과 재료, 표현 방식과 새로운 시도가 기억의 중심에 있습니다.": "Form, materials, modes of expression, and new attempts are central to this memory."
   ,"사람과 지역, 공동체와 사회적 의미가 기억의 중심에 있습니다.": "People, place, community, and social meaning are central to this memory."
@@ -4388,7 +4388,7 @@ Object.entries(v045ParticipantCopy).forEach(([lang, entries]) => Object.assign(e
 const v045EnglishPolish = {
   en: {
     "직접 확인": "Please review directly",
-    "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Feeling and atmosphere — Colour, sound, the atmosphere of a place, and feelings from that time have remained with you.",
+    "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Feeling and atmosphere — Colour, sound, the atmosphere of a place, and feelings from that time have remained with me.",
     "삶과 기억 — 개인의 경험과 관계, 삶의 변화가 기억의 중심에 있습니다.": "Life and memory — Personal experience, relationships, and changes in life are central to this memory.",
     "작품의 생각과 표현 — 형식과 재료, 표현 방식과 새로운 시도가 기억의 중심에 있습니다.": "Ideas and expression — Form, materials, ways of expressing, and new attempts are central to this memory.",
     "사람과 사회 — 사람과 지역, 공동체와 사회적 의미가 기억의 중심에 있습니다.": "People and society — People, place, community, and social meaning are central to this memory.",
@@ -9884,4 +9884,53 @@ Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
   "제작·설치·기술 인력": "製作、裝置或技術工作者",
   "갤러리·유통·후원 관계자": "畫廊、流通或贊助相關工作者",
   "보존·수복·소장품 관리 관계자": "保存、修復或館藏管理工作者",
+});
+
+// 2026-09-13: P01_CONTEXT 의 다섯 보기 중 둘만 「이름 — 설명」이고 나머지는 짧은
+// 이름표였다. 덧씌운 번역의 보기 코드가 스키마와 어긋나(AUDIENCE vs AUDIENCE_CITIZEN)
+// 셋은 사전으로 떨어지고 둘만 덧씌움이 걸렸기 때문이다. 네덜란드어·스페인어·
+// 프랑스어·말레이어는 사전에 다섯이 다 있어 온전했다. 빠진 둘을 채운다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "전문 활동과 현장 경험 — 작업, 기획, 연구, 교육과 운영의 자리에서 이 기억을 이야기합니다.": "Professional practice and field experience — you speak of this memory from making, planning, research, teaching, or running a space.",
+  "여러 위치가 함께 있음 — 전문 활동, 관람과 개인적 관계가 함께 얽혀 있습니다.": "Several positions at once — professional work, attending as an audience, and personal relationships are tangled together here.",
+});
+Object.assign(extraCopy.ja || (extraCopy.ja = {}), {
+  "전문 활동과 현장 경험 — 작업, 기획, 연구, 교육과 운영의 자리에서 이 기억을 이야기합니다.": "専門的な活動と現場の経験 — 制作、企画、研究、教育や運営の場からこの記憶を語ります。",
+  "여러 위치가 함께 있음 — 전문 활동, 관람과 개인적 관계가 함께 얽혀 있습니다.": "複数の位置が重なっている — 専門的な活動、鑑賞、個人的な関係が絡み合っています。",
+});
+Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
+  "전문 활동과 현장 경험 — 작업, 기획, 연구, 교육과 운영의 자리에서 이 기억을 이야기합니다.": "专业实践与现场经验 — 您从创作、策划、研究、教育或运营的位置来谈这段记忆。",
+  "여러 위치가 함께 있음 — 전문 활동, 관람과 개인적 관계가 함께 얽혀 있습니다.": "多个位置同时存在 — 专业工作、观看与个人关系交织在一起。",
+});
+Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
+  "전문 활동과 현장 경험 — 작업, 기획, 연구, 교육과 운영의 자리에서 이 기억을 이야기합니다.": "專業實踐與現場經驗 — 您從創作、策劃、研究、教育或營運的位置來談這段記憶。",
+  "여러 위치가 함께 있음 — 전문 활동, 관람과 개인적 관계가 함께 얽혀 있습니다.": "多個位置同時存在 — 專業工作、觀看與個人關係交織在一起。",
+});
+
+// 2026-09-13: 첫 질문(P01)의 보기가 영어·일본어·중국어에서 짧은 이름표뿐이었다.
+// 한국어는 보기마다 「이름 — 설명」이고, 네덜란드어·스페인어·프랑스어·말레이어는
+// 사전에 그대로 있었다. 덧씌운 번역이 사전을 이기고 설명을 지운 것이다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "나의 활동과 지속 — 작업, 연구, 기획, 교육과 관람을 이어온 경험에서 시작합니다.": "My own practice and the conditions for continuing it — we begin from your experience of making, research, curating, teaching, and attending.",
+  "기억하는 작가·작품·공간 — 오래 남아 있는 사람, 작품, 전시와 장소의 기억에서 시작합니다.": "An artist, work, or space I remember — we begin from memories of people, works, exhibitions, and places that have stayed with you.",
+  "나의 활동과 다른 사람의 기억 — 나의 경험과 다른 사람에 대한 기억을 함께 이야기합니다.": "My practice together with someone else's memory — we speak about your own experience alongside your memory of another person.",
+  "관객·시민의 문화예술 경험 — 보고, 듣고, 읽고, 참여하며 남은 경험에서 시작합니다.": "Arts and culture as I have met it as an audience member or citizen — we begin from what has remained of watching, listening, reading, and taking part.",
+});
+Object.assign(extraCopy.ja || (extraCopy.ja = {}), {
+  "나의 활동과 지속 — 작업, 연구, 기획, 교육과 관람을 이어온 경험에서 시작합니다.": "自分の活動と続けること — 制作、研究、企画、教育、鑑賞を続けてきた経験から始めます。",
+  "기억하는 작가·작품·공간 — 오래 남아 있는 사람, 작품, 전시와 장소의 기억에서 시작합니다.": "覚えている作家・作品・空間 — 長く残っている人、作品、展覧会や場所の記憶から始めます。",
+  "나의 활동과 다른 사람의 기억 — 나의 경험과 다른 사람에 대한 기억을 함께 이야기합니다.": "自分の活動と他の人の記憶 — 自分の経験と、他の人についての記憶をあわせて語ります。",
+  "관객·시민의 문화예술 경험 — 보고, 듣고, 읽고, 참여하며 남은 경험에서 시작합니다.": "観客・市民としての文化芸術の経験 — 見て、聞いて、読んで、参加して残った経験から始めます。",
+});
+Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
+  "나의 활동과 지속 — 작업, 연구, 기획, 교육과 관람을 이어온 경험에서 시작합니다.": "我自己的活动与延续 — 从您在创作、研究、策划、教育与观看中延续下来的经验开始。",
+  "기억하는 작가·작품·공간 — 오래 남아 있는 사람, 작품, 전시와 장소의 기억에서 시작합니다.": "我记得的艺术家、作品或空间 — 从长久留下的人、作品、展览与场所的记忆开始。",
+  "나의 활동과 다른 사람의 기억 — 나의 경험과 다른 사람에 대한 기억을 함께 이야기합니다.": "我的活动与他人的记忆 — 把自己的经验与对他人的记忆放在一起谈。",
+  "관객·시민의 문화예술 경험 — 보고, 듣고, 읽고, 참여하며 남은 경험에서 시작합니다.": "作为观众或市民的文化艺术经验 — 从观看、聆听、阅读与参与后留下的经验开始。",
+});
+Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
+  "나의 활동과 지속 — 작업, 연구, 기획, 교육과 관람을 이어온 경험에서 시작합니다.": "我自己的活動與延續 — 從您在創作、研究、策劃、教育與觀看中延續下來的經驗開始。",
+  "기억하는 작가·작품·공간 — 오래 남아 있는 사람, 작품, 전시와 장소의 기억에서 시작합니다.": "我記得的藝術家、作品或空間 — 從長久留下的人、作品、展覽與場所的記憶開始。",
+  "나의 활동과 다른 사람의 기억 — 나의 경험과 다른 사람에 대한 기억을 함께 이야기합니다.": "我的活動與他人的記憶 — 把自己的經驗與對他人的記憶放在一起談。",
+  "관객·시민의 문화예술 경험 — 보고, 듣고, 읽고, 참여하며 남은 경험에서 시작합니다.": "作為觀眾或市民的文化藝術經驗 — 從觀看、聆聽、閱讀與參與後留下的經驗開始。",
 });
