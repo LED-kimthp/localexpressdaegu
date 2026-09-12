@@ -1,5 +1,5 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r27";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r27";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r28";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r28";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1049,8 +1049,12 @@ export function hasForeignWordsAdaptiveSummary(summary, context = {}) {
   const language = String(context.response_language || "").toLowerCase();
   // 라틴 문자로 쓰는 언어는 영어 낱말이 섞여도 이상하지 않다.
   if (!/^(ja|zh)/u.test(language)) return false;
+  const text = String(summary || "");
+  // 밑줄이 붙은 라틴 문자는 그 언어의 낱말이 아니라 모델이 흘린 기계 문자열이다
+  // (일본어 통과 중 「助成の_age制限」, 2026-09-13). 길이와 무관하게 잡는다.
+  if (/_[A-Za-z]|[A-Za-z]_/u.test(text)) return true;
   // 세 글자 이하는 PDF·AI·SNS 처럼 그 언어에서도 그대로 쓰는 말이다.
-  const words = String(summary || "").match(/[A-Za-z]{4,}/gu) || [];
+  const words = text.match(/[A-Za-z]{4,}/gu) || [];
   if (!words.length) return false;
   const source = participantSourceText(context);
   return words.some((word) => !source.includes(word.toLowerCase()));
