@@ -38,7 +38,7 @@ const copy = {
     },
     practiceHelp: { AUDIENCE: "We record separately what you usually seek out and how you actually visit or take part.", EVERYDAY: "We record separately how this activity continues and meets other people through practice, gatherings, performances, or sharing.", PROFESSIONAL: "We record separately how your core activity continues and how it appears to others." },
     transitionPlaceholder: "One scene in which activity, practice, presentation, role, livelihood, relationships, or attending changed",
-    d1Title: "Choose the condition that currently feels most absent.", d1Help: "In the context of this activity, you may think of conditions that work in practice, such as {hints}.",
+    d1Title: "Choose the condition that currently feels most absent.", d1Help: "Thinking about this activity, you might have in mind conditions that actually make a difference, such as {hints}.",
     d3Title: "Choose the circumstances that make this change necessary.", d3Help: "You can leave up to three conditions that fit where this response is situated. You may include circumstances that actually worked together, such as {hints}.",
     d4Title: "Briefly describe how the conditions you named have affected activity, memory, or relationships.", d4HelpWithContext: "One or two sentences are enough. If any of these conditions are genuinely connected, you may include them: {hints}.", d4HelpWithoutContext: "One or two sentences are enough. You may leave this blank if no effect comes to mind; {hints} are only examples.",
   },

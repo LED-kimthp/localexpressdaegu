@@ -1,4 +1,4 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r19";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260912-r20";
 
 const copy = {
   en: {
@@ -257,7 +257,7 @@ const questions = {
     P02G: { text: "Choose the broad role that feels closest to this response.", options: { CREATION: "Creative practice", CURATING: "Curating and producing", CRITICISM: "Criticism and research", MEDIA: "Journalism and media", ARCHIVE: "Documentation, publishing, and communication", SPACE: "Operating spaces and institutions", EDUCATION: "Education, administration, and policy", PRODUCTION: "Production, conservation, and distribution" } },
     P02: { text: "Within that group, choose the role closest to this response." },
     P03: { text: "Do you hold any other roles alongside this one?" },
-    P05: { text_professional: "How long has it been since you first began working in a role connected to arts and culture?", text_audience: "How long has it been since you began seeking out arts and culture or taking part in exhibitions and programmes?" },
+    P05: { text_professional: "How long has it been since you began the arts and culture activity you just described?", text_audience: "How long has it been since you began seeking out arts and culture or taking part in exhibitions and programmes?" },
     P05_YEAR: { text: "If you remember, please enter the year you began." },
     P06: { text: "Which description is closest to your current arts and culture activity?" },
     P07: { text: "Which description is closest to your actual activity and public visibility in recent years?" },

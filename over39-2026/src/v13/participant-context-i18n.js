@@ -8,10 +8,10 @@ const base = {
     fieldOther: "가까운 분야를 직접 적어주세요.", modeOther: "현재의 관계 방식을 직접 적어주세요.", unitOther: "이번 답변의 중심을 직접 적어주세요.",
   },
   en: {
-    title: "Tell us about the arts-and-culture context of this response.",
+    title: "Tell us where in arts and culture this response comes from.",
     help: "Alongside any existing role, this records the field and form of your activity. It does not rank professional status or eligibility.",
     field: "Which arts-and-culture fields are closest to you?", mode: "How are you currently involved in that field?", form: "How does this activity currently continue within your life?", unit: "Whose experience is at the centre of this response?",
-    fieldOther: "Please name the field in your own words.", modeOther: "Please describe your way of being involved.", unitOther: "Please describe the centre of this response.",
+    fieldOther: "Please name the field in your own words.", modeOther: "Please describe your way of being involved.", unitOther: "Please tell us whose experience this response centres on.",
   },
   ja: {
     title: "今回の回答につながる文化芸術活動の背景を教えてください。", help: "これまでの役割とは別に、分野と活動の形を記録します。専門性の等級や参加資格を示すものではありません。",

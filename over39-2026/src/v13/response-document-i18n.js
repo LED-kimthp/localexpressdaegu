@@ -79,7 +79,7 @@ const frames = {
     archiveKind: "研究参加記録",
     archiveStudy: "〈満39歳以上〉文化芸術経験の研究",
     archiveHost: "主催・主管",
-    archiveHostValue: "北城路写真館 · オルタナティブスペース モホ住宅",
+    archiveHostValue: "北城路写真館 · オルタナティブスペース モホハウス",
     archiveLead: "総括企画",
     archiveLeadValue: "イ・センガン",
     archiveResearch: "研究協力",
