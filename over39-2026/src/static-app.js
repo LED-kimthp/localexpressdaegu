@@ -79,7 +79,7 @@ const creditRows = [
   [tx("주최", "Organizer", "主催", "主辦"), "북성로사진관"],
   [tx("프로젝트", "Project", "プロジェクト", "計畫"), "〈만 39세 이상〉"],
   [tx("공간 협력", "Space partner", "空間協力", "空間協力"), "대안공간 모호주택"],
-  [tx("연구 협력", "Research partner", "研究協力", "研究協力"), "Local Express Daegu"],
+  [tx("프로젝트 운영", "Project management", "プロジェクト運営", "專案營運"), "Local Express Daegu"],
   [tx("지원", "Supported by", "助成", "支持"), "한국문화예술위원회"],
 ];
 

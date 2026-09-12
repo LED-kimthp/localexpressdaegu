@@ -9,7 +9,7 @@
 // '경력 단절'이라는 하나의 상태를 만들지 않는다. 활동 상태는 P14×P15로 나눠서 세고,
 // M/S/D 좌표는 status를 섞지 않고, 역할은 provenance를 섞지 않고, NO_RECALL과
 // "큰 간극 없음"은 결측이 아니라 유효한 응답으로 센다.
-import { normalizedDScope } from "./flow.js?v=v7-20260913-r28";
+import { normalizedDScope } from "./flow.js?v=v7-20260913-r29";
 
 // n이 작을 때 비율은 경향처럼 읽힌다. 20 미만에서는 화면에 비율을 내보내지 않고 원수만 쓴다.
 export const SMALL_SAMPLE_THRESHOLD = 20;

@@ -98,7 +98,7 @@ const rows = [
   ["프로젝트 크레디트", "Project credits", "プロジェクトクレジット", "项目鸣谢", "專案資訊", "Crédits du projet", "Créditos del proyecto", "Projectcredits", "Kredit projek"],
   ["주최·주관", "Organized by", "主催・運営", "主办与运营", "主辦與營運", "Organisation", "Organiza", "Organisatie", "Penganjur"],
   ["총괄기획", "Lead planning", "総合企画", "总策划", "總策劃", "Direction du projet", "Dirección del proyecto", "Algemene leiding", "Perancangan utama"],
-  ["연구 협력", "Research collaboration", "研究協力", "研究協作", "研究協作", "Collaboration de recherche", "Colaboración de investigación", "Onderzoekssamenwerking", "Kerjasama penyelidikan"],
+  ["프로젝트 운영", "Project management", "プロジェクト運営", "项目运营", "專案營運", "Gestion du projet", "Gestión del proyecto", "Projectuitvoering", "Pengurusan projek"],
   ["후원", "Supported by", "後援", "支持", "支持", "Avec le soutien de", "Con el apoyo de", "Met steun van", "Disokong oleh"],
   ["APPLICATION RECEIPT", "Application receipt", "応募受付の確認", "申请回执", "申請收據", "Reçu de candidature", "Comprobante de solicitud", "Ontvangstbewijs aanmelding", "Resit permohonan"],
   ["이름 또는 활동명을 적어주세요.", "Enter a name or working name.", "名前または活動名を入力してください。", "请输入姓名或活动名称。", "請輸入姓名或活動名稱。", "Indiquez un nom ou nom d’activité.", "Escriba un nombre o nombre de actividad.", "Vul een naam of werknaam in.", "Masukkan nama atau nama aktiviti."],

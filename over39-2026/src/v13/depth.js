@@ -1,5 +1,5 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r28";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r28";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r29";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r29";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1010,7 +1010,14 @@ export function isTranscriptLikeAdaptiveSummary(summary, context = {}) {
   const copiedNarratives = sourceNarratives
     .map((item) => compactSummaryText(item?.text))
     .filter((text) => text.length >= 60 && compactSummary.includes(text));
-  return copiedNarratives.length >= 2;
+  if (copiedNarratives.length >= 2) return true;
+  // 정리문 전체가 참여자가 쓴 한 문장과 같으면, 그것은 정리가 아니라 옮겨 적은 것이다.
+  // 「떠오르는 게 없다」 경로처럼 글이 적게 모이는 길에서 실제로 나왔다(2026-09-13,
+  // 간체 통과). 두 개 이상 복사를 요구하는 앞의 규칙은 이 경우를 잡지 못한다.
+  return sourceNarratives.some((item) => {
+    const text = compactSummaryText(item?.text);
+    return text.length >= 20 && compactSummary === text;
+  });
 }
 
 const SUMMARY_LANGUAGE_NAMES = Object.freeze({

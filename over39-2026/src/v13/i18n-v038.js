@@ -10007,3 +10007,13 @@ Object.assign(extraCopy.nl || (extraCopy.nl = {}), { "이전에 오래 경험한
 Object.assign(extraCopy.es || (extraCopy.es = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "¿Hay otro papel que usted haya desempeñado durante mucho tiempo antes de este?" });
 Object.assign(extraCopy.fr || (extraCopy.fr = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Y a-t-il un autre rôle que vous avez tenu longtemps auparavant ?" });
 Object.assign(extraCopy.ms || (extraCopy.ms = {}), { "이전에 오래 경험한 다른 역할이 있나요?": "Adakah peranan lain yang pernah anda pegang lama sebelum ini?" });
+
+// 2026-09-13 TK: Local Express Daegu 는 연구 협력이 아니라 프로젝트 운영이다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), { "프로젝트 운영": "Project management" });
+Object.assign(extraCopy.ja || (extraCopy.ja = {}), { "프로젝트 운영": "プロジェクト運営" });
+Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), { "프로젝트 운영": "项目运营" });
+Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), { "프로젝트 운영": "專案營運" });
+Object.assign(extraCopy.nl || (extraCopy.nl = {}), { "프로젝트 운영": "Projectuitvoering" });
+Object.assign(extraCopy.es || (extraCopy.es = {}), { "프로젝트 운영": "Gestión del proyecto" });
+Object.assign(extraCopy.fr || (extraCopy.fr = {}), { "프로젝트 운영": "Gestion du projet" });
+Object.assign(extraCopy.ms || (extraCopy.ms = {}), { "프로젝트 운영": "Pengurusan projek" });
