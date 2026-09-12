@@ -9934,3 +9934,64 @@ Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
   "나의 활동과 다른 사람의 기억 — 나의 경험과 다른 사람에 대한 기억을 함께 이야기합니다.": "我的活動與他人的記憶 — 把自己的經驗與對他人的記憶放在一起談。",
   "관객·시민의 문화예술 경험 — 보고, 듣고, 읽고, 참여하며 남은 경험에서 시작합니다.": "作為觀眾或市民的文化藝術經驗 — 從觀看、聆聽、閱讀與參與後留下的經驗開始。",
 });
+
+// 2026-09-13: D_FOCUS 는 질문과 보기 넷이 여덟 언어 모두에서 한국어였다. 「나의 활동과
+// 다른 사람의 기억」을 고른 참여자, 또는 기억 경로에서 전문가 위치를 고른 참여자에게
+// 실제로 뜨는 화면이다(app.js renderD1). 언어 검사가 「RC2 가 묻는 문항」만 재고 있어
+// 이 바깥을 보지 못했다.
+Object.assign(extraCopy.en || (extraCopy.en = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "Which side feels more in need of change in this response?",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "My practice and the conditions for continuing — we look first at the time and the ground you need to keep going.",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "Conditions for meeting the artist or place you remember again — we look first at what it would take to meet those people, works, and spaces once more.",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "My own conditions first — we hold both threads together, with a little more weight on what you need to keep going.",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "Meeting the memory again first — we hold both threads together, with a little more weight on meeting the people and places you remember once more.",
+});
+Object.assign(extraCopy.ja || (extraCopy.ja = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "今回の回答で、変化がより必要だと感じるのはどちらですか？",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "自分の活動と続けるための条件 — 活動を続けるために必要な時間と基盤を先に見ていきます。",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "覚えている作家・現場にまた出会うための条件 — 覚えている人、作品、空間にもう一度出会う条件を先に見ていきます。",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "自分の活動の条件を先に見る — 二つの流れをあわせて見ながら、活動を続ける条件に少し重きを置きます。",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "記憶とのつながり直しを先に見る — 二つの流れをあわせて見ながら、覚えている人と現場にまた出会う条件に少し重きを置きます。",
+});
+Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "在这次回答中，您觉得哪一边更需要改变？",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "我的活动与延续的条件 — 先看看为了延续活动所需要的时间与基础。",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "与记得的艺术家或现场再次相遇的条件 — 先看看再次遇见那些人、作品与空间所需要的条件。",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "先看我的活动条件 — 两条线一起看，并把稍多的分量放在延续活动的条件上。",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "先看与记忆的再次相遇 — 两条线一起看，并把稍多的分量放在再次遇见那些人与现场的条件上。",
+});
+Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "在這次回答中，您覺得哪一邊更需要改變？",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "我的活動與延續的條件 — 先看看為了延續活動所需要的時間與基礎。",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "與記得的藝術家或現場再次相遇的條件 — 先看看再次遇見那些人、作品與空間所需要的條件。",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "先看我的活動條件 — 兩條線一起看，並把稍多的分量放在延續活動的條件上。",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "先看與記憶的再次相遇 — 兩條線一起看，並把稍多的分量放在再次遇見那些人與現場的條件上。",
+});
+Object.assign(extraCopy.nl || (extraCopy.nl = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "Aan welke kant is volgens u meer verandering nodig in dit verhaal?",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "Mijn praktijk en de voorwaarden om door te gaan — we kijken eerst naar de tijd en de basis die u nodig hebt om door te gaan.",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "Voorwaarden om de kunstenaar of plek die u zich herinnert weer te ontmoeten — we kijken eerst naar wat daarvoor nodig zou zijn.",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "Eerst mijn eigen voorwaarden — we houden beide lijnen samen, met iets meer gewicht op wat u nodig hebt om door te gaan.",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "Eerst het weerzien — we houden beide lijnen samen, met iets meer gewicht op het weerzien van de mensen en plekken die u zich herinnert.",
+});
+Object.assign(extraCopy.es || (extraCopy.es = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "¿En qué lado siente usted que hace más falta un cambio?",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "Mi práctica y las condiciones para continuar — miramos primero el tiempo y la base que usted necesita para seguir.",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "Las condiciones para reencontrarse con el artista o el lugar que recuerda — miramos primero qué haría falta para volver a encontrarlos.",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "Primero mis propias condiciones — sostenemos ambos hilos, con algo más de peso en lo que usted necesita para seguir.",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "Primero el reencuentro — sostenemos ambos hilos, con algo más de peso en volver a encontrar a las personas y los lugares que recuerda.",
+});
+Object.assign(extraCopy.fr || (extraCopy.fr = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "De quel côté sentez-vous qu’un changement est le plus nécessaire ?",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "Ma pratique et les conditions pour continuer — nous regardons d’abord le temps et les appuis dont vous avez besoin pour poursuivre.",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "Les conditions pour retrouver l’artiste ou le lieu dont vous vous souvenez — nous regardons d’abord ce qu’il faudrait pour les revoir.",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "D’abord mes propres conditions — nous tenons les deux fils ensemble, avec un peu plus de poids sur ce dont vous avez besoin pour poursuivre.",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "D’abord les retrouvailles — nous tenons les deux fils ensemble, avec un peu plus de poids sur le fait de revoir les personnes et les lieux dont vous vous souvenez.",
+});
+Object.assign(extraCopy.ms || (extraCopy.ms = {}), {
+  "이번 답변에서 변화가 더 필요하다고 느끼는 쪽은 어디인가요?": "Pada bahagian mana anda rasa perubahan lebih diperlukan?",
+  "나의 활동과 지속 조건 — 나의 활동을 이어가기 위해 필요한 시간과 기반을 먼저 살펴봅니다.": "Amalan saya dan keadaan untuk meneruskannya — kami melihat dahulu masa dan asas yang anda perlukan untuk terus berjalan.",
+  "기억한 작가·현장과 다시 연결되는 조건 — 기억한 사람과 작업, 공간을 다시 만날 조건을 먼저 살펴봅니다.": "Keadaan untuk bertemu semula pengkarya atau tempat yang anda ingat — kami melihat dahulu apa yang diperlukan untuk bertemu mereka lagi.",
+  "나의 활동 조건을 먼저 살펴보기 — 두 흐름을 함께 보며 나의 활동을 이어갈 조건에 조금 더 무게를 둡니다.": "Keadaan saya dahulu — kami memegang kedua-dua aliran, dengan sedikit lebih berat pada apa yang anda perlukan untuk meneruskan.",
+  "기억의 재연결을 먼저 살펴보기 — 두 흐름을 함께 보며 기억한 사람과 현장을 다시 만날 조건에 조금 더 무게를 둡니다.": "Pertemuan semula dahulu — kami memegang kedua-dua aliran, dengan sedikit lebih berat pada bertemu semula orang dan tempat yang anda ingat.",
+});
