@@ -5868,6 +5868,8 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
 .greeting-arrival .first-greeting-origin,
 .greeting-arrival .relay-sender-context,
 .greeting-arrival .relay-message-language,
+.greeting-arrival .relay-arrival-reason,
+.greeting-arrival .relay-withdraw-row,
 .greeting-arrival .first-greeting-continue,
 .greeting-arrival .relay-read-actions {
   opacity: 0;
@@ -5876,13 +5878,23 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
 .greeting-arrival > h1 { animation-delay: .06s; }
 .greeting-arrival > .first-greeting-help,
 .greeting-arrival > .relay-lead { animation-delay: .16s; }
+/* TK(2026-09-13): 「1초도 안 되어서 뜨면 이거 실제로 안부 맞아 싶어.」
+   즉시 뜨면 기계가 뱉은 것 같고 버벅이면 고장 난 것 같다 — 사람이 쓴 것처럼
+   느껴지려면 적당한 시간이 필요하다. 그리고 「메세지가 뜨고, 나면 그 뒤에 천천히
+   다른 문장들이 나타나는 거야.」 편지만 먼저 오고, 판단할 것들은 읽고 난 뒤에 온다.
+   이 순서 하나가 속도 문제와 「읽기도 전에 철회부터 보인다」를 같이 푼다.
+   전에는 전부 1.5초 안에 끝나 한꺼번에 뜨는 것처럼 보였다. */
 .greeting-arrival .first-greeting-reading,
-.greeting-arrival .relay-received-message { animation-duration: .94s; animation-delay: .34s; }
+.greeting-arrival .relay-received-message { animation-duration: .94s; animation-delay: 1s; }
 .greeting-arrival .first-greeting-origin,
 .greeting-arrival .relay-sender-context,
-.greeting-arrival .relay-message-language { animation-delay: .72s; }
+.greeting-arrival .relay-message-language { animation-delay: 3.2s; }
+.greeting-arrival .relay-arrival-reason { animation-delay: 3.4s; }
 .greeting-arrival .first-greeting-continue,
-.greeting-arrival .relay-read-actions { animation-delay: .86s; }
+.greeting-arrival .relay-read-actions { animation-delay: 4.6s; }
+/* 철회는 없애지 않는다. 다만 맨 나중에, 맨 아래에 — 메일 주소를 남긴 것이 이미
+   동의이고 거기엔 기대도 있다. 선물을 주며 반품 절차부터 설명하지 않는다. */
+.greeting-arrival .relay-withdraw-row { animation-delay: 5.6s; }
 @keyframes greeting-sentence-arrive {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
@@ -6770,4 +6782,30 @@ input[type="checkbox"] { width: 20px; height: 20px; }
     font-size: 6.4pt !important;
     line-height: 1.4 !important;
   }
+}
+
+/* 안부를 고른 근거로 쓰인 실제 문장 조각. 「왜 나에게 왔는가」의 답이 추상적인
+   설명이 아니라 두 사람이 실제로 쓴 말이어야 닿는다(2026-09-13 TK). */
+.relay-arrival-evidence {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.relay-arrival-evidence li {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid currentColor;
+  opacity: 0.72;
+  font-size: 0.92em;
+  line-height: 1.7;
+}
+
+.relay-withdraw-row {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid currentColor;
+  border-top-color: color-mix(in srgb, currentColor 12%, transparent);
+  text-align: center;
 }

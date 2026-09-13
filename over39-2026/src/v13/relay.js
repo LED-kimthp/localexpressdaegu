@@ -1,4 +1,4 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260913-r34";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260913-r35";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -143,7 +143,15 @@ function arrivalReasonSection(thread, firstMessage) {
   const reason = thread.connection_reason || {};
   const isSeed = reason.sender_context_code === "PROJECT_SEED" || reason.summary_key === "PROJECT_FIRST_GREETING";
   const receipt = task10a4Receipt();
-  return `<aside class="relay-arrival-reason"><span>${text(receipt.arrivalReasonLabel)}</span><p>${text(isSeed ? receipt.arrivalReasonSeed : receipt.arrivalReason)}</p></aside>`;
+  // 서버가 고른 근거를 여기서 버리고 모두에게 같은 문장을 보여주고 있었다. 판단으로
+  // 고른 안부에는 그 이유가 있고, 그것이 「왜 나에게 왔는가」에 대한 유일한 답이다.
+  // 무작위로 떨어졌을 때만 예전 고정 문장으로 돌아간다 — 그때는 정말로 이유가 없다.
+  const judged = reason.summary_key === "JUDGED_GREETING" && String(reason.summary || "").trim();
+  const body = isSeed ? text(receipt.arrivalReasonSeed) : judged ? text(reason.summary) : text(receipt.arrivalReason);
+  const evidence = !isSeed && judged && Array.isArray(reason.evidence)
+    ? reason.evidence.filter(Boolean).slice(0, 2).map((line) => `<li>${text(line)}</li>`).join("")
+    : "";
+  return `<aside class="relay-arrival-reason"><span>${text(receipt.arrivalReasonLabel)}</span><p>${body}</p>${evidence ? `<ul class="relay-arrival-evidence">${evidence}</ul>` : ""}</aside>`;
 }
 function senderContextSection(thread) {
   const { sender } = reasonDetails(thread);
@@ -168,7 +176,7 @@ function render() {
   const identityChoices = [["NAMED", compose().named], ["CONTEXTUAL", compose().contextual], ["ANONYMOUS", compose().anonymous]];
   const choiceButtons = (field, options) => `<div class="choice-list">${options.map(([value, label]) => `<button type="button" class="choice ${draft[field] === value ? "selected" : ""}" data-relay-choice="${text(field)}" data-relay-choice-value="${text(value)}" aria-pressed="${draft[field] === value}"><span aria-hidden="true">${draft[field] === value ? "✓" : ""}</span><strong>${text(label)}</strong></button>`).join("")}</div>`;
   const composeFlow = state.composeStep === "read"
-    ? `<section class="relay-reply relay-read-actions"><div class="relay-next-prompt"><h2>${text(simplified.continuationTitle)}</h2><p>${text(simplified.continuationHelp)}</p></div><div class="relay-actions relay-next-actions"><button class="primary-button" data-relay-action="begin">${text(simplified.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" data-relay-action="pass">${text(simplified.continuationSecondary)}</button></div><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></section>`
+    ? `<section class="relay-reply relay-read-actions"><div class="relay-next-prompt"><h2>${text(simplified.continuationTitle)}</h2><p>${text(simplified.continuationHelp)}</p></div><div class="relay-actions relay-next-actions"><button class="primary-button" data-relay-action="begin">${text(simplified.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" data-relay-action="pass">${text(simplified.continuationSecondary)}</button></div></section>`
     : state.composeStep === "write"
       ? `<section class="relay-reply"><h2>${text(simplified.writingTitle)}</h2><p class="greeting-writing-help">${text(simplified.writingHelp)}</p><textarea class="text-input" data-relay-message maxlength="1400" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><aside class="greeting-writing-example" aria-label="${text(simplified.exampleLabel)}"><span>${text(simplified.exampleLabel)}</span><p>${text(simplified.exampleText)}</p></aside><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<h3>${text(compose().translation)}</h3>${choiceButtons("translation_allowed", [["YES", compose().translationYes], ["NO", compose().translationNo]])}<div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
       : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(interfaceLanguageCode)}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(draft.translation_allowed === "YES" ? compose().translationYes : compose().translationNo)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
@@ -190,7 +198,7 @@ function render() {
   const receivedHeading = firstMessage
     ? `<h1>${text(simplified.receivedTitle)}</h1><p class="relay-lead">${text(receivedHelpText)}</p>`
     : `<h1>${text(simplified.featureName)}</h1>`;
-  root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}</section></main>`;
+  root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}${thread.can_reply && state.composeStep === "read" ? `<div class="relay-withdraw-row"><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></div>` : ""}</section></main>`;
 }
 async function request(payload) {
   if (!endpoint || !token) throw new Error("RELAY_NOT_CONFIGURED");
