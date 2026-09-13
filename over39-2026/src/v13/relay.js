@@ -3,7 +3,10 @@ import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const relayQuery = new URLSearchParams(location.search);
-const token = relayQuery.get("t") || "";
+// 열쇠는 주소의 # 뒤에 온다(2026-09-14). 그 앞에 ?t= 로 나간 링크가 이미 있을 수
+// 있으므로 둘 다 받는다 — 참여자가 옛 메일을 열었을 때 닫히면 안 된다.
+const hashToken = location.hash.startsWith("#") ? decodeURIComponent(location.hash.slice(1)) : "";
+const token = hashToken || relayQuery.get("t") || "";
 // 모듈 최상단이다. 쿠키를 막은 사파리에서는 접근만으로 던지고, 그러면 이 파일 전체가
 // 실행되지 않아 `#relay-root`가 빈 div로 남는다 — **안부 링크를 열면 완전한 흰 화면.**
 // 서버가 만드는 메일함 링크에는 `?lang=`이 붙지 않아 이 줄은 항상 실행된다.
