@@ -1,13 +1,13 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r31";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r31";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260913-r31";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260913-r32";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260913-r32";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260913-r32";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
 // skipped_low_information, api)은 사람이 쓴 것도 모델이 쓴 것도 아니다.
 // 제공자를 새로 붙일 때 이 한 줄만 고치면 된다. 이름을 여러 곳에 흩어 놓았던 것이
 // 2026-09-08에 cerebras를 붙였을 때 요약의 출처를 "fixed"로 기록하게 만든 원인이었다.
-const API_SOURCES = new Set(["openai", "motif", "cerebras", "groq", "morph", "motif3", "mistral"]);
+const API_SOURCES = new Set(["openai", "motif", "cerebras", "groq", "morph", "motif3", "mistral", "tokenharbor"]);
 
 export function isLiveModelSource(source) {
   return API_SOURCES.has(String(source || "").toLowerCase());
