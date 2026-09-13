@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260913-r30";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260913-r30";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260913-r30";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260913-r30";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260913-r30";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260913-r30";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260913-r30";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260913-r30";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260913-r30";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260913-r30";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260913-r30";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260913-r30";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260913-r30";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260913-r30";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260913-r30";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260913-r30";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260913-r30";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260913-r30";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260913-r30";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260913-r30";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260913-r30";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260913-r30";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260913-r30";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260913-r31";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260913-r31";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260913-r31";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260913-r31";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260913-r31";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260913-r31";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260913-r31";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260913-r31";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260913-r31";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260913-r31";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260913-r31";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260913-r31";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260913-r31";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260913-r31";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260913-r31";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260913-r31";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260913-r31";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260913-r31";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260913-r31";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260913-r31";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260913-r31";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260913-r31";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260913-r31";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "20dbd8579b41-dirty 2026-09-12T20:28:55.572Z";
+const buildStamp = "c474267e83af-dirty 2026-09-13T01:04:22.380Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -148,6 +148,9 @@ const LANGUAGE_LABELS = Object.freeze({
   nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
 });
 const languages = OFFERED_LANGUAGES.map((code) => [code, LANGUAGE_LABELS[code]]);
+// 안부 미리보기가 언어를 「zh-Hant」라는 코드로 보여주고 있었다(2026-09-13 번체 통과).
+// 참여자가 읽는 자리에는 사람이 읽는 이름을 쓴다 — 부록은 이미 그렇게 한다.
+const languageLabel = (code) => LANGUAGE_LABELS[String(code || "")] || String(code || "");
 const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
@@ -2645,7 +2648,7 @@ function renderGlobalGreetingsConnection(connection) {
   const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><aside class="greeting-writing-example" aria-label="${esc(local.messageExampleLabel)}"><span>${esc(local.messageExampleLabel)}</span><p>${esc(local.messageExample)}</p></aside><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
-  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(local.previewTitle)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(state.submitted?.source_language || state.language)}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(state.submitted?.source_language || state.language)}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
+  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(local.previewTitle)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
   const stageContent = currentStage === "receive" ? receiveSection : currentStage === "waiting" ? waitingSection : currentStage === "message" ? messageSection : previewSection;
   const writingFlow = ["message", "preview"].includes(currentStage);
   const primaryAction = ["receive", "waiting", "message"].includes(currentStage) ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button>`;
