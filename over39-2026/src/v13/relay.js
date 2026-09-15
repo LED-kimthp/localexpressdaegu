@@ -1,4 +1,4 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260915-r36";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260916-r37";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
