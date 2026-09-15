@@ -648,12 +648,18 @@ export async function createAnchorFollowup({
       };
     }
 
-    if (response.ok && provider === "motif" && serverSource === "motif" && serverQuestion) {
-      const run = { ...runBase, status: "success", source: "motif", error_code: null, fallback_reason: null };
+    // 2026-09: 제공자가 셋으로 늘면서 서버가 돌려주는 이름이 motif 말고도
+    // morph·tokenharbor·groq 가 되었는데, 여기만 글자 그대로 "motif"를 요구하고
+    // 있었다. 그래서 AI가 멀쩡히 만든 후속질문을 화면이 전부 버리고 준비된 대체
+    // 질문으로 넘어갔다 — 합성 파일럿 5명 전원, 14회 전부(2026-09-15).
+    // 후속질문은 이 연구가 평범한 설문보다 깊은 이야기를 남기려는 가장 큰 장치다.
+    // 살아 있는 제공자 목록은 depth.js 한 곳에서만 정한다.
+    if (response.ok && isLiveModelSource(provider) && serverSource === provider && serverQuestion) {
+      const run = { ...runBase, status: "success", source: provider, error_code: null, fallback_reason: null };
       return {
         decision: "ask",
-        source: "motif",
-        question: makeTurn({ anchorId, questionText: serverQuestion, source: "motif", language: responseLanguage, run, context, serverQuestionText: serverQuestion }),
+        source: provider,
+        question: makeTurn({ anchorId, questionText: serverQuestion, source: provider, language: responseLanguage, run, context, serverQuestionText: serverQuestion }),
         run,
       };
     }
@@ -732,8 +738,8 @@ export function reconcileAnchorTurnsAfterQuestionEdit({
 
 export function isStrictRealMotifPass(run, domMatch = run?.dom_match) {
   return Boolean(
-    run?.source === "motif"
-    && run?.provider === "motif"
+    isLiveModelSource(run?.source)
+    && run?.provider === run?.source
     && run?.request_id
     && run?.client_request_id_match === true
     && domMatch === true
@@ -741,7 +747,7 @@ export function isStrictRealMotifPass(run, domMatch = run?.dom_match) {
 }
 
 export function aggregateAnchorSource(runs = []) {
-  const real = runs.filter((run) => run?.operation === "anchor_followup" && !run?.invalidated_at && ["motif", "fallback"].includes(run?.source));
+  const real = runs.filter((run) => run?.operation === "anchor_followup" && !run?.invalidated_at && (isLiveModelSource(run?.source) || run?.source === "fallback"));
   if (!real.length) return runs.some((run) => run?.source === "skipped_low_information") ? "skipped_low_information" : null;
   const sources = new Set(real.map((run) => run.source));
   if (sources.size === 1) return [...sources][0];
