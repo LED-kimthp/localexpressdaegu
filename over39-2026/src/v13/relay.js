@@ -201,7 +201,7 @@ function render() {
   const receivedHeading = firstMessage
     ? `<h1>${text(simplified.receivedTitle)}</h1><p class="relay-lead">${text(receivedHelpText)}</p>`
     : `<h1>${text(simplified.featureName)}</h1>`;
-  root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}${thread.can_reply && state.composeStep === "read" ? `<div class="relay-withdraw-row"><button class="relay-withdraw" data-relay-action="withdraw">${text(c().withdraw)}</button></div>` : ""}</section></main>`;
+  root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}</section></main>`;
 }
 async function request(payload) {
   if (!endpoint || !token) throw new Error("RELAY_NOT_CONFIGURED");

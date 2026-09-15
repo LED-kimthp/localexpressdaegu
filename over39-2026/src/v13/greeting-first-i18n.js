@@ -3,11 +3,17 @@
 // system explanation before the participant reads the greeting.
 const copy = {
   ko: {
+    projectName: "〈만 39세 이상〉",
     projectMeta: "리서치 · 참여 기록 · 안부",
     introEyebrow: "문화예술과 함께한 시간, 이어지는 안부",
     introTitleLead: "한 사람의 안부에서 시작해,",
     introTitleMain: "당신의 이야기를 들려주세요.",
-    introLead: "문화예술과 함께해온 당신의 시간을 천천히 들려주세요.",
+    // 제목이 이미 「이야기를 들려주세요」라고 말한다. 같은 말을 한 번 더 하는 대신,
+    // 첫 화면 어디에도 없던 것을 여기서 말한다 — 왜 39세인가(TK 2026-09-15).
+    introLead: "이 연구는 한국에서 시작했습니다. 한국에서는 예술가 지원이 '청년·신진'이라는 이름으로 묶여 있고, 그 구분이 만 39세에서 끝납니다. 그 뒤에 무슨 일이 일어나는지를 기록합니다.",
+    // 2026-09-11에 자리만 만들고 문구가 없어, 아홉 언어 전부에서 빈 문단으로 나오고
+    // 있었다. 예순네 자리를 마지막 화면의 결과가 아니라 시작의 설명으로 옮긴다.
+    introFrame: "남기신 이야기는 기억·현재·이어가기 위한 조건, 세 방향으로 읽힙니다. 세 방향이 만나는 자리는 예순네 곳 가운데 하나입니다. 사람을 나누는 유형이 아니라, 오늘 남긴 이야기가 놓인 한 시점의 자리입니다.",
     introGreeting: "이곳을 지나간 사람이 남긴 안부가 준비되어 있으면 먼저 도착합니다. 아직 없을 때는 프로젝트가 준비한 첫 안부로 시작합니다. 답장하지 않아도 괜찮습니다. 천천히 읽은 뒤, 기억에 남은 장면에서 당신의 이야기를 시작합니다.",
     introAudience: "전문 예술가가 아니어도 괜찮습니다. 만들고, 기획하고, 가르치고, 배우고, 생활 속에서 참여하거나 관객으로 함께해온 경험까지 듣습니다.",
     introRecord: "질문은 서른 개 남짓이고, 중간에 두어 번은 당신이 쓴 문장에서 이어지는 질문이 옵니다. 스무 해, 서른 해의 시간을 몇 개의 항목으로 줄이지 않기 위해서입니다. 남긴 이야기는 참여 기록으로 정리해 직접 읽고 다듬을 수 있고, 모인 기록은 문화예술 정책을 이야기하는 자리로 이어집니다.",
@@ -54,11 +60,13 @@ const copy = {
     arrivalReasonSeed: "지금 당신에게 전할 수 있는, 앞서 남겨진 안부가 아직 없어 이 문장으로 시작합니다. 당신이 마지막에 남기는 한 문장은 다음 사람에게 먼저 도착하는 안부가 될 수 있어요.",
   },
   en: {
+    projectName: "〈Over 39〉",
     projectMeta: "Research · participation record · greeting",
     introEyebrow: "Time with arts and culture, a greeting carried onward",
     introTitleLead: "Begin with one person’s greeting,",
     introTitleMain: "then tell us your story.",
-    introLead: "Tell us, in your own time, about the years you have spent with arts and culture.",
+    introLead: "This research began in Korea, where support for artists is gathered under the words “young” and “emerging” — and that category ends at the age of 39. What happens after is what we are recording.",
+    introFrame: "What you leave is read in three directions — memory, the present, and the conditions for keeping going. Where those three meet is one of sixty-four positions: not a type you are sorted into, but where today’s story sits.",
     introGreeting: "If a greeting from someone who came this way before you is waiting, that comes first. If none is waiting yet, you will start with the greeting the project wrote to begin the chain. You do not have to reply to it. Read it in your own time, then begin your own story from a scene you remember.",
     introAudience: "You do not need to be a professional artist. We want to hear about making, planning, teaching, learning, taking part in everyday life, or simply being there as a member of an audience.",
     introRecord: "There are about thirty questions, and a couple of times along the way a question will follow from a sentence you have written. This is so that twenty or thirty years are not reduced to a handful of checkboxes. What you leave is gathered into a participation record you can read and revise yourself, and together those records feed into the conversations where arts and cultural policy is discussed.",

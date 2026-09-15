@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "9a176d41df0d-dirty 2026-09-13T18:42:48.897Z";
+const buildStamp = "90def2f81e01-dirty 2026-09-15T14:11:08.794Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2472,7 +2472,7 @@ function footer() {
   // 이메일이 프로젝트 이름 아래에 라벨 없이 붙어 있어, 옆 크레딧들과 종류가 다른 것이
   // 섞여 보였다(2026-09-07 TK). 왼쪽은 「이건 무엇인가」만 두고, 연락처는 크레딧과 같은
   // 모양(작은 라벨 + 값)으로 마지막 항목에 넣어 다섯이 한 규칙을 따르게 한다.
-  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>${esc(greetingFirst().researchTitle)}</span></div><div class="footer-credits">${creditRows().map(([role, name]) => `<span><em>${esc(role)}</em>${esc(name)}</span>`).join("")}<span class="footer-contact"><em>${esc(t("문의"))}</em><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></span></div></footer>`;
+  if (isRc2) return `<footer class="site-footer"><div class="footer-project"><strong>${esc(greetingFirst().projectName || "〈만 39세 이상〉")}</strong><span>${esc(greetingFirst().researchTitle)}</span></div><div class="footer-credits">${creditRows().map(([role, name]) => `<span><em>${esc(role)}</em>${esc(name)}</span>`).join("")}<span class="footer-contact"><em>${esc(t("문의"))}</em><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></span></div></footer>`;
   return `<footer class="site-footer"><div class="footer-project"><strong>〈만 39세 이상〉</strong><span>PUBLIC MEMORY RESEARCH · INSTITUTION RC1</span><a href="mailto:${researchContactEmail}">${researchContactEmail}</a></div><div class="footer-credits">${creditRows().map(([role, name]) => `<span><em>${esc(role)}</em>${esc(name)}</span>`).join("")}</div></footer>`;
 }
 
@@ -2921,11 +2921,14 @@ function renderIntro() {
             <p>${esc(local.introLead)}</p>
             <p>${esc(local.introGreeting)}</p>
             <p>${esc(local.introAudience)}</p>
-            <p>${esc(local.introRecord)}</p>
             <!-- 이 연구가 기록을 어떻게 읽는지 먼저 밝힌다. 예순네 자리는 마지막 화면의
                  좌표 번호로 처음 나타나던 것인데, 그때는 설명이 아니라 결과였다
-                 (TK 2026-09-11). -->
-            <p>${esc(local.introFrame)}</p>
+                 (TK 2026-09-11). 그 「먼저」를 지키려면 질문 개수를 말하기 전에 와야 한다
+                 — 어떻게 읽히는지 알고 나서 무엇을 묻는지 보는 순서(TK 2026-09-15).
+                 문구가 없는 언어에서는 빈 문단을 만들지 않는다. 2026-09-15까지
+                 아홉 언어 전부가 빈 <p>를 찍고 있었다. -->
+            ${local.introFrame ? `<p>${esc(local.introFrame)}</p>` : ""}
+            <p>${esc(local.introRecord)}</p>
           </div>
           <section class="greeting-first-journey" aria-label="${esc(local.journeyLabel)}">
             <div class="greeting-first-journey-heading"><span>${esc(local.journeyTitle)}</span></div>
@@ -2934,14 +2937,14 @@ function renderIntro() {
           <div class="intro-disclosure" role="note">
             <p><strong>AI</strong><span>${esc(local.introAi)}</span></p>
           </div>
-          <div class="intro-ready-note"><strong>${esc(local.duration)}</strong></div>
         </div>
         <section class="entry-route-grid entry-route-grid-research" aria-label="${esc(t("참여 경로"))}">
           <article class="entry-route-card entry-route-research interactive-tilt">
             <div class="route-copy"><span>RESEARCH</span>
             <h2>${esc(local.researchTitle)}</h2>
-            <p>${esc(local.researchDescription)}</p>
-            <div class="entry-route-meta">${esc(local.researchMeta)}</div>
+            <!-- 여기 있던 설명과 화살표 줄은 위의 01~04 목록과 같은 말이었다. 순서는
+                 목록이 맡고, 이 자리는 「시작하면 무엇이 드는가」를 말한다(TK 2026-09-15). -->
+            <p>${esc(local.duration)}</p>
             <div class="entry-route-actions"><button class="primary-button" type="button" data-action="${startAction}">${esc(startLabel)} <span aria-hidden="true">→</span></button></div></div>
           </article>
         </section>
@@ -3078,6 +3081,12 @@ function retryQueuedAuxOnComplete() {
 function render(focusHeading = false) {
   const scrollPosition = { x: window.scrollX, y: window.scrollY };
   document.documentElement.lang = state.language;
+  // 탭 제목이 정적 HTML에 한글로 박혀 있어, 영어 화면에서도 탭만 한글이었다.
+  if (isRc2) {
+    const brand = greetingFirst();
+    const title = [brand.projectName || "〈만 39세 이상〉", brand.researchTitle].filter(Boolean).join(" ");
+    if (title && document.title !== title) document.title = title;
+  }
   if (state.phase === "complete") retryQueuedAuxOnComplete();
   const content = state.phase === "loading" ? "<main class='interview-layout'>불러오는 중입니다.</main>" : state.phase === "intro" ? renderIntro() : state.phase === "notice" ? renderNotice() : state.phase === "greeting-choice" ? renderGreetingChoice() : state.phase === "greeting-first" ? renderFirstGreeting() : state.phase === "saving" ? renderSavePending() : state.phase === "save_failed" ? renderSaveFailed() : state.phase === "complete" ? renderComplete() : state.phase === "exhibition" ? (isRc2 ? renderComplete(state.submitted || createResponse()) : renderRetiredRc1ExhibitionApplication()) : state.phase === "connection" ? renderConnection() : state.phase === "referral" ? renderReferral() : state.phase === "feedback" ? renderInstitutionFeedback() : renderSurvey();
   root.innerHTML = `<div class="site-shell phase-${esc(state.phase)}">${header()}${content}${footer()}</div>`;
