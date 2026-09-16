@@ -18,7 +18,10 @@ const copy = {
     introAudience: "전문 예술가가 아니어도 괜찮습니다. 만들고, 기획하고, 가르치고, 배우고, 생활 속에서 참여하거나 관객으로 함께해온 경험까지 듣습니다.",
     introRecord: "질문은 서른 개 남짓이고, 중간에 두어 번은 당신이 쓴 문장에서 이어지는 질문이 옵니다. 스무 해, 서른 해의 시간을 몇 개의 항목으로 줄이지 않기 위해서입니다. 남긴 이야기는 참여 기록으로 정리해 직접 읽고 다듬을 수 있고, 모인 기록은 문화예술 정책을 이야기하는 자리로 이어집니다.",
     introAi: "이야기를 남기시는 동안, AI가 필요한 경우 두세 번까지 질문을 더 건넬 수 있습니다. 참여 기록의 초안은 AI가 정리하고, 당신이 직접 읽어보며 문장을 다듬을 수 있습니다.",
-    duration: "20분에서 30분 정도 걸립니다. 도중에 저장되니 나누어 참여하셔도 괜찮습니다.",
+    // 이어하기는 같은 브라우저에 저장된 초안으로만 된다. 「나누어 참여하셔도
+    // 괜찮습니다」만 읽으면 휴대폰으로 쓰다 노트북으로 옮겨도 이어질 것처럼
+    // 들린다 — 그러면 20분을 쓰고 처음부터 다시 하게 된다(TK 2026-09-16).
+    duration: "20분에서 30분 정도 걸립니다. 같은 기기에서 열면 도중에 멈춰도 이어서 하실 수 있습니다.",
     journeyLabel: "안부로 시작해 안부로 이어지는 참여 흐름",
     journeyTitle: "안부로 시작해 안부로 이어지는 흐름",
     journey: [
@@ -71,7 +74,7 @@ const copy = {
     introAudience: "You do not need to be a professional artist. We want to hear about making, planning, teaching, learning, taking part in everyday life, or simply being there as a member of an audience.",
     introRecord: "There are about thirty questions, and a couple of times along the way a question will follow from a sentence you have written. This is so that twenty or thirty years are not reduced to a handful of checkboxes. What you leave is gathered into a participation record you can read and revise yourself, and together those records feed into the conversations where arts and cultural policy is discussed.",
     introAi: "As you write, AI may ask up to two or three further questions where they are needed. AI drafts the participation record, and you read it over and adjust the wording yourself.",
-    duration: "It takes about twenty to thirty minutes. Your answers are saved as you go, so you can continue later.",
+    duration: "It takes about twenty to thirty minutes. If you open it on the same device, you can stop partway and continue later.",
     journeyLabel: "A participation flow that begins and continues with a greeting",
     journeyTitle: "Beginning with a greeting, continuing with a greeting",
     journey: [["A greeting arrives first", "Words from someone who passed through here"], ["Your story", "Memory · present · conditions for continuing"], ["Participation record", "Your record to read and refine"], ["For the next person", "One sentence left, as one was left for you"]],
@@ -163,7 +166,7 @@ const copy = {
     // 아예 없는 맥락을 말한다 — 왜 39세인가(TK 2026-09-16, 홍콩 발송 준비).
     introLead: "這項研究始於韓國。在韓國，對藝術家的支持被歸在「青年」與「新進」的名目之下，而這個區分到滿三十九歲為止。我們要記錄的，是那之後發生的事。",
     // 마지막 화면의 座標 설명과 같은 말로 미리 밝힌다.
-    introFrame: "您留下的故事會從三個方向被讀取：記憶、當下，以及繼續所需的條件。三個方向交會的位置，是六十四個之中的一個。它不會把您歸成某一種類型，只是今天這段故事所在的、某一個時刻的位置。", introGreeting: "如果先經過這裡的人留下了問候，它會先送到您這裡。如果還沒有，就從專案準備的第一則問候開始。您不必回信。慢慢讀過之後，請從記憶裡留下的那個場景說起。", introAudience: "您不必是專業藝術家。創作、策劃、教學、學習、在生活裡參與，以及作為觀眾一同經歷過的事，我們都想聽。", introRecord: "問題約有三十道，中途會有兩次左右順著您寫下的句子再問一問。這是為了不把二十年、三十年的時間壓縮成幾個選項。您留下的話會整理成參與記錄，您可以自己閱讀和修改；這些記錄匯集起來，會帶到討論文化藝術政策的場合裡。", introAi: "在您留下故事的過程中，AI 在需要時最多會再問兩三次。參與記錄的草稿由 AI 整理，您可以親自閱讀並修改文句。", duration: "大約需要二十到三十分鐘。中途會自動儲存，可以分次完成。",
+    introFrame: "您留下的故事會從三個方向被讀取：記憶、當下，以及繼續所需的條件。三個方向交會的位置，是六十四個之中的一個。它不會把您歸成某一種類型，只是今天這段故事所在的、某一個時刻的位置。", introGreeting: "如果先經過這裡的人留下了問候，它會先送到您這裡。如果還沒有，就從專案準備的第一則問候開始。您不必回信。慢慢讀過之後，請從記憶裡留下的那個場景說起。", introAudience: "您不必是專業藝術家。創作、策劃、教學、學習、在生活裡參與，以及作為觀眾一同經歷過的事，我們都想聽。", introRecord: "問題約有三十道，中途會有兩次左右順著您寫下的句子再問一問。這是為了不把二十年、三十年的時間壓縮成幾個選項。您留下的話會整理成參與記錄，您可以自己閱讀和修改；這些記錄匯集起來，會帶到討論文化藝術政策的場合裡。", introAi: "在您留下故事的過程中，AI 在需要時最多會再問兩三次。參與記錄的草稿由 AI 整理，您可以親自閱讀並修改文句。", duration: "大約需要二十到三十分鐘。在同一台裝置上開啟，中途停下也可以接著完成。",
     journeyLabel: "從問候開始、以問候繼續的參與流程", journeyTitle: "從問候開始，以問候繼續", journey: [["先抵達的問候", "經過這裡的人留下的句子"], ["您的故事", "記憶 · 當下 · 繼續所需的條件"], ["參與記錄", "由我親自閱讀和修改的記錄"], ["留給下一位", "像我收到的那樣留下的一句話"]],
     researchTitle: "文化藝術經驗記錄", researchDescription: "先讀一則已經抵達的問候，再開始。請慢慢說說記憶中的場景、當下的變化，以及繼續前行所需的條件。", researchMeta: "先抵達的問候 → 您的故事 → 參與記錄 → 留給下一位的問候", start: "從問候開始", continueDraft: "繼續說下去",
     greetingLoading: "正在為您取來先到的那則問候。", greetingLoadingHelp: "請稍候。研究問題會在您讀完問候後開始。", receivedTitle: "一則問候抵達了。", receivedHelp: "這是先經過這裡的一位參與者留下的句子。請慢慢讀。", seedHelp: "這是專案為開啟這段傳遞而準備的第一則問候。請慢慢讀。", randomNote: "從已經在問候箱中等待的句子裡，隨機送來了一則。", seedNote: "專案準備的第一則問候", beginStory: "現在開始您的故事",
