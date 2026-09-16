@@ -1,4 +1,4 @@
-import { isLiveModelSource } from "./depth.js?v=v7-20260916-r40";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260916-r41";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
@@ -654,7 +654,14 @@ export async function createAnchorFollowup({
     // 질문으로 넘어갔다 — 합성 파일럿 5명 전원, 14회 전부(2026-09-15).
     // 후속질문은 이 연구가 평범한 설문보다 깊은 이야기를 남기려는 가장 큰 장치다.
     // 살아 있는 제공자 목록은 depth.js 한 곳에서만 정한다.
-    if (response.ok && isLiveModelSource(provider) && serverSource === provider && serverQuestion) {
+    // 참여자가 고른 언어가 아닌 글자가 섞여 오는 일이 있다 — 영어로 답한 사람에게
+    // 「Classmates와 visual work를 이야기할 때…」가 갔다(2026-09-16 파일럿).
+    // 섞인 질문을 그대로 내보내느니, 그 언어로 번역해 둔 준비된 질문을 쓴다.
+    // 질문은 정리문보다 짧으므로 글자 수 바닥을 낮춰 잡는다.
+    const mixedLanguage = Boolean(serverQuestion)
+      && hasWrongLanguageText(serverQuestion, responseLanguage, { minLetters: 10 });
+
+    if (response.ok && isLiveModelSource(provider) && serverSource === provider && serverQuestion && !mixedLanguage) {
       const run = { ...runBase, status: "success", source: provider, error_code: null, fallback_reason: null };
       return {
         decision: "ask",
@@ -664,13 +671,13 @@ export async function createAnchorFollowup({
       };
     }
 
-    const reason = response.ok ? "server_not_verified_motif" : (response.status === 429 ? "http_429" : `http_${response.status}`);
+    const reason = mixedLanguage ? "wrong_language" : response.ok ? "server_not_verified_motif" : (response.status === 429 ? "http_429" : `http_${response.status}`);
     const text = fallbackQuestion(anchorId, responseLanguage);
     const run = {
       ...runBase,
       status: "fallback",
       source: "fallback",
-      error_code: body.error_code || body.error?.code || (response.ok ? "UNVERIFIED_PROVIDER_RESPONSE" : `HTTP_${response.status}`),
+      error_code: mixedLanguage ? "WRONG_LANGUAGE_QUESTION" : body.error_code || body.error?.code || (response.ok ? "UNVERIFIED_PROVIDER_RESPONSE" : `HTTP_${response.status}`),
       fallback_reason: reason,
     };
     return { decision: "ask", source: "fallback", question: makeTurn({ anchorId, questionText: text, source: "fallback", language: responseLanguage, run, context }), run };

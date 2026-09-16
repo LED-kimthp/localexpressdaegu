@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260916-r40";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260916-r40";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260916-r40";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260916-r41";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260916-r41";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260916-r41";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1029,14 +1029,22 @@ const SUMMARY_LANGUAGE_NAMES = Object.freeze({
 
 // 참여자가 한국어가 아닌 말로 썼는데 정리문이 한글로 돌아오는 일이 있다(말레이어에서
 // 확인, 2026-09-11). 그 글은 참여자가 읽고 확인할 수 없으므로 정리문으로 쓸 수 없다.
-export function isWrongLanguageAdaptiveSummary(summary, context = {}) {
-  const language = String(context.response_language || "ko").toLowerCase();
-  if (!language || language.startsWith("ko")) return false;
-  const text = String(summary || "");
-  const letters = text.match(/\p{L}/gu) || [];
-  if (letters.length < 20) return false;
-  const hangul = text.match(/[\uAC00-\uD7A3]/gu) || [];
+// 참여자가 고른 언어가 아닌 글자가 섞여 나올 때. 정리문과 후속질문이 같은 기준을 쓴다 —
+// 기준이 두 벌이면 한쪽만 고쳐지고 다른 쪽은 그대로 새어 나간다(2026-09-16, 영어
+// 참여자에게 「Classmates와 visual work를 이야기할 때…」가 갔다).
+// 질문은 정리문보다 짧아서 글자 수 바닥을 따로 받는다.
+export function hasWrongLanguageText(text, language, { minLetters = 20 } = {}) {
+  const code = String(language || "ko").toLowerCase();
+  if (!code || code.startsWith("ko")) return false;
+  const value = String(text || "");
+  const letters = value.match(/\p{L}/gu) || [];
+  if (letters.length < minLetters) return false;
+  const hangul = value.match(/[\uAC00-\uD7A3]/gu) || [];
   return hangul.length / letters.length > 0.3;
+}
+
+export function isWrongLanguageAdaptiveSummary(summary, context = {}) {
+  return hasWrongLanguageText(summary, context.response_language || "ko");
 }
 
 // 정리문에 참여자가 쓰지 않은 영어 낱말이 섞여 나오는 일이 있다(간체로 통과하던 중
