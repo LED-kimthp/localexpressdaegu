@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260916-r38";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260916-r38";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260916-r38";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260916-r38";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260916-r38";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260916-r38";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260916-r38";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260916-r38";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260916-r38";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260916-r38";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260916-r38";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260916-r38";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260916-r38";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260916-r38";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260916-r38";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260916-r38";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260916-r38";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260916-r38";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260916-r38";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260916-r38";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260916-r38";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260916-r38";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260916-r38";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260916-r39";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260916-r39";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260916-r39";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260916-r39";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260916-r39";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260916-r39";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260916-r39";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260916-r39";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260916-r39";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260916-r39";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260916-r39";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260916-r39";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260916-r39";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260916-r39";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260916-r39";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260916-r39";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260916-r39";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260916-r39";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260916-r39";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260916-r39";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260916-r39";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260916-r39";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260916-r39";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "2b526de4f039-dirty 2026-09-16T04:29:55.075Z";
+const buildStamp = "853c15df743e-dirty 2026-09-16T04:55:06.678Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -53,7 +53,34 @@ const interfaceLanguageKey = "over39-interface-language";
 // 접근만으로 SecurityError를 받고, 그러면 이 모듈 전체가 실행되지 않아 **완전한 흰 화면**이
 // 된다. 「불러오는 중입니다」조차 나오지 않는다. 저장소는 언제든 없을 수 있다고 보고 읽는다.
 const readStoredLanguage = () => { try { return localStorage.getItem(interfaceLanguageKey); } catch { return null; } };
-const requestedLanguage = String(query.get("lang") || readStoredLanguage() || "ko");
+// 운영체제·브라우저가 알려주는 언어를 우리가 내놓는 아홉 개 중 하나로 옮긴다.
+// 이것이 없어서 링크에 ?lang= 을 붙이지 않고 들어온 해외 참여자는 읽을 수 없는
+// 한국어 화면을 봤다(2026-09-16 홍콩 발송 준비에서 드러났다).
+// 최상단에서 navigator 를 맨몸으로 읽지 않는다 — 없거나 막히면 흰 화면이 된다.
+const systemLanguage = () => {
+  try {
+    const tags = Array.isArray(navigator?.languages) && navigator.languages.length
+      ? navigator.languages
+      : [navigator?.language];
+    for (const raw of tags) {
+      const tag = String(raw || "").toLowerCase();
+      if (!tag) continue;
+      if (tag.startsWith("ko")) return "ko";
+      if (tag.startsWith("ja")) return "ja";
+      // 홍콩·대만·마카오와 「번체」 표기는 번체로, 나머지 중국어는 간체로 연다.
+      if (tag.startsWith("zh")) return /hant|-tw|-hk|-mo/u.test(tag) ? "zh-Hant" : "zh-Hans";
+      if (tag.startsWith("en")) return "en";
+      if (tag.startsWith("nl")) return "nl";
+      if (tag.startsWith("es")) return "es";
+      if (tag.startsWith("fr")) return "fr";
+      if (tag.startsWith("ms")) return "ms";
+    }
+  } catch { /* 브라우저가 알려주지 않으면 아래 기본값으로 연다 */ }
+  return "";
+};
+// 순서가 중요하다. 주소로 지정한 것 > 지난번에 고른 것 > 운영체제 > 한국어.
+// 사람이 직접 고른 언어가 운영체제 설정에 밀리면 안 된다.
+const requestedLanguage = String(query.get("lang") || readStoredLanguage() || systemLanguage() || "ko");
 // 단추에 내놓는 언어. 여기 한 곳에서만 정한다 — 목록이 두 벌이면 단추에서 내린 언어가
 // ?lang= 이나 저장된 선택으로 되살아난다.
 //
