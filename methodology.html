@@ -5,12 +5,28 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>LED Methodology</title>
+<meta name="description" content="장소, 이미지, 이동, 기록 — 로컬익스프레스 대구가 일상의 기록을 공공의 풍경으로 만들어 온 방법론과 프로젝트의 흐름."/>
+<link rel="canonical" href="https://localexpressdaegu.org/methodology.html"/>
+<meta name="theme-color" content="#f5f2eb"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Local Express Daegu"/>
+<meta property="og:locale" content="ko_KR"/>
+<meta property="og:image" content="https://localexpressdaegu.org/assets/og-image.jpg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="달성공원 프로젝트 기록 이미지"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta property="og:url" content="https://localexpressdaegu.org/methodology.html"/>
+<meta property="og:title" content="LED Methodology / 장소를 다시 읽는 방법"/>
+<meta property="og:description" content="장소, 이미지, 이동, 기록 — 로컬익스프레스 대구가 일상의 기록을 공공의 풍경으로 만들어 온 방법론과 프로젝트의 흐름."/>
+
 <style>
 *{box-sizing:border-box}
 :root{
   --bg:#f5f2eb;
   --ink:#151411;
-  --muted:#746f66;
+  --muted:#706c64;
   --line:#d8d1c5;
   --panel:#fbfaf6;
 }
@@ -63,7 +79,7 @@ a{color:inherit}
 .cover-note p{font-size:15px;line-height:1.85;color:var(--muted);word-break:keep-all;margin:0 0 16px}
 .section{
   padding:76px 44px;border-bottom:1px solid var(--line);
-  display:grid;grid-template-columns:minmax(260px,.48fr) minmax(0,1fr);gap:48px
+  display:grid;grid-template-columns:minmax(0,.48fr) minmax(0,1fr);gap:48px
 }
 .section h2{
   font-size:clamp(42px,5vw,82px);font-weight:400;
@@ -102,7 +118,7 @@ a{color:inherit}
   border-bottom:1px solid var(--line)
 }
 .reference-inner{
-  display:grid;grid-template-columns:minmax(260px,520px) minmax(280px,1fr);
+  display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);
   gap:24px;align-items:center
 }
 .reference-image{
@@ -193,8 +209,15 @@ a{color:inherit}
 /* v022 methodology refinement */
 .cover{min-height:72vh!important;align-items:center!important;padding:58px 44px 60px!important}
 .cover h1{font-size:clamp(54px,7.2vw,116px)!important}
+/* 사이드바(315px)가 본문 폭을 줄이는 만큼 표제 상한을 낮춘다.
+   min()의 둘째 항은 표제 칸 폭에서 역산한 값으로, 긴 단어가 중간에서
+   쪼개지지 않을 최대 크기다. 칸이 충분히 넓어지면 첫째 항(원래 크기)이 이긴다. */
+@media (min-width:1001px){
+  .cover h1{font-size:min(clamp(54px,7.2vw,116px), calc(12.8vw - 61px))!important}
+  .section h2,.summary h2{font-size:min(clamp(42px,5vw,82px), calc(6.3vw - 28px))!important}
+}
 .cover .desc{max-width:720px}
-.reference-inner{grid-template-columns:minmax(240px,.64fr) minmax(320px,1fr);gap:30px;align-items:center}
+.reference-inner{grid-template-columns:minmax(0,.64fr) minmax(0,1fr);gap:30px;align-items:center}
 .reference-caption .label{font-size:10px;letter-spacing:.16em}
 .reference-caption h3{font-size:22px;line-height:1.28;margin-bottom:10px}
 .reference-caption h3 .project-meta{display:block;margin-top:6px;font-size:14px;font-weight:400;line-height:1.65;color:var(--muted);letter-spacing:0}
@@ -210,7 +233,7 @@ a{color:inherit}
 /* v023 consolidated methodology refinement */
 .top .brand-link{display:block;text-decoration:none;color:inherit;cursor:pointer}
 .top .brand-link:hover{opacity:.72}
-.cover{max-width:1560px;margin:0 auto;min-height:70vh!important;grid-template-columns:minmax(520px,.9fr) minmax(460px,.74fr);gap:70px;align-items:center!important;padding:56px 52px 60px!important}
+.cover{max-width:1560px;margin:0 auto;min-height:70vh!important;grid-template-columns:minmax(0,.9fr) minmax(0,.74fr);gap:70px;align-items:center!important;padding:56px 52px 60px!important}
 .cover-note{max-width:620px;justify-self:start}
 .cover-note .en-card-title{font-size:18px;font-weight:400;line-height:1.45;letter-spacing:-.02em;margin:24px 0 10px;color:var(--muted)}
 .cover-note .en-card{font-size:13px;line-height:1.82;color:var(--muted)}
@@ -231,7 +254,7 @@ a{color:inherit}
 }
 .en-support p:last-child{margin-bottom:0!important}
 
-.reference-inner{grid-template-columns:minmax(240px,.64fr) minmax(320px,1fr);gap:30px;align-items:center}
+.reference-inner{grid-template-columns:minmax(0,.64fr) minmax(0,1fr);gap:30px;align-items:center}
 .reference-caption .label{font-size:10px;letter-spacing:.16em}
 .reference-caption h3{font-size:22px;line-height:1.28;margin-bottom:10px}
 .reference-caption p{font-size:14px;line-height:1.8}
@@ -613,6 +636,13 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 }
 .copy-status[hidden]{display:none!important}
 .copy-status small{font-size:11px;color:var(--muted)}
+
+/* 모바일 터치 영역 확보: 헤더 링크가 15px 높이라 누르기 어려웠다.
+   WCAG 2.2 AA(2.5.8)의 24x24px을 넘기도록 여백만 준다. 글자 크기는 그대로. */
+@media (max-width:820px){
+  .nav{gap:10px 14px;flex-wrap:wrap}
+  .nav a{display:inline-block;padding:7px 3px}
+}
 </style>
 </head>
 <body>
@@ -643,7 +673,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="kicker">INTRODUCTION</div>
 <h2>일상의 기록이<br/>공공의 풍경이<br/>되는 과정</h2>
 </div>
-<div class="body"><p class="lead">로컬익스프레스대구는 시각예술을 기반으로 장소와 이미지, 기록의 관계를 살핍니다.</p><p>우리는 장소와 시간 속에서 발생한 장면과 언어, 기억과 기록이 어떤 자리로 옮겨지는지 천천히 따라갑니다. 참여자의 카메라로 도착한 이미지, 이동을 통해 다시 전해진 기억, 텍스트와 출판으로 정리된 질문, 전시와 아카이브 안에서 배열된 기록은 각기 다른 경로로 장소를 다시 읽게 합니다.</p><p>개인의 사진 한 장, 특정한 시간에 도착한 이미지, 오래된 골목의 표면, 전시가 놓인 조건, 동물원의 시간과 도시 재편의 흐름은 서로 다른 기록의 형태를 가집니다. 이 기록들이 함께 놓일 때, 장소를 기억하고 다시 바라보는 감각이 조금씩 생깁니다.</p><p>그 감각은 장소와 기억을 옮기고 다시 쓰는 방식으로 이어집니다. 로컬익스프레스대구는 멀어진 기억, 아직 공공의 언어를 얻지 못한 장소, 서로 다른 시간 속에 흩어진 장면들을 감각 가능한 거리로 옮겨 놓습니다.</p></div>
+<div class="body"><p class="lead">로컬익스프레스 대구는 시각예술을 기반으로 장소와 이미지, 기록의 관계를 살핍니다.</p><p>우리는 장소와 시간 속에서 발생한 장면과 언어, 기억과 기록이 어떤 자리로 옮겨지는지 천천히 따라갑니다. 참여자의 카메라로 도착한 이미지, 이동을 통해 다시 전해진 기억, 텍스트와 출판으로 정리된 질문, 전시와 아카이브 안에서 배열된 기록은 각기 다른 경로로 장소를 다시 읽게 합니다.</p><p>개인의 사진 한 장, 특정한 시간에 도착한 이미지, 오래된 골목의 표면, 전시가 놓인 조건, 동물원의 시간과 도시 재편의 흐름은 서로 다른 기록의 형태를 가집니다. 이 기록들이 함께 놓일 때, 장소를 기억하고 다시 바라보는 감각이 조금씩 생깁니다.</p><p>그 감각은 장소와 기억을 옮기고 다시 쓰는 방식으로 이어집니다. 로컬익스프레스 대구는 멀어진 기억, 아직 공공의 언어를 얻지 못한 장소, 서로 다른 시간 속에 흩어진 장면들을 감각 가능한 거리로 옮겨 놓습니다.</p></div>
 </section>
 <section class="section" id="methodology">
 <div>
@@ -652,13 +682,13 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="subtitle">장소, 이미지, 이동, 기록의 초기 층위</div><div class="subtitle-en">Early layers of site, image, movement, and record</div>
 </div>
 <div class="body">
-<p class="lead">로컬익스프레스대구의 방법론은 2017년 설립 이후의 프로젝트들 속에서 구체화되었습니다.</p>
+<p class="lead">로컬익스프레스 대구의 방법론은 2017년 설립 이후의 프로젝트들 속에서 구체화되었습니다.</p>
 <p>그 바탕에는 설립 이전부터 이어져 온 장소와 이미지에 대한 감각, 이동과 전달의 방식, 그리고 2015년 대구예술발전소 입주작가 활동을 통해 형성된 작가들과의 협업 경험이 놓여 있습니다.</p>
-<p>2015–2016년 〈안녕 배달〉에서 형성된 이동과 전달의 감각, 2016년 안동문화예술의전당 〈K를 찾아서〉에서 다뤄진 장소와 도시 브랜드에 대한 질문은 이후 로컬익스프레스대구의 장소·이미지·공공 기록 방법론으로 이어지는 중요한 선행 장면입니다. 이 프로젝트는 그 관계의 연장선에서 진행되었고, 안동이라는 장소와 ‘K’라는 문화적 기호가 전통, 관광, 산업, 세계화의 언어 속에서 어떻게 작동하는지를 살폈습니다.</p>
+<p>2015–2016년 〈안녕 배달〉에서 형성된 이동과 전달의 감각, 2016년 안동문화예술의전당 〈K를 찾아서〉에서 다뤄진 장소와 도시 브랜드에 대한 질문은 이후 로컬익스프레스 대구의 장소·이미지·공공 기록 방법론으로 이어지는 중요한 선행 장면입니다. 이 프로젝트는 그 관계의 연장선에서 진행되었고, 안동이라는 장소와 ‘K’라는 문화적 기호가 전통, 관광, 산업, 세계화의 언어 속에서 어떻게 작동하는지를 살폈습니다.</p>
 <div class="reference-plate">
 <div class="reference-inner">
 <div class="reference-image">
-<img alt="〈K를 찾아서〉 도록 표지" src="assets/methodology/k_search_cover.jpg"/>
+<img alt="〈K를 찾아서〉 도록 표지" src="assets/methodology/k_search_cover.jpg" loading="lazy" decoding="async" width="2195" height="1418"/>
 </div>
 <div class="reference-caption">
 <div class="label">시각 참조 01 / Visual Reference</div>
@@ -668,8 +698,8 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 </div>
 </div>
 </div>
-<p>이후 로컬익스프레스대구의 실천은 이러한 감각을 장소 기반 리서치, 공공 기록, 시민 참여, 출판과 담론 생산의 구조로 확장해왔습니다. 장소를 읽고, 이미지를 공공적 질문으로 세우고, 시민의 기억과 사회적 조건을 기록의 구조로 전환하는 일. 이 흐름이 로컬익스프레스대구가 이어가고자 하는 방법론의 중심입니다.</p>
-<p>동시대 미술 안에는 작품의 유통과 전시, 시장과 연구, 공공적 실천이 각기 다른 방식으로 작동합니다. 로컬익스프레스대구는 그 가운데 장소와 이미지, 시민의 기억과 공공적 해석이 만나는 지점에서 예술이 어떤 자리를 만들 수 있는지 살핍니다. 그 자리는 빠른 성과나 큰 선언으로 닫히지 않고, 오래 볼 수 있는 기록과 다시 만날 수 있는 장면에 가깝습니다.</p>
+<p>이후 로컬익스프레스 대구의 실천은 이러한 감각을 장소 기반 리서치, 공공 기록, 시민 참여, 출판과 담론 생산의 구조로 확장해왔습니다. 장소를 읽고, 이미지를 공공적 질문으로 세우고, 시민의 기억과 사회적 조건을 기록의 구조로 전환하는 일. 이 흐름이 로컬익스프레스 대구가 이어가고자 하는 방법론의 중심입니다.</p>
+<p>동시대 미술 안에는 작품의 유통과 전시, 시장과 연구, 공공적 실천이 각기 다른 방식으로 작동합니다. 로컬익스프레스 대구는 그 가운데 장소와 이미지, 시민의 기억과 공공적 해석이 만나는 지점에서 예술이 어떤 자리를 만들 수 있는지 살핍니다. 그 자리는 빠른 성과나 큰 선언으로 닫히지 않고, 오래 볼 수 있는 기록과 다시 만날 수 있는 장면에 가깝습니다.</p>
 </div>
 </section>
 <section class="section" id="flow">
@@ -682,14 +712,14 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <button type="button"><div><div class="fold-title">이동이 막힌 존재와 기억의 회로</div><div class="fold-meta">〈안녕 배달〉 / 이동과 전달 / 기억의 통로</div></div><span class="fold-icon">+</span></button>
 <div class="fold-content" hidden="">
 <p>〈안녕 배달〉에서 출발한 배달의 감각은 이동하기 어려운 몸과 멀어진 기억 사이에 임시적인 통로를 만드는 일이었습니다. 요양병원 안의 언어와 그림, 기억과 단서는 병원 밖의 장소를 향한 지도가 되었고, 예술가는 그 방향을 따라 이동했습니다. 영상은 그 이동을 다시 전하는 형식이 되었고, 병원 안의 기억과 병원 밖의 장소 사이에 잠시 통로를 만들었습니다.</p>
-<p>이 경험은 이후 로컬익스프레스대구가 장소를 바라보는 중요한 기준이 되었습니다. 장소는 주소와 지명, 그리고 누군가의 기억이 계속 향하고 있는 방향을 함께 품습니다. 예술은 그 방향을 따라가며, 사회가 기능적으로 처리한 문제 안에 남겨진 감정과 관계의 층위를 다시 보이게 합니다.</p>
-<div class="reference-plate flow-visual-reference"><div class="reference-inner"><div class="reference-image"><img alt="〈안녕 배달〉 찰흙 만지기 과정" src="assets/methodology/hello_delivery_clay_workshop.jpg"/></div><div class="reference-caption"><div class="label">시각 참조 02 / Visual Reference</div><h3>〈안녕 배달〉</h3><p>찰흙 만지기 / 기억을 꺼내는 과정</p><div class="meta">Clay workshop · Drawing out memory</div></div></div></div></div>
+<p>이 경험은 이후 로컬익스프레스 대구가 장소를 바라보는 중요한 기준이 되었습니다. 장소는 주소와 지명, 그리고 누군가의 기억이 계속 향하고 있는 방향을 함께 품습니다. 예술은 그 방향을 따라가며, 사회가 기능적으로 처리한 문제 안에 남겨진 감정과 관계의 층위를 다시 보이게 합니다.</p>
+<div class="reference-plate flow-visual-reference"><div class="reference-inner"><div class="reference-image"><img alt="〈안녕 배달〉 찰흙 만지기 과정" src="assets/methodology/hello_delivery_clay_workshop.jpg" loading="lazy" decoding="async" width="787" height="1118"/></div><div class="reference-caption"><div class="label">시각 참조 02 / Visual Reference</div><h3>〈안녕 배달〉</h3><p>찰흙 만지기 / 기억을 꺼내는 과정</p><div class="meta">Clay workshop · Drawing out memory</div></div></div></div></div>
 </div>
 <div class="fold">
 <button type="button"><div><div class="fold-title">공론장</div><div class="fold-meta">예술적 발화 / 제도 / 공론장의 조건</div></div><span class="fold-icon">+</span></button>
 <div class="fold-content" hidden="">
 <p>2017년 대구 청년미술프로젝트에서 일부 작품과 작가노트를 둘러싼 수정·교체·제외 요구는 예술적 발화가 제도와 공론의 장 안에서 어떤 조건으로 놓이는가를 묻는 계기가 되었습니다.</p>
-<p>그 문제의식은 북성로 일대에서 전시, 라운드테이블, 토론, 공연이 함께 열린 문화예술 공론장으로 이어졌습니다.</p><div class="reference-plate public-field-2017-reference"><div class="reference-inner"><div class="reference-image"><img alt="공론장 관련 장면" src="assets/methodology/public_field_2017.jpg"/></div><div class="reference-caption"><div class="label">관련 장면 / Visual Note</div><h3>공론장</h3><p>예술적 발화와 공론장의 조건을 묻는 장면</p><div class="meta">A public field opened within the city</div></div></div></div>
+<p>그 문제의식은 북성로 일대에서 전시, 라운드테이블, 토론, 공연이 함께 열린 문화예술 공론장으로 이어졌습니다.</p><div class="reference-plate public-field-2017-reference"><div class="reference-inner"><div class="reference-image"><img alt="공론장 관련 장면" src="assets/methodology/public_field_2017.jpg" loading="lazy" decoding="async" width="960" height="960"/></div><div class="reference-caption"><div class="label">관련 장면 / Visual Note</div><h3>공론장</h3><p>예술적 발화와 공론장의 조건을 묻는 장면</p><div class="meta">A public field opened within the city</div></div></div></div>
 <p>예술의 공공성, 작가의 노동, 표현의 자유, 관객의 신뢰, 행정의 책임, 장소의 윤리, 참여자의 존엄은 서로 연결된 기준입니다. 이 기준들이 함께 자리할 때, 예술은 하나의 사건을 지나 다시 질문하고 기록하고 만날 수 있는 자리를 만듭니다.</p>
 </div>
 </div>
@@ -700,7 +730,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="reference-plate">
 <div class="reference-inner">
 <div class="reference-image">
-<img alt="신장동 아카이브 야간 장면" src="assets/methodology/shinjang_archive_night_stall.jpg"/>
+<img alt="신장동 아카이브 야간 장면" src="assets/methodology/shinjang_archive_night_stall.jpg" loading="lazy" decoding="async" width="2048" height="1365"/>
 </div>
 <div class="reference-caption">
 <div class="label">시각 참조 03 / Visual Reference</div>
@@ -724,7 +754,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 </div>
 <div class="body">
 <p class="lead">〈정례브리핑 14시, 27일〉은 팬데믹 시기 매일 반복되던 공적 브리핑의 시간을 서로 다른 장소의 일상 기록으로 옮긴 프로젝트입니다.</p>
-<p>당시 오후 2시의 정례브리핑은 확진자 수와 방역 지침, 사회적 거리두기의 기준을 전달하는 익숙한 공적 시간이었습니다. 로컬익스프레스대구는 그 시간을 다시 바라보며, 숫자와 지침의 바깥에서 사람들이 어떤 하루를 지나고 있었는지 묻고자 했습니다.</p>
+<p>당시 오후 2시의 정례브리핑은 확진자 수와 방역 지침, 사회적 거리두기의 기준을 전달하는 익숙한 공적 시간이었습니다. 로컬익스프레스 대구는 그 시간을 다시 바라보며, 숫자와 지침의 바깥에서 사람들이 어떤 하루를 지나고 있었는지 묻고자 했습니다.</p>
 <div class="rhythm-grid">
 <div class="rhythm-card"><strong>14:00</strong><span>공적 브리핑의 시간과 개인의 하루가 만나는 기준점</span></div>
 <div class="rhythm-card"><strong>27컷</strong><span>일회용 카메라의 제한된 프레임과 기록의 리듬</span></div>
@@ -745,7 +775,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="reference-plate">
 <div class="reference-inner">
 <div class="reference-image">
-<img alt="〈정례브리핑 14시, 27일〉 전시 기록 벽" src="assets/methodology/regular_briefing_exhibition_wall.jpg"/>
+<img alt="〈정례브리핑 14시, 27일〉 전시 기록 벽" src="assets/methodology/regular_briefing_exhibition_wall.jpg" loading="lazy" decoding="async" width="2048" height="1365"/>
 </div>
 <div class="reference-caption">
 <div class="label">시각 참조 04 / Visual Reference</div>
@@ -771,7 +801,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="reference-plate">
 <div class="reference-inner">
 <div class="reference-image">
-<img alt="PAN Series 워크숍 장면" src="assets/methodology/pan_series_workshop_locality.jpg"/>
+<img alt="PAN Series 워크숍 장면" src="assets/methodology/pan_series_workshop_locality.jpg" loading="lazy" decoding="async" width="927" height="615"/>
 </div>
 <div class="reference-caption">
 <div class="label">시각 참조 05 / Visual Reference</div>
@@ -781,7 +811,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 </div>
 </div>
 </div>
-<p>공론장은 하나의 프로그램으로만 설명되지 않습니다. 누가 질문할 수 있는지, 어떤 언어가 오갈 수 있는지, 비평과 관계가 어떻게 형성되는지, 전시가 어떤 과정 끝에 발생하는지를 함께 살피는 조건에 가깝습니다. 로컬익스프레스대구의 PAN은 그런 판의 가능성을 실험한 흐름입니다.</p>
+<p>공론장은 하나의 프로그램으로만 설명되지 않습니다. 누가 질문할 수 있는지, 어떤 언어가 오갈 수 있는지, 비평과 관계가 어떻게 형성되는지, 전시가 어떤 과정 끝에 발생하는지를 함께 살피는 조건에 가깝습니다. 로컬익스프레스 대구의 PAN은 그런 판의 가능성을 실험한 흐름입니다.</p>
 <div class="en-support">
 <p>PAN Series is a research project that asks what it means to work locally, and how the question of locality can be reopened.</p>
 <p>Portfolio review, lectures, workshops, and exhibition each function as a program and together as a single flow. Review is a space to look at work again; lectures build a language for questions; workshops open a space for dialogue. The exhibition is the scene that emerges after all of it accumulates.</p>
@@ -798,12 +828,12 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div class="section-en">Gathering the times of people dispersed across one place.</div>
 </div>
 <div class="body">
-<p class="lead">달성공원 프로젝트는 로컬익스프레스대구의 방법론이 가장 복합적으로 드러나는 장면입니다.</p>
+<p class="lead">달성공원 프로젝트는 로컬익스프레스 대구의 방법론이 가장 복합적으로 드러나는 장면입니다.</p>
 <p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p>
 <div class="reference-plate">
 <div class="reference-inner">
 <div class="reference-image">
-<img alt="달성공원 풍경" src="assets/methodology/dalseong_park_landscape_20160909.jpg"/>
+<img alt="달성공원 풍경" src="assets/methodology/dalseong_park_landscape_20160909.jpg" loading="lazy" decoding="async" width="2048" height="1365"/>
 </div>
 <div class="reference-caption">
 <div class="label">시각 참조 06 / Visual Reference</div>
@@ -814,7 +844,7 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 </div>
 </div>
 <p>달성공원 프로젝트에서 참여자의 사진과 기억은 중요한 기록의 입구가 됩니다. 개인의 앨범 속 사진 한 장은 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 품고 있습니다. 누군가에게 달성공원은 어린 시절의 나들이 장소이고, 누군가에게는 동물원이며, 누군가에게는 오래된 성곽과 도시의 기억이 겹친 장소입니다.</p>
-<p>이 프로젝트는 참여자의 사진과 기억을 동의와 확인을 거쳐 정리하고, 하나의 장소에 쌓인 시간을 다시 읽는 기록의 과정으로 다룹니다. 중요한 것은 사진의 양보다, 사진을 통해 어떤 기억과 장소 감각이 다시 읽히는가입니다. 온라인 접수 양식은 기억을 조심스럽게 맡기는 입구로 기능합니다. 공개는 로컬익스프레스대구의 아카이브 검토와 큐레이션을 통해 이루어집니다.</p>
+<p>이 프로젝트는 참여자의 사진과 기억을 동의와 확인을 거쳐 정리하고, 하나의 장소에 쌓인 시간을 다시 읽는 기록의 과정으로 다룹니다. 중요한 것은 사진의 양보다, 사진을 통해 어떤 기억과 장소 감각이 다시 읽히는가입니다. 온라인 접수 양식은 기억을 조심스럽게 맡기는 입구로 기능합니다. 공개는 로컬익스프레스 대구의 아카이브 검토와 큐레이션을 통해 이루어집니다.</p>
 <div class="en-support">
 <p>The Dalseong Park Project is where the methodology of Local Express Daegu appears in its most layered form.</p>
 <p>In this project, participants’ photographs and memories serve as an entry point into the record. A single photograph from a personal album holds a sense of place that official histories rarely capture.</p>
@@ -839,10 +869,10 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
 <div><strong>달성공원</strong><span>하나의 장소에 흩어진 사람들의 시간을 다시 모읍니다.</span></div>
 </div>
 <p class="final-line">Everyday Documentation as Public Record.<br/>일상의 기록이 공공의 풍경이 되는 방식.</p>
-<p class="small">그 단순한 이동 안에 로컬익스프레스대구가 장소와 이미지, 공공 기록을 다루는 방법론이 있습니다.</p><div class="en-support"><p>That simple act of movement holds the methodology through which Local Express Daegu works with site, image, and public record.</p></div>
+<p class="small">그 단순한 이동 안에 로컬익스프레스 대구가 장소와 이미지, 공공 기록을 다루는 방법론이 있습니다.</p><div class="en-support"><p>That simple act of movement holds the methodology through which Local Express Daegu works with site, image, and public record.</p></div>
 </div>
 </section>
-<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="small">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a class="copy-email" href="#" data-email="contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><span class="copy-status" role="status" aria-live="polite" hidden>이메일 주소가 복사되었습니다<br/><small>Email copied</small></span><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
+<section class="contact" id="contact"><h2>Contact</h2><p>로컬익스프레스 대구는 장소와 기억, 기록과 공공성에 관한 질문을 오래 바라보고 있습니다.</p><p>각자의 방식으로 이어온 질문들이 같은 방향 안에서 만날 수 있기를 기대합니다.</p><p class="small">Messages, materials, research inquiries, and conversations that resonate with this direction are welcome.</p><a class="copy-email" href="#" data-email="contact@localexpressdaegu.org">contact@localexpressdaegu.org</a><span class="copy-status" role="status" aria-live="polite" hidden>이메일 주소가 복사되었습니다<br/><small>Email copied</small></span><a href="https://www.instagram.com/_l.e._d/" rel="noopener" target="_blank">Instagram @_l.e._d</a></section>
 </main>
 </div>
 <footer class="footer"><div><strong>LED</strong><br/>Local Express Daegu</div><div>Nonprofit Arts Organization / 비영리 예술단체<br/>명칭: 로컬익스프레스 대구 / Local Express Daegu<br/>고유번호: 415-82-83174</div><div>Location: Daegu, South Korea<br/>Instagram: @_l.e._d</div><div>© Local Express Daegu. All rights reserved.</div></footer>
