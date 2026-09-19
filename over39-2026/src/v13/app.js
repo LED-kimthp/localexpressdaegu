@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r43";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r43";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r43";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r43";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r43";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r43";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r43";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r43";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r43";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r43";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r43";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r43";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r43";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r43";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r43";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r43";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r43";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r43";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r43";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r43";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r43";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r43";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r43";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r44";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r44";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r44";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r44";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r44";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r44";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r44";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r44";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r44";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r44";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r44";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r44";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r44";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r44";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r44";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r44";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r44";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r44";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r44";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r44";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r44";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r44";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r44";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "364733fc234d-dirty 2026-09-19T16:54:51.673Z";
+const buildStamp = "c70f60bf6d67-dirty 2026-09-19T18:06:59.840Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -248,7 +248,7 @@ const CHOICE_COPY_KO = {
   },
   P07: {
     VISIBLE_ACTIVE: "활동과 발표 — 활동과 외부 발표가 함께 이어졌습니다.",
-    ACTIVE_LESS_VISIBLE: "보이지 않는 지속 — 활동은 이어졌고 외부 발표의 횟수는 줄었습니다.",
+    ACTIVE_LESS_VISIBLE: "활동은 계속, 발표는 줄어듦 — 활동은 이어졌고 외부 발표의 횟수는 줄었습니다.",
     ROLE_SHIFT: "역할과 방식의 변화 — 역할과 매체, 활동 방식이 이전과 다르게 움직였습니다.",
     PROJECT_ONLY: "프로젝트 단위의 활동 — 특정 프로젝트가 열리는 시기에 활동했습니다.",
     LIFE_ADJUSTED: "생활에 맞춘 속도 — 생활과 돌봄, 건강과 다른 일에 맞추어 활동의 속도를 조절했습니다.",
@@ -270,13 +270,15 @@ const CHOICE_COPY_KO = {
     SKIP: "건너뛰기",
   },
   P13: {
-    YES: "보이지 않는 지속 — 밖에서 잘 보이지 않은 시기에도 이어온 일이 있었습니다.",
-    MIXED: "이어짐과 멈춤 — 이어간 일과 멈춘 시기가 함께 있었습니다.",
-    NO: "떠오르기 어려움 — 밖에서 잘 보이지 않던 때에 이어온 일을 지금은 구체적으로 떠올리기 어렵습니다.",
+    // 2026-09-20: 제목이 「보이지 않는 지속」 같은 연구 용어였다 — 첫 검토가 되물은 바로 그 말.
+    // 참여자가 고르는 제목은 답의 말로, 설명은 연구의 말로 둔다. 값(YES 등)은 그대로다.
+    YES: "네, 있었어요 — 밖에서는 잘 안 보였지만 계속하던 일이 있었습니다.",
+    MIXED: "하다 말다 했어요 — 계속한 일과 멈춘 때가 함께 있었습니다.",
+    NO: "떠올리기 어려워요 — 그때 계속하던 일을 지금은 구체적으로 떠올리기 어렵습니다.",
     // 계속 드러난 채로 이어온 사람에게는 「그 시기」가 없다. 이 선택지가 없으면 그분들이
     // 자기 현실을 「기억이 안 난다」로 답해야 했다 — 연구가 피하려던 바로 그 일이다.
-    NO_SUCH_PERIOD: "계속 드러난 지속 — 활동이 대체로 밖으로 보이는 채 이어져 왔습니다.",
-    UNSURE: "아직 정하기 어려움 — 지금은 그 이어짐을 한 가지 상태로 말하기 어렵습니다.",
+    NO_SUCH_PERIOD: "그런 때가 따로 없었어요 — 활동이 대체로 밖으로 보이는 채 이어져 왔습니다.",
+    UNSURE: "지금은 잘 모르겠어요 — 한 가지 상태로 말하기 어렵습니다.",
   },
   P14: {
     STEADY: "꾸준한 지속 — 작업이나 핵심 활동을 비교적 꾸준히 이어가고 있습니다.",
@@ -533,7 +535,7 @@ const rc2QuestionTopics = {
   M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "여기서 잠깐", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "이유", AI_ANCHOR_M04_TEXT: "여기서 잠깐", M05: "남은 단서",
   MEMORY_TIME: "시간", MEMORY_EVIDENCE: "경험 방식", MEMORY_TO_PRESENT: "현재",
   ACTIVITY: "현재의 연결", PRACTICE_PUBLIC_STATE: "현재 상태", STATE_BACKGROUND: "현재에 작용한 현실",
-  TRANSITION: "변화", AI_ANCHOR_P12: "여기서 잠깐", CONTINUITY: "보이지 않는 지속", AI_ANCHOR_P13_TEXT: "여기서 잠깐", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "여기서 잠깐", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "여기서 잠깐",
+  TRANSITION: "변화", AI_ANCHOR_P12: "여기서 잠깐", CONTINUITY: "이어온 것", AI_ANCHOR_P13_TEXT: "여기서 잠깐", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "여기서 잠깐", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "여기서 잠깐",
   D03: "현실 경험", D04: "영향", AI_CONDITIONAL_D04_CONDITIONS: "여기서 잠깐", R01: "이어갈 방식", COMMUNITY: "다른 이름",
   REFLECTION_REVIEW: "응답 정리", SUBMIT: "세 방향 확인", USE_SCOPE: "활용 범위",
 };
@@ -1035,6 +1037,10 @@ function screenHeading(title, help = "", purpose = purposeForScreen()) {
 }
 
 function renderConsent() {
+  // 2026-09-20: 동의 화면의 안내 다섯 줄(AI 전달·중간 저장·시각 기록·계속 보관·철회 주소)을
+  // 접어 둔다. 약속의 글자는 그대로다(시험이 잠근다). 첫 실제 참여자(총괄기획)가 「참여
+  // 안내는 두 줄이면 된다 — 조사에 참여된다 / 정책제안 자료로 쓰인다」고 짚어, 그 두 줄을
+  // 부제(consentHelp)에 두고 나머지는 펼쳐 보게 했다.
   if (isRc2) {
     const local = stage();
     return `${screenHeading(local.consentTitle, local.consentHelp)}
@@ -1048,6 +1054,9 @@ function renderConsent() {
       <section class="consent-choice-block">
         <h3>${esc(t("AI 사용"))}</h3>
         ${renderChoices("RC02", [["YES", local.consentAi]])}
+      </section>
+      <details class="participant-context-section participant-context-optional consent-details"><summary><span>${esc(local.consentDetails)}</span></summary><div class="consent-details-body">
+      <section class="consent-choice-block">
         <p class="ai-use-note" role="note">${esc(t("후속 질문과 참여 기록 초안을 만드는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다."))}</p>
       </section>
       <section class="consent-choice-block">
@@ -1055,7 +1064,8 @@ function renderConsent() {
         <p class="ai-use-note" role="note">${esc(t("설문 중간의 두 지점에서도 그때까지의 응답이 저장됩니다. 도중에 멈추셔도 그 지점까지의 이야기는 남습니다."))}</p>
         <p class="ai-use-note" role="note">${esc(t("참여를 시작한 시각과 저장을 마친 시각, 그때 사용한 설문 앱의 버전이 응답과 함께 기록됩니다."))}</p>
         <p class="ai-use-note" role="note">${esc(t("응답은 연구 자료로 계속 보관합니다. 철회를 원하시면 언제든 다음 주소로 요청할 수 있습니다."))} <a href="mailto:${researchContactEmail}">${researchContactEmail}</a></p>
-      </section>`;
+      </section>
+      </div></details>`;
   }
   return `${screenHeading("이 조사의 목적과 참여 방식을 확인해 주세요.", "기억은 사라진 이름과 장면을 다시 불러오는 시작입니다.")}
     ${renderChoices("RC01", [["YES", question("RC01").text]])}
@@ -1208,14 +1218,19 @@ function renderParticipantContext() {
   const copy = participantContextCopy(state.language);
   const options = participantContextOptions(state.language);
   const local = stage();
-  const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
-  const titles = task7().contextSteps;
-  const sections = [
-    `<section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>`,
-    `<section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>`,
-    `<section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section><details class="participant-context-section participant-context-optional context-unit-optional" ${state.answers.participation_unit ? "open" : ""}><summary><span>${esc(copy.unit || unit.text)}</span><small>${esc(local.optional)}</small></summary><div class="context-unit-optional-body">${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</div></details>`,
-  ];
-  return `<div class="context-internal-progress" aria-label="Context ${step + 1} / 3"><span>CONTEXT ${step + 1} / 3</span><ol aria-hidden="true">${[0, 1, 2].map((index) => `<li class="${index === step ? "current" : index < step ? "complete" : ""}">${index + 1}</li>`).join("")}</ol></div>${screenHeading(titles[step], local.contextHelp)}${sections[step]}`;
+  // 2026-09-20: 세 단계(분야 13 → 방식 15 → 형태 10·단위 4)로 나뉘어 있어, 첫 문장을
+  // 쓰기까지 이 화면에서만 네 번 골라야 했다. 첫 실제 참여자(총괄기획)가 「초반에 지치게
+  // 한다」고 짚은 자리다. 분야 하나만 묻고 나머지 셋은 접어 둔다 — 자료 칸은 그대로라
+  // 펼쳐서 답한 사람의 답은 전과 똑같이 저장되고, 분석(research-insights)이 쓰는 것은
+  // 분야와 형태뿐이다. 되돌리려면 이 함수의 이전 판(git 85fbb5b 이전)을 다시 두면 된다.
+  const moreOpen = values(state.answers.participation_mode).length || state.answers.activity_form || state.answers.participation_unit;
+  return `${screenHeading(copy.title, copy.help)}
+    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
+    <details class="participant-context-section participant-context-optional context-more-optional" ${moreOpen ? "open" : ""}><summary><span>${esc(copy.more)}</span><small>${esc(local.optional)}</small></summary><div class="context-more-optional-body">
+      <section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>
+      <section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section>
+      <section class="participant-context-section"><label class="field-label">${esc(copy.unit || unit.text)}</label>${renderChoices("CTX_UNIT", options.participation_unit)}${renderOtherInput("CTX_UNIT", copy.unitOther)}</section>
+    </div></details>`;
 }
 
 function renderActivity() {
@@ -1286,11 +1301,13 @@ function renderContinuity() {
     : kind === "EVERYDAY"
       ? "연습, 모임, 배움, 돌봄, 관계, 휴식처럼 가까운 표현으로 적어주세요."
       : "작업, 기록, 공부, 돌봄, 관계, 거리두기, 휴식처럼 가까운 표현으로 적어주세요.";
+  // 2026-09-20: 첫 검토(총괄기획)가 「보이지 않는 지속? 어디서? 어떻게? 왜?」라고 되물었다.
+  // 물음은 「그때도 계속하던 일」로 바꾸고, 도움말이 보기(어떻게)와 묻는 이유(왜)를 든다.
   const help = audience
-    ? "전시장에 자주 가지 않던 때가 있었다면, 영화, 공연, 만화, 웹툰, 디자인, 온라인 이미지처럼 다른 경로로 관심이 이어졌을 수 있어요."
+    ? "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심이 무엇인지 찾으려고 묻습니다."
     : kind === "EVERYDAY"
-      ? "공연이나 발표가 적었던 때가 있었다면, 연습, 모임, 배움과 관계가 다른 모습으로 이어졌을 수 있어요."
-      : "발표가 적었던 때가 있었다면, 작업, 조사, 관계와 생각이 다른 모습으로 이어졌을 수 있어요.";
+      ? "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것이 무엇인지 찾으려고 묻습니다."
+      : "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것이 무엇인지 찾으려고 묻습니다.";
   return `${screenHeading(copy.p13, help)}
     ${renderChoices("P13", p13.options)}
     ${shouldShowP13Text(stateValue) ? renderText("P13_TEXT", { field: "invisible_continuity_text", value: state.answers.invisible_continuity_text || "", placeholder, label: audience ? p13Text.text_audience : p13Text.text }) : ""}`;
@@ -2053,7 +2070,12 @@ function canContinue(id) {
   if (id === "ROLE_GROUP") return Boolean(state.answers.role_group_primary);
   if (id === "ROLE_PRIMARY") return Boolean(state.answers.role_primary);
   if (id === "ROLE_BRIDGE") return Boolean(state.answers.role_group_primary && state.answers.role_primary);
-  if (id === "PARTICIPANT_CONTEXT") return hasParticipantContext(state.answers);
+  // 2026-09-20: 방식·형태·단위는 접힌 선택 항목이 되었다. 분야만 있으면 넘어간다.
+  // hasParticipantContext(네 칸 완성)는 자료를 압축할 때의 기준으로 그대로 남는다.
+  if (id === "PARTICIPANT_CONTEXT") {
+    const field = values(state.answers.field);
+    return field.length > 0 && (!field.includes("OTHER") || Boolean(String(state.answers.field_other || "").trim()));
+  }
   if (id === "M01") return Boolean(state.answers.memory_type);
   if (id === "M02") return Boolean(state.answers.memory_clue_text?.trim());
   if (id === "M04") return Boolean(state.answers.m_declared && state.answers.memory_meaning_text?.trim());
@@ -2107,19 +2129,6 @@ function canContinue(id) {
     return researchContactComplete();
   }
   return true;
-}
-
-function canContinueContextStep(step = Number(state.contextStep || 0)) {
-  if (step === 0) {
-    const field = values(state.answers.field);
-    return field.length > 0 && (!field.includes("OTHER") || Boolean(String(state.answers.field_other || "").trim()));
-  }
-  if (step === 1) {
-    const mode = values(state.answers.participation_mode);
-    return mode.length > 0 && (!mode.includes("OTHER") || Boolean(String(state.answers.participation_mode_other || "").trim()));
-  }
-  return Boolean(state.answers.activity_form)
-    && (state.answers.participation_unit !== "OTHER" || Boolean(String(state.answers.participation_unit_other || "").trim()));
 }
 
 function createResponse(submissionPhase = "final") {
@@ -2905,7 +2914,6 @@ function renderSurvey() {
   const id = screens[state.step];
   const meta = progressMeta(id);
   const adaptiveScreen = Boolean(adaptiveScreenCheckpoint[id]);
-  const contextInternalStep = id === "PARTICIPANT_CONTEXT" ? Math.max(0, Math.min(2, Number(state.contextStep || 0))) : null;
   const nextLabel = isRc2 && id === "CONSENT"
     ? greetingFirst().consentContinue
     : id === "USE_SCOPE"
@@ -2917,9 +2925,9 @@ function renderSurvey() {
       : adaptiveScreen
         ? state.adaptiveGenerating ? "답변을 읽고 있어요" : "이 답변에서 이어가기"
         : state.depthGenerating ? "질문을 준비하고 있습니다" : id === "DEPTH_D" && state.summaryGenerating ? "정리하고 있습니다" : state.summaryGenerating ? "기록을 정리하고 있습니다" : state.translationGenerating ? "번역을 준비하고 있습니다" : "다음";
-  const nextDisabled = (contextInternalStep === null ? !canContinue(id) : !canContinueContextStep(contextInternalStep)) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
-  const backAction = contextInternalStep !== null && contextInternalStep > 0 ? "context-back" : "back";
-  const nextAction = contextInternalStep !== null && contextInternalStep < 2 ? "context-next" : "next";
+  const nextDisabled = !canContinue(id) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
+  const backAction = "back";
+  const nextAction = "next";
   return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
@@ -3548,20 +3556,6 @@ document.addEventListener("click", (event) => {
     });
     return;
   }
-  if (target.dataset.action === "context-back") {
-    state.contextStep = Math.max(0, Number(state.contextStep || 0) - 1);
-    saveDraft();
-    render(true);
-    return;
-  }
-  if (target.dataset.action === "context-next") {
-    const step = Math.max(0, Math.min(2, Number(state.contextStep || 0)));
-    if (!canContinueContextStep(step)) return;
-    state.contextStep = Math.min(2, step + 1);
-    saveDraft();
-    render(true);
-    return;
-  }
   if (target.dataset.action === "back") {
     let previous = Math.max(0, state.step - 1);
     // 앞으로 갈 때는 질문이 없는 앵커 화면을 건너뛰지만, 뒤로 갈 때는 그 화면에 그대로
@@ -3930,8 +3924,8 @@ document.addEventListener("input", (event) => {
   }
   saveDraft();
   const activeId = activeScreens()[state.step];
-  const nextButton = document.querySelector("button.primary-button[data-action='next'], button.primary-button[data-action='context-next']");
-  if (nextButton) nextButton.disabled = activeId === "PARTICIPANT_CONTEXT" ? !canContinueContextStep() : !canContinue(activeId);
+  const nextButton = document.querySelector("button.primary-button[data-action='next']");
+  if (nextButton) nextButton.disabled = !canContinue(activeId);
 });
 
 document.addEventListener("change", (event) => {

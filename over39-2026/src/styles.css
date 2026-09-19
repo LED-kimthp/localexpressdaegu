@@ -6812,3 +6812,22 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   border-top-color: color-mix(in srgb, currentColor 12%, transparent);
   text-align: center;
 }
+
+/* 2026-09-20: 접힘 항목 두 곳 — 맥락 화면의 「더 자세히 남기기」(방식·형태·단위)와 동의 화면의
+   「저장 · 보관 · AI 사용에 관한 자세한 안내」. 앞것은 같은 화면에 있던 단위 접힘(context-unit-optional)과
+   같은 꼴로 맞추고, 뒷것은 펼침 표시(▶)를 남겨 안내가 접혀 있음이 보이게 한다. */
+.context-more-optional { margin-top: 24px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.context-more-optional > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 58px; cursor: pointer; list-style: none; }
+.context-more-optional > summary::-webkit-details-marker { display: none; }
+.context-more-optional > summary span { font-weight: 730; line-height: 1.45; }
+.context-more-optional > summary small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.context-more-optional-body { padding: 4px 0 18px; }
+.context-more-optional-body > .participant-context-section:first-child { margin-top: 0; }
+.consent-details { margin-top: 24px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.consent-details > summary { padding: 18px 0; cursor: pointer; font-weight: 730; line-height: 1.45; }
+.consent-details[open] > summary { border-bottom: 1px solid var(--line); }
+.consent-details-body { padding: 4px 0 18px; }
+@media (max-width: 640px) {
+  .context-more-optional > summary { min-width: 0; }
+  .context-more-optional > summary span { overflow-wrap: anywhere; }
+}
