@@ -115,38 +115,47 @@ export function participantContextLabels(language = "ko") { return labels[langua
 // a job title in order to answer it.
 const activityScreenCopy = {
   ko: {
+    purposeAudience: "지금을 묻는 이유가 있어요. 그 기억 이후로 문화예술과의 관계가 어떻게 이어지고 달라졌는지를 남기려 합니다.", purposeOther: "지금을 묻는 이유가 있어요. 그 기억 이후로 활동이 어떻게 이어지고 달라졌는지를 남기려 합니다.",
     headingAudience: "문화예술을 찾아보고 참여해 온 방식을 알려주세요.", headingOther: "현재의 활동과 상태를 알려주세요.",
     p05Audience: "문화예술을 스스로 찾아보거나 전시·프로그램에 참여하기 시작한 지 얼마나 되었나요?", p05Other: "지금 말한 문화예술 활동을 시작한 지 얼마나 되었나요?", yearLabel: "기억한다면 시작 연도를 적어주세요.", yearPlaceholder: "예: 2008",
   },
   en: {
+    purposeAudience: "There is a reason we ask about now. We want to record how your relationship with arts and culture has continued and changed since that memory.", purposeOther: "There is a reason we ask about now. We want to record how the activity has continued and changed since that memory.",
     headingAudience: "Tell us how you have sought out and taken part in arts and culture.", headingOther: "Tell us about your current activity and its situation.",
     p05Audience: "How long has it been since you began seeking out arts and culture or taking part in programmes?", p05Other: "How long has it been since you began the arts-and-culture activity you have just described?", yearLabel: "If you remember, enter the year you began.", yearPlaceholder: "For example, 2008",
   },
   ja: {
+    purposeAudience: "いまについて尋ねるのには理由があります。その記憶のあと、文化芸術との関わりがどう続き、どう変わったかを残そうとしています。", purposeOther: "いまについて尋ねるのには理由があります。その記憶のあと、活動がどう続き、どう変わったかを残そうとしています。",
     headingAudience: "文化芸術を探し、参加してきた方法を教えてください。", headingOther: "現在の活動と状態を教えてください。",
     p05Audience: "文化芸術を自分で探したり、プログラムに参加し始めてからどのくらいですか？", p05Other: "今話している文化芸術活動を始めてから、どのくらいですか？", yearLabel: "覚えていれば、始めた年を入力してください。", yearPlaceholder: "例：2008",
   },
   "zh-Hans": {
+    purposeAudience: "问到现在是有原因的。我们想记下那段记忆之后，您与文化艺术的关系是怎样延续、又怎样改变的。", purposeOther: "问到现在是有原因的。我们想记下那段记忆之后，活动是怎样延续、又怎样改变的。",
     headingAudience: "请告诉我们您如何寻找并参与文化艺术。", headingOther: "请告诉我们您目前的活动与状态。",
     p05Audience: "您开始主动接触文化艺术或参与相关活动至今有多久？", p05Other: "您开始刚才所说的文化艺术活动至今有多久？", yearLabel: "如果记得，请填写开始的年份。", yearPlaceholder: "例如：2008",
   },
   "zh-Hant": {
+    purposeAudience: "問到現在是有原因的。我們想記下那段記憶之後，您與文化藝術的關係是怎樣延續、又怎樣改變的。", purposeOther: "問到現在是有原因的。我們想記下那段記憶之後，活動是怎樣延續、又怎樣改變的。",
     headingAudience: "請告訴我們您如何尋找並參與文化藝術。", headingOther: "請告訴我們您目前的活動與狀態。",
     p05Audience: "您開始主動接觸文化藝術或參與相關活動至今有多久？", p05Other: "您開始剛才所說的文化藝術活動至今有多久？", yearLabel: "如果記得，請填寫開始的年份。", yearPlaceholder: "例如：2008",
   },
   fr: {
+    purposeAudience: "Si nous vous interrogeons sur le présent, c’est pour une raison. Nous voulons garder trace de la façon dont votre lien aux arts et à la culture s’est poursuivi et a changé depuis ce souvenir.", purposeOther: "Si nous vous interrogeons sur le présent, c’est pour une raison. Nous voulons garder trace de la façon dont l’activité s’est poursuivie et a changé depuis ce souvenir.",
     headingAudience: "Racontez comment vous avez cherché et rejoint les arts et la culture.", headingOther: "Racontez votre activité actuelle et sa situation.",
     p05Audience: "Depuis combien de temps cherchez-vous les arts et la culture ou participez-vous à des activités ?", p05Other: "Depuis combien de temps avez-vous commencé l’activité culturelle ou artistique dont vous venez de parler ?", yearLabel: "Si vous vous en souvenez, indiquez l’année de début.", yearPlaceholder: "Par exemple : 2008",
   },
   es: {
+    purposeAudience: "Hay una razón para preguntar por el presente. Queremos dejar constancia de cómo ha continuado y cambiado su relación con el arte y la cultura desde aquel recuerdo.", purposeOther: "Hay una razón para preguntar por el presente. Queremos dejar constancia de cómo ha continuado y cambiado la actividad desde aquel recuerdo.",
     headingAudience: "Cuéntenos cómo ha buscado y participado en las artes y la cultura.", headingOther: "Cuéntenos sobre su actividad actual y su situación.",
     p05Audience: "¿Desde hace cuánto busca artes y cultura o participa en actividades?", p05Other: "¿Desde hace cuánto comenzó la actividad cultural o artística de la que acaba de hablar?", yearLabel: "Si lo recuerda, indique el año en que comenzó.", yearPlaceholder: "Por ejemplo: 2008",
   },
   nl: {
+    purposeAudience: "Er is een reden dat we naar het heden vragen. We willen vastleggen hoe uw band met kunst en cultuur sinds die herinnering is doorgegaan en veranderd.", purposeOther: "Er is een reden dat we naar het heden vragen. We willen vastleggen hoe de activiteit sinds die herinnering is doorgegaan en veranderd.",
     headingAudience: "Vertel hoe u kunst en cultuur hebt opgezocht en eraan hebt deelgenomen.", headingOther: "Vertel over uw huidige activiteit en situatie.",
     p05Audience: "Hoe lang zoekt u al kunst en cultuur op of neemt u deel aan activiteiten?", p05Other: "Hoe lang geleden bent u begonnen met de kunst- of cultuuractiviteit waarover u zojuist vertelde?", yearLabel: "Vul het beginjaar in als u het zich herinnert.", yearPlaceholder: "Bijvoorbeeld: 2008",
   },
   ms: {
+    purposeAudience: "Ada sebabnya kami bertanya tentang masa kini. Kami mahu merakam bagaimana hubungan anda dengan seni dan budaya berterusan dan berubah sejak ingatan itu.", purposeOther: "Ada sebabnya kami bertanya tentang masa kini. Kami mahu merakam bagaimana kegiatan itu berterusan dan berubah sejak ingatan itu.",
     headingAudience: "Ceritakan cara anda mencari dan menyertai seni dan budaya.", headingOther: "Ceritakan kegiatan dan keadaan anda sekarang.",
     p05Audience: "Sudah berapa lama anda mencari seni dan budaya atau menyertai kegiatan?", p05Other: "Sudah berapa lama anda memulakan kegiatan seni dan budaya yang baru anda ceritakan?", yearLabel: "Jika anda ingat, masukkan tahun anda bermula.", yearPlaceholder: "Contohnya: 2008",
   },

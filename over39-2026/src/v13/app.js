@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260919-r42";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260919-r42";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260919-r42";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260919-r42";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260919-r42";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260919-r42";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260919-r42";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260919-r42";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260919-r42";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260919-r42";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260919-r42";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260919-r42";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260919-r42";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260919-r42";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260919-r42";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260919-r42";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260919-r42";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260919-r42";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260919-r42";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260919-r42";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260919-r42";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260919-r42";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260919-r42";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r43";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r43";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r43";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r43";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r43";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r43";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r43";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r43";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r43";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r43";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r43";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r43";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r43";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r43";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r43";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r43";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r43";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r43";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r43";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r43";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r43";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r43";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r43";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "8238f2932712-dirty 2026-09-19T04:53:57.673Z";
+const buildStamp = "364733fc234d-dirty 2026-09-19T16:54:51.673Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -755,7 +755,7 @@ function activeScreens() {
 
 function rc2StageIndex(id) {
   const startScreens = new Set(["CONSENT", "P01", "P01_CONTEXT", "ROLE_GROUP", "ROLE_PRIMARY", "ROLE_PARALLEL", "ROLE_BRIDGE", "PARTICIPANT_CONTEXT"]);
-  const memoryScreens = new Set(["M01", "NO_RECALL_RELATION", "M02", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE", "M03_RECONNECT", "M10_VERIFY"]);
+  const memoryScreens = new Set(["M01", "NO_RECALL_RELATION", "M02", "M04", "AI_ANCHOR_M04_TEXT", "M05", "MEMORY_TIME", "MEMORY_EVIDENCE"]);
   const presentScreens = new Set(["MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION", "AI_ANCHOR_P12", "CONTINUITY", "AI_ANCHOR_P13_TEXT", "SUPPORT_CONDITIONS"]);
   const conditionScreens = new Set(["D01", "D02", "AI_ANCHOR_D02_TEXT", "D03", "D04", "AI_CONDITIONAL_D04_CONDITIONS", "R01", "COMMUNITY"]);
   if (startScreens.has(id)) return 1;
@@ -1225,7 +1225,9 @@ function renderActivity() {
   const audience = isAudienceContext();
   const copy = participantActivityScreenCopy(state.language);
   const heading = audience ? copy.headingAudience : copy.headingOther;
-  if (isRc2) return `${screenHeading(heading)}
+  // 2026-09-20: 구간 첫 화면에 「왜 묻는가」 한 줄. 총괄기획이 첫 통과 뒤 「왜 묻는지 모르겠다」고
+  // 다섯 번 적었다 — 기억·현재·조건 어느 구간도 들어갈 때 이유를 말하지 않고 있었다.
+  if (isRc2) return `${screenHeading(heading, audience ? copy.purposeAudience : copy.purposeOther)}
     <label class="field-label">${esc(audience ? copy.p05Audience : copy.p05Other)}</label>${renderChoices("P05", p05.options)}
     ${state.answers.activity_duration_band ? renderText("P05_YEAR", { multiline: false, placeholder: copy.yearPlaceholder, label: copy.yearLabel }) : ""}`;
   return `${screenHeading(heading)}
@@ -1717,7 +1719,10 @@ function renderAdaptiveCheckpoint(checkpoint) {
   // 닿지 못한다. 약속한 문을 실제로 만든다.
   const skip = `<button class="text-button adaptive-skip" type="button" data-action="skip-adaptive" data-checkpoint="${esc(checkpoint)}">${esc(t("이 질문은 건너뛸게요"))}</button>`;
   // 폴백 질문은 방금 쓴 글을 읽고 만든 것이 아니다. 「읽었어요」라고 말하지 않는다.
-  const questionLead = turn.source === "motif" ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead;
+  // 2026-09-20: 여기만 글자 그대로 "motif"를 보고 있어서, 제공자가 groq·morph 로 바뀐 뒤로는
+  // AI 가 방금 쓴 글을 읽고 만든 질문에도 「읽었어요」 대신 예비 머리말이 나갔다. 살아 있는
+  // 제공자 목록은 depth.js 한 곳에서만 정한다(anchor-live.js 가 9월 16일에 같은 이유로 고쳐졌다).
+  const questionLead = isLiveModelSource(turn.source) ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead;
   return `${screenHeading(stage().followingQuestion, questionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>

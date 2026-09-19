@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260919-r42";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260920-r43";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -218,7 +218,10 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
   ids.push("D01", "D02");
   if (adaptive && hasSubstantiveDChange(answers)) ids.push("D02_TEXT");
   ids.push("D03", "D04", "R01");
-  if (adaptive && answers.memory_type !== "NO_RECALL") ids.push("M03", "M10");
+  // 2026-09-20: M03(다시 이어보기)·M10(확인해 줄 사람)은 RC2 에서 조건 구간이 끝난 뒤
+  // 기억으로 되돌아가 묻는 두 화면이었다. 둘 다 좌표·분석 어디에도 쓰이지 않고 부록 표
+  // 한 줄에만 실린다. 첫 실제 참여자(총괄기획)가 「너무 추상적」이라 짚었고 답은 「아직 잘
+  // 모르겠다」였다. 질문을 빼는 것은 되돌릴 수 없는 결정이지만, 이 둘은 잃는 자료가 없다.
   return ids;
 }
 
@@ -272,7 +275,6 @@ function buildAdaptiveScreens(answers = {}) {
   screens.push("SUPPORT_CONDITIONS", "D01", "D02");
   if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
   screens.push("D03", "D04", "R01");
-  if (answers.memory_type !== "NO_RECALL") screens.push("M03_RECONNECT", "M10_VERIFY");
   screens.push("COMMUNITY", "DOCUMENT_IDENTITY", "PROFILE", "REFLECTION_REVIEW", "SUBMIT", "USE_SCOPE");
   return screens;
 }

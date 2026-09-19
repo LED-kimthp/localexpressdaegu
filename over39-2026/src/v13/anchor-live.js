@@ -1,4 +1,4 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260919-r42";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260920-r43";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
@@ -106,6 +106,12 @@ export function lowInformationReason(value) {
   if (STANDALONE_NO_RECALL_PATTERNS.some((pattern) => pattern.test(text))) return "no_recall";
   const compact = text.replace(/[\s\p{P}\p{S}]/gu, "");
   if (!compact) return "punctuation_only";
+  // 2026-09-20: 첫 실제 참여자의 「지속」 답이 「거리두기」(4자)였고, 그 답에 S축의
+  // 하나뿐인 후속질문이 붙었다. 같은 사람이 「변화」에 쓴 28자 답은 그래서 후속질문을
+  // 잃었다 — 총괄기획이 「핵심 질문에 꼬리 질문이 따라와야」라고 짚은 바로 그 자리다.
+  // 흐름(flow.js)이 쓰는 이 판정에는 글자 수 기준이 없어서 「응」도 정보가 있는 답으로
+  // 통과했다. depth.js 의 같은 이름 함수가 쓰는 기준(5자 미만)을 여기에도 둔다.
+  if (text.length < 5) return "too_short";
   if (/^[ㄱ-ㅎㅏ-ㅣ]+$/u.test(compact)) return "jamo_noise";
   if (/^(.)\1{1,}$/u.test(compact)) return "repeated_character";
   if (/^(?:asdf|qwer|zxcv|hjkl|1234|1111|0000)+$/i.test(compact)) return "keyboard_noise";
