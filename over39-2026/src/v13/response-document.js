@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260916-r41";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260919-r42";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260916-r41";
-import { normalizedDScope } from "./flow.js?v=v7-20260916-r41";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260919-r42";
+import { normalizedDScope } from "./flow.js?v=v7-20260919-r42";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260916-r41";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260916-r41";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260916-r41";
+import { translate } from "./i18n.js?v=v7-20260919-r42";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260919-r42";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260919-r42";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -802,8 +802,13 @@ export function buildResponseDocument({
       ...one(L.memory, MEMORY_TYPE_LABELS, answers.memory_type, EN_LABELS),
       // M03 은 대상마다 다른 것을 묻는다. 칸 이름은 실제로 물은 것을 따라가고, 그 이름이
       // 없는 언어에서는 「기억에서 이어 고른 답」으로 둔다.
+      // 저장되는 값은 참여자의 언어와 무관하게 스키마의 한국어 선택지 문자열이다
+      // (renderChoices 가 optionValue 를 그대로 담고, 화면에서만 옮겨 보여준다).
+      // 영어만 사슬을 건너뛰고 그 한국어를 그대로 영어 값으로 넘기고 있어서, 영문
+      // 부록의 이 칸이 참여자마다 한국어로 찍혔다 — 사슬에는 46개 선택지의 영어가
+      // 모두 있었다. 다른 언어와 같은 길로 보낸다(2026-09-17).
       ...row(frameLanguage === "ko" || english ? (branchLabel || L.branch) : L.branch,
-        localizedValue(answers.memory_branch_followup, frameLanguage, english ? answers.memory_branch_followup : "")),
+        localizedValue(answers.memory_branch_followup, frameLanguage)),
       ...one(L.creative, CREATIVE_STATE_LABELS, answers.creative_work_state, EN_LABELS),
       ...one(L.public, PUBLIC_STATE_LABELS, answers.public_activity_state, EN_LABELS),
       // P16 의 보기 가운데 AGE_ELIGIBILITY_END「청년·신진 지원 연령 기준 종료」가
@@ -1043,7 +1048,7 @@ export function renderResponseDocument(document = {}) {
         ? array(layer.entries).map((entry) => {
           const cite = entry.question_id ? `<span class="response-document-cite">${esc(entry.question_id)}</span>` : "";
           return entry.question
-            ? `<div class="response-document-exchange">${cite}<p class="response-document-asked">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
+            ? `<div class="response-document-exchange">${cite}<p class="response-document-asked" data-prefix="${esc(frame.askedPrefix || "")}">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
             : `<div class="response-document-exchange">${cite}<blockquote>${esc(entry.text)}</blockquote></div>`;
         }).join("")
         : `<p class="response-document-empty">${esc(task7.rawEmpty)}</p>`;
@@ -1064,11 +1069,11 @@ export function renderResponseDocument(document = {}) {
       // 근거로 인용되는 문장은 참여자의 원문이고, 배정과 선택은 연구 측 표시다.
       const axisBody = array(layer.axes).map((axis) => {
         const secondary = axis.secondary
-          ? `<span class="response-document-axis-secondary">${esc(axis.secondary.code)} ${axis.secondary.codebook && axis.secondary.codebook !== axis.secondary.label
+          ? `<span class="response-document-axis-secondary" data-prefix="${esc(frame.axisSecondaryPrefix || "")}">${esc(axis.secondary.code)} ${axis.secondary.codebook && axis.secondary.codebook !== axis.secondary.label
               ? `<span class="response-document-title-screen">${esc(axis.secondary.label)}</span><span class="response-document-title-appendix">${esc(axis.secondary.codebook)}</span>`
               : esc(axis.secondary.label)}</span>`
           : "";
-        const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
+        const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked" data-prefix="${esc(frame.askedPrefix || "")}">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
         const name = axis.codebook && axis.codebook !== axis.label
           ? `<span class="response-document-title-screen">${esc(axis.label)}</span><span class="response-document-title-appendix">${esc(axis.codebook)}</span>`
           : esc(axis.label);

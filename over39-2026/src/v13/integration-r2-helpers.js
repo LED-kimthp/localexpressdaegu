@@ -35,14 +35,39 @@ export function translationReuseDecision({ action, sourceLanguage, approvedText,
   return { reuse: false, translation: "", reason: "translation_required" };
 }
 
-export function safeFinalSummaryFailure(errorCode = "FINAL_SUMMARY_UNAVAILABLE") {
+// 정리문을 못 받았을 때 참여자가 보는 한 줄. 지금까지 한국어로만 있어서, 홍콩·영어권
+// 참여자가 실패한 순간에만 한국어를 만났다 — 하필 무슨 일이 생겼는지 알아야 하는
+// 자리다. 여기에 직접 둔다: 이 파일은 지금까지 아무것도 불러오지 않는다(2026-09-17).
+const FINAL_SUMMARY_UNAVAILABLE_NOTE = {
+  ko: "구체적인 정리 결과를 불러오지 못했습니다.",
+  en: "The summary could not be prepared this time.",
+  ja: "整理の結果を取得できませんでした。",
+  "zh-Hans": "这次未能取得整理结果。",
+  "zh-Hant": "這次未能取得整理結果。",
+  // 옛 코드 zh 는 번체였다(i18n.js 가 zh-Hant 를 zh 위에 얹는다). zh-HK 처럼
+  // 앞자리만 남는 값도 여기로 떨어져야 한국어를 만나지 않는다.
+  zh: "這次未能取得整理結果。",
+  nl: "De samenvatting kon deze keer niet worden opgehaald.",
+  es: "Esta vez no se pudo obtener el resumen.",
+  fr: "Le résumé n\u2019a pas pu être établi cette fois.",
+  ms: "Ringkasan tidak dapat disediakan kali ini.",
+};
+
+export function finalSummaryUnavailableNote(language = "ko") {
+  const code = String(language || "ko").trim();
+  return FINAL_SUMMARY_UNAVAILABLE_NOTE[code]
+    || FINAL_SUMMARY_UNAVAILABLE_NOTE[code.split("-")[0]]
+    || FINAL_SUMMARY_UNAVAILABLE_NOTE.ko;
+}
+
+export function safeFinalSummaryFailure(errorCode = "FINAL_SUMMARY_UNAVAILABLE", language = "ko") {
   return {
     summary: null,
     summary_ko: null,
     axes: { m: null, s: null, d: null },
     secondary_axes: { m: null, s: null, d: null },
     evidence: { m: [], s: [], d: [] },
-    uncertainty: "구체적인 정리 결과를 불러오지 못했습니다.",
+    uncertainty: finalSummaryUnavailableNote(language),
     source: "safe_failure",
     requires_rewrite: true,
     run: {

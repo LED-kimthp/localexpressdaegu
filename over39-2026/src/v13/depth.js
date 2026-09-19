@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260916-r41";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260916-r41";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260916-r41";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260919-r42";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260919-r42";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260919-r42";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1117,7 +1117,7 @@ function summaryRepairInstruction(reason, context = {}) {
 
 export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallback", context, answers = {}, turns = [], fetchImpl = fetch, timeoutMs = 20000 }) {
   if (mode === "mock") return { ...buildAdaptiveRuleSummary({ answers, turns }), source: "mock_api", run: { status: "success", provider: "mock", operation: "summarize_adaptive", real_motif_pass: false } };
-  if (mode !== "live" || !endpoint) return safeFinalSummaryFailure("FINAL_SUMMARY_NOT_CONFIGURED");
+  if (mode !== "live" || !endpoint) return safeFinalSummaryFailure("FINAL_SUMMARY_NOT_CONFIGURED", context?.response_language);
   const started = performance.now();
   const clientRequestId = String(context?.client_request_id || "").trim() || null;
   let repairAttempted = false;
@@ -1234,7 +1234,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       },
     };
   } catch (error) {
-    const result = safeFinalSummaryFailure(error?.message || "FINAL_SUMMARY_FAILED");
+    const result = safeFinalSummaryFailure(error?.message || "FINAL_SUMMARY_FAILED", context?.response_language);
     result.run = {
       ...result.run,
       status: "failed",
