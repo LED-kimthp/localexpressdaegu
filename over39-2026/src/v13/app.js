@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r45";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r45";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r45";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r45";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r45";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r45";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r45";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r45";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r45";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r45";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r45";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r45";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r45";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r45";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r45";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r45";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r45";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r45";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r45";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r45";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r45";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r45";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r45";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r46";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r46";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r46";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r46";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r46";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r46";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r46";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r46";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r46";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r46";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r46";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r46";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r46";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r46";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r46";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r46";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r46";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r46";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r46";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r46";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r46";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r46";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r46";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "226eb58a944d-dirty 2026-09-20T04:50:20.990Z";
+const buildStamp = "08797ebc0746-dirty 2026-09-20T05:08:13.478Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2457,6 +2457,25 @@ async function beginFirstGreeting() {
   render(true);
 }
 
+function openOutgoingGreeting() {
+    const connection = getConnection();
+    connection.opt_in = "YES";
+    connection.receive_opt_in = connection.receive_opt_in === "YES" ? "YES" : "NO";
+    // `여기에서 마치기`로 남은 표식을 함께 푼다. 이게 없으면 안부를 다시 쓰러 들어갔다
+    // 나온 뒤에도 완료 화면이 계속 "마쳤다"고 말한다.
+    if (state.connectionStatus === "finished") state.connectionStatus = null;
+    connection.stage = "message";
+    connection.message_audience = connection.message_audience || "OPEN";
+    connection.preview_confirmed = false;
+    saveConnection();
+    // `connection.stage`만 바꾸고 화면을 다시 그리면 완료 화면이 그대로 다시 그려진다.
+    // 완료 화면의 안부 블록은 `stage`를 보지 않기 때문이다(`done`일 때만 본다). 안부를
+    // 쓰는 화면은 `phase === "connection"`에서 그려지므로 여기서 함께 옮겨야 한다.
+    // 이게 없어서 랜딩이 `04 다음 사람에게`로 약속한 마지막 단계의 버튼이 죽어 있었다.
+    state.phase = "connection";
+    render(true);
+}
+
 function beginResearchStory(receiveGreeting = false) {
   state.phase = "survey";
   state.step = Math.max(1, state.step);
@@ -2825,7 +2844,7 @@ function renderRc2Complete(response) {
       // 이미 있는 `다음 사람에게 안부 남기기`로 돌아갈 수 있게 남겨 둔다.
       : connection.stage === "done" || state.connectionStatus === "finished"
         ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.continuationSecondary)}</h2><p>${esc(greetingFirstLocal.continuationHelp)}</p><div class="greeting-opt-in-actions"><button class="secondary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button></div></div>`
-        : `<h2>${esc(greetingFirstLocal.coordinateTransitionTitle)}</h2><p>${esc(greetingFirstLocal.coordinateTransitionHelp)}</p><div class="greeting-opt-in-actions"><button class="primary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="finish-greeting">${esc(greetingFirstLocal.continuationSecondary)}</button></div>`
+        : `${state.firstGreeting ? "" : `<div class="greeting-receive-first"><h2>${esc(greetingFirstLocal.receiveGreetingTitle)}</h2><p>${esc(greetingFirstLocal.receiveGreetingHelp)}</p><div class="greeting-opt-in-action"><button class="secondary-button" type="button" data-action="read-first-greeting">${esc(greetingFirstLocal.receiveGreetingAction)}</button></div></div>`}<h2>${esc(greetingFirstLocal.coordinateTransitionTitle)}</h2><p>${esc(greetingFirstLocal.coordinateTransitionHelp)}</p><div class="greeting-opt-in-actions"><button class="primary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="finish-greeting">${esc(greetingFirstLocal.continuationSecondary)}</button></div>`
     : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p class="feature-closed-status" role="status">${esc(task7Local.gateOff)}</p>`;
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
@@ -3450,7 +3469,19 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "begin-story") {
+    // 안부를 끝에서 읽은 경우에는 설문으로 갈 곳이 없다. 받았으면 다음은 남기는 차례다.
+    if (state.greetingAfterRecord) { openOutgoingGreeting(); return; }
     beginResearchStory(true);
+    return;
+  }
+  // 완료 화면에서 「먼저 도착한 안부 읽기」. 받는 기계장치(예약·수신)는 그대로 쓰고,
+  // 읽고 난 뒤 돌아갈 곳만 설문이 아니라 안부 남기기로 바꾼다.
+  if (target.dataset.action === "read-first-greeting") {
+    state.greetingAfterRecord = true;
+    const connection = getConnection();
+    connection.receive_opt_in = "YES";
+    saveConnection();
+    beginFirstGreeting();
     return;
   }
   if (target.dataset.action === "choose-first-greeting") {
@@ -3472,22 +3503,7 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "first-greeting") {
-    const connection = getConnection();
-    connection.opt_in = "YES";
-    connection.receive_opt_in = connection.receive_opt_in === "YES" ? "YES" : "NO";
-    // `여기에서 마치기`로 남은 표식을 함께 푼다. 이게 없으면 안부를 다시 쓰러 들어갔다
-    // 나온 뒤에도 완료 화면이 계속 "마쳤다"고 말한다.
-    if (state.connectionStatus === "finished") state.connectionStatus = null;
-    connection.stage = "message";
-    connection.message_audience = connection.message_audience || "OPEN";
-    connection.preview_confirmed = false;
-    saveConnection();
-    // `connection.stage`만 바꾸고 화면을 다시 그리면 완료 화면이 그대로 다시 그려진다.
-    // 완료 화면의 안부 블록은 `stage`를 보지 않기 때문이다(`done`일 때만 본다). 안부를
-    // 쓰는 화면은 `phase === "connection"`에서 그려지므로 여기서 함께 옮겨야 한다.
-    // 이게 없어서 랜딩이 `04 다음 사람에게`로 약속한 마지막 단계의 버튼이 죽어 있었다.
-    state.phase = "connection";
-    render(true);
+    openOutgoingGreeting();
     return;
   }
   if (target.dataset.action === "save-exhibition") {
@@ -3626,12 +3642,11 @@ document.addEventListener("click", (event) => {
       }
     }
 
-    if (isRc2 && id === "CONSENT") {
-      state.phase = "greeting-choice";
-      saveDraft();
-      render(true);
-      return;
-    }
+    // 2026-09-20: 안부를 끝으로 옮겼다. 전에는 동의 다음에 「안부 읽고 시작 / 없이 시작」을
+    // 고르게 하고 먼저 도착한 안부를 받은 뒤 설문이 시작됐다. 이제 동의 다음은 바로 이야기고,
+    // 받기와 남기기는 참여 기록을 확인한 뒤 완료 화면에서 함께 한다(TK 2026-09-20).
+    // renderGreetingChoice 와 greeting-choice 단계는 되돌릴 수 있도록 남겨 두었다 — 지금은
+    // 아무 데서도 이 단계로 가지 않는다.
 
     if (isRc2) {
       const sourceAnchorByScreen = {
