@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260920-r46";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260920-r46";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260920-r46";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260920-r47";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260920-r47";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260920-r47";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1251,6 +1251,27 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
       real_motif_pass: false,
     };
     return result;
+  }
+}
+
+// 2026-09-20: 마지막 제안(closing_offer). 정리문과 **같은 재료**를 쓰므로 순서대로 부를 이유가
+// 없다 — 동시에 부른다. 실패해도 참여자는 정리문을 그대로 갖는다(제안은 없으면 없는 대로 둔다).
+// 서버가 지어낸 인용을 걸러 하나도 안 남으면 응답을 버리므로, 여기로는 근거 있는 글만 온다.
+export async function createClosingOffer({ endpoint, anonKey, mode = "fallback", context, fetchImpl = fetch, timeoutMs = 90000 } = {}) {
+  if (mode !== "live" || !endpoint) return { offer: "", evidence: [], source: "skipped" };
+  try {
+    const result = await requestAiJson({ endpoint, anonKey, operation: "closing_offer", context, fetchImpl, timeoutMs });
+    // requestAiJson 은 { ok, status, body, request_id } 를 준다. parsed 라는 필드는 없다 —
+    // 이걸 읽고 있어서 서버가 제안을 만들어도 화면에는 한 번도 뜨지 않았다(2026-09-20 검토에서 잡힘).
+    if (!result?.ok) return { offer: "", evidence: [], source: "unavailable", run: result?.body?.run || null };
+    const body = result.body || {};
+    const offer = String(body.offer || "").trim();
+    const evidence = Array.isArray(body.evidence) ? body.evidence.map((item) => String(item || "")).filter(Boolean) : [];
+    if (!offer) return { offer: "", evidence: [], source: "unavailable", run: body.run || null };
+    return { offer, evidence, source: "live", run: body.run || null, request_id: result.request_id || body.request_id || null, evidence_dropped: Number(body.evidence_dropped || 0) };
+  } catch (error) {
+    // 제안이 없다고 참여를 막지 않는다. 조용히 비워 두고 화면은 그 구역만 그리지 않는다.
+    return { offer: "", evidence: [], source: "unavailable", error: String(error?.message || error) };
   }
 }
 

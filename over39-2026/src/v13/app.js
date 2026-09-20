@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r46";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r46";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r46";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r46";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r46";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r46";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r46";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r46";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r46";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r46";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r46";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r46";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r46";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r46";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r46";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r46";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r46";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r46";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r46";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r46";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r46";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r46";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r46";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r47";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r47";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r47";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r47";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r47";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r47";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r47";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r47";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r47";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r47";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r47";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r47";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r47";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r47";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r47";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r47";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r47";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r47";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r47";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r47";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r47";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r47";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r47";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "08797ebc0746-dirty 2026-09-20T05:08:13.478Z";
+const buildStamp = "0a81415e7b18-dirty 2026-09-20T06:20:36.326Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1386,7 +1386,20 @@ function renderMemoryTime() {
   const locationQuestion = question("M07");
   const locationLabel = noRecall() ? locationQuestion.text_no_recall : "장소 — 어디에서 만난 경험인가요?";
   return `${screenHeading(title)}${renderChoices("M06", q.options)}${state.answers.memory_time_band ? renderText("M06_YEAR", { multiline: false, placeholder: "예: 2018", label: "기억나는 연도 (선택)" }) : ""}
-  ${renderText("M07", { multiline: false, placeholder: "예: KR,대구; 온라인", label: locationLabel, value: locations })}`;
+  ${renderText("M07", { multiline: false, placeholder: "예: KR,대구; 온라인", label: locationLabel, value: locations })}
+    ${isRc2 ? renderMeaningTagsFolded() : ""}`;
+}
+
+// 2026-09-20: M05(그 기억과 함께 남아 있는 것, 선택지 10개)는 화면 하나를 통째로 쓰고 있었다.
+// 빼지는 않는다 — 묻는 내용이 이 연구의 제목 질문(「지원이 끝난 뒤에도 남아 있는 것」)에 가장
+// 가깝다. 대신 「언제·어디서」 화면 안에 접어, 답하고 싶은 사람만 펼치게 한다. 펼쳐서 답한
+// 사람의 답은 전과 똑같이 저장된다.
+function renderMeaningTagsFolded() {
+  const q = question("M05");
+  const chosen = values(state.answers.m_support_tags).length;
+  return `<details class="participant-context-section participant-context-optional context-more-optional memory-support-optional" ${chosen ? "open" : ""}><summary><span>${esc(t("그 기억과 함께 남아 있는 것도 남기기"))}</span><small>${esc(stage().optional)}</small></summary><div class="context-more-optional-body">
+    <label class="field-label">${esc(noRecall() ? q.text_no_recall : q.text)}</label>${renderChoices("M05", q.options, { multi: true, max: 2 })}
+  </div></details>`;
 }
 
 function renderEvidence() {
@@ -1431,11 +1444,19 @@ function renderD1() {
 function renderD2() {
   const d02 = question("D02");
   const d02Text = question("D02_TEXT");
+  // 2026-09-20: D_FOCUS(어느 쪽의 변화를 말할지)는 D01 화면에 붙어 있었다. D01 을 RC2 흐름에서
+  // 빼면서 이리로 옮긴다. 이걸 옮기지 않으면 「나의 활동과 다른 사람의 기억」(route=BOTH) 경로에서
+  // d_scope 가 비어 dOptions 가 빈 배열을 돌려주고, D02 에 고를 것이 하나도 없게 된다 — D축이
+  // 통째로 비는 것이므로 좌표가 만들어지지 않는다.
+  const focus = question("D_FOCUS");
+  const canChooseFocus = state.answers.route === "BOTH" || (state.answers.route === "MEMORY" && state.answers.response_position === "PROFESSIONAL");
+  const focusPart = canChooseFocus ? `<label class="field-label">${esc(focus.text)}</label>${renderChoices("D_FOCUS", focus.options)}` : "";
   const options = dOptions("desired");
   const title = options.length && dScope() === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d02 : d02.text;
   if (!isRc2) return `${screenHeading("가장 먼저 바라는 변화를 골라주세요.")}<label class="field-label">${esc(title || d02.text)}</label>${renderChoices("D02", options)}`;
   const substantive = hasSubstantiveDChange(state.answers);
   return `${screenHeading("지금 이 흐름을 이어가거나 다시 움직이기 위해, 가장 먼저 달라졌으면 하는 장면은 무엇인가요?", "특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.")}
+    ${focusPart}
     <label class="field-label">${esc(t("지금과 가까운 변화의 방향을 골라주세요."))}</label>
     ${renderChoices("D02", options)}
     ${substantive ? renderText("D02_TEXT", { field: "desired_change_text", value: state.answers.desired_change_text || "", placeholder: "가장 먼저 달라졌으면 하는 실제 장면을 적어주세요.", label: d02Text.text }) : ""}`;
@@ -1756,6 +1777,19 @@ async function prepareAdaptiveSummary() {
   // A full participant record asks Motif to compose 3–5 sentences and return
   // the three evidence-backed directions. Keep this longer than the Edge
   // summary window so a valid provider response is not aborted in-browser.
+  // 2026-09-20: 마지막 제안을 여기서 **함께** 띄운다. 같은 재료를 쓰므로 순서대로 부르면 17초가
+  // 그대로 기다림에 더해진다. 결과는 완료 화면에서 쓰므로 여기서 기다리지 않고, 도착하면 그때
+  // 화면만 다시 그린다. 실패해도 참여는 그대로 간다.
+  state.closingOfferStatus = "loading";
+  createClosingOffer({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, timeoutMs: 90000 })
+    .then((result) => {
+      state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
+      state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
+      state.answers.closing_offer = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
+      saveDraft();
+      if (state.phase === "complete") render(false);
+    })
+    .catch(() => { state.closingOfferStatus = "unavailable"; });
   const summary = await createAdaptiveSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, answers: state.answers, turns, timeoutMs: 120000 });
   state.answers.depth_summary = {
     summary: summary.summary,
@@ -2101,6 +2135,7 @@ function canContinue(id) {
     if (adaptiveStatus(adaptiveScreenCheckpoint[id]) === "skipped_by_participant") return true;
     return Boolean(state.answers[turn.answer_field]?.trim());
   }
+  // D01 은 RC2 흐름에서 빠졌다(RC1 에는 남아 있어 이 줄도 남긴다).
   if (id === "D01") return Boolean(state.answers.d_current_gap);
   if (id === "D02") return Boolean(state.answers.d_desired_change_primary) && (!hasSubstantiveDChange(state.answers) || Boolean(state.answers.desired_change_text?.trim()));
   if (id === "DEPTH_M") return Boolean(state.answers.depth_m);
@@ -2414,12 +2449,16 @@ async function beginFirstGreeting() {
   state.phase = "greeting-first";
   state.firstGreeting = { status: "loading", requested_at: new Date().toISOString() };
   saveFirstGreeting();
-  saveDraft();
+  // 2026-09-20: 안부가 끝으로 오면서, 저장을 마친 사람이 안부를 읽으면 이 saveDraft 가 끝난 설문을
+  // 초안으로 되살렸다. 그 초안은 아무 데서도 지워지지 않아, 다음에 페이지를 열면 「이야기 계속하기」가
+  // 뜨고 최종 저장 화면이 앞사람의 답과 함께 열린다 — 기관 검토용 공용 기기면 다음 사람이 그걸 본다.
+  // 기록을 마친 뒤의 안부 읽기는 초안을 건드리지 않는다.
+  if (state.greetingAfterRecord) clearDraft(); else saveDraft();
   render(true);
   if (!globalGreetingsEnabled) {
     state.firstGreeting = { status: "unavailable", reason: "GLOBAL_GREETINGS_COLLECTION_DISABLED" };
     saveFirstGreeting();
-    saveDraft();
+    if (state.greetingAfterRecord) clearDraft(); else saveDraft();
     render(true);
     return;
   }
@@ -2453,7 +2492,7 @@ async function beginFirstGreeting() {
     state.firstGreeting = { status: "waiting", reason: reservation.receipt?.reason || "QUEUE_EMPTY" };
   }
   saveFirstGreeting();
-  saveDraft();
+  if (state.greetingAfterRecord) clearDraft(); else saveDraft();
   render(true);
 }
 
@@ -2846,9 +2885,17 @@ function renderRc2Complete(response) {
         ? `<div class="greeting-choice-complete" role="status"><h2>${esc(greetingFirstLocal.continuationSecondary)}</h2><p>${esc(greetingFirstLocal.continuationHelp)}</p><div class="greeting-opt-in-actions"><button class="secondary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button></div></div>`
         : `${state.firstGreeting ? "" : `<div class="greeting-receive-first"><h2>${esc(greetingFirstLocal.receiveGreetingTitle)}</h2><p>${esc(greetingFirstLocal.receiveGreetingHelp)}</p><div class="greeting-opt-in-action"><button class="secondary-button" type="button" data-action="read-first-greeting">${esc(greetingFirstLocal.receiveGreetingAction)}</button></div></div>`}<h2>${esc(greetingFirstLocal.coordinateTransitionTitle)}</h2><p>${esc(greetingFirstLocal.coordinateTransitionHelp)}</p><div class="greeting-opt-in-actions"><button class="primary-button" type="button" data-action="first-greeting">${esc(greetingFirstLocal.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-action="finish-greeting">${esc(greetingFirstLocal.continuationSecondary)}</button></div>`
     : `<h2>${esc(task7Local.greetingOptInTitle)}</h2><p class="feature-closed-status" role="status">${esc(task7Local.gateOff)}</p>`;
+  // 2026-09-20: 마지막 제안. 참여 기록과 좌표를 본 뒤, 안부를 주고받기 전에 놓는다.
+  // 참여자가 승인하는 것은 자기 말로 된 정리문뿐이라는 계약이 있어(task5), 제안은 승인 대상인
+  // 참여 기록 안에 들어가지 않는다. 없으면 그 구역을 아예 그리지 않는다 — 빈 상자를 남기지 않는다.
+  const offerSection = state.closingOffer?.text
+    ? `<section class="closing-offer"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2>${esc(greetingFirstLocal.closingOfferTitle)}</h2>${String(state.closingOffer.text).split(/\n{2,}/).filter(Boolean).map((para) => `<p>${esc(para.trim())}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p></section>`
+    : state.closingOfferStatus === "loading"
+      ? `<section class="closing-offer closing-offer-loading" role="status"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><p>${esc(greetingFirstLocal.closingOfferLoading)}</p></section>`
+      : "";
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
 
 function getReferral() {
@@ -3106,23 +3153,36 @@ function renderSaveFailed() {
   return `<main class="saving-layout"><section class="saving-card save-failed" role="alert"><h1>${esc(local.saveFailedTitle)}</h1><p>${esc(state.storageBlocked && local.saveFailedNoStorage ? local.saveFailedNoStorage : local.saveFailedLead)}</p><div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-survey">${esc(local.backToResponses)}</button><button class="primary-button" type="button" data-action="resend">${esc(local.retrySave)} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
+// 안부를 못 불러온 상태인지(빈 큐와 구분). renderFirstGreeting 이 두 자리에서 쓰이므로 따로 뺀다.
+function unavailableStatus(greeting) { return greeting?.status === "unavailable"; }
+
 function renderFirstGreeting() {
   const local = greetingFirst();
   const simplified = greetingSimple();
   const greeting = state.firstGreeting || { status: "loading" };
+  // 2026-09-20: 이 화면은 이제 두 자리에서 쓰인다. 예전에는 설문 **앞**에만 있어 「이제 당신의
+  // 이야기 시작하기」라고 말했는데, 안부가 끝으로 오면서 25분을 다 쓴 사람도 이 화면을 본다.
+  // 그 사람에게 「연구 질문은 안부를 읽은 뒤 시작됩니다」는 틀린 말이다. 갈라서 말한다.
+  const afterRecord = Boolean(state.greetingAfterRecord);
+  const continueLabel = afterRecord ? local.continuationPrimary : local.beginStory;
+  const skipLabel = afterRecord ? local.continuationPrimary : local.continueWithoutGreeting;
+  const loadingHelpText = afterRecord ? local.afterRecordLoadingHelp : local.greetingLoadingHelp;
+  const emptyHelpText = afterRecord
+    ? (unavailableStatus(greeting) ? local.afterRecordUnavailableHelp : local.afterRecordWaitingHelp)
+    : (unavailableStatus(greeting) ? local.unavailableHelp : local.waitingHelp);
   if (greeting.status === "loading") {
     // 이 화면에는 조작이 하나도 없었다. 안부를 불러오는 동안 릴레이가 멈추면 참여자는
     // 설문 맨 앞에서 앞으로도 뒤로도 못 간다 — 이야기를 한 줄도 쓰기 전에. 기다림이
     // 끝나기를 기다리게 두지 않고, 기다림이 끝난 뒤 화면(waiting/unavailable)에 이미
     // 있는 그 버튼을 여기에도 상시 노출한다. 새 문구를 만들지 않는다.
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-loading" aria-live="polite"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingLoading)}</h1><p>${esc(local.greetingLoadingHelp)}</p>${processingSignal(local.greetingLoading)}<div class="first-greeting-continue"><button class="secondary-button" type="button" data-action="begin-story">${esc(local.continueWithoutGreeting)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-loading" aria-live="polite"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingLoading)}</h1><p>${esc(loadingHelpText)}</p>${processingSignal(local.greetingLoading)}<div class="first-greeting-continue"><button class="secondary-button" type="button" data-action="begin-story">${esc(skipLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   if (greeting.status === "received") {
     const isSeed = greeting.origin === "core_seed";
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(local.beginStory)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   const unavailable = greeting.status === "unavailable";
-  return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(unavailable ? local.unavailableHelp : local.waitingHelp)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(local.continueWithoutGreeting)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;
+  return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(emptyHelpText)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(skipLabel)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;
 }
 
 function renderGreetingChoice() {
@@ -3160,8 +3220,16 @@ function render(focusHeading = false) {
   traceCurrentAnchorDom();
   bindInteractiveMotion();
   requestAnimationFrame(() => {
-    if (focusHeading) document.querySelector("h1[tabindex='-1'], h2[tabindex='-1']")?.focus({ preventScroll: true });
-    else {
+    if (focusHeading) {
+      // 2026-09-20 파일럿에서 잡힘: 화면이 바뀌어도 앞 화면의 스크롤을 그대로 물려받아,
+      // 새 질문이 제목이 아니라 마지막 선택지나 「다음」 단추부터 보였다(랜딩 365px·682px·
+      // 981px·1407px·2194px 로 계속 깊어짐). preventScroll 은 초점을 옮기며 튀는 것을
+      // 막으려던 것인데, 위로 올려 주지 않으니 사람이 질문을 못 보고 시작하게 된다.
+      // 새 화면에서는 맨 위로 올리고 초점만 제목에 둔다. 화면 안에서 고쳐 그릴 때(render(false))는
+      // 아래의 자리 지키기가 그대로 돈다 — 선택지를 고를 때 화면이 튀면 안 되기 때문이다.
+      window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+      document.querySelector("h1[tabindex='-1'], h2[tabindex='-1']")?.focus({ preventScroll: true });
+    } else {
       const restoreScroll = () => window.scrollTo({ left: scrollPosition.x, top: scrollPosition.y, behavior: "auto" });
       restoreScroll();
       requestAnimationFrame(restoreScroll);
@@ -3376,7 +3444,13 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.action === "open-call") { window.open(openCallUrl(), "_blank", "noopener,noreferrer"); return; }
   if (target.dataset.action === "notice") { state.phase = "notice"; render(true); return; }
-  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, sessionStartedAt: new Date().toISOString(), language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; saveDraft(); render(true); return; }
+  // 2026-09-20: 참여자가 언제 시작했는지를 아무 데서도 기록하지 않고 있었다. 세션 행은 첫 서버
+  // 호출 때 만들어지는데 그게 기억 구간 세 번째 화면의 AI 후속질문이다 — 첫 실제 참여자의
+  // first_seen_at 과 첫 AI 호출 사이가 0.3초였다. 그래서 「14.7분」에는 동의·시작 위치·활동 맥락·
+  // 역할·M01·M02·M04 가 통째로 빠져 있었고, 설문이 실제로 몇 분 걸리는지 아무도 모른다.
+  // 답 꾸러미에 넣어 두면 스냅샷 payload 로 그대로 저장되고 마이그레이션이 필요 없다.
+  // 이어하기로 돌아오면 초안의 답이 그대로 오므로 처음 시각이 유지된다.
+  if (target.dataset.action === "start") { state = { phase: "survey", step: 0, answers: { survey_started_at: new Date().toISOString() }, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: `${isRc2 ? "RC2" : "RC1"}-${crypto.randomUUID()}`, sessionStartedAt: new Date().toISOString(), language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; saveDraft(); render(true); return; }
   if (target.dataset.action === "resume") {
     const draft = loadDraft();
     if (draft) {

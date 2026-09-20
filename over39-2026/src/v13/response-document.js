@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r46";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r47";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260920-r46";
-import { normalizedDScope } from "./flow.js?v=v7-20260920-r46";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260920-r47";
+import { normalizedDScope } from "./flow.js?v=v7-20260920-r47";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260920-r46";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260920-r46";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r46";
+import { translate } from "./i18n.js?v=v7-20260920-r47";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260920-r47";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r47";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -807,6 +807,8 @@ export function buildResponseDocument({
       // 영어만 사슬을 건너뛰고 그 한국어를 그대로 영어 값으로 넘기고 있어서, 영문
       // 부록의 이 칸이 참여자마다 한국어로 찍혔다 — 사슬에는 46개 선택지의 영어가
       // 모두 있었다. 다른 언어와 같은 길로 보낸다(2026-09-17).
+      // M03 은 r43(2026-09-20)부터 RC2 에서 묻지 않는다. 줄은 남긴다 — RC1 과 지난 응답에는
+      // 값이 있고, 값이 없으면 row() 가 줄을 버려 빈 줄이 생기지 않는다(기억 층의 M08~M10 과 같다).
       ...row(frameLanguage === "ko" || english ? (branchLabel || L.branch) : L.branch,
         localizedValue(answers.memory_branch_followup, frameLanguage)),
       ...one(L.creative, CREATIVE_STATE_LABELS, answers.creative_work_state, EN_LABELS),
@@ -822,6 +824,10 @@ export function buildResponseDocument({
       ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS, EN_RECONNECT_LABELS),
       // D01·D02·D03 의 보기 문구는 스키마 은행에서 나온다(역할·범위마다 다르다). 그 문구도
       // 같은 사슬로 옮기므로, 옮긴 말이 없는 언어에서는 저절로 비워진다.
+      // D01(d_current_gap)은 8249b2b(2026-09-20)부터 RC2 에서 묻지 않는다. 줄은 남긴다 —
+      // RC1 경로는 아직 묻고, 그 전에 저장된 응답에는 값이 있다. 값이 없으면 row() 가 줄을
+      // 통째로 버리므로 새 흐름의 부록에는 이름표만 남는 빈 줄이 생기지 않는다(아홉 언어 ×
+      // RC1/RC2 로 실측, appendix-language-parity.test.js 「빠진 문항의 자리」가 지킨다).
       ...row(L.gap, localizedValue(dConditionLabel("gap", answers.d_current_gap, answers, schema, "ko"), frameLanguage)),
       ...row(L.change, localizedValue(dConditionLabel("desired", answers.d_desired_change_primary, answers, schema, "ko"), frameLanguage)),
       ...(() => {
@@ -853,11 +859,17 @@ export function buildResponseDocument({
     return [
       ...row(L.mTime, year ? `${time}${time ? " · " : ""}${year}` : time),
       ...row(L.mPlace, places.join(" · ")),
+      // M08(경험 방식)·M09(기억과의 관계)는 8249b2b(2026-09-20)부터, M10(확인해 줄 사람)은
+      // r43 부터 RC2 에서 묻지 않는다. 세 줄은 그대로 둔다 — RC1 경로는 아직 묻고, 그 전에
+      // 저장된 응답에는 값이 들어 있으며, 되돌리기로 하면 사전과 줄이 그대로 살아난다. 새
+      // 흐름의 부록에서는 값이 없어 row()·many() 가 줄을 통째로 버리므로 이름표만 남는
+      // 빈 줄은 생기지 않는다. 그래서 RC2 의 기억 층은 시기·지역(·펼쳐서 답한 M05)만 남는다.
       ...many(L.mMode, answers.memory_experience_modes, MEMORY_MODE_LABELS),
       ...one(L.mRelation, MEMORY_RELATION_LABELS, answers.memory_relationship),
       ...row(L.mWitness, answers.witness_role === "OTHER"
         ? clean(answers.witness_role_other)
         : localizedValue(WITNESS_ROLE_LABELS[answers.witness_role], frameLanguage)),
+      // M05 는 빠지지 않고 「언제·어디서」 화면 안에 접혔다. 펼쳐서 답하면 전과 같이 저장된다.
       ...many(L.mSupport, answers.m_support_tags, MEMORY_SUPPORT_LABELS),
     ];
   })();

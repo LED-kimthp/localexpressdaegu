@@ -10393,3 +10393,19 @@ Object.entries(p13PlainHelp).forEach(([language, entries]) => {
   Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
 });
 Object.assign(extraCopy.zh || (extraCopy.zh = {}), p13PlainHelp["zh-Hant"]);
+
+// 2026-09-20: M05 를 「언제·어디서」 화면 안에 접으면서 생긴 펼침 이름표.
+const memorySupportFoldLabel = {
+  en: { "그 기억과 함께 남아 있는 것도 남기기": "Also note what remains alongside that memory" },
+  ja: { "그 기억과 함께 남아 있는 것도 남기기": "その記憶とともに残っているものも書き残す" },
+  "zh-Hant": { "그 기억과 함께 남아 있는 것도 남기기": "也記下與那段記憶一同留下的東西" },
+  "zh-Hans": { "그 기억과 함께 남아 있는 것도 남기기": "也记下与那段记忆一同留下的东西" },
+  fr: { "그 기억과 함께 남아 있는 것도 남기기": "Noter aussi ce qui demeure avec ce souvenir" },
+  es: { "그 기억과 함께 남아 있는 것도 남기기": "Anotar también lo que permanece junto a ese recuerdo" },
+  nl: { "그 기억과 함께 남아 있는 것도 남기기": "Noteer ook wat er samen met die herinnering blijft" },
+  ms: { "그 기억과 함께 남아 있는 것도 남기기": "Catatkan juga apa yang kekal bersama ingatan itu" },
+};
+Object.entries(memorySupportFoldLabel).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), memorySupportFoldLabel["zh-Hant"]);

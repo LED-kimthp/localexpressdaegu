@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260920-r46";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260920-r47";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -76,6 +76,9 @@ const KEEP_ON_ROUTE_CHANGE = new Set([
   // 회수한 서술은 경로가 바뀌어도 끝까지 들고 간다. 여기 없으면 경로를 한 번 바꾸는 것만으로
   // 앞서 지켜 둔 글이 도로 사라진다.
   WITHDRAWN_KEY,
+  // 2026-09-20: 시작 시각은 ISO 문자열이라 looksLikeWriting 이 「글」로 보고 회수 칸으로 옮겼다.
+  // 첫 P01 클릭 한 번에 모든 참여자의 시작 시각이 answers 에서 사라지고 있었다.
+  "survey_started_at",
   ...PARTICIPANT_CONTEXT_FIELDS,
 ]);
 
@@ -198,7 +201,13 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
     if (!adaptive) ids.push("M03");
     ids.push("M04");
     if (adaptive) ids.push("M04_TEXT");
-    ids.push("M05", "M06", "M07", "M08", "M09");
+    // 2026-09-20: M08(경험 방식)·M09(나와의 관계)는 RC2 에서 뺐다. 좌표·분석 어디에도 쓰이지 않고
+    // 부록 한 줄씩만 만든다. M09 가 묻는 것은 P01(시작 위치) 네 선택지와 크게 겹치고, 첫 실제
+    // 참여자가 27문 가운데 유일하게 비워 둔 문항이기도 하다. M08(직접 겪었나·전해 들었나)은
+    // 기억을 증거로 검증하는 틀이라 「기억을 그대로 받는다」는 이 연구의 태도와 어긋난다.
+    // M05 는 남긴다 — 「그 기억과 함께 남아 있는 것」은 이 연구의 제목 질문에 가장 가깝다.
+    ids.push("M05", "M06", "M07");
+    if (!adaptive) ids.push("M08", "M09");
     if (!adaptive) ids.push("M10");
   }
   // P06/P07 remain valid legacy fields but are no longer part of the RC2 core.
@@ -215,7 +224,15 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
   } else {
     ids.push("P06", "P07");
   }
-  ids.push("D01", "D02");
+  // 2026-09-20: D01(지금 체감하는 결핍)은 RC2 에서 뺐다. D02(바라는 변화)와 같은 네 축(D1~D4)을
+  // 한 번은 「부족한 것」, 한 번은 「바라는 것」으로 두 번 묻는 구조다. 좌표의 D축은 D02 만 쓴다.
+  // (2026-09-20 정정: 처음에 근거로 든 「둘 다 답한 22명 중 18명이 같은 값」은 오염된 수였다.
+  //  백업 응답 57건 가운데 37건이 모든 단일선택을 첫 선택지로 채운 자동 픽스처라 100% 일치를
+  //  만들어 냈다. 빼면 67~69%이고 유일한 실제 참여자는 D2 와 D4 로 다르게 답했다. 그래서 근거는
+  //  답의 일치가 아니라 「같은 네 축을 두 번 묻는다」는 구조다. 이 백업으로 답의 겹침은 못 잰다.) 결핍과 바람의 구분은
+  // D02_TEXT 의 도움말(「현재 체감하는 조건과 바라는 변화를 구분해 적어도 좋습니다」)이 이미 받는다.
+  if (!adaptive) ids.push("D01");
+  ids.push("D02");
   if (adaptive && hasSubstantiveDChange(answers)) ids.push("D02_TEXT");
   ids.push("D03", "D04", "R01");
   // 2026-09-20: M03(다시 이어보기)·M10(확인해 줄 사람)은 RC2 에서 조건 구간이 끝난 뒤
@@ -254,7 +271,7 @@ function buildAdaptiveScreens(answers = {}) {
   if (answers.memory_type !== "NO_RECALL") {
     screens.push("M02");
     addAnchorScreen(screens, answers, "M04", "M04_TEXT", "AI_ANCHOR_M04_TEXT");
-    screens.push("M05", "MEMORY_TIME", "MEMORY_EVIDENCE");
+    screens.push("MEMORY_TIME");
   }
   screens.push("MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION");
   // S축 심화는 한 사람당 한 번뿐인데, 예전에는 P12 화면이 먼저 나와 그 한 번을 늘 가져갔다.
@@ -272,7 +289,7 @@ function buildAdaptiveScreens(answers = {}) {
     && !isLowInformationText(anchorSourceText(answers, "P12"));
   if (continuityFollowUp) screens.push("AI_ANCHOR_P13_TEXT");
   else if (transitionFollowUp) screens.push("AI_ANCHOR_P12");
-  screens.push("SUPPORT_CONDITIONS", "D01", "D02");
+  screens.push("SUPPORT_CONDITIONS", "D02");
   if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
   screens.push("D03", "D04", "R01");
   screens.push("COMMUNITY", "DOCUMENT_IDENTITY", "PROFILE", "REFLECTION_REVIEW", "SUBMIT", "USE_SCOPE");
@@ -294,14 +311,14 @@ export function fixedQuestionIdsForScreen(screen, answers = {}, { adaptive = fal
     CONTINUITY: adaptive && showsContinuityQuestion(answers) ? ["P13", ...(["YES", "MIXED"].includes(answers.invisible_continuity_state) ? ["P13_TEXT"] : [])] : [],
     SUPPORT_CONDITIONS: adaptive ? ["P19", ...(Array.isArray(answers.support_conditions) && answers.support_conditions.some((value) => value !== "NONE") ? ["P19_TEXT"] : [])] : [],
     M01: ["M01"], NO_RECALL_RELATION: ["NO_RECALL_RELATION"], M02: ["M02"], M03: ["M03"], M03_RECONNECT: ["M03"], M10_VERIFY: ["M10"], M04: adaptive ? ["M04", "M04_TEXT"] : ["M04"], M05: ["M05"],
-    MEMORY_TIME: ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],
-    D01: ["D01"], D02: adaptive ? ["D02", ...(hasSubstantiveDChange(answers) ? ["D02_TEXT"] : [])] : ["D02"], D03: ["D03"], D04: ["D04"], R01: ["R01"],
+    MEMORY_TIME: adaptive ? ["M05", "M06", "M07"] : ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],
+    D01: ["D01"], D02: adaptive ? ["D_FOCUS", "D02", ...(hasSubstantiveDChange(answers) ? ["D02_TEXT"] : [])] : ["D02"], D03: ["D03"], D04: ["D04"], R01: ["R01"],
   };
   return map[screen] || [];
 }
 
 export function flowCounts(screens, answers = {}, { adaptive = false } = {}) {
-  const requiredIds = ["M01", "M02", "M04", "D01", "D02"];
+  const requiredIds = ["M01", "M02", "M04", "D02"];
   if (adaptive) requiredIds.push("P14", "P15", "P16", "P11", "P19");
   const fixed = applicableFixedQuestionIds(answers, { adaptive });
   return {
