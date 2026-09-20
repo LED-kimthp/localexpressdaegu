@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r44";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r44";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r44";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r44";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r44";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r44";
-import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r44";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r44";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r44";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r44";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r44";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r44";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r44";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r44";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r44";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r44";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r44";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r44";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r44";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r44";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r44";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r44";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r44";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r45";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r45";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r45";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r45";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r45";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r45";
+import { ADAPTIVE_CHECKPOINTS, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r45";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r45";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r45";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r45";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r45";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r45";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r45";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r45";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r45";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r45";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r45";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r45";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r45";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r45";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r45";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r45";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r45";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c70f60bf6d67-dirty 2026-09-19T18:06:59.840Z";
+const buildStamp = "226eb58a944d-dirty 2026-09-20T04:50:20.990Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2957,10 +2957,15 @@ function renderIntro() {
         <div class="intro-hero">
           <div class="archive-label">${esc(local.introEyebrow)}</div>
           <h1 tabindex="-1"><span class="intro-title-lead">${esc(local.introTitleLead)}</span><span class="intro-title-main">${esc(local.introTitleMain)}</span></h1>
+          <!-- 2026-09-20: 표제·두 물음·「똑똑똑」 부름·프로젝트 문장·초대는 이생강 님(총괄기획)의 원고를 그대로 쓴다
+               (수정0916 슬라이드 2, TK 「저대로」 승인). 제도 사실 한 문장(만 39세)은 프로젝트 문장 앞에 남기고,
+               먼저 도착하는 안부·예순네 자리·질문 수 문단은 원고 아래로 내려갔다 — TK 9/11·9/15 의 순서 결정은 그대로다. -->
+          <p class="intro-questions">${esc(local.introQuestions)}</p>
+          <div class="intro-call">${local.introCall.map((line, index) => `<span class="${index === 0 ? "intro-call-knock" : "intro-call-line"}">${esc(line)}</span>`).join("")}</div>
           <div class="intro-copy">
             <p>${esc(local.introLead)}</p>
+            <p>${esc(local.introInvite)}</p>
             <p>${esc(local.introGreeting)}</p>
-            <p>${esc(local.introAudience)}</p>
             <!-- 이 연구가 기록을 어떻게 읽는지 먼저 밝힌다. 예순네 자리는 마지막 화면의
                  좌표 번호로 처음 나타나던 것인데, 그때는 설명이 아니라 결과였다
                  (TK 2026-09-11). 그 「먼저」를 지키려면 질문 개수를 말하기 전에 와야 한다

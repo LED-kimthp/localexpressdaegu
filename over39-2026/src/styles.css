@@ -6831,3 +6831,42 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .context-more-optional > summary { min-width: 0; }
   .context-more-optional > summary span { overflow-wrap: anywhere; }
 }
+
+/* 2026-09-20: 첫 화면 원고(이생강) — 표제 아래 두 물음(.intro-questions)과 「똑똑똑」 부름(.intro-call).
+   둘 다 가운데 정렬인 표제 영역에 놓이고, 본문(.intro-copy)은 그 아래에서 왼쪽 정렬로 이어진다. */
+.rc2-intro .intro-questions {
+  max-width: 780px;
+  margin: 0 auto;
+  color: #343630;
+  font-size: clamp(17px, 1.55vw, 20px);
+  line-height: 1.7;
+  word-break: keep-all;
+  text-wrap: balance;
+}
+.rc2-intro .intro-call {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 860px;
+  margin: 40px auto 0;
+  word-break: keep-all;
+}
+.rc2-intro .intro-call-knock {
+  margin-bottom: 10px;
+  font-size: clamp(40px, 4.2vw, 58px);
+  font-weight: 680;
+  line-height: 1.05;
+  letter-spacing: -.04em;
+}
+.rc2-intro .intro-call-line {
+  font-size: clamp(19px, 1.9vw, 26px);
+  font-weight: 620;
+  line-height: 1.4;
+  letter-spacing: -.018em;
+}
+@media (max-width: 640px) {
+  .rc2-intro .intro-call { margin-top: 30px; }
+  .rc2-intro .intro-call-knock { font-size: 36px; }
+  .rc2-intro .intro-call-line { font-size: 18px; }
+}
