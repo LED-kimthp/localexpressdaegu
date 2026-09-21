@@ -1,18 +1,19 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r51";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r52";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260921-r51";
-import { normalizedDScope } from "./flow.js?v=v7-20260921-r51";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260921-r52";
+import { normalizedDScope } from "./flow.js?v=v7-20260921-r52";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260921-r51";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260921-r51";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r51";
+import { translate } from "./i18n.js?v=v7-20260921-r52";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260921-r52";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r52";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
 const ROLE_LABELS = {
   R01: "시각예술가", R02: "사진·영상·미디어 작가", R03: "공예·디자인 창작자",
+  R21: "음악·소리 창작자", R22: "공연·연극 창작자", R23: "무용·신체 창작자", R24: "문학·글 창작자",
   R04: "큐레이터·전시기획자", R05: "독립기획자·프로듀서", R06: "비평가",
   R07: "연구자", R08: "문화예술 기자", R09: "독립미디어 관계자",
   R10: "편집자·출판기획자", R11: "아키비스트·기록연구자", R12: "사진·영상 기록자",

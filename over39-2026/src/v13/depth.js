@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260921-r51";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260921-r51";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260921-r51";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260921-r52";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260921-r52";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260921-r52";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -30,6 +30,10 @@ const ROLE_LABELS = {
   R01: "시각예술가",
   R02: "사진·영상·미디어 작가",
   R03: "공예·디자인 창작자",
+  R21: "음악·소리 창작자",
+  R22: "공연·연극 창작자",
+  R23: "무용·신체 창작자",
+  R24: "문학·글 창작자",
   R04: "큐레이터·전시기획자",
   R05: "독립기획자·프로듀서",
   R06: "비평가",

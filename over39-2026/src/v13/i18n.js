@@ -1,11 +1,15 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260921-r51";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260921-r51";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260921-r52";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260921-r52";
 
 const copy = {
   en: {
     "시각예술가": "Visual artist",
     "사진·영상·미디어 작가": "Photographer, moving-image, or media artist",
     "공예·디자인 창작자": "Craft or design practitioner",
+    "음악·소리 창작자": "Music or sound practitioner",
+    "공연·연극 창작자": "Theatre or performance practitioner",
+    "무용·신체 창작자": "Dance or movement practitioner",
+    "문학·글 창작자": "Literary or writing practitioner",
     "큐레이터·전시기획자": "Curator or exhibition planner",
     "독립기획자·프로듀서": "Independent planner or producer",
     "비평가": "Critic",
@@ -68,6 +72,10 @@ const copy = {
     "시각예술가": "視覚芸術家",
     "사진·영상·미디어 작가": "写真・映像・メディア作家",
     "공예·디자인 창작자": "工芸・デザインの創作者",
+    "음악·소리 창작자": "音楽・音の創作者",
+    "공연·연극 창작자": "舞台・演劇の創作者",
+    "무용·신체 창작자": "舞踊・身体表現の創作者",
+    "문학·글 창작자": "文学・文章の創作者",
     "큐레이터·전시기획자": "キュレーター・展覧会企画者",
     "독립기획자·프로듀서": "独立企画者・プロデューサー",
     "비평가": "批評家",
@@ -118,6 +126,10 @@ const copy = {
     "시각예술가": "視覺藝術家",
     "사진·영상·미디어 작가": "攝影、影像或媒體藝術家",
     "공예·디자인 창작자": "工藝或設計創作者",
+    "음악·소리 창작자": "音樂或聲音創作者",
+    "공연·연극 창작자": "表演或劇場創作者",
+    "무용·신체 창작자": "舞蹈或身體創作者",
+    "문학·글 창작자": "文學或寫作創作者",
     "큐레이터·전시기획자": "策展人或展覽企劃者",
     "독립기획자·프로듀서": "獨立企劃者或製作人",
     "비평가": "評論者",
