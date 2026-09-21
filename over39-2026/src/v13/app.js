@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260921-r49";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260921-r49";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260921-r49";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260921-r49";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260921-r49";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260921-r49";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260921-r49";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260921-r49";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260921-r49";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260921-r49";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r49";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260921-r49";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260921-r49";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260921-r49";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260921-r49";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260921-r49";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260921-r49";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260921-r49";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260921-r49";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r49";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260921-r49";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260921-r49";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260921-r49";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260921-r50";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260921-r50";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260921-r50";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260921-r50";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260921-r50";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260921-r50";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260921-r50";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260921-r50";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260921-r50";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260921-r50";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r50";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260921-r50";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260921-r50";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260921-r50";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260921-r50";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260921-r50";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260921-r50";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260921-r50";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260921-r50";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r50";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260921-r50";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260921-r50";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260921-r50";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "5c0ae4b61ab3-dirty 2026-09-21T13:29:29.764Z";
+const buildStamp = "f176ec643aac-dirty 2026-09-21T13:33:41.418Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1698,6 +1698,41 @@ function recordSkippedLowInformation(anchorId) {
   return true;
 }
 
+// 한 번 실패하면 끝나던 것을 두 번까지 시도한다. 서버가 5xx 로 넘어지는 경우가 실제로
+// 있었고(파일럿 3: 41초 뒤 500), 곧바로 같은 요청을 보내면 통했다. 사이를 조금 띄운다.
+async function requestClosingOffer(context, attempts = 2) {
+  let last = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const result = await createClosingOffer({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, timeoutMs: 120000 });
+      if (result?.offer) return result;
+      last = result;
+    } catch (error) {
+      last = null;
+    }
+    if (attempt < attempts) await new Promise((resolve) => window.setTimeout(resolve, 1500));
+  }
+  return last;
+}
+
+// 완료 화면에 닿았는데 제안이 없으면 여기서 한 번 더 청한다. 참여자가 기록을 읽는
+// 동안 도착하면 그때 화면만 다시 그린다. 이미 시도했으면 다시 하지 않는다.
+function ensureClosingOfferOnComplete() {
+  if (state.closingOffer?.text || state.closingOfferRetried) return;
+  if (state.closingOfferStatus === "loading" || !state.closingOfferContext) return;
+  state.closingOfferRetried = true;
+  state.closingOfferStatus = "loading";
+  requestClosingOffer(state.closingOfferContext, 1)
+    .then((result) => {
+      state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
+      state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
+      state.answers.closing_offer = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
+      saveDraft();
+      if (state.phase === "complete") render(false);
+    })
+    .catch(() => { state.closingOfferStatus = "unavailable"; });
+}
+
 async function requestAdaptiveNext(checkpoint) {
   if (state.adaptiveGenerating) return { decision: "deduplicated", question: currentAdaptiveTurn(checkpoint), source: "existing" };
   const existing = currentAdaptiveTurn(checkpoint);
@@ -1789,7 +1824,8 @@ async function prepareAdaptiveSummary() {
   // 그대로 기다림에 더해진다. 결과는 완료 화면에서 쓰므로 여기서 기다리지 않고, 도착하면 그때
   // 화면만 다시 그린다. 실패해도 참여는 그대로 간다.
   state.closingOfferStatus = "loading";
-  createClosingOffer({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, timeoutMs: 120000 })
+  state.closingOfferContext = context;
+  requestClosingOffer(context)
     .then((result) => {
       state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
       state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
@@ -2916,6 +2952,12 @@ function renderRc2Complete(response) {
   // 제안은 이제 참여 기록 안(맨 끝)에 들어간다. 기록에 이미 들어갔으면 화면에서 또
   // 보여주지 않는다 — 같은 글이 한 화면에 두 번 나온다. 기록을 만든 뒤에 제안이
   // 도착한 경우에만 아래에 따로 놓는다.
+  if (!document.closing_offer?.text && !state.closingOffer?.text) window.setTimeout(ensureClosingOfferOnComplete, 0);
+  // 늦게 도착한 제안도 인쇄물에 들어가야 한다. 기록은 활용 범위 화면에서 만들어지므로
+  // 그때 제안이 없었으면 문서에 빠져 있다. 원본을 건드리지 않고 사본에 얹는다.
+  if (!document.closing_offer?.text && state.closingOffer?.text) {
+    document.closing_offer = { text: state.closingOffer.text, label: greetingFirstLocal.closingOfferLabel, note: greetingFirstLocal.closingOfferNote, source_kind: "ai_generated", approval_scope: "excluded", participant_approved: false };
+  }
   const offerInDocument = Boolean(document.closing_offer?.text);
   const offerSection = offerInDocument
     ? ""
@@ -3248,7 +3290,9 @@ function retryQueuedAuxOnComplete() {
 let lastRenderedScreenKey = null;
 function currentScreenKey() {
   try {
-    return `${state.phase}:${state.phase === "survey" ? (activeScreens()[state.step] || state.step) : ""}`;
+    const screen = state.phase === "survey" ? (activeScreens()[state.step] || state.step) : "";
+    const waiting = state.depthGenerating || state.adaptiveGenerating ? ":waiting" : "";
+    return `${state.phase}:${screen}${waiting}`;
   } catch {
     return `${state.phase}:?`;
   }
