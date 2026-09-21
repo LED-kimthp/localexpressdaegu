@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260920-r47";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260921-r48";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -234,7 +234,11 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
   if (!adaptive) ids.push("D01");
   ids.push("D02");
   if (adaptive && hasSubstantiveDChange(answers)) ids.push("D02_TEXT");
-  ids.push("D03", "D04", "R01");
+  // 2026-09-20: R01(이 기억이 다음에 어떤 모습으로 이어지면 좋을까 — 인터뷰·전시·출판·아카이브…)은
+  // RC2 에서 뺐다. 좌표에도 분석 표에도 들어가지 않고 부록 한 줄만 만든다. TK 가 작가 선정·후속
+  // 프로그램에서도 쓰지 않는다고 확인해 뺀다. 스키마·renderR01·RC1 경로는 그대로라 되돌릴 수 있다.
+  ids.push("D03", "D04");
+  if (!adaptive) ids.push("R01");
   // 2026-09-20: M03(다시 이어보기)·M10(확인해 줄 사람)은 RC2 에서 조건 구간이 끝난 뒤
   // 기억으로 되돌아가 묻는 두 화면이었다. 둘 다 좌표·분석 어디에도 쓰이지 않고 부록 표
   // 한 줄에만 실린다. 첫 실제 참여자(총괄기획)가 「너무 추상적」이라 짚었고 답은 「아직 잘
@@ -291,7 +295,7 @@ function buildAdaptiveScreens(answers = {}) {
   else if (transitionFollowUp) screens.push("AI_ANCHOR_P12");
   screens.push("SUPPORT_CONDITIONS", "D02");
   if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
-  screens.push("D03", "D04", "R01");
+  screens.push("D03", "D04");
   screens.push("COMMUNITY", "DOCUMENT_IDENTITY", "PROFILE", "REFLECTION_REVIEW", "SUBMIT", "USE_SCOPE");
   return screens;
 }

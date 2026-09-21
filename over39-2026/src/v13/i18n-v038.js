@@ -10409,3 +10409,36 @@ Object.entries(memorySupportFoldLabel).forEach(([language, entries]) => {
   Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
 });
 Object.assign(extraCopy.zh || (extraCopy.zh = {}), memorySupportFoldLabel["zh-Hant"]);
+
+// 2026-09-20: 회피 선택지 분화 — 두 쌍이 글자까지 같아 여덟 언어에서도 같은 말이 두 번 나왔다
+// (P14·P15 「한 가지 상태로 말하기 어렵다」, P11·P13 「지금은 잘 모르겠어요」).
+const avoidanceOptionCopy = {
+  en: { "영향을 받는지 아직 모르겠음": "I am not sure yet whether it affects me", "다음 모습이 아직 그려지지 않는다": "I cannot yet picture what comes next", "시기마다 달라서 하나로 묶기 어렵다": "It changes from one period to the next, so I cannot pick one", "자리마다 달라서 하나로 묶기 어렵다": "It differs from one setting to another, so I cannot pick one", "언제였는지 흐릿해요": "I cannot pin down when it was", "그때 무엇이 이어졌는지 아직 모르겠어요": "I do not yet know what was continuing then" },
+  ja: { "영향을 받는지 아직 모르겠음": "影響を受けているかどうか、まだ分かりません", "다음 모습이 아직 그려지지 않는다": "次の姿がまだ思い描けません", "시기마다 달라서 하나로 묶기 어렵다": "時期によって違うので、一つにまとめにくい", "자리마다 달라서 하나로 묶기 어렵다": "場によって違うので、一つにまとめにくい", "언제였는지 흐릿해요": "いつだったかがはっきりしません", "그때 무엇이 이어졌는지 아직 모르겠어요": "その時期に何が続いていたのか、まだ分かりません" },
+  "zh-Hant": { "영향을 받는지 아직 모르겠음": "還不確定是否受到影響", "다음 모습이 아직 그려지지 않는다": "還想像不出接下來的樣子", "시기마다 달라서 하나로 묶기 어렵다": "不同時期各不相同，難以歸為一種", "자리마다 달라서 하나로 묶기 어렵다": "不同場合各不相同，難以歸為一種", "언제였는지 흐릿해요": "記不清是什麼時候了", "그때 무엇이 이어졌는지 아직 모르겠어요": "那段時間還有什麼在延續，我還說不上來" },
+  "zh-Hans": { "영향을 받는지 아직 모르겠음": "还不确定是否受到影响", "다음 모습이 아직 그려지지 않는다": "还想象不出接下来的样子", "시기마다 달라서 하나로 묶기 어렵다": "不同时期各不相同，难以归为一种", "자리마다 달라서 하나로 묶기 어렵다": "不同场合各不相同，难以归为一种", "언제였는지 흐릿해요": "记不清是什么时候了", "그때 무엇이 이어졌는지 아직 모르겠어요": "那段时间还有什么在延续，我还说不上来" },
+  fr: { "영향을 받는지 아직 모르겠음": "Je ne sais pas encore si cela m’affecte", "다음 모습이 아직 그려지지 않는다": "Je n’arrive pas encore à imaginer la suite", "시기마다 달라서 하나로 묶기 어렵다": "Cela change d’une période à l’autre, difficile d’en choisir une", "자리마다 달라서 하나로 묶기 어렵다": "Cela diffère selon les contextes, difficile d’en choisir un", "언제였는지 흐릿해요": "Je ne saurais dire quand c’était", "그때 무엇이 이어졌는지 아직 모르겠어요": "Je ne sais pas encore ce qui continuait alors" },
+  es: { "영향을 받는지 아직 모르겠음": "Todavía no sé si me afecta", "다음 모습이 아직 그려지지 않는다": "Todavía no consigo imaginar lo que viene", "시기마다 달라서 하나로 묶기 어렵다": "Cambia según la época, es difícil elegir una", "자리마다 달라서 하나로 묶기 어렵다": "Difiere según el contexto, es difícil elegir uno", "언제였는지 흐릿해요": "No sabría decir cuándo fue", "그때 무엇이 이어졌는지 아직 모르겠어요": "Todavía no sé qué seguía entonces" },
+  nl: { "영향을 받는지 아직 모르겠음": "Ik weet nog niet of het invloed heeft", "다음 모습이 아직 그려지지 않는다": "Ik kan me nog niet voorstellen wat er daarna komt", "시기마다 달라서 하나로 묶기 어렵다": "Het verschilt per periode, moeilijk om er één te kiezen", "자리마다 달라서 하나로 묶기 어렵다": "Het verschilt per context, moeilijk om er één te kiezen", "언제였는지 흐릿해요": "Ik weet niet precies wanneer dat was", "그때 무엇이 이어졌는지 아직 모르겠어요": "Ik weet nog niet wat er toen doorging" },
+  ms: { "영향을 받는지 아직 모르겠음": "Saya masih tidak pasti sama ada ia memberi kesan", "다음 모습이 아직 그려지지 않는다": "Saya masih tidak dapat bayangkan apa yang seterusnya", "시기마다 달라서 하나로 묶기 어렵다": "Ia berbeza mengikut tempoh, sukar memilih satu", "자리마다 달라서 하나로 묶기 어렵다": "Ia berbeza mengikut tempat, sukar memilih satu", "언제였는지 흐릿해요": "Saya tidak pasti bila ia berlaku", "그때 무엇이 이어졌는지 아직 모르겠어요": "Saya masih tidak pasti apa yang berterusan ketika itu" },
+};
+Object.entries(avoidanceOptionCopy).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), avoidanceOptionCopy["zh-Hant"]);
+
+// 2026-09-21: 정리문 대기(실측 88초) 동안 화면에 보이는 진행 표시.
+const summaryWaitCopy = {
+  en: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "We are putting your record together. This can take a little while." },
+  ja: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "記録を整えています。少し時間がかかることがあります。" },
+  "zh-Hant": { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "正在整理您的記錄，可能需要一點時間。" },
+  "zh-Hans": { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "正在整理您的记录，可能需要一点时间。" },
+  fr: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "Nous mettons votre dossier en forme. Cela peut prendre un moment." },
+  es: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "Estamos ordenando su registro. Puede tardar un poco." },
+  nl: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "We stellen uw verslag samen. Dit kan even duren." },
+  ms: { "기록을 정리하고 있어요. 조금 걸릴 수 있어요.": "Kami sedang menyusun rekod anda. Ia mungkin mengambil sedikit masa." },
+};
+Object.entries(summaryWaitCopy).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), summaryWaitCopy["zh-Hant"]);

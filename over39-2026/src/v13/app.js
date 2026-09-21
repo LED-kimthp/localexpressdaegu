@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260920-r47";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260920-r47";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260920-r47";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260920-r47";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260920-r47";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260920-r47";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260920-r47";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260920-r47";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260920-r47";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260920-r47";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260920-r47";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260920-r47";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260920-r47";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260920-r47";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260920-r47";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260920-r47";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260920-r47";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260920-r47";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260920-r47";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260920-r47";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260920-r47";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260920-r47";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260920-r47";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260921-r48";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260921-r48";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260921-r48";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260921-r48";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260921-r48";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260921-r48";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260921-r48";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260921-r48";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260921-r48";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260921-r48";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r48";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260921-r48";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260921-r48";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260921-r48";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260921-r48";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260921-r48";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260921-r48";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260921-r48";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260921-r48";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r48";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260921-r48";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260921-r48";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260921-r48";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "0a81415e7b18-dirty 2026-09-20T06:20:36.326Z";
+const buildStamp = "e79caa7628b5-dirty 2026-09-21T08:58:10.368Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -230,6 +230,10 @@ function openCallUrl() {
 
 // Conceptual choices use a short heading followed by one complete sentence.
 // Factual choices such as age, language, names and yes/no remain compact.
+// 2026-09-20: 회피 선택지가 열네 문항 전부에 붙어 있고, 문구까지 같은 것이 세 쌍이었다.
+// 첫 실제 참여자가 「비슷한 질문의 형식이 계속된다」고 한 것의 정체가 이것이다 — 물음이 달라도
+// 마지막 줄이 늘 같으면 같은 질문을 또 받는 것처럼 읽힌다. 각 문항이 **무엇을 못 고르는지**를
+// 그 문항의 말로 적는다. 값(MIXED·UNSURE 등)은 그대로라 자료는 이어진다.
 const CHOICE_COPY_KO = {
   P06: {
     ACTIVE_MAIN: "주된 활동 — 현재 이 활동을 생활의 중심에 두고 이어가고 있습니다.",
@@ -266,7 +270,7 @@ const CHOICE_COPY_KO = {
     GRADUAL: "서서히 달라짐 — 여러 경험과 변화가 겹치며 조금씩 달라졌습니다.",
     MULTIPLE: "여러 번의 변화 — 활동과 역할이 서로 다른 시기에 여러 차례 바뀌었습니다.",
     CONTINUED: "비슷한 흐름 — 큰 전환 없이 익숙한 방식과 리듬이 이어졌습니다.",
-    UNSURE: "아직 정하기 어려움 — 지금은 변화의 시점이나 방향을 한 가지로 말하기 어렵습니다.",
+    UNSURE: "시점이 흐릿함 — 달라진 것은 있는데 언제였는지 하나로 짚기 어렵습니다.",
     SKIP: "건너뛰기",
   },
   P13: {
@@ -278,7 +282,7 @@ const CHOICE_COPY_KO = {
     // 계속 드러난 채로 이어온 사람에게는 「그 시기」가 없다. 이 선택지가 없으면 그분들이
     // 자기 현실을 「기억이 안 난다」로 답해야 했다 — 연구가 피하려던 바로 그 일이다.
     NO_SUCH_PERIOD: "그런 때가 따로 없었어요 — 활동이 대체로 밖으로 보이는 채 이어져 왔습니다.",
-    UNSURE: "지금은 잘 모르겠어요 — 한 가지 상태로 말하기 어렵습니다.",
+    UNSURE: "아직 답이 안 나옴 — 그때 무엇이 이어졌는지 지금은 말하기 어렵습니다.",
   },
   P14: {
     STEADY: "꾸준한 지속 — 작업이나 핵심 활동을 비교적 꾸준히 이어가고 있습니다.",
@@ -290,7 +294,7 @@ const CHOICE_COPY_KO = {
     AUDIENCE_ACTIVE: "꾸준한 관람과 참여 — 문화예술을 비교적 꾸준히 찾아보고 참여하고 있습니다.",
     AUDIENCE_OCCASIONAL: "상황에 따른 참여 — 시기와 생활의 상황에 맞추어 문화예술을 만나고 있습니다.",
     AUDIENCE_DISTANCED: "현장과의 거리 — 현재는 문화예술 현장과 거리를 두고 있습니다.",
-    MIXED: "여러 상태가 함께 있음 — 지금의 상태를 한 가지 흐름으로 정하기 어렵습니다.",
+    MIXED: "시기마다 다름 — 때에 따라 달라서 한 가지 상태로 묶기 어렵습니다.",
   },
   P15: {
     MAKING_AND_SHOWING: "제작과 공개 — 제작과 외부 공개 활동이 함께 이어지고 있습니다.",
@@ -303,7 +307,7 @@ const CHOICE_COPY_KO = {
     AUDIENCE_OCCASIONAL: "상황에 따른 현장 참여 — 시기와 생활의 상황에 맞추어 참여하고 있습니다.",
     AUDIENCE_ONLINE: "온라인과 기록 — 온라인과 출판, 기록을 중심으로 문화예술을 만나고 있습니다.",
     AUDIENCE_PAUSED: "관람과 참여의 휴식 — 현재는 관람과 참여를 잠시 쉬고 있습니다.",
-    MIXED: "여러 상태가 함께 있음 — 지금의 공개와 참여 상태를 한 가지 흐름으로 정하기 어렵습니다.",
+    MIXED: "자리마다 다름 — 어떤 자리에서는 드러나고 어떤 자리에서는 그렇지 않습니다.",
   },
   P16: {
     LIVELIHOOD: "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.",
@@ -360,7 +364,7 @@ const CHOICE_COPY_KO = {
     GUIDE: "정보와 안내 — 이해하기 쉬운 정보와 안내가 문화예술을 이어가는 기반이 되었습니다.",
     ONLINE_MEDIA: "온라인과 매체 — 온라인과 출판, 영상이 문화예술을 이어서 만나는 기반이 되었습니다.",
     RECOMMENDATION: "다른 사람의 추천 — 다른 사람이 건넨 추천이 새로운 작품과 공간을 만나는 계기가 되었습니다.",
-    NONE: "지금은 떠오르지 않음 — 현재는 특별히 떠오르는 기반을 정하기 어렵습니다.",
+    NONE: "떠오르는 것이 없음 — 기반이라 부를 만한 것이 지금은 떠오르지 않습니다.",
     OTHER: "다른 기반 — 목록에 없는 다른 기반을 직접 적을 수 있습니다.",
   },
   M01: {
@@ -384,7 +388,7 @@ const CHOICE_COPY_KO = {
     SOCIAL: "지역과 사회의 상황 — 당시 지역과 사회의 상황이 이 기억과 함께 남아 있습니다.",
     LIFE: "그때의 삶 — 당시 나의 생활과 관계가 이 기억과 함께 남아 있습니다.",
     SENSORY: "설명하기 어려운 감각 — 말로 정리하기 어려운 감각이 이 기억과 함께 남아 있습니다.",
-    UNKNOWN: "아직 정하기 어려움 — 지금은 함께 남아 있는 것을 한 가지로 정하기 어렵습니다.",
+    UNKNOWN: "이름 붙이기 어려움 — 무언가 남아 있는데 한 가지로 고르기 어렵습니다.",
   },
   M08: {
     DIRECT: "현장에서 직접 — 그 장소에서 작품이나 사건을 직접 경험했습니다.",
@@ -413,7 +417,7 @@ const CHOICE_COPY_KO = {
     ROUNDTABLE: "라운드테이블 — 여러 참여자가 함께 모여 경험과 조건을 이야기합니다.",
     AUDIO_VIDEO: "음성·영상 기록 — 목소리와 장면을 음성과 영상의 형태로 이어갑니다.",
     INTERNATIONAL_DIALOGUE: "다른 지역과의 대화 — 다른 지역과 국가의 사람들과 경험을 나눕니다.",
-    UNKNOWN: "아직 정하기 어려움 — 다음에 이어질 모습을 지금은 한 가지로 정하기 어렵습니다.",
+    UNKNOWN: "아직 그림이 없음 — 다음에 이어질 모습이 지금은 그려지지 않습니다.",
   },
 };
 
@@ -2992,9 +2996,15 @@ function renderSurvey() {
         ? state.adaptiveGenerating ? "답변을 읽고 있어요" : "이 답변에서 이어가기"
         : state.depthGenerating ? "질문을 준비하고 있습니다" : id === "DEPTH_D" && state.summaryGenerating ? "정리하고 있습니다" : state.summaryGenerating ? "기록을 정리하고 있습니다" : state.translationGenerating ? "번역을 준비하고 있습니다" : "다음";
   const nextDisabled = !canContinue(id) || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating;
+  // 2026-09-21 파일럿 2: 정리문을 기다리는 88초 동안 화면에서 바뀌는 것이 「다음」 단추 글자뿐이고
+  // 「이전」까지 꺼져 있어 「고장났나」 싶은 시간이 된다. 이미 다른 화면들이 쓰는 조용한 진행
+  // 표시를 여기에도 둔다 — 새 문구를 만들지 않고, 무슨 일이 일어나는지 보이게만 한다.
+  const waitingSignal = state.summaryGenerating || state.translationGenerating || state.adaptiveGenerating || state.depthGenerating
+    ? processingSignal(state.summaryGenerating ? "기록을 정리하고 있어요. 조금 걸릴 수 있어요." : "답변을 읽고 있어요")
+    : "";
   const backAction = "back";
   const nextAction = "next";
-  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
+  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div>${waitingSignal}<div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function researchJourney() {
@@ -3202,8 +3212,25 @@ function retryQueuedAuxOnComplete() {
   } catch { /* 저장소가 막힌 브라우저에서는 대기열 자체가 없다 */ }
 }
 
+// 2026-09-21 파일럿 2: 「새 화면은 맨 위에서」를 focusHeading 에 걸어 두었더니 대부분의 전환에
+// 안 걸렸다. RC2 의 「다음」·「이전」·고정 확인·정리 경로는 전부 `render(!isRc2)` = render(false)
+// 라서다. 적응형 화면은 render(true) 뒤에 render(false) 가 덮기까지 했다. 스물일곱 화면 가운데
+// 맨 위에서 시작한 것은 넷뿐이었다. 그래서 판단 기준을 「초점을 옮기는가」가 아니라
+// **「화면이 실제로 바뀌었는가」**로 옮긴다 — 그게 원래 재려던 것이다.
+let lastRenderedScreenKey = null;
+function currentScreenKey() {
+  try {
+    return `${state.phase}:${state.phase === "survey" ? (activeScreens()[state.step] || state.step) : ""}`;
+  } catch {
+    return `${state.phase}:?`;
+  }
+}
+
 function render(focusHeading = false) {
   const scrollPosition = { x: window.scrollX, y: window.scrollY };
+  const screenKey = currentScreenKey();
+  const screenChanged = lastRenderedScreenKey !== null && screenKey !== lastRenderedScreenKey;
+  lastRenderedScreenKey = screenKey;
   document.documentElement.lang = state.language;
   // 탭 제목이 정적 HTML에 한글로 박혀 있어, 영어 화면에서도 탭만 한글이었다.
   if (isRc2) {
@@ -3220,7 +3247,7 @@ function render(focusHeading = false) {
   traceCurrentAnchorDom();
   bindInteractiveMotion();
   requestAnimationFrame(() => {
-    if (focusHeading) {
+    if (focusHeading || screenChanged) {
       // 2026-09-20 파일럿에서 잡힘: 화면이 바뀌어도 앞 화면의 스크롤을 그대로 물려받아,
       // 새 질문이 제목이 아니라 마지막 선택지나 「다음」 단추부터 보였다(랜딩 365px·682px·
       // 981px·1407px·2194px 로 계속 깊어짐). preventScroll 은 초점을 옮기며 튀는 것을
@@ -3228,7 +3255,7 @@ function render(focusHeading = false) {
       // 새 화면에서는 맨 위로 올리고 초점만 제목에 둔다. 화면 안에서 고쳐 그릴 때(render(false))는
       // 아래의 자리 지키기가 그대로 돈다 — 선택지를 고를 때 화면이 튀면 안 되기 때문이다.
       window.scrollTo({ left: 0, top: 0, behavior: "auto" });
-      document.querySelector("h1[tabindex='-1'], h2[tabindex='-1']")?.focus({ preventScroll: true });
+      if (focusHeading) document.querySelector("h1[tabindex='-1'], h2[tabindex='-1']")?.focus({ preventScroll: true });
     } else {
       const restoreScroll = () => window.scrollTo({ left: scrollPosition.x, top: scrollPosition.y, behavior: "auto" });
       restoreScroll();
