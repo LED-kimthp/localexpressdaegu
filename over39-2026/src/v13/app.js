@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260921-r48";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260921-r48";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260921-r48";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260921-r48";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260921-r48";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260921-r48";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260921-r48";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260921-r48";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260921-r48";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument } from "./response-document.js?v=v7-20260921-r48";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r48";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260921-r48";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260921-r48";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260921-r48";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260921-r48";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260921-r48";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260921-r48";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260921-r48";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260921-r48";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r48";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260921-r48";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260921-r48";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260921-r48";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260921-r49";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260921-r49";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260921-r49";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260921-r49";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260921-r49";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260921-r49";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260921-r49";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260921-r49";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260921-r49";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260921-r49";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r49";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260921-r49";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260921-r49";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260921-r49";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260921-r49";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260921-r49";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260921-r49";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260921-r49";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260921-r49";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r49";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260921-r49";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260921-r49";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260921-r49";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "e79caa7628b5-dirty 2026-09-21T08:58:10.368Z";
+const buildStamp = "5c0ae4b61ab3-dirty 2026-09-21T13:29:29.764Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -968,6 +968,10 @@ function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}
     createdAt: state.answers.response_document_created_at || new Date().toISOString(),
     confirmedAt,
     final,
+    // 제안은 화면에서만 보이고 인쇄하면 사라졌다. 참여자가 들고 가는 것은 이 종이다.
+    closingOffer: state.closingOffer?.text
+      ? { text: state.closingOffer.text, label: greetingFirstCopy(state.language).closingOfferLabel, note: greetingFirstCopy(state.language).closingOfferNote }
+      : null,
     // 500장을 결과보고서 부록으로 붙일 때 어느 응답인지 가릴 표기다. 문서 밖의 카드에만
     // 있어 인쇄에서 빠졌다(2026-09-09 실측).
     participantCode: state.participantReference?.code || "",
@@ -1785,7 +1789,7 @@ async function prepareAdaptiveSummary() {
   // 그대로 기다림에 더해진다. 결과는 완료 화면에서 쓰므로 여기서 기다리지 않고, 도착하면 그때
   // 화면만 다시 그린다. 실패해도 참여는 그대로 간다.
   state.closingOfferStatus = "loading";
-  createClosingOffer({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, timeoutMs: 90000 })
+  createClosingOffer({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, timeoutMs: 120000 })
     .then((result) => {
       state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
       state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
@@ -1901,7 +1905,7 @@ function renderReflectionReview() {
   }
   if (!isRc2) {
     return `${screenHeading("지금까지의 응답을 이렇게 읽었습니다.", "직접 읽고 필요한 부분을 고칠 수 있어요.")}
-      <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 정리" : "응답 정리"}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>연결이 지연되면 작성한 문장을 중심으로 먼저 정리합니다. 정리 문장은 언제든 직접 읽고 고칠 수 있습니다.</small>` : ""}</div>
+      <div class="reflection-summary"><span>${state.answers.depth_summary?.source === "rules" ? "원문 중심 정리" : "응답 정리"}</span>${summaryParagraphsOf(summary).map((part) => `<p>${esc(part)}</p>`).join("")}${state.answers.depth_summary?.source === "rules" ? `<small>연결이 지연되면 작성한 문장을 중심으로 먼저 정리합니다. 정리 문장은 언제든 직접 읽고 고칠 수 있습니다.</small>` : ""}</div>
       ${renderChoices("reflection_action", [["ACCEPT", "전체적으로 가까워요"], ["EDIT", "일부를 고치고 싶어요"], ["DROP", "이 정리는 남기지 않을게요"]])}
       ${action === "EDIT" ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: "빠진 내용이나 어긋난 부분을 고쳐주세요.", label: "고친 문장" }) : ""}`;
   }
@@ -1911,13 +1915,13 @@ function renderReflectionReview() {
     : local.editPlaceholder;
   const summaryProvenance = state.answers.depth_summary?.provenance;
   const translatedPreview = responseSourceLanguage() !== "ko" && summaryKo
-    ? `<div class="response-document-translation reflection-translation"><span>${esc(local.koreanDraftLabel)}</span><p>${esc(summaryKo)}</p>${summaryProvenance?.translation_kind === "ai-translated" ? `<small class="ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</small>` : ""}</div>`
+    ? `<div class="response-document-translation reflection-translation"><span>${esc(local.koreanDraftLabel)}</span>${summaryParagraphsOf(summaryKo).map((part) => `<p>${esc(part)}</p>`).join("")}${summaryProvenance?.translation_kind === "ai-translated" ? `<small class="ai-use-note">${esc(t("일부 문장은 AI 번역을 사용합니다. 언어에 따라 표현의 차이가 있을 수 있습니다."))}</small>` : ""}</div>`
     : "";
   return `${screenHeading(local.synthesisTitle, local.synthesisHelp)}
     ${rawSection}
     <section class="record-layer record-layer-synthesis"><div class="record-layer-heading"><span>02</span><div><h3>${esc(local.synthesisTitle)}</h3><p>${esc(local.synthesisHelp)}</p></div></div>
     ${summaryProvenance?.kind === "ai-generated" ? `<p class="ai-use-note" role="note">${esc(t("앞서 남긴 응답을 바탕으로 AI가 정리한 초안입니다. 뜻이 다르게 느껴지는 문장은 직접 다듬을 수 있어요."))}</p>` : ""}
-    <div class="reflection-summary"><span>${esc(state.answers.depth_summary?.source === "rules" ? local.ruleDraftLabel : local.summaryDraftLabel)}</span><p>${esc(summary)}</p>${state.answers.depth_summary?.source === "rules" ? `<small>${esc(local.ruleDraftHelp)}</small>` : ""}</div>
+    <div class="reflection-summary"><span>${esc(state.answers.depth_summary?.source === "rules" ? local.ruleDraftLabel : local.summaryDraftLabel)}</span>${summaryParagraphsOf(summary).map((part) => `<p>${esc(part)}</p>`).join("")}${state.answers.depth_summary?.source === "rules" ? `<small>${esc(local.ruleDraftHelp)}</small>` : ""}</div>
     ${translatedPreview}
     ${renderChoices("reflection_action", [["ACCEPT", local.acceptAction], ["EDIT", local.editAction], ["REWRITE", local.rewriteNewAction]])}
     ${["EDIT", "REWRITE"].includes(action) ? renderText("participant_revision", { field: "participant_revision", value: state.answers.participant_revision || "", placeholder: revisionPlaceholder, label: revisionLabel }) : ""}
@@ -2040,12 +2044,28 @@ function renderUseScope() {
   const contactSummary = archiveUse === "ASK_LATER"
     ? ` · <span data-use-scope-contact-status>${esc(useScopeContactStatusText())}</span>`
     : "";
+  // 2026-09-21 TK: 「너무 보수적이라니까. 설문에 마지막까지 참여한 사람에게, 무슨 카드결제
+  // 하는 것도 아니고. 이건 취지에 안 맞아.」 스물다섯 분을 쓴 사람에게 예·아니요를 세 번
+  // 더 묻고 단추를 여섯 번 누르게 하고 있었다. 동의를 받는 일이 결제 확인처럼 보였다.
+  //
+  // 그렇다고 셋을 하나로 묶지는 않는다. 01·02 는 「이름 없는 기록을 연구에 쓴다」는 같은
+  // 갈래라 한 번에 고를 수 있게 하되, 두 문장을 단추 안에 그대로 두어 무엇에 동의하는지는
+  // 읽히게 한다. 03 은 성격이 다르다 — 나중에 참여자에게 다시 연락하겠다는 약속이고,
+  // 켜면 이메일까지 받는다. 그래서 묶지 않고, 대신 **필수에서 뺐다.** 안 고르면
+  // 「연구 범위에서 마무리」로 간다. 개인정보를 덜 쓰는 쪽이 기본값이어야 한다.
+  //
+  // 흔한 경우의 누름 수: 여섯 번 → 한 번. 하나씩 정하고 싶은 사람은 접힌 곳을 편다.
+  const bothChosen = researchUse === "ANON_ANALYSIS" && quoteUse === "ANON_EXCERPT";
+  const eachTouched = Boolean((researchUse || quoteUse) && !bothChosen);
   return `${screenHeading(consent.title, local.useScopeHelp)}
+    <button type="button" class="use-scope-both ${bothChosen ? "selected" : ""}" data-use-both="1" aria-pressed="${bothChosen}"><strong>${esc(consent.useScopeBoth)}</strong><small>${esc(consent.researchYes)}</small><small>${esc(consent.quoteYes)}</small></button>
+    <details class="use-scope-detail"${eachTouched ? " open" : ""}><summary>${esc(consent.useScopeEach)}</summary>
     <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(consent.researchQ)}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", consent.researchYes, "")}${choice("policy_research_use", "INTERNAL_ONLY", consent.researchNo, "")}</div></section>
     <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(consent.quoteQ)}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", consent.quoteYes, "")}${choice("policy_quote_use", "NO_QUOTE", consent.quoteNo, "")}</div></section>
-    <section class="use-scope-section"><span>03 · ${esc(t("전시·출판·웹 기록"))}</span><h3>${esc(consent.publicQ)}</h3><div class="use-scope-grid">${choice("public_archive_interest", "ASK_LATER", consent.publicYes, "")}${choice("public_archive_interest", "RESEARCH_ONLY", consent.publicNo, "")}</div></section>
+    </details>
+    <section class="use-scope-section use-scope-optional"><h3>${esc(consent.publicQ)}</h3><button type="button" class="use-scope-choice use-scope-optin ${archiveUse === "ASK_LATER" ? "selected" : ""}" data-use-field="public_archive_interest" data-use-value="ASK_LATER" data-use-toggle="1" aria-pressed="${archiveUse === "ASK_LATER"}"><strong>${esc(consent.publicYes)}</strong></button><p class="use-scope-default-note">${esc(consent.useScopePublicDefault)}</p></section>
     ${contactSection}
-    <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse ? (archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리") : "공개 활용 범위 미선택"))}${contactSummary}</p></div>`;
+    <div class="use-scope-summary"><strong>${esc(t("현재 선택"))}</strong><p>${esc(t(researchUse ? (researchUse === "ANON_ANALYSIS" ? "익명 분석" : "내부 연구") : "정책연구 범위 미선택"))} · ${esc(t(quoteUse ? (quoteUse === "ANON_EXCERPT" ? "익명 문장 인용 가능" : "문장 인용 제외") : "인용 범위 미선택"))} · ${esc(t(archiveUse === "ASK_LATER" ? "공개 활용은 다시 확인" : "연구 범위에서 마무리"))}${contactSummary}</p></div>`
 }
 
 function screenBody(id) {
@@ -2162,8 +2182,9 @@ function canContinue(id) {
     // 조건을 보면, 버튼이 켜져 있는데 눌러도 아무 일이 없는 상태가 생긴다 — 그것도
     // 참여 기록을 실제로 저장하는 마지막 버튼에서.
     if (!synthesisConfirmed() || !state.answers.participant_approved_text) return false;
-    const useScopeComplete = Boolean(state.answers.policy_research_use && state.answers.policy_quote_use && state.answers.public_archive_interest);
-    if (!useScopeComplete) return false;
+    // 03(전시·출판 때 다시 연락)은 필수에서 뺐다 — 안 고르면 「연구 범위에서 마무리」다.
+    // 앞의 둘은 그대로 필수다: 기록을 연구에 쓸지 말지는 참여자가 정해야 한다.
+    if (!state.answers.policy_research_use || !state.answers.policy_quote_use) return false;
     if (state.answers.public_archive_interest !== "ASK_LATER") return true;
     return researchContactComplete();
   }
@@ -2751,7 +2772,7 @@ function renderGlobalGreetingsConnection(connection) {
   const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><aside class="greeting-writing-example" aria-label="${esc(local.messageExampleLabel)}"><span>${esc(local.messageExampleLabel)}</span><p>${esc(local.messageExample)}</p></aside><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
-  const previewSection = `<section class="connection-section greeting-preview"><span class="archive-label">${esc(local.previewTitle)}</span><h2>${esc(copy.previewTitle)}</h2><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
+  const previewSection = `<section class="connection-section greeting-preview"><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
   const stageContent = currentStage === "receive" ? receiveSection : currentStage === "waiting" ? waitingSection : currentStage === "message" ? messageSection : previewSection;
   const writingFlow = ["message", "preview"].includes(currentStage);
   const primaryAction = ["receive", "waiting", "message"].includes(currentStage) ? "" : `<button class="primary-button" type="button" data-action="save-connection" ${connectionCanSave() ? "" : "disabled"}>${esc(copy.save)} <span aria-hidden="true">→</span></button>`;
@@ -2767,7 +2788,7 @@ function renderGlobalGreetingsConnection(connection) {
       : "";
   return `<main class="connection-layout rc2-connection-layout greeting-connection">
     <section class="connection-main">
-      <div class="greeting-intro"><div><div class="archive-label">${esc(local.greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingFeatureName)}</h1><p class="greeting-privacy-note">${esc(copy.privacy)}</p></div></div>
+      <div class="greeting-intro"><div><div class="archive-label">${esc(local.greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.greetingFeatureName)}</h1></div></div>
       ${writingFlow ? stepNav : ""}${stageContent}
       ${stageActions}
       <div class="survey-actions"><button class="secondary-button" type="button" data-action="back-to-result">${esc(copy.back)}</button>${primaryAction}</div>
@@ -2892,12 +2913,19 @@ function renderRc2Complete(response) {
   // 2026-09-20: 마지막 제안. 참여 기록과 좌표를 본 뒤, 안부를 주고받기 전에 놓는다.
   // 참여자가 승인하는 것은 자기 말로 된 정리문뿐이라는 계약이 있어(task5), 제안은 승인 대상인
   // 참여 기록 안에 들어가지 않는다. 없으면 그 구역을 아예 그리지 않는다 — 빈 상자를 남기지 않는다.
-  const offerSection = state.closingOffer?.text
-    ? `<section class="closing-offer"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2>${esc(greetingFirstLocal.closingOfferTitle)}</h2>${String(state.closingOffer.text).split(/\n{2,}/).filter(Boolean).map((para) => `<p>${esc(para.trim())}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p></section>`
+  // 제안은 이제 참여 기록 안(맨 끝)에 들어간다. 기록에 이미 들어갔으면 화면에서 또
+  // 보여주지 않는다 — 같은 글이 한 화면에 두 번 나온다. 기록을 만든 뒤에 제안이
+  // 도착한 경우에만 아래에 따로 놓는다.
+  const offerInDocument = Boolean(document.closing_offer?.text);
+  const offerSection = offerInDocument
+    ? ""
+    : state.closingOffer?.text
+    ? `<section class="closing-offer"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2>${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(state.closingOffer.text).map((para) => `<p>${esc(para)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p></section>`
     : state.closingOfferStatus === "loading"
       ? `<section class="closing-offer closing-offer-loading" role="status"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><p>${esc(greetingFirstLocal.closingOfferLoading)}</p></section>`
       : "";
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
+  state.printReference = reference;
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
   return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
 }
@@ -3454,9 +3482,20 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
+  if (target.dataset.useBoth) {
+    // 01·02 를 한 번에. 이미 둘 다 고른 상태에서 다시 누르면 되돌린다.
+    const already = state.answers.policy_research_use === "ANON_ANALYSIS" && state.answers.policy_quote_use === "ANON_EXCERPT";
+    state.answers.policy_research_use = already ? "" : "ANON_ANALYSIS";
+    state.answers.policy_quote_use = already ? "" : "ANON_EXCERPT";
+    saveDraft();
+    render(false);
+    return;
+  }
   if (target.dataset.useField) {
-    state.answers[target.dataset.useField] = target.dataset.useValue;
-    if (target.dataset.useField === "public_archive_interest" && target.dataset.useValue !== "ASK_LATER") {
+    // 껐다 켜는 단추(03)는 같은 값을 다시 누르면 고르지 않은 상태로 돌아간다.
+    const clearing = target.dataset.useToggle && state.answers[target.dataset.useField] === target.dataset.useValue;
+    state.answers[target.dataset.useField] = clearing ? "" : target.dataset.useValue;
+    if (target.dataset.useField === "public_archive_interest" && (clearing || target.dataset.useValue !== "ASK_LATER")) {
       state.researchContact = { email: "", consent: false, status: null };
     }
     saveDraft();
@@ -3550,6 +3589,17 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "print-document") {
+    // 2026-09-21 TK: 저장하면 「Claude.pdf」가 됐다. 브라우저는 document.title 을
+    // 파일이름으로 쓰므로, 인쇄하는 동안만 참여 기록의 코드번호로 바꾼다.
+    const previousTitle = document.title;
+    const code = String(state.printReference || "").trim();
+    if (code) document.title = code;
+    const restore = () => {
+      document.title = previousTitle;
+      window.removeEventListener("afterprint", restore);
+    };
+    window.addEventListener("afterprint", restore);
+    window.setTimeout(restore, 60000);   // afterprint 를 안 주는 브라우저 대비
     window.print();
     return;
   }
@@ -3841,6 +3891,9 @@ document.addEventListener("click", (event) => {
       // 2차 가드를 두지 않는다. 여기서 걸릴 수 있는 조건은 전부 `canContinue("USE_SCOPE")`
       // 안으로 옮겼고, 그 값이 그대로 버튼의 disabled 계산에 쓰인다. 두 조건이 갈라져
       // 있던 동안에는 버튼이 켜져 있어도 눌러서 아무 일이 없을 수 있었다.
+      // 03 을 고르지 않고 지나갔으면 기록에 「연구 범위에서 마무리」라고 분명히 적는다.
+      // 빈 칸으로 두면 나중에 자료를 읽는 사람이 「안 물어봤다」와 구별할 수 없다.
+      if (!state.answers.public_archive_interest) state.answers.public_archive_interest = "RESEARCH_ONLY";
       state.answers.response_document_draft = buildCurrentResponseDocument({ final: true, confirmedAt: state.answers.document_confirmed_at });
       state.submitted = createResponse();
       savePending(state.submitted);

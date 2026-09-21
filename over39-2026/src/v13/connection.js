@@ -1,4 +1,4 @@
-import { coordinateNumber } from "./classification.js?v=v7-20260921-r48";
+import { coordinateNumber } from "./classification.js?v=v7-20260921-r49";
 
 export const connectionTopics = {
   CRITIQUE: "비평과 읽기",

@@ -6920,3 +6920,31 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .closing-offer .closing-offer-note { margin-top: 18px; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
 .closing-offer-loading p { color: var(--muted); }
 @media (max-width: 640px) { .closing-offer { margin-top: 32px; padding: 22px 0 24px; } }
+
+
+/* 2026-09-21: 참여 기록 맨 끝의 「당신에게」. 승인 구역 밖이라는 것이 눈으로 보이게
+   왼쪽에 선을 두고 배경을 깔지 않는다 — 카드로 만들면 기록의 일부처럼 읽힌다. */
+.response-document-offer {
+  margin: 26px 0 0;
+  break-inside: avoid;
+  padding: 0 0 0 16px;
+  border-left: 2px solid var(--red);
+}
+.response-document-offer-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.response-document-offer p {
+  margin: 0 0 10px;
+  line-height: 1.75;
+}
+.response-document-offer small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}

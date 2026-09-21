@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r48";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260921-r49";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260921-r48";
-import { normalizedDScope } from "./flow.js?v=v7-20260921-r48";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260921-r49";
+import { normalizedDScope } from "./flow.js?v=v7-20260921-r49";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260921-r48";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260921-r48";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r48";
+import { translate } from "./i18n.js?v=v7-20260921-r49";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260921-r49";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260921-r49";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -679,6 +679,7 @@ export function buildResponseDocument({
   final = false,
   participantCode = "",
   schema = null,
+  closingOffer = null,
 } = {}) {
   // The answer's original language and the visible document frame are
   // intentionally separate: switching interface language must not rewrite
@@ -963,6 +964,14 @@ export function buildResponseDocument({
       ].filter(([label, value]) => clean(label) && clean(value)),
     },
     coordinate: { m: coordinate.m || null, s: coordinate.s || null, d: coordinate.d || null },
+    // 2026-09-21 TK: 「마지막 제안 하는 거 그게 필요해. 어디에 어떻게 넣으면 좋을까?」
+    // 기록의 맨 끝, 확인 문장 바로 위에 놓는다. 이유 셋 — ⑴ 맺는 말이므로 마지막에
+    // 읽혀야 한다 ⑵ 오른쪽 「연구 분석」 칸에 넣으면 연구자에게 하는 말로 읽힌다
+    // ⑶ 인쇄물 첫 장 아래가 비어 있어 자리가 거기 있다. 참여자가 승인한 것은 자기
+    // 말로 된 정리문뿐이므로(task5), 승인 구역 밖에 두고 AI가 썼다고 밝힌다.
+    closing_offer: closingOffer?.text
+      ? { text: String(closingOffer.text), label: closingOffer.label || "", note: closingOffer.note || "", source_kind: "ai_generated", approval_scope: "excluded", participant_approved: false }
+      : null,
     // `sections` remains for old analysis/export consumers. Participant UI
     // uses `layers`, whose approval metadata matches what was actually read
     // and confirmed.
@@ -1042,6 +1051,53 @@ export function buildResponseDocument({
   };
 }
 
+// 정리문을 문단으로 나눈다. 빈 줄이 있으면 그대로 쓰고, 없으면 한 덩어리로 둔다 —
+// 문장마다 끊으면 오히려 토막글이 되고, 그건 참여자가 읽는 글이 아니다.
+// 2026-09-21 TK: 「너무 붙여쓰기야.」 정리문이 열 줄짜리 한 덩이로 온다.
+// 엣지 함수 프롬프트에 「두세 문단으로 나누고 사이에 빈 줄을 두라」를 넣었지만 모델은
+// 자주 지키지 않았다. 모델에게 부탁해서 되는 일이 아니므로 받는 쪽에서 나눈다.
+// 글자는 하나도 바꾸지 않는다 — 어디서 끊어 보여줄지만 정한다.
+function splitIntoSentences(text) {
+  const marks = ".!?。！？";
+  const closers = "\"'\u201d\u2019)]\u300d\u300f\u203a\u00bb";
+  const out = [];
+  let start = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    if (!marks.includes(text[i])) continue;
+    let end = i + 1;
+    while (end < text.length && closers.includes(text[end])) end += 1;
+    const next = text[end];
+    // 뒤에 공백이 오지 않으면 문장 끝이 아니다 — 「3.5」나 「www.」가 잘리지 않게.
+    if (next !== undefined && !/\s/.test(next)) continue;
+    const piece = text.slice(start, end).trim();
+    if (piece) out.push(piece);
+    start = end;
+  }
+  const tail = text.slice(start).trim();
+  if (tail) out.push(tail);
+  return out.length ? out : [text];
+}
+
+export function summaryParagraphsOf(text) {
+  const raw = String(text || "").trim();
+  if (!raw) return [];
+  const explicit = raw.split(/\n\s*\n+/).map((part) => part.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean);
+  if (explicit.length > 1) return explicit;          // 모델이 이미 나눠 보냈으면 그대로 둔다
+  const single = explicit[0] || raw;
+  const sentences = splitIntoSentences(single);
+  if (sentences.length < 3) return [single];         // 두 문장짜리를 굳이 쪼개지 않는다
+  // 문장 수로 나누면 긴 문장 셋이 한 덩이가 되어 여전히 답답하다(실측 289자).
+  // 길이로 나눈다. 한글·한자는 글자당 정보가 많아 같은 글자 수라도 더 길게 읽히므로
+  // 기준을 낮게 잡는다.
+  const dense = (single.match(/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/g) || []).length > single.length / 3;
+  const budget = dense ? 150 : 320;
+  const groups = Math.min(4, Math.max(2, Math.round(single.length / budget)));
+  const per = Math.ceil(sentences.length / groups);
+  const out = [];
+  for (let i = 0; i < sentences.length; i += per) out.push(sentences.slice(i, i + per).join(" "));
+  return out.filter(Boolean);
+}
+
 export function renderResponseDocument(document = {}) {
   const frame = responseDocumentFrame(document.display_language || document.source_language);
   const task7 = task7Copy(document.display_language || document.source_language);
@@ -1065,7 +1121,9 @@ export function renderResponseDocument(document = {}) {
         }).join("")
         : `<p class="response-document-empty">${esc(task7.rawEmpty)}</p>`;
     } else if (layer.id === "participant_confirmed_synthesis") {
-      body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
+      // 2026-09-21: 정리문 전체가 한 덩어리 <p> 로 나갔다. 모델이 문단을 나눠도 화면에서 뭉개져,
+      // 대여섯 문장이 벽처럼 붙어 「나열처럼 보인다」(TK). 빈 줄로 나뉜 곳을 문단으로 살린다.
+      body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span>${summaryParagraphsOf(item.text).map((part) => `<p>${esc(part)}</p>`).join("")}${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
     } else {
       body = array(layer.paragraphs).map((paragraph) => (paragraph && typeof paragraph === "object"
         ? `<p><span class="response-document-title-screen">${esc(paragraph.screen)}</span><span class="response-document-title-appendix">${esc(paragraph.appendix)}</span></p>`
@@ -1139,6 +1197,9 @@ export function renderResponseDocument(document = {}) {
   // 이름·기록 코드·기관 표기가 이미 밝히고, 승인 경계는 절 제목이 말하며, 활용
   // 범위는 바로 위에 값으로 있다. 같은 문단이 500장에 500번 나올 이유가 없다.
   // 값 자체는 document.archive.statement 에 그대로 남는다 — 지운 것은 인쇄면뿐이다.
-  const archiveStatement = "";
+  const offer = document.closing_offer;
+  const archiveStatement = offer?.text
+    ? `<section class="response-document-offer" data-approval-scope="excluded">${offer.label ? `<span class="response-document-offer-label">${esc(offer.label)}</span>` : ""}${summaryParagraphsOf(offer.text).map((part) => `<p>${esc(part)}</p>`).join("")}${offer.note ? `<small>${esc(offer.note)}</small>` : ""}</section>`
+    : "";
   return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${document.appendix_title ? `<span class="response-document-title-screen">${esc(document.title)}</span><span class="response-document-title-appendix">${esc(document.appendix_title)}</span>` : esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }

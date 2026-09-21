@@ -1,13 +1,15 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260921-r48";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260921-r48";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260921-r48";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260921-r49";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260921-r49";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260921-r49";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
 // skipped_low_information, api)은 사람이 쓴 것도 모델이 쓴 것도 아니다.
 // 제공자를 새로 붙일 때 이 한 줄만 고치면 된다. 이름을 여러 곳에 흩어 놓았던 것이
 // 2026-09-08에 cerebras를 붙였을 때 요약의 출처를 "fixed"로 기록하게 만든 원인이었다.
-const API_SOURCES = new Set(["openai", "motif", "cerebras", "groq", "morph", "motif3", "mistral", "tokenharbor"]);
+// 여기 이름을 안 넣으면 그 제공자가 쓴 글이 연구 기록에 「사람이 쓴 고정 문장」으로 조용히 남는다.
+// 2026-09-08 cerebras, 2026-09-13 tokenharbor 에서 두 번 겪었고 두 번 다 시험이 잡았다.
+const API_SOURCES = new Set(["openai", "motif", "cerebras", "groq", "morph", "motif3", "mistral", "tokenharbor", "upstage"]);
 
 export function isLiveModelSource(source) {
   return API_SOURCES.has(String(source || "").toLowerCase());
@@ -1257,7 +1259,7 @@ export async function createAdaptiveSummary({ endpoint, anonKey, mode = "fallbac
 // 2026-09-20: 마지막 제안(closing_offer). 정리문과 **같은 재료**를 쓰므로 순서대로 부를 이유가
 // 없다 — 동시에 부른다. 실패해도 참여자는 정리문을 그대로 갖는다(제안은 없으면 없는 대로 둔다).
 // 서버가 지어낸 인용을 걸러 하나도 안 남으면 응답을 버리므로, 여기로는 근거 있는 글만 온다.
-export async function createClosingOffer({ endpoint, anonKey, mode = "fallback", context, fetchImpl = fetch, timeoutMs = 90000 } = {}) {
+export async function createClosingOffer({ endpoint, anonKey, mode = "fallback", context, fetchImpl = fetch, timeoutMs = 120000 } = {}) {
   if (mode !== "live" || !endpoint) return { offer: "", evidence: [], source: "skipped" };
   try {
     const result = await requestAiJson({ endpoint, anonKey, operation: "closing_offer", context, fetchImpl, timeoutMs });
