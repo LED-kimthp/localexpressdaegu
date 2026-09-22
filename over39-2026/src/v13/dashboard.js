@@ -1,4 +1,4 @@
-import { buildConnectionProfile, connectionTopics, coordinateInsight, rankedMatches } from "./connection.js?v=v7-20260922-r54";
+import { buildConnectionProfile, connectionTopics, coordinateInsight, rankedMatches } from "./connection.js?v=v7-20260922-r55";
 
 const root = document.querySelector("#dashboard-root");
 const pendingKey = "over39-v13-pilot-pending-submission";
