@@ -775,6 +775,37 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
   .nav{gap:10px 14px;flex-wrap:wrap}
   .nav a{display:inline-block;padding:7px 3px}
 }
+/* v22 달성공원 — 열려 있는 기록면
+   나머지 다섯은 끝난 프로젝트라 제목·이미지·한 문단이면 충분했다. 달성공원만
+   2017년부터 닫히지 않았는데 판이 같아서 같은 무게로 읽혔다. 겹쳐 있는 시간과
+   기록이 놓이는 순서, 그리고 들어오는 문을 섹션 안에 둔다.
+   새 물감은 쓰지 않는다 — 기존 판(--line, --muted, 18px 라운드)의 결 그대로.
+   폭 주의: .text 는 .project 의 둘째 칼럼이라 1440 화면에서도 579px 뿐이다.
+   .archive 가 그 안에 있어 max-width:980px 은 걸리지 않는다. 그래서 두 칸까지만.
+   (같은 자리의 .ref-grid 가 3칸에 185px씩 — 한글은 그보다 넓어야 읽힌다.) */
+.layer-note{margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+.layer-note .kicker{margin-bottom:16px}
+.layers,.record-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.layers{gap:12px}
+.layers li{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.2)}
+.layers strong{display:block;font-weight:400;font-size:15px;line-height:1.45;letter-spacing:-.02em;word-break:keep-all}
+.layers span{display:block;margin-top:7px;font-size:12px;line-height:1.7;color:var(--muted);word-break:keep-all}
+.layers em{display:block;margin-top:8px;font-style:normal;font-size:11px;line-height:1.55;color:var(--muted)}
+.record-steps{counter-reset:step;gap:22px 24px}
+.record-steps li{border-top:1px solid var(--line);padding-top:14px;font-size:13px;line-height:1.72;color:var(--muted);word-break:keep-all}
+.record-steps li::before{counter-increment:step;content:"0" counter(step);display:block;margin-bottom:8px;font-size:11px;letter-spacing:.14em;color:var(--ink)}
+.record-steps b{display:block;font-weight:400;font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:5px}
+.entry{margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+.entry .kicker{margin-bottom:12px}
+.entry p{margin:0 0 12px;font-size:14px;line-height:1.82;color:var(--muted);word-break:keep-all}
+.entry p:last-child{margin-bottom:0}
+.entry .actions{flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:18px}
+.entry .action{flex:1 1 240px;font-size:13px;padding:12px 16px}
+@media(max-width:1000px){
+  .layers,.record-steps{grid-template-columns:1fr}
+  .entry .action{flex:1 1 100%}
+}
+
 </style><script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -818,7 +849,8 @@ Local Express Daegu</a><nav class="nav"><a href="#home">Home</a><a href="#about"
 <div class="frame"><img alt="공원, 동물원, 시민 기억의 시간이 겹쳐 있는 달성공원의 풍경" src="assets/index/dalseong_park/dalseong_hero_01.jpg" loading="lazy" decoding="async" width="1440" height="960"/><div class="frame-note"><strong>달성공원 프로젝트</strong><span>하나의 장소에 겹쳐 있는 공원, 동물원, 시민 기억의 시간</span></div></div>
 <div class="text">
 <div class="short"><p>달성공원 프로젝트는 2017년부터 이어온 장소 기반 장기 기록 프로젝트입니다. 참여자의 사진과 기억, 동물원의 시간, 도시 재편의 흐름을 함께 살피며 하나의 장소에 쌓인 시간을 다시 읽습니다.</p><p class="en">A place-based long-term record project that re-reads Dalseong Park through participants’ photographs and memories, the history of the zoo, and urban change.</p><button class="toggle">Archive Note +</button></div>
-<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p><p>로컬익스프레스 대구는 개인의 앨범 속 사진 한 장과 기억 한 줄을 통해, 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 천천히 모으고 다시 읽고자 합니다.</p><p>참여자가 전한 사진과 기억은 동의와 확인을 거쳐 정리되며, 공개는 로컬익스프레스 대구의 아카이브 검토와 큐레이션을 통해 이루어집니다.</p><p class="en">Participants’ photographs and memories are organized once consent is confirmed, and shared through Local Express Daegu’s archival review and curation.</p><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>달성공원 프로젝트
+<div class="entry"><div><div class="kicker">OPEN RECORD / 열려 있는 기록</div><p>달성공원 프로젝트는 2017년부터 지금까지 닫히지 않은 기록입니다. 앨범 속 사진 한 장과 기억 한 줄이 이 아카이브의 입구가 됩니다.</p><p class="en">A record that has stayed open since 2017. A single photograph and a line of memory are the entry to this archive.</p></div><div class="actions"><a class="action" href="methodology.html#dalseong"><span>기록의 방법 읽기 / Methodology</span><span>→</span></a><a class="action" href="#contact"><span>사진과 기억 전하기 / Contact</span><span>→</span></a></div></div>
+<div class="archive" hidden=""><div class="archive-title">Archive Note</div><p>달성공원은 오래된 성곽의 시간, 공원과 동물원의 시간, 시민의 산책과 유년의 기억, 그리고 동물원 이전과 도시 재편의 흐름이 한 장소 안에 겹쳐 있는 풍경입니다.</p><div class="layer-note"><div class="kicker">LAYERS OF TIME / 겹쳐 있는 시간</div><ul class="layers"><li><strong>성곽의 시간</strong><span>한 장소에 남은 가장 이른 층.</span><em>The oldest layer, left by the fortress.</em></li><li><strong>공원과 동물원의 시간</strong><span>공원이 되고 동물원이 들어선 시간.</span><em>The time of the park and the zoo.</em></li><li><strong>산책과 유년의 기억</strong><span>시민의 산책과 유년이 쌓인 시간.</span><em>Citizens’ walks and childhood memories.</em></li><li><strong>이전과 도시 재편</strong><span>동물원 이전과 도시가 다시 짜이는 흐름.</span><em>The zoo’s relocation and urban change.</em></li></ul></div><p>로컬익스프레스 대구는 개인의 앨범 속 사진 한 장과 기억 한 줄을 통해, 행정 기록이나 공식 역사에 포착되기 어려운 장소의 감각을 천천히 모으고 다시 읽고자 합니다.</p><p>참여자가 전한 사진과 기억은 동의와 확인을 거쳐 정리되며, 공개는 로컬익스프레스 대구의 아카이브 검토와 큐레이션을 통해 이루어집니다.</p><p class="en">Participants’ photographs and memories are organized once consent is confirmed, and shared through Local Express Daegu’s archival review and curation.</p><div class="layer-note"><div class="kicker">HOW THE RECORD IS PLACED / 기록이 놓이는 순서</div><ol class="record-steps"><li><b>동의</b>사진과 기억을 아카이브에 맡기는 일에 대한 동의를 먼저 확인합니다.</li><li><b>확인</b>전해진 기록의 내용을 참여자와 다시 확인합니다.</li><li><b>정리</b>확인을 마친 사진과 기억을 하나의 기록으로 정리합니다.</li><li><b>검토와 공개</b>로컬익스프레스 대구의 아카이브 검토와 큐레이션을 거쳐 공개됩니다.</li></ol></div><div class="reference-images"><div class="reference-head"><div class="kicker">IMAGE RECORDS</div><p>달성공원 프로젝트
 참여자의 사진과 기억을 통해 하나의 장소에 쌓인 시간을 다시 읽는 장기 기록 프로젝트
 A long-term record project re-reading the layered times of one place through participants’ photographs and memories.</p></div><div class="ref-grid"><figure><img alt="달성공원 동물원의 시간을 보여주는 장면" src="assets/index/dalseong_park/dalseong_ref_01.jpg" loading="lazy" decoding="async" width="900" height="600"/><figcaption>01 · 동물원 구역의 풍경 / View of the zoo area</figcaption></figure><figure><img alt="시민의 산책과 공원의 표면" src="assets/index/dalseong_park/dalseong_ref_02.jpg" loading="lazy" decoding="async" width="900" height="600"/><figcaption>02 · 공원 산책길과 훌라후프 / Park walkway and hula hoops</figcaption></figure><figure><img alt="장소 안에 남은 구조와 기억의 흔적" src="assets/index/dalseong_park/dalseong_ref_03.jpg" loading="lazy" decoding="async" width="900" height="600"/><figcaption>03 · 달성공원 꽃마차 / Dalseong Park flower carriage</figcaption></figure></div></div><button class="toggle close">Archive Note −</button></div>
 </div>
