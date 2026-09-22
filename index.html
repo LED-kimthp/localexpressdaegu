@@ -806,6 +806,33 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
   .entry .action{flex:1 1 100%}
 }
 
+
+/* 821~1000px 사각지대 복구.
+   max-width:1000px 블록이 .nav,.util,.side 를 숨기는데
+   되살리는 규칙은 max-width:820px 블록에만 있어, 그 사이 구간에서
+   상단 메뉴와 PROJECT INDEX 가 둘 다 사라졌다.
+   (iPad Pro 11" 세로 834px, 안드로이드 태블릿, 창을 줄인 노트북이 여기 들어온다)
+   이 구간의 레이아웃은 .layout{display:block} 으로 이미 세로로 쌓이므로
+   820px 이하와 같은 방식으로 되살리되 폭에 맞춰 여유를 준다. */
+@media (min-width:821px) and (max-width:1000px){
+  .top .nav{
+    display:flex!important;flex-wrap:wrap!important;
+    gap:9px 16px!important;justify-content:flex-start!important;
+    font-size:12px!important;line-height:1.35!important;
+  }
+  .top .nav a{display:inline-block;padding:7px 3px}
+  .side{
+    display:grid!important;grid-template-columns:repeat(3,1fr)!important;
+    position:static!important;top:auto!important;height:auto!important;
+    width:auto!important;max-width:none!important;margin:0!important;
+    padding:18px 22px!important;gap:8px 20px!important;
+    border-right:0!important;border-bottom:1px solid var(--line)!important;
+    background:rgba(245,242,235,.72)!important;overflow:visible!important;
+  }
+  .side a{display:block;text-decoration:none;padding:12px 0;border-top:1px solid var(--line)}
+  .side .kicker{grid-column:1 / -1!important;margin-bottom:2px!important}
+  .side strong,.side small{max-width:100%!important;overflow-wrap:break-word!important}
+}
 </style><script type="application/ld+json">
 {
   "@context": "https://schema.org",
