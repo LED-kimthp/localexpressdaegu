@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r53";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r53";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r53";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r53";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r53";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r53";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r53";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r53";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r53";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r53";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r53";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r53";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r53";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r53";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r53";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r53";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r53";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r53";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r53";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r53";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r53";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r53";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r53";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r54";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r54";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r54";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r54";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r54";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r54";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r54";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r54";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r54";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r54";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r54";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r54";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r54";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r54";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r54";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r54";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r54";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r54";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r54";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r54";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r54";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r54";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r54";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "bd016ca04dad-dirty 2026-09-21T15:42:55.949Z";
+const buildStamp = "2d48d0a51dc4-dirty 2026-09-22T01:57:09.652Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -819,7 +819,11 @@ function dOptions(kind) {
   const scope = dScope();
   if (scope === "SELF_ROLE") {
     const role = state.answers.role_primary;
-    const bank = schema.role_question_bank?.[role];
+    // 역할에 맞는 은행이 없으면 R01(갈래를 가리지 않는 창작자)의 것을 쓴다.
+    // 없으면 선택지가 0개가 되어 「다음」이 영영 꺼진다 — 그 역할을 고른 사람은
+    // 설문을 못 끝낸다(2026-09-22 파일럿 4). 은행을 빠뜨린 것은 시험이 잡지만,
+    // 잡히기 전에 링크가 나가 있을 수 있다. 막힌 화면보다 일반적인 선택지가 낫다.
+    const bank = schema.role_question_bank?.[role] || schema.role_question_bank?.R01;
     const labels = bank?.[kind === "gap" ? "d01_options" : "d02_options"];
     const coded = (labels || []).slice(0, 4).map((label, index) => [`D${index + 1}`, label]);
     const local = stage().task5;
@@ -2881,6 +2885,11 @@ function rc2AxisValue(response, axis) {
     || response.axes?.[`${key}_primary`]
     || response.answers?.[`participant_${key}`]
     || null;
+  // 2026-09-22 파일럿 4: 「아직 못 정함」을 고른 참여자의 완료 화면이 「여러 방향이 함께
+  // 남아 있습니다」라고 했다. 참여자가 하지 않은 말이다 — 여러 방향이 남은 것과 정하지
+  // 않기로 한 것은 다르다. 회피 선택지는 그대로 「정하지 않으셨습니다」로 돌려준다.
+  const undecided = new Set(["UNSURE", "NO_SPECIFIC_CHANGE", "NO_MAJOR_GAP", "NO_AXIS", "MIXED", "PREFER_NOT_TO_SAY"]);
+  if (!value || undecided.has(String(value))) return greetingFirst().coordinateUndecided;
   return responseDocumentFrame(state.language).axis[value] || greetingFirst().coordinateMixed;
 }
 

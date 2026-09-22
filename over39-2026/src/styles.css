@@ -6948,3 +6948,52 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   font-size: 11px;
   line-height: 1.6;
 }
+
+
+/* 2026-09-22: 마지막 동의 화면. 한 번에 고르는 단추와 접어 둔 낱개 선택. */
+.use-scope-both {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 20px;
+  border: 1px solid var(--line-dark, #b8b4aa);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+}
+.use-scope-both strong { font-size: 16px; line-height: 1.45; }
+.use-scope-both small {
+  position: relative;
+  padding-left: 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.use-scope-both small::before {
+  position: absolute;
+  left: 0;
+  content: "·";
+}
+.use-scope-both:hover { border-color: var(--ink); }
+.use-scope-both.selected { border-color: var(--red); background: var(--paper, #f7f7f3); }
+.use-scope-detail { margin: 0 0 18px; }
+.use-scope-detail > summary {
+  padding: 12px 0;
+  border-top: 1px solid var(--line, #d8d8d2);
+  border-bottom: 1px solid var(--line, #d8d8d2);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+.use-scope-optional { margin-top: 4px; }
+.use-scope-optin { min-height: 0; width: 100%; }
+.use-scope-default-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
