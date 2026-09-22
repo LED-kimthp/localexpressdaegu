@@ -41,6 +41,11 @@ const frames = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "물음", axisSecondaryPrefix: "함께",
+    // 문항 ID(M02·P13_TEXT…)는 참여자에게 뜻이 없는 글자다. 인쇄물의 여백에 그대로 찍혀
+    // 나갔다(2026-09-22 실측). 보이는 자리에는 이 이름표를 쓰고 코드는 data-question-id 로
+    // 남긴다 — 보고서의 「참여 기록 코드 · 문항 ID」 인용은 그대로 맞물린다. 여백 폭이
+    // 12.5mm 라 한두 낱말로 짧게 둔다. 아홉 언어가 다 있어야 한다.
+    questionLabels: { M02: "장면", M04_TEXT: "이유", NO_RECALL_RELATION: "지금의 관계", P12: "달라진 것", P13_TEXT: "이어온 것", P16: "현재의 현실", P18: "배경", P19: "기반", P19_TEXT: "기반", D02_TEXT: "바라는 변화", D03: "겪은 현실", D04: "영향", M10: "확인할 사람", P02: "주요 역할", P03: "함께하는 역할", P04: "지난 역할" },
     appendixRawTitle: "{name}{이가} 쓴 글", appendixSynthesisTitle: "{name}{이가} 확인한 글", appendixDocumentTitle: "{name}의 기록", appendixStructureTitle: "선택 응답", appendixReadingTitle: "연구 분석", appendixScopeTitle: "활용 동의 범위",
     rowLabels: { memoryNote: "기억이 놓인 시간과 지역, 그리고 그 기억과 함께 남아 있는 것입니다.", route: "이야기의 출발", role: "활동·참여 위치", roles: "함께하는 위치", memory: "기억의 대상", branch: "기억에서 이어 고른 답", creative: "작품 제작 상태", public: "공개 활동 상태", realityNow: "현재에 작용하는 현실", transition: "조건이 달라진 시점", invisible: "안 보이던 때 이어진 것", support: "지지해 온 조건", duration: "활동 기간", reconnect: "이어지면 좋을 방식", gap: "지금 가장 비어 있는 것", change: "먼저 달라지면 좋을 것", reality: "조건이 놓인 현실", memoryTitle: "기억의 단서", mTime: "시기", mPlace: "지역", mMode: "경험 방식", mRelation: "기억과의 관계", mWitness: "확인해 줄 수 있는 사람", mSupport: "함께 남은 것" }, readingSourceRules: "규칙 정리(모델 없음)",
   },
@@ -81,6 +86,7 @@ const frames = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "Asked", axisSecondaryPrefix: "With",
+    questionLabels: { M02: "Scene", M04_TEXT: "Reason", NO_RECALL_RELATION: "Relation now", P12: "What changed", P13_TEXT: "What continued", P16: "Conditions now", P18: "Background", P19: "Support", P19_TEXT: "Support", D02_TEXT: "Desired change", D03: "Reality", D04: "Effect", M10: "Who confirms", P02: "Main role", P03: "Parallel role", P04: "Earlier role" },
     appendixRawTitle: "Writing by {name}", appendixSynthesisTitle: "Text confirmed by {name}", appendixDocumentTitle: "Record of {name}", appendixStructureTitle: "Selected answers", appendixReadingTitle: "Research analysis", appendixScopeTitle: "Consented scope of use",
     rowLabels: { memoryNote: "The time and place the memory sits in, and what remains alongside it.", route: "Starting point", role: "Position in activity or participation", roles: "Parallel positions", memory: "What the memory is of", branch: "Follow-up about the memory", creative: "Creative work", public: "Public activity", realityNow: "Conditions acting on the present", transition: "When conditions shifted", invisible: "What continued while unseen", support: "Conditions that supported it", duration: "Years active", reconnect: "How it could continue", gap: "What is most lacking now", change: "What would help first", reality: "The reality these conditions sit in", memoryTitle: "Clues to the memory", mTime: "When", mPlace: "Where", mMode: "How it was experienced", mRelation: "Relation to the memory", mWitness: "Who could confirm it", mSupport: "What stayed with it" }, readingSourceRules: "Rule-based (no model)",
   },
@@ -121,6 +127,7 @@ const frames = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "問い", axisSecondaryPrefix: "あわせて",
+    questionLabels: { M02: "場面", M04_TEXT: "理由", NO_RECALL_RELATION: "今の関係", P12: "変わったこと", P13_TEXT: "続いていたこと", P16: "今の現実", P18: "背景", P19: "支え", P19_TEXT: "支え", D02_TEXT: "望む変化", D03: "現実", D04: "影響", M10: "確認できる人", P02: "主な役割", P03: "並行する役割", P04: "以前の役割" },
     appendixRawTitle: "{name}が書いた文章", appendixSynthesisTitle: "{name}が確認した文章", appendixDocumentTitle: "{name}の記録", appendixStructureTitle: "選択回答", appendixReadingTitle: "研究分析", appendixScopeTitle: "利用同意の範囲",
     rowLabels: { memoryNote: "記憶が置かれた時期と地域、そしてその記憶とともに残っているものです。", route: "話の出発点", role: "活動・参加の位置", roles: "並行する位置", memory: "記憶の対象", branch: "記憶について続けて選んだ答え", creative: "作品制作の状態", public: "公開活動の状態", realityNow: "現在に働いている現実", transition: "条件が変わった時点", invisible: "見えなかった時期に続いていたこと", support: "支えてきた条件", duration: "活動期間", reconnect: "続くとよい形", gap: "いま最も足りないこと", change: "まず変わるとよいこと", reality: "条件が置かれた現実", memoryTitle: "記憶の手がかり", mTime: "時期", mPlace: "地域", mMode: "経験の方法", mRelation: "記憶との関係", mWitness: "一緒に確認できる人", mSupport: "ともに残ったもの" }, readingSourceRules: "規則による整理（モデルなし）",
   },
@@ -161,6 +168,7 @@ const frames = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "提问", axisSecondaryPrefix: "同时",
+    questionLabels: { M02: "场景", M04_TEXT: "原因", NO_RECALL_RELATION: "当下的关系", P12: "改变的事", P13_TEXT: "延续的事", P16: "当下的现实", P18: "背景", P19: "支撑", P19_TEXT: "支撑", D02_TEXT: "希望的改变", D03: "现实", D04: "影响", M10: "可确认的人", P02: "主要角色", P03: "并行的角色", P04: "以前的角色" },
     appendixRawTitle: "{name}撰写的文字", appendixSynthesisTitle: "{name}确认的文字", appendixDocumentTitle: "{name}的记录", appendixStructureTitle: "选择回答", appendixReadingTitle: "研究分析", appendixScopeTitle: "使用同意范围",
     rowLabels: { memoryNote: "这段记忆所在的时间与地区，以及与它一同留下的东西。", route: "故事的起点", role: "活动·参与位置", roles: "并行的位置", memory: "记忆的对象", branch: "关于记忆的后续选择", creative: "创作状态", public: "公开活动状态", realityNow: "当下起作用的现实", transition: "条件改变的时点", invisible: "不显眼时期仍在延续的事", support: "一直支撑的条件", duration: "活动时长", reconnect: "希望延续的方式", gap: "当下最缺少的", change: "希望先改变的", reality: "这些条件所处的现实", memoryTitle: "记忆的线索", mTime: "时期", mPlace: "地区", mMode: "经验方式", mRelation: "与记忆的关系", mWitness: "可以一起确认的人", mSupport: "一同留下的事物" }, readingSourceRules: "按规则整理（无模型）",
   },
@@ -201,6 +209,7 @@ const frames = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "提問", axisSecondaryPrefix: "同時",
+    questionLabels: { M02: "場景", M04_TEXT: "原因", NO_RECALL_RELATION: "當下的關係", P12: "改變的事", P13_TEXT: "延續的事", P16: "當下的現實", P18: "背景", P19: "支撐", P19_TEXT: "支撐", D02_TEXT: "希望的改變", D03: "現實", D04: "影響", M10: "可確認的人", P02: "主要角色", P03: "並行的角色", P04: "以前的角色" },
     appendixRawTitle: "{name}撰寫的文字", appendixSynthesisTitle: "{name}確認的文字", appendixDocumentTitle: "{name}的記錄", appendixStructureTitle: "選擇回答", appendixReadingTitle: "研究分析", appendixScopeTitle: "使用同意範圍",
     rowLabels: { memoryNote: "這段記憶所在的時間與地區，以及與它一同留下的東西。", route: "故事的起點", role: "活動·參與位置", roles: "並行的位置", memory: "記憶的對象", branch: "關於記憶的後續選擇", creative: "創作狀態", public: "公開活動狀態", realityNow: "當下起作用的現實", transition: "條件改變的時點", invisible: "不顯眼時期仍在延續的事", support: "一直支撐的條件", duration: "活動時長", reconnect: "希望延續的方式", gap: "當下最缺少的", change: "希望先改變的", reality: "這些條件所處的現實", memoryTitle: "記憶的線索", mTime: "時期", mPlace: "地區", mMode: "經驗方式", mRelation: "與記憶的關係", mWitness: "可以一起確認的人", mSupport: "一同留下的事物" }, readingSourceRules: "依規則整理（無模型）",
   },
@@ -240,6 +249,7 @@ frames.fr = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "Question", axisSecondaryPrefix: "Avec",
+    questionLabels: { M02: "Scène", M04_TEXT: "Raison", NO_RECALL_RELATION: "Relation actuelle", P12: "Ce qui a changé", P13_TEXT: "Ce qui a continué", P16: "Réalité actuelle", P18: "Contexte", P19: "Appui", P19_TEXT: "Appui", D02_TEXT: "Changement souhaité", D03: "Réalité", D04: "Effet", M10: "Qui peut confirmer", P02: "Rôle principal", P03: "Rôle parallèle", P04: "Rôle antérieur" },
     appendixRawTitle: "Écrits de {name}", appendixSynthesisTitle: "Texte confirmé par {name}", appendixDocumentTitle: "Récit de {name}", appendixStructureTitle: "Réponses sélectionnées", appendixReadingTitle: "Analyse de recherche", appendixScopeTitle: "Périmètre d'utilisation consenti",
     rowLabels: { memoryNote: "Le moment et le lieu où se situe le souvenir, et ce qui demeure avec lui.", route: "Point de départ", role: "Position dans l'activité ou la participation", roles: "Positions parallèles", memory: "Objet du souvenir", branch: "Choix complémentaire sur le souvenir", creative: "Travail de création", public: "Activité publique", realityNow: "Réalités agissant sur le présent", transition: "Moment où les conditions ont changé", invisible: "Ce qui continuait sans être visible", support: "Conditions qui l'ont soutenu", duration: "Années d'activité", reconnect: "Formes de continuation souhaitées", gap: "Ce qui manque le plus aujourd'hui", change: "Ce qui aiderait d'abord", reality: "La réalité où se situent ces conditions", memoryTitle: "Indices du souvenir", mTime: "Période", mPlace: "Lieu", mMode: "Mode d'expérience", mRelation: "Relation au souvenir", mWitness: "Qui pourrait le confirmer", mSupport: "Ce qui est resté avec" }, readingSourceRules: "Établi par règles (sans modèle)",
 };
@@ -278,6 +288,7 @@ frames.es = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "Pregunta", axisSecondaryPrefix: "Junto con",
+    questionLabels: { M02: "Escena", M04_TEXT: "Motivo", NO_RECALL_RELATION: "Relación actual", P12: "Lo que cambió", P13_TEXT: "Lo que continuó", P16: "Realidad actual", P18: "Contexto", P19: "Apoyo", P19_TEXT: "Apoyo", D02_TEXT: "Cambio deseado", D03: "Realidad", D04: "Efecto", M10: "Quién lo confirma", P02: "Rol principal", P03: "Rol paralelo", P04: "Rol anterior" },
     appendixRawTitle: "Escritos de {name}", appendixSynthesisTitle: "Texto confirmado por {name}", appendixDocumentTitle: "Registro de {name}", appendixStructureTitle: "Respuestas seleccionadas", appendixReadingTitle: "Análisis de investigación", appendixScopeTitle: "Alcance de uso consentido",
     rowLabels: { memoryNote: "El momento y el lugar en que se sitúa el recuerdo, y lo que permanece junto a él.", route: "Punto de partida", role: "Posición en la actividad o participación", roles: "Posiciones paralelas", memory: "Objeto del recuerdo", branch: "Elección complementaria sobre el recuerdo", creative: "Trabajo creativo", public: "Actividad pública", realityNow: "Realidades que actúan en el presente", transition: "Momento en que cambiaron las condiciones", invisible: "Lo que continuaba sin verse", support: "Condiciones que lo sostuvieron", duration: "Años de actividad", reconnect: "Formas en que podría continuar", gap: "Lo que más falta ahora", change: "Lo que ayudaría primero", reality: "La realidad donde se sitúan estas condiciones", memoryTitle: "Pistas del recuerdo", mTime: "Época", mPlace: "Lugar", mMode: "Modo de experiencia", mRelation: "Relación con el recuerdo", mWitness: "Quién podría confirmarlo", mSupport: "Lo que quedó con ello" }, readingSourceRules: "Elaborado por reglas (sin modelo)",
 };
@@ -316,6 +327,7 @@ frames.nl = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "Vraag", axisSecondaryPrefix: "Samen met",
+    questionLabels: { M02: "Scène", M04_TEXT: "Reden", NO_RECALL_RELATION: "Relatie nu", P12: "Wat veranderde", P13_TEXT: "Wat doorging", P16: "Huidige omstandigheden", P18: "Achtergrond", P19: "Steun", P19_TEXT: "Steun", D02_TEXT: "Gewenste verandering", D03: "Werkelijkheid", D04: "Gevolg", M10: "Wie het bevestigt", P02: "Voornaamste rol", P03: "Parallelle rol", P04: "Eerdere rol" },
     appendixRawTitle: "Geschreven door {name}", appendixSynthesisTitle: "Tekst bevestigd door {name}", appendixDocumentTitle: "Verslag van {name}", appendixStructureTitle: "Gekozen antwoorden", appendixReadingTitle: "Onderzoeksanalyse", appendixScopeTitle: "Toegestane gebruiksomvang",
     rowLabels: { memoryNote: "De tijd en de plaats waar de herinnering zich bevindt, en wat er samen mee blijft.", route: "Vertrekpunt", role: "Positie in activiteit of deelname", roles: "Parallelle posities", memory: "Waarover de herinnering gaat", branch: "Vervolgkeuze over de herinnering", creative: "Creatief werk", public: "Publieke activiteit", realityNow: "Omstandigheden die nu meespelen", transition: "Moment waarop voorwaarden veranderden", invisible: "Wat doorging zonder zichtbaar te zijn", support: "Voorwaarden die het droegen", duration: "Jaren actief", reconnect: "Vormen waarin het kan doorgaan", gap: "Wat nu het meest ontbreekt", change: "Wat eerst zou helpen", reality: "De werkelijkheid waarin deze voorwaarden staan", memoryTitle: "Aanwijzingen bij de herinnering", mTime: "Periode", mPlace: "Plaats", mMode: "Wijze van ervaren", mRelation: "Verhouding tot de herinnering", mWitness: "Wie het kan bevestigen", mSupport: "Wat ermee bleef" }, readingSourceRules: "Op regels gebaseerd (geen model)",
 };
@@ -354,6 +366,7 @@ frames.ms = {
     // ::before 가 한국어를 박아 넣어 아홉 언어 모두에 「물음 · 」·「함께 · 」가 찍혔다 —
     // CSS 가 넣는 글자라 HTML 을 아무리 뒤져도 보이지 않았다(2026-09-17).
     askedPrefix: "Soalan", axisSecondaryPrefix: "Bersama",
+    questionLabels: { M02: "Adegan", M04_TEXT: "Sebab", NO_RECALL_RELATION: "Hubungan kini", P12: "Apa yang berubah", P13_TEXT: "Apa yang berterusan", P16: "Keadaan kini", P18: "Latar", P19: "Sokongan", P19_TEXT: "Sokongan", D02_TEXT: "Perubahan diharap", D03: "Realiti", D04: "Kesan", M10: "Siapa mengesahkan", P02: "Peranan utama", P03: "Peranan seiring", P04: "Peranan dahulu" },
     appendixRawTitle: "Tulisan {name}", appendixSynthesisTitle: "Teks yang disahkan {name}", appendixDocumentTitle: "Rekod {name}", appendixStructureTitle: "Jawapan pilihan", appendixReadingTitle: "Analisis penyelidikan", appendixScopeTitle: "Skop penggunaan yang dipersetujui",
     rowLabels: { memoryNote: "Masa dan tempat ingatan itu berada, serta apa yang kekal bersamanya.", route: "Titik permulaan", role: "Kedudukan dalam kegiatan atau penyertaan", roles: "Kedudukan seiring", memory: "Perkara yang diingati", branch: "Pilihan susulan tentang ingatan", creative: "Kerja kreatif", public: "Kegiatan awam", realityNow: "Keadaan yang bertindak pada masa kini", transition: "Ketika keadaan berubah", invisible: "Apa yang berterusan tanpa kelihatan", support: "Keadaan yang menyokongnya", duration: "Tempoh kegiatan", reconnect: "Cara ia boleh diteruskan", gap: "Apa yang paling kurang kini", change: "Apa yang membantu dahulu", reality: "Realiti tempat keadaan ini berada", memoryTitle: "Petunjuk ingatan", mTime: "Tempoh", mPlace: "Tempat", mMode: "Cara pengalaman", mRelation: "Hubungan dengan ingatan", mWitness: "Siapa boleh mengesahkannya", mSupport: "Apa yang kekal bersamanya" }, readingSourceRules: "Disusun oleh peraturan (tanpa model)",
 };

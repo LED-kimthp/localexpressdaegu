@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r56";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r57";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260922-r56";
-import { normalizedDScope } from "./flow.js?v=v7-20260922-r56";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260922-r57";
+import { normalizedDScope } from "./flow.js?v=v7-20260922-r57";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260922-r56";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260922-r56";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r56";
+import { translate } from "./i18n.js?v=v7-20260922-r57";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260922-r57";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r57";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -425,19 +425,30 @@ function roleText(answers = {}, english = false) {
   return [primary, ...parallel].filter(Boolean).join(" · ");
 }
 
+// P10·M07 은 「KR,대구」처럼 참여자가 적은 입력 문법을 label 에 그대로 담는다
+// (app.js locationValues). 머리글은 그 label 을 붙여서 「대한민국 · 대구 · KR,대구」로
+// 나갔다 — 같은 곳이 두 번이고 뒤쪽은 쉼표 문법이 새어 나온 것이다(2026-09-22 실측).
+// 덩어리를 쪼개 사람이 읽는 조각만 남긴다. 두 글자 나라 코드(KR·JP…)는 입력 문법의
+// 기계 표시이므로 뺀다 — 다만 그것뿐이면 칸이 비므로 그때는 적은 말을 그대로 쓴다.
+const INPUT_COUNTRY_CODE = /^[A-Za-z]{2}$/u;
+
+function locationParts(item) {
+  // 덩어리를 그대로 문자열로 만들면 부록에 「[object Object]」가 찍힌다. 완료 화면의
+  // 좌표에서 이미 한 번 그렇게 됐다 — 500장짜리 부록에서는 알아차릴 계기가 없으므로
+  // 읽을 수 있는 모양(문자열 또는 label·country_code·city)일 때만 넣는다(2026-09-09).
+  if (typeof item === "string" || typeof item === "number") return [clean(item)];
+  if (!item || typeof item !== "object") return [];
+  if (item.online) return [clean(item.label)];
+  const country = clean(item.country_code);
+  const readable = [INPUT_COUNTRY_CODE.test(country) ? "" : country, clean(item.city)].filter(Boolean);
+  return readable.length ? readable : [clean(item.label)];
+}
+
 function locationText(answers = {}, frame = responseDocumentFrame("ko")) {
-  const places = [];
-  const residence = [clean(answers.residence_country_code), clean(answers.residence_city)].filter(Boolean).join(" · ");
-  if (residence) places.push(residence);
-  for (const item of array(answers.activity_locations)) {
-    // 덩어리를 그대로 문자열로 만들면 부록에 「[object Object]」가 찍힌다. 완료 화면의
-    // 좌표에서 이미 한 번 그렇게 됐다 — 500장짜리 부록에서는 알아차릴 계기가 없으므로
-    // 읽을 수 있는 모양(문자열 또는 label)일 때만 넣는다(2026-09-09).
-    const raw = typeof item === "string" || typeof item === "number" ? item : item?.label;
-    const label = clean(raw);
-    if (label) places.push(label);
-  }
-  return [...new Set(places)].join(" · ") || frame.unspecified;
+  // 조각 단위로 겹치는 것을 걸러야 「대한민국 · 대구」와 「대구」가 한 번으로 모인다.
+  const places = [clean(answers.residence_country_code), clean(answers.residence_city)];
+  for (const item of array(answers.activity_locations)) places.push(...locationParts(item));
+  return [...new Set(places.filter(Boolean))].join(" · ") || frame.unspecified;
 }
 
 function originSection(answers = {}, english = false) {
@@ -852,10 +863,9 @@ export function buildResponseDocument({
       const list = array(values).map((v) => localizedValue(dict?.[v], frameLanguage)).filter(Boolean);
       return list.length ? [[clean(label), list.join(" · ")]] : [];
     };
-    // 지역은 참여자가 적은 말이므로 옮기지 않는다.
-    const places = [...new Set(array(answers.memory_locations)
-      .map((item) => clean(typeof item === "string" || typeof item === "number" ? item : item?.label))
-      .filter(Boolean))];
+    // 지역은 참여자가 적은 말이므로 옮기지 않는다. 다만 M07 도 P10 과 같은 덩어리라
+    // 「KR,대구」가 그대로 찍혔다 — 머리글과 같은 방법으로 조각만 남긴다(2026-09-22).
+    const places = [...new Set(array(answers.memory_locations).flatMap(locationParts).filter(Boolean))];
     const year = clean(answers.memory_year_optional);
     const time = localizedValue(MEMORY_TIME_LABELS[answers.memory_time_band], frameLanguage);
     return [
@@ -1099,6 +1109,19 @@ export function summaryParagraphsOf(text) {
   return out.filter(Boolean);
 }
 
+// 인용 주소를 두 겹으로 쓴다. 보이는 자리에는 사람이 읽는 이름표(「장면」·「이어온 것」),
+// 코드는 data-question-id 로 남긴다. 참여자에게 M02·P13_TEXT 는 뜻 없는 글자지만
+// (2026-09-22 인쇄물 실측), 코드를 지우면 보고서 본문의 「참여 기록 코드 · 문항 ID」 인용이
+// over39_fixed_answers.question_id 와 맞물리지 못해 부록의 인용문이 어느 물음에 대한 답인지
+// 알 수 없는 조각이 된다(2026-09-09 결정). 연구 쪽은 HTML 속성이나 데이터베이스에서 읽는다.
+// 이름표가 없는 주소(AI 후속질문)는 코드를 그대로 보인다 — 물음 문장이 바로 옆에 나온다.
+function questionCite(questionId, frame) {
+  const id = clean(questionId);
+  if (!id) return "";
+  const label = clean(frame?.questionLabels?.[id]) || id;
+  return `<span class="response-document-cite" data-question-id="${esc(id)}">${esc(label)}</span>`;
+}
+
 export function renderResponseDocument(document = {}) {
   const frame = responseDocumentFrame(document.display_language || document.source_language);
   const task7 = task7Copy(document.display_language || document.source_language);
@@ -1115,7 +1138,7 @@ export function renderResponseDocument(document = {}) {
       // 물음에 대한 답인지 알 수 없는 조각이 된다(2026-09-09).
       body = array(layer.entries).length
         ? array(layer.entries).map((entry) => {
-          const cite = entry.question_id ? `<span class="response-document-cite">${esc(entry.question_id)}</span>` : "";
+          const cite = questionCite(entry.question_id, frame);
           return entry.question
             ? `<div class="response-document-exchange">${cite}<p class="response-document-asked" data-prefix="${esc(frame.askedPrefix || "")}">${esc(entry.question)}</p><blockquote>${esc(entry.text)}</blockquote></div>`
             : `<div class="response-document-exchange">${cite}<blockquote>${esc(entry.text)}</blockquote></div>`;
@@ -1144,7 +1167,9 @@ export function renderResponseDocument(document = {}) {
               ? `<span class="response-document-title-screen">${esc(axis.secondary.label)}</span><span class="response-document-title-appendix">${esc(axis.secondary.codebook)}</span>`
               : esc(axis.secondary.label)}</span>`
           : "";
-        const evidence = array(axis.evidence).map((item) => `<li>${item.question_id ? `<span class="response-document-cite">${esc(item.question_id)}</span>` : ""}${item.question ? `<span class="response-document-asked" data-prefix="${esc(frame.askedPrefix || "")}">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
+        // 인쇄에서 오른쪽 단의 근거는 주소만 남는다(styles.css). 왼쪽 여백과 같은 말이어야
+        // 눈으로 이어 찾을 수 있으므로 여기도 같은 이름표를 쓴다.
+        const evidence = array(axis.evidence).map((item) => `<li>${questionCite(item.question_id, frame)}${item.question ? `<span class="response-document-asked" data-prefix="${esc(frame.askedPrefix || "")}">${esc(item.question)}</span>` : ""}<q>${esc(item.text)}</q></li>`).join("");
         const name = axis.codebook && axis.codebook !== axis.label
           ? `<span class="response-document-title-screen">${esc(axis.label)}</span><span class="response-document-title-appendix">${esc(axis.codebook)}</span>`
           : esc(axis.label);
@@ -1198,9 +1223,9 @@ export function renderResponseDocument(document = {}) {
   // 이름·기록 코드·기관 표기가 이미 밝히고, 승인 경계는 절 제목이 말하며, 활용
   // 범위는 바로 위에 값으로 있다. 같은 문단이 500장에 500번 나올 이유가 없다.
   // 값 자체는 document.archive.statement 에 그대로 남는다 — 지운 것은 인쇄면뿐이다.
-  const offer = document.closing_offer;
-  const archiveStatement = offer?.text
-    ? `<section class="response-document-offer" data-approval-scope="excluded">${offer.label ? `<span class="response-document-offer-label">${esc(offer.label)}</span>` : ""}${summaryParagraphsOf(offer.text).map((part) => `<p>${esc(part)}</p>`).join("")}${offer.note ? `<small>${esc(offer.note)}</small>` : ""}</section>`
-    : "";
+  // 제안은 참여 기록에 찍지 않는다(TK 2026-09-22). 기록은 한 장으로 끝나야 하고,
+  // 제안은 화면의 창에서 건넨다. `document.closing_offer` 에는 그대로 남아 있으므로
+  // 연구 쪽에서 읽을 수 있고, 다시 실으려면 여기만 되돌리면 된다.
+  const archiveStatement = "";
   return `<article class="response-document-sheet" data-document-status="${esc(document.status)}" data-approval-scope="${esc(document.approval_scope || "legacy_document")}"><header class="response-document-header"><div><span>${esc(document.brand_label || "〈만 39세 이상〉 · PARTICIPATION RECORD")}</span><h2>${document.appendix_title ? `<span class="response-document-title-screen">${esc(document.title)}</span><span class="response-document-title-appendix">${esc(document.appendix_title)}</span>` : esc(document.title)}</h2><p>${esc(document.subtitle)}</p></div></header><p class="response-document-description">${esc(document.description)}</p><dl class="response-document-metadata">${metadata}</dl>${archive}${layers.length ? `${layerGroups}${projectNote}` : sections}${archiveStatement}<footer class="response-document-confirmation"><p>${esc(document.confirmation)}</p></footer></article>`;
 }

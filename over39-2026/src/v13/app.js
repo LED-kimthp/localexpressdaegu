@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r56";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r56";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r56";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r56";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r56";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r56";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r56";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r56";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r56";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r56";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r56";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r56";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r56";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r56";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r56";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r56";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r56";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r56";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r56";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r56";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r56";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r56";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r56";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r57";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r57";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r57";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r57";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r57";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r57";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r57";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r57";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r57";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r57";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r57";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r57";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r57";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r57";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r57";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r57";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r57";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r57";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r57";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r57";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r57";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r57";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r57";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "0daf07020297-dirty 2026-09-22T04:02:16.119Z";
+const buildStamp = "e6f2939fa51d-dirty 2026-09-22T05:24:03.160Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2968,7 +2968,16 @@ function renderRc2Complete(response) {
   if (!document.closing_offer?.text && state.closingOffer?.text) {
     document.closing_offer = { text: state.closingOffer.text, label: greetingFirstLocal.closingOfferLabel, note: greetingFirstLocal.closingOfferNote, source_kind: "ai_generated", approval_scope: "excluded", participant_approved: false };
   }
-  const offerInDocument = Boolean(document.closing_offer?.text);
+  // 기록에는 더 이상 찍히지 않으므로, 창을 닫은 뒤에도 읽을 수 있게 완료 화면에 남긴다.
+  // 인쇄할 때는 이 구역도 빠진다(styles.css) — 종이는 한 장이다.
+  const offerInDocument = false;
+  // 2026-09-22 TK: 제안을 창으로 띄운다. 기록 안에 묻혀 스크롤로 찾게 두지 않는다 —
+  // 스물다섯 분을 쓴 사람에게 마지막으로 건네는 말이라 도착한 것이 보여야 한다.
+  // 한 번만 뜬다. 닫아도 아래 참여 기록에 그대로 남으므로 잃는 것이 없다.
+  const offerText = document.closing_offer?.text || state.closingOffer?.text || "";
+  const offerDialog = offerText && !state.closingOfferSeen
+    ? `<div class="closing-offer-scrim" data-action="close-closing-offer"></div><section class="closing-offer-dialog" role="dialog" aria-modal="true" aria-labelledby="closing-offer-dialog-title" tabindex="-1"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2 id="closing-offer-dialog-title">${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(offerText).map((part) => `<p>${esc(part)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p><div class="closing-offer-dialog-actions"><button class="primary-button" type="button" data-action="close-closing-offer">${esc(greetingFirstLocal.closingOfferClose)}</button></div><p class="closing-offer-stays">${esc(greetingFirstLocal.closingOfferStays)}</p></section>`
+    : "";
   const offerSection = offerInDocument
     ? ""
     : state.closingOffer?.text
@@ -2979,7 +2988,7 @@ function renderRc2Complete(response) {
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   state.printReference = reference;
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section></main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section>${offerDialog}</main>`;
 }
 
 function getReferral() {
@@ -3080,7 +3089,9 @@ function renderSurvey() {
   // 「이전」까지 꺼져 있어 「고장났나」 싶은 시간이 된다. 이미 다른 화면들이 쓰는 조용한 진행
   // 표시를 여기에도 둔다 — 새 문구를 만들지 않고, 무슨 일이 일어나는지 보이게만 한다.
   const waitingSignal = state.summaryGenerating || state.translationGenerating || state.adaptiveGenerating || state.depthGenerating
-    ? processingSignal(state.summaryGenerating ? "기록을 정리하고 있어요. 조금 걸릴 수 있어요." : "답변을 읽고 있어요")
+    ? processingSignal(state.summaryGenerating
+      ? (state.closingOfferStatus === "loading" ? greetingFirst().closingOfferWait : "기록을 정리하고 있어요. 조금 걸릴 수 있어요.")
+      : "답변을 읽고 있어요")
     : "";
   const backAction = "back";
   const nextAction = "next";
@@ -3329,6 +3340,9 @@ function render(focusHeading = false) {
   traceCurrentAnchorDom();
   bindInteractiveMotion();
   requestAnimationFrame(() => {
+    // 창이 떴으면 그리로 초점을 옮긴다. 안 옮기면 화면 낭독기는 창이 열린 줄 모르고,
+    // 키보드만 쓰는 사람은 닫기 단추까지 탭으로 한참 내려가야 한다.
+    if (!state.closingOfferSeen) document.querySelector(".closing-offer-dialog")?.focus({ preventScroll: true });
     if (focusHeading || screenChanged) {
       // 2026-09-20 파일럿에서 잡힘: 화면이 바뀌어도 앞 화면의 스크롤을 그대로 물려받아,
       // 새 질문이 제목이 아니라 마지막 선택지나 「다음」 단추부터 보였다(랜딩 365px·682px·
@@ -3503,6 +3517,14 @@ function saveCurrentConnection() {
   });
 }
 
+// 창은 Esc 로도 닫힌다. 화면을 덮는 것은 빠져나갈 길이 있어야 한다.
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (state.closingOfferSeen || !document.querySelector(".closing-offer-dialog")) return;
+  state.closingOfferSeen = true;
+  render(false);
+});
+
 document.addEventListener("click", (event) => {
   const target = event.target.closest("button");
   if (!target) return;
@@ -3649,7 +3671,12 @@ document.addEventListener("click", (event) => {
     prepareAdaptiveSummary().then(() => render(false)).catch(() => { state.summaryGenerating = false; render(false); });
     return;
   }
-  if (target.dataset.action === "print-document") {
+  if (target.dataset.action === "close-closing-offer") {
+    state.closingOfferSeen = true;
+    render(false);
+    return;
+  }
+    if (target.dataset.action === "print-document") {
     // 2026-09-21 TK: 저장하면 「Claude.pdf」가 됐다. 브라우저는 document.title 을
     // 파일이름으로 쓰므로, 인쇄하는 동안만 참여 기록의 코드번호로 바꾼다.
     const previousTitle = document.title;
