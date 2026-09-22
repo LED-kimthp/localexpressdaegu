@@ -6328,6 +6328,15 @@ select:focus-visible {
   background: var(--surface-soft);
 }
 
+/* 라벨과 입력창을 담는 판. 단추를 담는 판은 좌우 0을 지켜야 하지만(위 설명), 이쪽은
+   그럴 이유가 없고 오히려 라벨·입력창이 빨간 테두리에 붙어 「필수」 표시와 어긋났다.
+   판에 여백을 주므로 안쪽 「필수」 표시의 제 여백은 뺀다 — 안 그러면 16px 이 된다. */
+.record-confirm-inset {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+.record-confirm-inset .record-confirm-label { padding-left: 0; }
+
 .record-confirm-label {
   display: block;
   margin-bottom: var(--space-2);

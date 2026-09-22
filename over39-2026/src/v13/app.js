@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r55";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r55";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r55";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r55";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r55";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r55";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r55";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r55";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r55";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r55";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r55";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r55";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r55";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r55";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r55";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r55";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r55";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r55";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r55";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r55";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r55";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r55";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r55";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r56";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r56";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r56";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r56";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r56";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r56";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r56";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r56";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r56";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r56";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r56";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r56";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r56";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r56";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r56";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r56";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r56";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r56";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r56";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r56";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r56";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r56";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r56";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "e0dae9dce4a4-dirty 2026-09-22T02:06:04.379Z";
+const buildStamp = "0daf07020297-dirty 2026-09-22T04:02:16.119Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1375,7 +1375,7 @@ function renderMeaning() {
   const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : note.text;
   const placeholder = noRecall() ? "현재의 거리감이나 남아 있는 느낌" : "먼저 떠오르는 내용을 적어주세요.";
   return `${screenHeading(title, "한 문장으로 적어도 좋아요.")}
-    ${requiredBlock("m04-text-required", renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label }))}
+    ${requiredBlock("m04-text-required", renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label }), { inset: true })}
     <label class="field-label">${esc(t("기억의 방향 — 가까운 항목을 골라주세요."))}</label>
     ${renderChoices("M04", options)}`;
 }
@@ -1889,9 +1889,10 @@ async function prepareAdaptiveSummary() {
 // 「세 방향 확인」의 마지막 선택도 같은 이유로 진행을 막는데 표시가 없었다. 문구는 새로
 // 만들지 않고 9개 언어에 이미 있는 `required`만 쓰고, 표시 방식도 한 곳으로 모은다.
 // `aria-describedby`가 이 표시를 가리키므로 화면 낭독에서도 무엇이 필수인지 들린다.
-function requiredBlock(id, inner) {
+function requiredBlock(id, inner, { inset = false } = {}) {
   const requiredLabel = stage1UiExtraCopy(state.language).required;
-  return `<div class="record-confirm" role="group" aria-describedby="${esc(id)}"><span class="record-confirm-label" id="${esc(id)}">${esc(requiredLabel)}</span>${inner}</div>`;
+  const shape = inset ? "record-confirm record-confirm-inset" : "record-confirm";
+  return `<div class="${shape}" role="group" aria-describedby="${esc(id)}"><span class="record-confirm-label" id="${esc(id)}">${esc(requiredLabel)}</span>${inner}</div>`;
 }
 
 function renderRecordConfirm(label) {
@@ -2076,7 +2077,7 @@ function renderUseScope() {
   // 표시가 하나도 없었다. 이메일을 다 넣어도 버튼이 열리지 않는 이유가 화면 어디에도
   // 없었고, 이메일을 주고 싶지 않은 사람은 03을 바꿔야 한다는 것도 알 수 없었다.
   // 「응답 정리」 확인 칸과 같은 방식으로 감싸 무엇이 남았는지 보이게 한다.
-  const contactSection = archiveUse === "ASK_LATER" ? `<section class="use-scope-section research-contact-section"><span>04 · ${esc(local.researchContactLabel)}</span><h3>${esc(local.researchContactTitle)}</h3><p>${esc(local.researchContactHelp)}</p>${requiredBlock("research-contact-required", `<label class="field-label" for="research-contact-email">${esc(local.researchContactLabel)}</label><input id="research-contact-email" class="text-input text-input-single" type="email" inputmode="email" autocomplete="email" required aria-required="true" aria-describedby="research-contact-required" data-research-contact="email" value="${esc(researchContact.email || "")}" placeholder="name@example.com" /><label class="final-check"><input type="checkbox" data-research-contact-consent aria-required="true" aria-describedby="research-contact-required" ${researchContact.consent ? "checked" : ""} /><span>${esc(local.researchContactConsent)}</span></label>`)}</section>` : "";
+  const contactSection = archiveUse === "ASK_LATER" ? `<section class="use-scope-section research-contact-section"><span>04 · ${esc(local.researchContactLabel)}</span><h3>${esc(local.researchContactTitle)}</h3><p>${esc(local.researchContactHelp)}</p>${requiredBlock("research-contact-required", `<label class="field-label" for="research-contact-email">${esc(local.researchContactLabel)}</label><input id="research-contact-email" class="text-input text-input-single" type="email" inputmode="email" autocomplete="email" required aria-required="true" aria-describedby="research-contact-required" data-research-contact="email" value="${esc(researchContact.email || "")}" placeholder="name@example.com" /><label class="final-check"><input type="checkbox" data-research-contact-consent aria-required="true" aria-describedby="research-contact-required" ${researchContact.consent ? "checked" : ""} /><span>${esc(local.researchContactConsent)}</span></label>`, { inset: true })}</section>` : "";
   // 요약줄이 `… · 공개 활용은 다시 확인`에서 끝나면 다 채운 것처럼 읽힌다. 실제로는
   // 04가 남아 있어 저장 버튼이 잠겨 있는데, 그 사실이 어디에도 없었다. 03에서 `다시
   // 확인`을 고른 동안에만 04의 상태를 같은 줄에 덧붙인다. 문구는 이미 9개 언어에 있는
