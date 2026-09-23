@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r65";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r65";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r65";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r66";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r66";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r66";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1369,7 +1369,9 @@ export async function translateArrivedGreeting({ endpoint, anonKey, mode = "fall
       body: JSON.stringify({
         operation: "translate_summary",
         client_wait_ms: timeoutMs,
-        context: { source_language: languageTag(sourceLanguage), target_language: languageTag(targetLanguage), text: original, prompt_version: ADAPTIVE_PROMPT_VERSION },
+        // purpose 는 서버가 참여 기록의 한국어 번역(부록)과 이 안부 번역을 가르는 표지다.
+        // 한국어로 옮길 때도 「원문을 그대로 돌려줬는가」「한국어가 맞는가」를 보게 한다.
+        context: { purpose: "greeting", source_language: languageTag(sourceLanguage), target_language: languageTag(targetLanguage), text: original, prompt_version: ADAPTIVE_PROMPT_VERSION },
       }),
     }), timeoutMs);
     if (!response.ok) throw new Error(`AI_HTTP_${response.status}`);

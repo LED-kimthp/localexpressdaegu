@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r65";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r65";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r65";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r65";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r65";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r65";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r65";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r65";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r65";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r65";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r65";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r65";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r65";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r65";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r65";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r65";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r65";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r65";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r65";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r65";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r65";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r65";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r65";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r66";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r66";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r66";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r66";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r66";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r66";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r66";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r66";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r66";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r66";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r66";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r66";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r66";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r66";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r66";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r66";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r66";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r66";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r66";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r66";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r66";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r66";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r66";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "663b3bb0fdd5-dirty 2026-09-23T04:08:12.157Z";
+const buildStamp = "f7a57efc0162-dirty 2026-09-23T10:16:10.841Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -613,6 +613,13 @@ function storageRemove(key) {
 }
 
 function saveDraft() {
+  // 기록을 마친 뒤에는 이 기기에 이어쓰기 초안을 남기지 않는다. 2026-09-20 에 안부 화면의
+  // 초안 저장을 막았지만, 머리말의 언어 메뉴가 saveDraft() 를 따로 불러 같은 초안을 다시
+  // 만들었다(2026-09-23 검토). 기관의 공용 기기에서는 다음 사람이 「이야기 계속하기」로
+  // 앞사람의 답을 전부 보게 된다. 부르는 곳마다 막지 않고 여기 한 곳에서 막는다.
+  // 단, 최종 저장이 실패해 「답변으로 돌아가기」로 설문에 돌아온 사람(state.submitted 가 남아
+  // 있다)은 고친 답이 초안으로 남아야 한다 — 그래서 submitted 는 설문 밖에서만 막는다.
+  if (state.greetingAfterRecord || (state.submitted && state.phase !== "survey")) return;
   if (["survey", "greeting-choice", "greeting-first"].includes(state.phase)) {
     try {
     localStorage.setItem(draftKey, JSON.stringify({
@@ -637,7 +644,16 @@ function saveDraft() {
 }
 
 function loadDraft() {
-  try { return JSON.parse(localStorage.getItem(draftKey) || "null"); } catch { return null; }
+  let draft = null;
+  try { draft = JSON.parse(localStorage.getItem(draftKey) || "null"); } catch { return null; }
+  // r66 이전에 언어 메뉴가 남긴 초안은 이미 여러 기기에 있을 수 있다. 안부 단계(greeting-first)
+  // 초안은 설문 **앞**에서만 정상이고 그때는 답이 비어 있다. 기록 확인 시각이 찍힌 안부 단계
+  // 초안은 기록을 마친 사람의 것이므로 열지 않고 지운다.
+  if (draft?.phase === "greeting-first" && draft?.answers?.document_confirmed_at) {
+    clearDraft();
+    return null;
+  }
+  return draft;
 }
 
 function clearDraft() { storageRemove(draftKey); }
@@ -742,6 +758,8 @@ function getConnection() {
   state.connection = state.connection || loadConnection();
   // 전에 시작한 초안에는 빈 값이 들어 있다. 물음을 없앤 뒤로는 그 빈 값을 채울 화면이
   // 없어서, 예전 초안으로 돌아온 사람은 저장 버튼이 영영 꺼진 채였다(2026-09-23).
+  // 예전에 「원문만」(NO)을 고른 사람의 선택은 그대로 둔다 — 본인이 고른 동의다(TK 결정).
+  // 대신 쓰는 화면이 「번역이 함께 갑니다」가 아니라 「원문만 전달됩니다」라고 말한다.
   if (state.connection.translation_allowed !== "YES" && state.connection.translation_allowed !== "NO") {
     state.connection.translation_allowed = "YES";
   }
@@ -2543,25 +2561,133 @@ async function requestGreetingReservation(response, { inlineFirst = false } = {}
   }
 }
 
-// 번역이 실패해도 안부는 그대로 있다. 원문은 이미 화면에 있고, 아래 한 줄만 바뀐다.
-// 한 번 받아 둔 번역은 안부와 함께 저장되므로 새로고침해도 다시 부르지 않는다.
-async function fillGreetingTranslation() {
+// ── 도착한 안부를 읽는 사람의 말로 ─────────────────────────────────────
+// 2026-09-23 검토에서 여섯 가지가 한꺼번에 걸렸다. 번역을 한 번만, 한 자리에서만
+// 부르고(beginFirstGreeting) 끝나면 화면 전체를 다시 그렸기 때문이다.
+//  · 화면 언어를 바꾸면 번역이 옛 언어로 남았다(translated_language 를 쓰고 읽지 않았다).
+//  · 한 번 실패하면 되돌릴 길이 없었다.
+//  · 번역 중에 탭을 닫았다 이어 쓰면 「옮기고 있어요」에서 영영 멈췄다.
+//  · 늦게 온 번역이 이미 떠난 화면(안부 쓰는 칸)을 통째로 다시 그려 글 쓰던 자리를 날렸다.
+//  · 같은 자리에 머물러도 제목·편지·버튼의 등장 애니메이션이 처음부터 다시 돌았다.
+//  · 알림 줄이 지워졌다 새로 생겨서 화면 낭독기는 번역이 왔는지 몰랐다.
+// 그래서 이렇게 한다: 무엇을 보여줄지는 arrivalTranslationView() 한 곳에서 정하고,
+// 가져오는 일은 ensureGreetingTranslation() 이 맡는다. 이 함수는 render() 끝에서 매번
+// 불리고 스스로 판단해서 필요할 때만 움직인다 — 언어 바꾸기·이어쓰기·새로고침을 따로
+// 챙기지 않아도 된다. 번역이 오면 화면 전체가 아니라 번역 자리만 갈아 끼운다.
+let greetingTranslationRequest = "";
+// 요청마다 번호를 붙인다. 언어로만 가르면 A→B→A 로 빨리 바꿨을 때 A 요청이 두 번 나가고,
+// 늦게 온 쪽(실패일 수도 있다)이 먼저 온 번역을 덮어썼다(2026-09-23 검증).
+let greetingTranslationSeq = 0;
+// 「다시 옮겨 보기」를 누른 사람의 초점. 단추가 사라지면 초점이 문서 맨 위로 떨어진다.
+let arrivalRetryFocusPending = false;
+
+// 쓴 사람이 줄을 바꿔 썼으면 그 모양을 그대로 둔다. 정리문용 규칙(summaryParagraphsOf)은
+// 줄바꿈을 공백으로 펴고 문장을 다시 묶어서, 한 줄에 한 문장씩 쓴 안부가 뭉개졌다.
+// 한 덩어리로 온 긴 글만 정리문과 같은 규칙으로 나눈다(TK 2026-09-23).
+function greetingParagraphsOf(text) {
+  const value = String(text || "").replace(/\r\n?/g, "\n").trim();
+  if (!value) return [];
+  if (value.includes("\n")) return value.split(/\n[ \t]*\n+/).map((part) => part.trim()).filter(Boolean);
+  return summaryParagraphsOf(value);
+}
+
+function arrivalTranslationView(greeting) {
+  const simplified = greetingSimple();
+  const originalLanguage = greeting.original_language || "ko";
+  const needed = greetingTranslationNeeded(originalLanguage, state.language);
+  const forThisLanguage = greeting.translated_language === state.language;
+  const translated = needed && forThisLanguage && greeting.translation_status === "ready"
+    ? String(greeting.translated_text || "").trim()
+    : "";
+  const failed = needed && forThisLanguage && greeting.translation_status === "failed";
+  const lead = translated || greeting.original_text || "";
+  const leadLanguage = translated ? state.language : originalLanguage;
+  const status = !needed ? "none" : translated ? "ready" : failed ? "failed" : "loading";
+  // 안내 한 줄은 번역과 원문 **사이**에 온다. 「위는 기계 번역, 아래가 원문」이라는 말이
+  // 원문 밑에 붙어 있어, 쓴 사람의 문장을 기계 번역이라고 부르고 있었다.
+  const statusText = status === "loading" ? simplified.arrivalTranslationLoading
+    : status === "failed" ? simplified.arrivalTranslationFailed
+    : status === "ready" ? simplified.arrivalTranslationNote
+    : "";
+  const sourceHtml = translated
+    ? `<aside class="first-greeting-source"><span>${esc(simplified.arrivalOriginalLabel.split("{language}").join(languageLabel(originalLanguage)))}</span><blockquote lang="${esc(originalLanguage)}">${greetingParagraphsOf(greeting.original_text).map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></aside>`
+    : "";
+  return {
+    leadClass: `first-greeting-reading${String(lead).length > 160 ? " is-long" : ""}`,
+    leadHtml: `<blockquote lang="${esc(leadLanguage)}">${greetingParagraphsOf(lead).map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote>`,
+    status,
+    statusText,
+    retryHtml: status === "failed" ? `<button class="text-button" type="button" data-action="retry-greeting-translation">${esc(simplified.arrivalTranslationRetry)}</button>` : "",
+    sourceHtml,
+  };
+}
+
+function patchArrivalTranslation() {
+  const lead = root.querySelector("[data-arrival-lead]");
   const greeting = state.firstGreeting;
-  if (!greeting || greeting.status !== "received") return;
-  const result = await translateArrivedGreeting({
+  if (!lead || greeting?.status !== "received") return;
+  const view = arrivalTranslationView(greeting);
+  lead.className = view.leadClass;
+  lead.innerHTML = view.leadHtml;
+  // 알림 줄은 지우지 않고 글자만 바꾼다. 지웠다 새로 만들면 화면 낭독기가 읽지 않는다.
+  const status = root.querySelector("[data-arrival-status]");
+  if (status) status.textContent = view.statusText;
+  const retry = root.querySelector("[data-arrival-retry]");
+  if (retry?.contains(document.activeElement)) arrivalRetryFocusPending = true;
+  if (retry) retry.innerHTML = view.retryHtml;
+  // 누른 단추가 사라지면(번역 중) 알림 줄로, 다시 실패해 단추가 돌아오면 그 단추로 초점을 옮긴다.
+  if (arrivalRetryFocusPending) {
+    const again = retry?.querySelector("button");
+    if (again) { again.focus({ preventScroll: true }); arrivalRetryFocusPending = false; }
+    else if (status) { status.focus({ preventScroll: true }); if (view.status !== "loading") arrivalRetryFocusPending = false; }
+  }
+  const source = root.querySelector("[data-arrival-source]");
+  if (source) source.innerHTML = view.sourceHtml;
+}
+
+function ensureGreetingTranslation({ retry = false } = {}) {
+  const greeting = state.firstGreeting;
+  if (state.phase !== "greeting-first" || greeting?.status !== "received") return;
+  const target = state.language;
+  if (!greetingTranslationNeeded(greeting.original_language || "ko", target)) return;
+  const forThisLanguage = greeting.translated_language === target;
+  if (forThisLanguage && greeting.translation_status === "ready") return;
+  // 같은 말로 이미 실패했으면 스스로 다시 부르지 않는다 — 화면을 그릴 때마다 되풀이된다.
+  // 다시 해 보기 단추를 누르거나 다른 언어로 바꾸면 그때 부른다.
+  if (forThisLanguage && greeting.translation_status === "failed" && !retry) return;
+  const key = `${greeting.greeting_id || ""}:${target}`;
+  if (greetingTranslationRequest === key && !retry) return;
+  greetingTranslationRequest = key;
+  const token = ++greetingTranslationSeq;
+  greeting.translation_status = "loading";
+  greeting.translated_language = target;
+  greeting.translated_text = "";
+  saveFirstGreeting();
+  saveDraft();
+  patchArrivalTranslation();
+  translateArrivedGreeting({
     endpoint: aiFunctionUrl,
     anonKey: supabaseAnonKey,
     mode: aiMode,
     text: greeting.original_text,
     sourceLanguage: greeting.original_language || "ko",
-    targetLanguage: state.language,
+    targetLanguage: target,
+  }).then((result) => {
+    // 이 뒤에 다른 요청이 나갔으면 그쪽이 이 자리의 주인이다.
+    if (token !== greetingTranslationSeq) return;
+    greetingTranslationRequest = "";
+    // 이어쓰기로 돌아오면 같은 안부라도 다른 객체다. 비교는 안부 번호로 한다.
+    const current = state.firstGreeting;
+    if (!current || current.status !== "received" || (current.greeting_id || "") !== (greeting.greeting_id || "")) return;
+    // 기다리는 사이 다른 언어로 바꿨으면 그쪽 요청이 이 자리의 주인이다.
+    if (current.translated_language !== target) return;
+    current.translated_text = result.translation || "";
+    current.translation_status = result.translation ? "ready" : "failed";
+    saveFirstGreeting();
+    saveDraft();
+    // 화면 전체를 다시 그리지 않는다. 안부 화면이 아니면 저장만 하고 끝난다.
+    patchArrivalTranslation();
   });
-  // 그 사이에 다른 안부로 넘어갔거나 화면을 떠났으면 덮어쓰지 않는다.
-  if (state.firstGreeting !== greeting) return;
-  greeting.translated_text = result.translation || "";
-  greeting.translation_status = result.translation ? "ready" : "failed";
-  saveFirstGreeting();
-  render(false);
 }
 
 async function beginFirstGreeting() {
@@ -2604,11 +2730,11 @@ async function beginFirstGreeting() {
         ? String(reservation.receipt.greeting.connection_reason_snapshot?.sender_display_label || "").slice(0, 80) || null
         : null,
       received_at: new Date().toISOString(),
-      // 읽는 사람의 말과 다르면 옮긴다. 안부를 먼저 띄우고 번역은 뒤에서 가져온다 —
-      // 번역을 기다리느라 안부가 늦게 뜨면, 못 읽는 글 앞에서 기다리는 시간만 길어진다.
-      translation_status: greetingTranslationNeeded(reservation.receipt.greeting.original_language || "ko", state.language) ? "loading" : "none",
+      // 번역은 여기서 정하지 않는다. 안부를 먼저 띄우고, render() 끝의
+      // ensureGreetingTranslation() 이 읽는 사람의 말과 다를 때만 뒤에서 가져온다.
+      translation_status: "none",
       translated_text: "",
-      translated_language: state.language,
+      translated_language: "",
     };
   } else if (reservation.status === "not_active" || reservation.error) {
     state.firstGreeting = { status: "unavailable", reason: reservation.error || "GREETING_NOT_ACTIVE" };
@@ -2618,7 +2744,6 @@ async function beginFirstGreeting() {
   saveFirstGreeting();
   if (state.greetingAfterRecord) clearDraft(); else saveDraft();
   render(true);
-  if (state.firstGreeting?.translation_status === "loading") await fillGreetingTranslation();
 }
 
 function openOutgoingGreeting() {
@@ -2805,7 +2930,10 @@ function createConnectionUpdate() {
       sender_public_context: senderPublicContext,
       origin: connection.origin === "core_seed" ? "core_seed" : "participant",
       translation_allowed: connection.translation_allowed === "YES",
-      original_language: research.source_language || state.language || "ko",
+      // 안부는 기록을 마친 뒤 **지금 화면의 말**로 쓴다. 설문 답에서 읽은 말을 쓰면,
+      // 설문은 한국어로 하고 안부는 영어로 쓴 사람의 글이 「원문 · 한국어」로 붙어
+      // 영어 독자에게 쓸데없는 번역을 부르고 한국어 독자에게는 번역을 빠뜨렸다(2026-09-23 검토).
+      original_language: state.language || research.source_language || "ko",
       // Notification contact is deliberately collected only after a greeting
       // has been received. It is not a condition of receiving the first one.
       delivery_modes: ["MEDIATED_WEB"],
@@ -2876,7 +3004,7 @@ function renderGlobalGreetingsConnection(connection) {
   // ③ 길게 쓸 수 있으니 남은 글자 수를 눈에 보이게 둔다 — maxlength 만 걸어 두면
   //    한도에 닿는 순간 글자가 그냥 안 써져서 고장처럼 보인다.
   const messageLength = String(messageValue).length;
-  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count" aria-live="polite">${messageLength} / ${GREETING_MESSAGE_MAX}</p><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(local.translationNote)}</p></section>`;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count">${messageLength} / ${GREETING_MESSAGE_MAX}</p><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(connection.translation_allowed === "NO" ? local.translationNoteOriginalOnly : local.translationNote)}</p></section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
   const previewSection = `<section class="connection-section greeting-preview"><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
@@ -3369,19 +3497,8 @@ function renderFirstGreeting() {
     // 읽을 수 있는 글이 앞에 온다. 다른 말로 온 안부라면 큰 글씨 자리에 번역을 놓고,
     // 원문은 그 아래에 이름표를 달아 **통째로** 둔다 — 접어 두지 않는다. 번역은 모델이
     // 만든 글이고, 그 사람이 실제로 쓴 문장은 여기에 그대로 있어야 한다(TK 2026-09-23).
-    const arrivalTranslated = greeting.translation_status === "ready" && String(greeting.translated_text || "").trim();
-    const arrivalLead = arrivalTranslated || greeting.original_text || "";
-    const arrivalParagraphs = summaryParagraphsOf(arrivalLead);
-    const arrivalLong = String(arrivalLead).length > 160;
-    const arrivalNotice = greeting.translation_status === "loading"
-      ? `<p class="first-greeting-translating" role="status">${esc(local.arrivalTranslationLoading)}</p>`
-      : greeting.translation_status === "failed"
-        ? `<p class="first-greeting-translating">${esc(local.arrivalTranslationFailed)}</p>`
-        : "";
-    const arrivalOriginal = arrivalTranslated
-      ? `<aside class="first-greeting-source"><span>${esc(local.arrivalOriginalLabel.replace("{language}", languageLabel(greeting.original_language || "ko")))}</span><blockquote lang="${esc(greeting.original_language || "ko")}">${summaryParagraphsOf(greeting.original_text || "").map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote><small>${esc(local.arrivalTranslationNote)}</small></aside>`
-      : "";
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading${arrivalLong ? " is-long" : ""}"><blockquote lang="${esc(arrivalTranslated ? state.language : (greeting.original_language || "ko"))}">${arrivalParagraphs.map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></div>${arrivalNotice}${arrivalOriginal}${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    const arrival = arrivalTranslationView(greeting);
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="${arrival.leadClass}" data-arrival-lead>${arrival.leadHtml}</div><div class="first-greeting-translation-state"><p class="first-greeting-translating" role="status" aria-live="polite" tabindex="-1" data-arrival-status>${esc(arrival.statusText)}</p><span data-arrival-retry>${arrival.retryHtml}</span></div><div data-arrival-source>${arrival.sourceHtml}</div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   const unavailable = greeting.status === "unavailable";
   return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(emptyHelpText)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(skipLabel)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;
@@ -3440,6 +3557,8 @@ function render(focusHeading = false) {
   localizeRenderedCopy(root);
   traceCurrentAnchorDom();
   bindInteractiveMotion();
+  // 언어를 바꿨든, 이어쓰기로 돌아왔든, 새로고침했든 여기 한 곳에서 판단한다.
+  if (state.phase === "greeting-first") ensureGreetingTranslation();
   requestAnimationFrame(() => {
     // 창이 떴으면 그리로 초점을 옮긴다. 안 옮기면 화면 낭독기는 창이 열린 줄 모르고,
     // 키보드만 쓰는 사람은 닫기 단추까지 탭으로 한참 내려가야 한다.
@@ -3823,6 +3942,10 @@ document.addEventListener("click", (event) => {
   }
   // 완료 화면에서 「먼저 도착한 안부 읽기」. 받는 기계장치(예약·수신)는 그대로 쓰고,
   // 읽고 난 뒤 돌아갈 곳만 설문이 아니라 안부 남기기로 바꾼다.
+  if (target.dataset.action === "retry-greeting-translation") {
+    ensureGreetingTranslation({ retry: true });
+    return;
+  }
   if (target.dataset.action === "read-first-greeting") {
     state.greetingAfterRecord = true;
     const connection = getConnection();

@@ -1,6 +1,6 @@
-import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r65";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r65";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r65";
+import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r66";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r66";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r66";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -15,9 +15,49 @@ let state = { session: null, sessions: [], sessionsTotal: null, selected: null, 
 // 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
 const adminRedirectUrl = () => `${location.origin}${location.pathname}`;
 
-function loadSession() { try { return JSON.parse(sessionStorage.getItem(sessionKey) || "null"); } catch { return null; } }
-function saveSession(session) { state.session = session; sessionStorage.setItem(sessionKey, JSON.stringify(session)); }
-function clearSession() { state.session = null; sessionStorage.removeItem(sessionKey); }
+// 한 번 들어오면 이 기기에서는 다시 묻지 않는다(TK 2026-09-23: 「매번 번거롭다」).
+// 예전에는 탭을 닫으면 사라지는 sessionStorage 에 두고, 한 시간 뒤 만료되는 토큰을
+// 갱신하지도 않아 새 탭을 열 때마다·한 시간마다 메일 코드를 다시 받아야 했다 — 그러다
+// 메일 발송 한도(429)에 걸렸다. 이제 localStorage 에 두고, 만료가 다가오면 갱신 토큰으로
+// 조용히 새로 받는다. 이 기기에서 나가려면 「로그아웃」을 누른다.
+function loadSession() {
+  try {
+    return JSON.parse(localStorage.getItem(sessionKey) || sessionStorage.getItem(sessionKey) || "null");
+  } catch { return null; }
+}
+function saveSession(session) {
+  state.session = session;
+  try { localStorage.setItem(sessionKey, JSON.stringify(session)); } catch { sessionStorage.setItem(sessionKey, JSON.stringify(session)); }
+}
+function clearSession() {
+  state.session = null;
+  try { localStorage.removeItem(sessionKey); } catch { /* 무시 */ }
+  try { sessionStorage.removeItem(sessionKey); } catch { /* 무시 */ }
+}
+
+// 토큰이 1분 안에 끝나면 갱신 토큰으로 새로 받는다. 갱신도 안 되면 그때만 다시 묻는다.
+async function refreshSessionIfNeeded({ force = false } = {}) {
+  // 다른 탭이 먼저 갱신했으면 그 세션을 쓴다. 갱신 토큰은 한 번 쓰면 새것으로 바뀌어서, 옛 것을
+  // 다시 내밀면 거절된다. 다른 탭에서 로그아웃했으면 여기서도 나간다.
+  const stored = loadSession();
+  if (!stored) { state.session = null; return false; }
+  if (Number(stored.expires_at || 0) >= Number(state.session?.expires_at || 0)) state.session = stored;
+  const session = state.session;
+  if (!session?.refresh_token) return Boolean(session?.access_token);
+  if (!force && Number(session.expires_at || 0) - Date.now() > 60000) return true;
+  const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
+    method: "POST",
+    headers: { apikey: anonKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: session.refresh_token }),
+  });
+  // 갱신이 거절되면(철회·만료) 세션을 지우고 로그인 화면으로 돌아간다. 붙들고 있으면
+  // 모든 화면이 「권한 없음」으로 비어 보이기만 한다.
+  if (!response.ok) { clearSession(); return false; }
+  const body = await response.json();
+  if (!body?.access_token) { clearSession(); return false; }
+  saveSession({ access_token: body.access_token, refresh_token: body.refresh_token || session.refresh_token, expires_at: Date.now() + Number(body.expires_in || 3600) * 1000 });
+  return true;
+}
 
 function captureAuthCallback() {
   const params = new URLSearchParams(location.hash.replace(/^#/, ""));
@@ -39,7 +79,9 @@ function captureAuthCallback() {
   history.replaceState({}, "", location.pathname);
 }
 
-async function api(table, query = "", { withCount = false } = {}) {
+async function api(table, query = "", { withCount = false, retried = false } = {}) {
+  await refreshSessionIfNeeded();
+  if (!state.session?.access_token) throw new Error("ADMIN_ACCESS_DENIED");
   const headers = { apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` };
   // `Prefer: count=exact`를 붙이면 PostgREST가 RLS 적용 뒤의 전체 행 수를 Content-Range에
   // 담아 준다(`0-499/1234`). 행을 더 받지 않고 잘림을 알 수 있는 유일한 값이고, Supabase는
@@ -47,6 +89,8 @@ async function api(table, query = "", { withCount = false } = {}) {
   // 라이브 확인: `access-control-expose-headers: ... Content-Range ...`
   if (withCount) headers.Prefer = "count=exact";
   const response = await fetch(`${supabaseUrl}/rest/v1/${table}${query}`, { headers });
+  // 화면을 오래 열어 둔 사이 토큰이 끝났을 수 있다. 한 번만 새로 받아 다시 묻는다.
+  if (response.status === 401 && !retried && await refreshSessionIfNeeded({ force: true })) return api(table, query, { withCount, retried: true });
   if (response.status === 401 || response.status === 403) throw new Error("ADMIN_ACCESS_DENIED");
   if (!response.ok) throw new Error(`ADMIN_HTTP_${response.status}`);
   const rows = await response.json();
@@ -128,6 +172,8 @@ async function loadResearchInsights() {
 // ── 철회·알림 관리 (TK 결정 2026-08-30) ─────────────────────────────────────
 async function relayAdminCall(action, payload = {}) {
   if (!relayEndpoint) throw new Error("RELAY_NOT_CONFIGURED");
+  await refreshSessionIfNeeded();
+  if (!state.session?.access_token) throw new Error("ADMIN_ACCESS_DENIED");
   const response = await fetch(relayEndpoint, { method: "POST", headers: { "Content-Type": "application/json", apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` }, body: JSON.stringify({ action, ...payload }) });
   const result = await response.json().catch(() => ({}));
   if (!response.ok || !result.ok) throw new Error(result.error_code || "RELAY_ADMIN_CALL_FAILED");
@@ -627,7 +673,16 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.insightsSample) { state.insightsIncludeTest = button.dataset.insightsSample === "with-test"; render(); return; }
   if (button.dataset.responseId) { state.view = "responses"; return loadDetail(button.dataset.responseId); }
   if (button.dataset.adminFilter) { state.filter = button.dataset.adminFilter; render(); return; }
-  if (button.dataset.adminAction === "logout") { clearSession(); state.status = "ready"; render(); return; }
+  if (button.dataset.adminAction === "logout") {
+    // 이 기기에 오래 남는 로그인이 되었으므로, 나갈 때는 서버에서도 토큰을 무른다. 그러지 않으면
+    // 다른 탭이 다음 갱신 때 세션을 되살린다.
+    const token = state.session?.access_token;
+    clearSession();
+    state.status = "ready";
+    render();
+    if (token) fetch(`${supabaseUrl}/auth/v1/logout`, { method: "POST", headers: { apikey: anonKey, Authorization: `Bearer ${token}` } }).catch(() => {});
+    return;
+  }
   if (button.dataset.adminAction === "set-password") {
     // 여기서 정하면 다음부터 메일 없이 들어올 수 있다. 이 화면에는 참여자가 쓴 이야기
     // 전부가 있으므로, 짧거나 다른 곳에서 쓰던 비밀번호를 그대로 받지 않는다.
@@ -637,6 +692,7 @@ document.addEventListener("click", async (event) => {
     const again = window.prompt("한 번 더 넣어주세요");
     if (again === null) return;
     if (again !== next) { window.alert("두 번 넣은 비밀번호가 다릅니다."); return; }
+    await refreshSessionIfNeeded();
     const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
       method: "PUT",
       headers: { apikey: anonKey, Authorization: `Bearer ${state.session.access_token}`, "Content-Type": "application/json" },
@@ -731,9 +787,10 @@ document.addEventListener("click", async (event) => {
     const message = document.querySelector("#relay-message")?.value.trim();
     const matchReason = document.querySelector("#relay-reason")?.value.trim();
     if (!relayEndpoint || !toResponseId || !message) { state.relayError = "받는 응답 ID와 전할 내용을 확인해 주세요."; render(); return; }
-    const response = await fetch(relayEndpoint, { method: "POST", headers: { "Content-Type": "application/json", apikey: anonKey, Authorization: `Bearer ${state.session.access_token}` }, body: JSON.stringify({ action: "admin_create_proposal", from_response_id: state.selected, to_response_id: toResponseId, message, match_reason: matchReason, source_language: "ko" }) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.ok) { state.relayError = "전달 링크를 만들지 못했습니다. 중계 기능 배포와 관리자 권한을 확인해 주세요."; render(); return; }
+    // 토큰 갱신을 거치도록 relayAdminCall 로 부른다.
+    let result = null;
+    try { result = await relayAdminCall("admin_create_proposal", { from_response_id: state.selected, to_response_id: toResponseId, message, match_reason: matchReason, source_language: "ko" }); } catch { result = null; }
+    if (!result?.ok) { state.relayError = "전달 링크를 만들지 못했습니다. 중계 기능 배포와 관리자 권한을 확인해 주세요."; render(); return; }
     // 링크를 href로 그대로 심으므로, https가 아닌 값은 화면에 걸지 않는다.
     if (!/^https:\/\//.test(String(result.relay_url || ""))) { state.relayError = "받은 링크 형식이 예상과 다릅니다."; render(); return; }
     state.relayResult = result.relay_url;
@@ -773,7 +830,13 @@ document.addEventListener("click", async (event) => {
   }
 });
 
+window.addEventListener("storage", (event) => {
+  if (event.key !== sessionKey) return;
+  state.session = loadSession();
+  if (!state.session) { state.status = "ready"; render(); }
+});
+
 captureAuthCallback();
 state.session = loadSession();
 if (!state.session || !supabaseUrl || !anonKey) { state.status = "ready"; render(); }
-else loadSessions().catch((error) => { clearSession(); state.error = error.message === "ADMIN_NOT_REGISTERED" ? "이 계정은 관리자 목록에 등록되지 않았습니다." : "관리자 권한을 확인하지 못했습니다."; state.status = "ready"; render(); });
+else refreshSessionIfNeeded().catch(() => false).then(() => loadSessions()).catch((error) => { clearSession(); state.error = error.message === "ADMIN_NOT_REGISTERED" ? "이 계정은 관리자 목록에 등록되지 않았습니다." : "관리자 권한을 확인하지 못했습니다."; state.status = "ready"; render(); });

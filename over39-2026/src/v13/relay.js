@@ -1,4 +1,4 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r65";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r66";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -13,6 +13,9 @@ const token = hashToken || relayQuery.get("t") || "";
 const storedRelayLanguage = () => { try { return localStorage.getItem("over39-interface-language"); } catch { return null; } };
 const interfaceLanguage = relayQuery.get("lang") || storedRelayLanguage() || navigator.language || "ko";
 const interfaceLanguageCode = String(interfaceLanguage || "").replace(/^zh(?:[-_])?cn$/i, "zh-Hans").replace(/^zh(?:[-_])?(tw|hk)$/i, "zh-Hant");
+// 이 페이지의 html 은 늘 lang="ko" 였다. 일본어·중국어로 보여도 한국어로 적혀 있어서, 말마다
+// 다르게 줄을 바꾸는 규칙(:lang)이 듣지 않았고 화면 낭독기는 일본어를 한국어로 읽었다.
+document.documentElement.lang = interfaceLanguageCode || "ko";
 const text = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 const copy = {
@@ -185,7 +188,7 @@ function render() {
     ? `<section class="relay-reply relay-read-actions"><div class="relay-next-prompt"><h2>${text(simplified.continuationTitle)}</h2><p>${text(simplified.continuationHelp)}</p></div><div class="relay-actions relay-next-actions"><button class="primary-button" data-relay-action="begin">${text(simplified.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" data-relay-action="pass">${text(simplified.continuationSecondary)}</button></div></section>`
     : state.composeStep === "write"
       // 예시문과 번역 여부 물음은 뺐다 — 설문 쪽 안부 화면과 같은 이유다(TK 2026-09-23).
-      ? `<section class="relay-reply"><h2>${text(simplified.writingTitle)}</h2><p class="greeting-writing-help">${text(simplified.writingHelp)}</p><textarea class="text-input" data-relay-message maxlength="${RELAY_MESSAGE_MAX}" aria-describedby="relay-message-count" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><p class="greeting-message-count${draft.message.length >= RELAY_MESSAGE_MAX ? " is-full" : ""}" id="relay-message-count" aria-live="polite">${draft.message.length} / ${RELAY_MESSAGE_MAX}</p><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<p class="greeting-translation-note">${text(compose().translationNote)}</p><div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
+      ? `<section class="relay-reply"><h2>${text(simplified.writingTitle)}</h2><p class="greeting-writing-help">${text(simplified.writingHelp)}</p><textarea class="text-input" data-relay-message maxlength="${RELAY_MESSAGE_MAX}" aria-describedby="relay-message-count" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><p class="greeting-message-count${draft.message.length >= RELAY_MESSAGE_MAX ? " is-full" : ""}" id="relay-message-count">${draft.message.length} / ${RELAY_MESSAGE_MAX}</p><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<p class="greeting-translation-note">${text(compose().translationNote)}</p><div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
       : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(interfaceLanguageCode)}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(compose().translationNote)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
   const firstMessage = messages[0] || null;
   const laterMessages = messages.slice(1);

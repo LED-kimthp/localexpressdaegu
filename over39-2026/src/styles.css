@@ -5895,10 +5895,14 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   letter-spacing: -.025em;
 }
 .first-greeting-received .first-greeting-reading blockquote p { margin: 0; }
+/* 쓴 사람이 한 줄에 한 문장씩 적었으면 그 줄을 그대로 보인다. 문단 안의 줄바꿈이다. */
+.first-greeting-received .first-greeting-reading blockquote p,
+.first-greeting-source blockquote p { white-space: pre-line; }
 /* 다른 말로 온 안부: 읽을 수 있는 글이 위, 쓴 사람의 원문이 아래. 원문은 접지 않는다 —
    위의 큰 글씨는 기계가 옮긴 것이고, 그 사람이 실제로 쓴 문장은 이 자리에 있다. */
 .first-greeting-translating {
   margin: 16px 0 0;
+  max-width: 640px;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.7;
@@ -5916,7 +5920,9 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   font-weight: 720;
   letter-spacing: .04em;
 }
-.first-greeting-received .first-greeting-source blockquote {
+/* :root 를 붙인다 — html[lang="ja"|"zh"] 의 명조·송체 규칙(0,2,2)이 원문 블록까지 덮어써
+   「읽기 쉬운 본문 글씨」가 일본어·중국어 화면에서만 편지 글씨가 되었다. */
+:root .first-greeting-received .first-greeting-source blockquote {
   margin: 0;
   padding: 0;
   border: 0;
@@ -5930,13 +5936,10 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
 }
 .first-greeting-source blockquote p { margin: 0; }
 .first-greeting-source blockquote p + p { margin-top: .85em; }
-.first-greeting-source > small {
-  display: block;
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 11.5px;
-  line-height: 1.7;
-}
+/* 번역 중·실패·「위는 기계 번역」 안내가 모두 이 한 줄에 온다. 비었을 때는 자리만 남긴다 —
+   지우면 화면 낭독기가 나중에 들어온 글자를 읽지 않는다. */
+.first-greeting-translating:empty { margin: 0; }
+.first-greeting-translation-state .text-button { margin-top: 6px; }
 .first-greeting-received .first-greeting-reading blockquote p + p { margin-top: .9em; }
 /* 짧은 한 줄은 크게 놓아야 편지처럼 읽힌다. 600자가 그 크기로 오면 화면 몇 장이
    통째로 글씨가 된다 — 길이에 따라 크기를 내린다(TK 2026-09-23). */
@@ -5948,7 +5951,9 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
 }
 
 /* 안부를 쓰는 화면: 남은 글자 수와, 번역이 함께 간다는 한 줄. */
-.greeting-message-count {
+/* p 를 붙인다 — .connection-section > p 와 .relay-reply > p(0,1,1)가 글자 크기와 여백을
+   덮어써 숫자가 본문 크기로, relay 에서는 칸 끝에 붙어 나왔다. */
+p.greeting-message-count {
   margin: 8px 0 26px;
   color: var(--muted);
   font-size: 11.5px;
@@ -5957,8 +5962,8 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-.greeting-message-count.is-full { color: var(--red); }
-.greeting-translation-note {
+p.greeting-message-count.is-full { color: var(--red); }
+p.greeting-translation-note {
   margin: 18px 0 0;
   padding-top: 15px;
   border-top: 1px solid var(--line);
@@ -6122,6 +6127,9 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
   font-size: 13.5px;
   line-height: 1.85;
   word-break: keep-all;
+  /* 칸 너비보다 긴 한 덩어리(주소, 띄어쓰기 없는 긴 낱말)는 어느 말이든 칸 안에서 끊는다.
+     그러지 않으면 옆 칸의 글자 위로 겹쳐 나간다. */
+  overflow-wrap: anywhere;
 }
 .completion-coordinate-evidence blockquote::before { content: "\201C"; }
 .completion-coordinate-evidence blockquote::after { content: "\201D"; }
@@ -6185,6 +6193,19 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
     transform: none;
   }
 }
+
+/* 한국어는 낱말 중간에서 줄을 바꾸지 않게 word-break: keep-all 을 곳곳(56곳)에 두었다.
+   일본어·중국어에서 keep-all 은 「글자 사이에서 줄을 바꾸지 말라」가 되어, 띄어쓰기가 없는
+   문장이 칸을 뚫고 옆 칸 글자 위로 겹쳐 나갔다(TK 2026-09-23, 완료 화면 세 방향의 근거 문장).
+   두 언어는 글자 사이에서 줄을 바꾸는 것이 정상이다. 규칙마다 고치지 않고 여기서 한 번에 푼다 —
+   56곳의 선택자 우선순위가 제각각이라 !important 로 누른다. 금칙(、。 앞에서 줄 바꾸지 않기)은
+   strict 로 지킨다.
+   :lang() 은 페이지가 아니라 **그 글자의 말**을 본다. 한국어 화면에 놓인 일본어 원문
+   (<blockquote lang="ja">)도 풀리고, 일본어 화면에 놓인 한국어 원문은 keep-all 을 그대로 지킨다.
+   (처음엔 html:lang(ja) * 로 썼다가 기존 선택자 목록 한가운데에 끼워 넣어, 한국어 첫 화면
+   제목의 자간 규칙을 깨뜨렸다 — 2026-09-23 검증에서 잡힘. 그래서 독립된 규칙으로 둔다.) */
+:lang(ja),
+:lang(zh) { word-break: normal !important; line-break: strict; }
 
 /* Typographic refinements · 2026-08-27
    Small corrections only; the existing scale, colour and spacing are unchanged. */
