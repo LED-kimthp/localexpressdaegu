@@ -1,4 +1,6 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r66";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r67";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20260923-r67";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel } from "./greeting-text.js?v=v7-20260923-r67";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -111,7 +113,7 @@ const greetingReasonCopy = {
   ms: { map: "Kedudukan semasa yang dibaca dalam dua rekod", sender: { MAKING: "seorang peserta yang terus menghasilkan karya", CONNECTING: "seorang peserta yang menghubungkan karya dan orang", READING: "seorang peserta yang membaca dan mendokumentasikan karya", PERFORMANCE: "seorang peserta yang meneruskan persembahan dan latihan", EDUCATION: "seorang peserta yang meneruskan seni dan budaya melalui pengajaran dan pembelajaran", EVERYDAY: "seorang peserta yang meneruskan seni dan budaya dalam kehidupan harian", CULTURAL_RELATION: "seorang peserta yang terus berhubung dengan seni dan budaya" }, summary: "Salam ini disampaikan dengan membaca bersama arah yang dekat dalam kedua-dua rekod, peranan semasa dan arah hubungan yang dipilih. Kedudukan ini boleh berubah mengikut masa atau keadaan.", SAME_DIRECTION: "Satu arah yang dekat muncul dalam kedua-dua rekod.", ADJACENT_DIRECTION: "Sebahagian arah dalam dua rekod bersebelahan.", ROLE_BRIDGE: "Soalan yang serupa berterusan daripada peranan yang berbeza." },
 };
 
-let state = { loading: true, relay: null, error: "", result: "", notification: "", translations: new Set(), composeStep: "read", draft: { message: "", sender_visibility: "", translation_allowed: "YES", confirmed: false } };
+let state = { loading: true, relay: null, error: "", result: "", notification: "", composeStep: "read", draft: { message: "", sender_visibility: "", translation_allowed: "YES", confirmed: false } };
 function c() { return copy[interfaceLanguageCode] || copy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function forwarding() { return forwardingCopy[interfaceLanguageCode] || forwardingCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function compose() { return composeCopy[interfaceLanguageCode] || composeCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
@@ -166,13 +168,113 @@ function senderContextSection(thread) {
   const { sender } = reasonDetails(thread);
   return sender ? `<section class="relay-sender-context"><span>${text(receipt().senderContext)}</span><strong>${text(sender)}</strong></section>` : "";
 }
-function messageCard(message) {
-  return `<article class="relay-letter"><p lang="${text(message.source_language || "")}">${text(message.body_original)}</p></article>`;
+// ── 편지함 번역 ────────────────────────────────────────────────────────────
+// 편지함은 원문만 보여 줬다. 「번역 보기」 단추가 있었지만 저장된 번역(translated_body)이 있을
+// 때만 나왔고 그것을 쓰는 곳이 없어, 사실상 늘 원문뿐이었다. 그래서 다른 말의 안부는 이 자리로
+// 보내지 않게 막아 두었다(r66). 이제 도착 화면과 같은 규칙으로 옮긴다(TK 2026-09-23).
+//  · 언제 옮기나: greetingTranslationNeeded — 도착 화면과 같은 함수다.
+//  · 어떻게 보이나: 읽을 수 있는 글이 편지 자리에, 「위는 기계 번역」 한 줄, 원문은 통째로 아래.
+//  · 늦게 와도: 화면 전체를 다시 그리지 않고 그 편지 자리만 갈아 끼운다 — 답장을 쓰던 칸을 지킨다.
+//  · 한 번 받은 번역은 이 탭에 남긴다(sessionStorage). 새로고침해도 다시 부르지 않는다.
+const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
+const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
+const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
+const messageTranslations = new Map();
+let messageTranslationSeq = 0;
+const translationStoreKey = (message) => `over39-relay-translation:${message.id}:${interfaceLanguageCode}`;
+
+function storedMessageTranslation(message) {
+  try { return JSON.parse(sessionStorage.getItem(translationStoreKey(message)) || "null"); } catch { return null; }
 }
-function messageLanguage(message) {
-  const open = state.translations.has(message.id);
-  return `<section class="relay-message-language"><span>${text(c().original)} · ${text(message.source_language || "")}</span>${message.translated_body ? `<button class="translation-toggle" type="button" data-translation-id="${text(message.id)}" aria-expanded="${open}">${text(open ? c().hideTranslation : c().translation)}</button>${open ? `<div class="relay-translation" lang="${text(message.translation_language || "")}"><span>${text(message.translation_language || "")}</span><p>${text(message.translated_body)}</p></div>` : ""}` : ""}</section>`;
+
+function messageTranslationEntry(message) {
+  const key = `${message.id}:${interfaceLanguageCode}`;
+  if (!messageTranslations.has(key)) {
+    const stored = storedMessageTranslation(message);
+    if (stored?.status === "ready" && stored.text) messageTranslations.set(key, { status: "ready", text: stored.text });
+  }
+  return messageTranslations.get(key) || null;
 }
+
+function messageView(message) {
+  const simplified = simplifiedGreeting();
+  const originalLanguage = message.source_language || "";
+  const needed = greetingTranslationNeeded(originalLanguage, interfaceLanguageCode);
+  const entry = needed ? messageTranslationEntry(message) : null;
+  const translated = entry?.status === "ready" ? String(entry.text || "").trim() : "";
+  const status = !needed ? "none" : translated ? "ready" : entry?.status === "failed" ? "failed" : "loading";
+  const lead = translated || message.body_original || "";
+  const leadLanguage = translated ? interfaceLanguageCode : originalLanguage;
+  return {
+    status,
+    long: String(lead).length > GREETING_LONG_CHARS,
+    leadHtml: `<p lang="${text(leadLanguage)}">${greetingParagraphsOf(lead).map(text).join("\n\n")}</p>`,
+    statusText: status === "loading" ? simplified.arrivalTranslationLoading
+      : status === "failed" ? simplified.arrivalTranslationFailed
+      : status === "ready" ? simplified.arrivalTranslationNote
+      : "",
+    retryHtml: status === "failed" ? `<button class="translation-toggle" type="button" data-relay-retry-translation="${text(message.id)}">${text(simplified.arrivalTranslationRetry)}</button>` : "",
+    sourceHtml: translated
+      ? `<aside class="relay-message-source"><span>${text(simplified.arrivalOriginalLabel.split("{language}").join(languageLabel(originalLanguage)))}</span><blockquote lang="${text(originalLanguage)}">${greetingParagraphsOf(message.body_original).map((part) => `<p>${text(part)}</p>`).join("")}</blockquote></aside>`
+      : "",
+  };
+}
+
+// 편지 한 통. 쓴 사람이 비운 줄은 <p> 안의 빈 줄로 남기고 white-space: pre-line 으로 보인다.
+function messageBlock(message) {
+  const view = messageView(message);
+  return `<div class="relay-message" data-relay-message-id="${text(message.id)}"><article class="relay-letter${view.long ? " is-long" : ""}" data-relay-lead>${view.leadHtml}</article><div class="relay-translation-state"><p class="relay-translation-status" role="status" aria-live="polite" tabindex="-1" data-relay-status>${text(view.statusText)}</p><span data-relay-retry>${view.retryHtml}</span></div><div data-relay-source>${view.sourceHtml}</div></div>`;
+}
+
+function patchMessage(message) {
+  const holder = root.querySelector(`[data-relay-message-id="${CSS.escape(String(message.id))}"]`);
+  if (!holder) return;
+  const view = messageView(message);
+  const lead = holder.querySelector("[data-relay-lead]");
+  if (lead) { lead.className = `relay-letter${view.long ? " is-long" : ""}`; lead.innerHTML = view.leadHtml; }
+  // 알림 줄은 지우지 않고 글자만 바꾼다. 지웠다 새로 만들면 화면 낭독기가 읽지 않는다.
+  const status = holder.querySelector("[data-relay-status]");
+  if (status) status.textContent = view.statusText;
+  const retry = holder.querySelector("[data-relay-retry]");
+  const retryHadFocus = retry?.contains(document.activeElement);
+  if (retry) retry.innerHTML = view.retryHtml;
+  if (retryHadFocus) (retry.querySelector("button") || status)?.focus({ preventScroll: true });
+  const source = holder.querySelector("[data-relay-source]");
+  if (source) source.innerHTML = view.sourceHtml;
+}
+
+function ensureMessageTranslations({ retryId = "" } = {}) {
+  const messages = state.relay?.thread?.messages || [];
+  for (const message of messages) {
+    if (!message?.id || !greetingTranslationNeeded(message.source_language || "", interfaceLanguageCode)) continue;
+    const key = `${message.id}:${interfaceLanguageCode}`;
+    const entry = messageTranslationEntry(message);
+    if (entry?.status === "ready" || entry?.status === "loading") continue;
+    // 실패는 스스로 되풀이하지 않는다. 「다시 옮겨 보기」를 누른 편지만 다시 부른다.
+    if (entry?.status === "failed" && String(message.id) !== String(retryId)) continue;
+    const token = ++messageTranslationSeq;
+    messageTranslations.set(key, { status: "loading", text: "", token });
+    patchMessage(message);
+    translateArrivedGreeting({
+      endpoint: aiFunctionUrl,
+      anonKey: supabaseAnonKey,
+      mode: aiMode,
+      text: message.body_original,
+      sourceLanguage: message.source_language,
+      targetLanguage: interfaceLanguageCode,
+    }).then((result) => {
+      if (messageTranslations.get(key)?.token !== token) return;
+      const translated = String(result?.translation || "").trim();
+      messageTranslations.set(key, { status: translated ? "ready" : "failed", text: translated });
+      if (translated) {
+        try { sessionStorage.setItem(translationStoreKey(message), JSON.stringify({ status: "ready", text: translated })); } catch { /* 막혀 있어도 화면에는 보인다. */ }
+      }
+      patchMessage(message);
+    });
+  }
+}
+// ── 편지함 번역 끝 ──────────────────────────────────────────────────────────
+
 function render() {
   const simplified = simplifiedGreeting();
   if (state.loading) { root.innerHTML = `<main class="relay-layout"><p>${text(c().loading)}</p></main>`; return; }
@@ -189,14 +291,14 @@ function render() {
     : state.composeStep === "write"
       // 예시문과 번역 여부 물음은 뺐다 — 설문 쪽 안부 화면과 같은 이유다(TK 2026-09-23).
       ? `<section class="relay-reply"><h2>${text(simplified.writingTitle)}</h2><p class="greeting-writing-help">${text(simplified.writingHelp)}</p><textarea class="text-input" data-relay-message maxlength="${RELAY_MESSAGE_MAX}" aria-describedby="relay-message-count" placeholder="${text(c().placeholder)}">${text(draft.message)}</textarea><p class="greeting-message-count${draft.message.length >= RELAY_MESSAGE_MAX ? " is-full" : ""}" id="relay-message-count">${draft.message.length} / ${RELAY_MESSAGE_MAX}</p><h3>${text(compose().visibility)}</h3>${choiceButtons("sender_visibility", identityChoices)}<p class="greeting-translation-note">${text(compose().translationNote)}</p><div class="relay-actions"><button class="secondary-button" data-relay-action="back-read">${text(c().original)}</button><button class="primary-button" data-relay-action="preview">${text(compose().preview)} <span aria-hidden="true">→</span></button></div></section>`
-      : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(interfaceLanguageCode)}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(compose().translationNote)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
+      : `<section class="relay-reply relay-preview"><h2>${text(compose().previewTitle)}</h2><article class="relay-letter"><span>${text(c().original)} · ${text(languageLabel(interfaceLanguageCode))}</span><p>${text(draft.message)}</p></article><dl><div><dt>${text(compose().visibility)}</dt><dd>${text(identityChoices.find(([value]) => value === draft.sender_visibility)?.[1] || "")}</dd></div><div><dt>${text(compose().translation)}</dt><dd>${text(compose().translationNote)}</dd></div></dl><label class="final-check"><input type="checkbox" data-relay-preview-confirmed ${draft.confirmed ? "checked" : ""} /><span>${text(compose().confirm)}</span></label><div class="relay-actions"><button class="secondary-button" data-relay-action="back-write">${text(compose().back)}</button><button class="primary-button" data-relay-action="reply" ${draft.confirmed ? "" : "disabled"}>${text(next.send)} <span aria-hidden="true">→</span></button></div></section>`;
   const firstMessage = messages[0] || null;
   const laterMessages = messages.slice(1);
   const receivedGreeting = firstMessage
-    ? `<section class="relay-messages relay-received-message">${messageCard(firstMessage)}</section>${senderContextSection(thread)}${arrivalReasonSection(thread, firstMessage)}${messageLanguage(firstMessage)}`
+    ? `<section class="relay-messages relay-received-message">${messageBlock(firstMessage)}</section>${senderContextSection(thread)}${arrivalReasonSection(thread, firstMessage)}`
     : "";
   const laterThread = laterMessages.length
-    ? `<section class="relay-messages relay-later-messages">${laterMessages.map((message) => `${messageCard(message)}${messageLanguage(message)}`).join("")}</section>`
+    ? `<section class="relay-messages relay-later-messages">${laterMessages.map((message) => messageBlock(message)).join("")}</section>`
     : "";
   // 프로젝트 시드와 연구팀 전달문에 「사람이 남긴 문장」 머리말을 달지 않는다 —
   // 발신자 맥락 라벨과 머리말이 서로 모순되지 않게 한다.
@@ -209,6 +311,7 @@ function render() {
     ? `<h1>${text(simplified.receivedTitle)}</h1><p class="relay-lead">${text(receivedHelpText)}</p>`
     : `<h1>${text(simplified.featureName)}</h1>`;
   root.innerHTML = `<main class="relay-layout"><section class="relay-card ${firstMessage ? "relay-card-received greeting-arrival" : ""}"><div class="archive-label">${text(simplified.projectLabel)}</div>${receivedHeading}${receivedGreeting}${laterThread}${thread.can_reply ? composeFlow : ""}</section></main>`;
+  ensureMessageTranslations();
 }
 async function request(payload) {
   if (!endpoint || !token) throw new Error("RELAY_NOT_CONFIGURED");
@@ -219,8 +322,8 @@ async function request(payload) {
 }
 
 document.addEventListener("click", async (event) => {
-  const translation = event.target.closest("[data-translation-id]");
-  if (translation) { const id = translation.dataset.translationId; state.translations.has(id) ? state.translations.delete(id) : state.translations.add(id); render(); return; }
+  const retryTranslation = event.target.closest("[data-relay-retry-translation]");
+  if (retryTranslation) { ensureMessageTranslations({ retryId: retryTranslation.dataset.relayRetryTranslation }); return; }
   const choice = event.target.closest("[data-relay-choice]");
   if (choice) { state.draft[choice.dataset.relayChoice] = choice.dataset.relayChoiceValue; state.draft.confirmed = false; render(); return; }
   const button = event.target.closest("[data-relay-action]"); if (!button) return;

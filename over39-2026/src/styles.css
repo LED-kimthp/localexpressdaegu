@@ -4930,7 +4930,7 @@ body,
 .relay-reason p { margin: 7px 0 0; line-height: 1.7; }
 .relay-letter { position: relative; padding: clamp(28px, 5vw, 46px); border: 1px solid var(--line-dark); background: #fffdf8; box-shadow: 0 18px 42px rgba(31,32,29,.08); transform: rotate(.25deg); }
 .relay-letter::after { content:""; position:absolute; inset:8px; border:1px solid rgba(157,73,57,.12); pointer-events:none; }
-.relay-letter p { font-size: clamp(17px,2.2vw,21px); line-height:1.85; }
+.relay-letter p { font-size: clamp(17px,2.2vw,21px); line-height:1.85; white-space: pre-line; }
 .relay-trust { display:grid; gap:4px; margin-top:34px; padding-top:20px; border-top:1px solid var(--line); }
 .relay-trust strong { font-size:13px; }
 .relay-trust span { color:var(--red); font-size:13px; }
@@ -5147,6 +5147,10 @@ body,
 .adaptive-question { margin: var(--space-7) 0 0; }
 .adaptive-question h3 { max-width: 760px; margin: 0; font-size: clamp(20px, 2.7vw, 28px); line-height: 1.42; letter-spacing: -.025em; }
 .adaptive-question + .field-label { display: block; margin-top: var(--space-6); }
+/* 입력칸은 이제 renderText 가 .text-field 로 감싸서 그린다. 위의 두 규칙(.field-label ·
+   .text-input 이 바로 뒤에 오는 경우)은 옛 모양을 가리켜 아무것도 잡지 못했고, 「이어지는 답변」이
+   AI 질문 상자 밑에 붙어 버렸다(TK 2026-09-23). 감싼 덩어리에 같은 여백을 준다. */
+.adaptive-question + .text-field { margin-top: var(--space-6); }
 .adaptive-question ~ .text-input { margin-top: var(--space-5); }
 .adaptive-question .ai-use-note { margin: var(--space-3) 0 0; }
 
@@ -5232,6 +5236,7 @@ body,
   .adaptive-previous-answer { margin-top: 24px; padding: 15px; }
   .adaptive-question { margin-top: 24px; }
   .adaptive-question + .field-label { margin-top: var(--space-5); }
+  .adaptive-question + .text-field { margin-top: var(--space-5); }
   .completion-boundary { margin-top: 34px; padding: 32px 0; }
   .participant-reference-card { margin-top: 20px; }
   .referral-parse-preview dl { grid-template-columns: 1fr; gap: 8px; }
@@ -6007,6 +6012,15 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
 .greeting-arrival .relay-sender-context,
 .greeting-arrival .relay-message-language { animation-delay: 3.2s; }
 .greeting-arrival .relay-arrival-reason { animation-delay: 3.4s; }
+/* 편지함 번역(2026-09-23): 알림 줄과 원문은 편지 뒤에 온다. 번역이 늦게 와서 원문 자리가
+   나중에 채워질 때도 같은 걸음으로 나타난다. */
+.greeting-arrival .relay-translation-state,
+.greeting-arrival .relay-message-source {
+  opacity: 0;
+  animation: greeting-sentence-arrive .72s cubic-bezier(.22, .61, .36, 1) forwards;
+}
+.greeting-arrival .relay-translation-state { animation-delay: 1.6s; }
+.greeting-arrival .relay-message-source { animation-delay: 1.8s; }
 .greeting-arrival .first-greeting-continue,
 .greeting-arrival .relay-read-actions { animation-delay: 4.6s; }
 /* 철회는 없애지 않는다. 다만 맨 나중에, 맨 아래에 — 메일 주소를 남긴 것이 이미
@@ -6046,6 +6060,21 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
   padding-top: 0;
   border-top: 0;
 }
+/* 길게 온 편지는 글씨를 내린다 — 600자가 41px 로 오면 화면 몇 장이 한 문단이 된다. */
+.relay-card-received.greeting-arrival .relay-letter.is-long p {
+  font-size: clamp(18px, 1.9vw, 23px);
+  line-height: 1.95;
+  letter-spacing: -.015em;
+}
+/* 편지함 번역: 「위는 기계 번역」 한 줄과, 그 아래 쓴 사람의 원문(접지 않는다). */
+.relay-translation-status { margin: 12px 0 0; max-width: 640px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.relay-translation-status:empty { margin: 0; }
+.relay-translation-state .translation-toggle { margin-top: 6px; }
+.relay-message-source { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
+.relay-message-source > span { display: block; margin-bottom: 10px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+:root .relay-message-source blockquote { margin: 0; padding: 0; border: 0; background: transparent; color: var(--ink); font-family: inherit; font-size: 14.5px; font-weight: 400; line-height: 1.85; letter-spacing: 0; }
+.relay-message-source blockquote p { margin: 0; white-space: pre-line; }
+.relay-message-source blockquote p + p { margin-top: .85em; }
 
 .completion-coordinate {
   margin-top: clamp(52px, 8vw, 88px);

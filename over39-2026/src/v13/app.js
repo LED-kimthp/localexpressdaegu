@@ -1,26 +1,27 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r66";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r66";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r66";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r66";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r66";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r66";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r66";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r66";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r66";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r66";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r66";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r66";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r66";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r66";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r66";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r66";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r66";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r66";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r66";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r66";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r66";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r66";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r66";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r67";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r67";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r67";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r67";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r67";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r67";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r67";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r67";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r67";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r67";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel } from "./greeting-text.js?v=v7-20260923-r67";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r67";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r67";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r67";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r67";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r67";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r67";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r67";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r67";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r67";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r67";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r67";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r67";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r67";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +30,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "f7a57efc0162-dirty 2026-09-23T10:16:10.841Z";
+const buildStamp = "01cac654de85-dirty 2026-09-23T10:52:56.891Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -173,14 +174,10 @@ function clearAdaptiveAnchor(checkpoint, { clearReflection = true } = {}) {
 
 // The local language comes first. The remaining languages follow ISO language-code order.
 // 내린 언어의 이름표도 남겨둔다 — 다시 열 때 OFFERED_LANGUAGES 만 고치면 된다.
-const LANGUAGE_LABELS = Object.freeze({
-  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文",
-  nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
-});
-const languages = OFFERED_LANGUAGES.map((code) => [code, LANGUAGE_LABELS[code]]);
 // 안부 미리보기가 언어를 「zh-Hant」라는 코드로 보여주고 있었다(2026-09-13 번체 통과).
 // 참여자가 읽는 자리에는 사람이 읽는 이름을 쓴다 — 부록은 이미 그렇게 한다.
-const languageLabel = (code) => LANGUAGE_LABELS[String(code || "")] || String(code || "");
+// 이름표는 편지함(relay.js)과 함께 쓰므로 greeting-text.js 에 둔다.
+const languages = OFFERED_LANGUAGES.map((code) => [code, LANGUAGE_LABELS[code]]);
 const researchContactEmail = "over39@localexpressdaegu.org";
 const greetingSenderName = "〈만 39세 이상〉 안부의 좌표";
 const greetingSenderEmail = "hello@localexpressdaegu.org";
@@ -1766,22 +1763,50 @@ async function requestClosingOffer(context, attempts = 2) {
   return last;
 }
 
+// 제안문을 청할 재료. 정리문과 같은 재료다. 완료 화면에서 다시 청할 때도 여기서 만든다 —
+// 예전에는 정리문을 만들 때 쥐어 둔 재료(closingOfferContext)만 썼는데, 그것은 메모리에만
+// 있어서 설문 중 새로고침·「이야기 계속하기」 뒤에는 없었다. 그러면 완료 화면의 재시도가
+// 「재료가 없다」며 그냥 넘어가 팝업이 영영 뜨지 않았다(2026-09-23 점검).
+function closingOfferContextFor() {
+  const answers = Object.keys(state.answers || {}).length ? state.answers : (state.submitted?.answers || {});
+  const response = state.submitted || createResponse("adaptive_complete");
+  return { ...buildAdaptiveSummaryContext({ response, turns: values(answers.adaptive_turns), answers }), interview_mode: "adaptive_v2", anchor_ids: ACTIVE_ANCHOR_ORDER, adaptive_policy_version: ADAPTIVE_POLICY_VERSION };
+}
+
+// 도착한 제안문을 받는 한 곳.
+//  · owner: 청할 때의 state. 「이 기기에서 다른 분이 참여하기」는 state 를 통째로 바꾼다. 앞사람의
+//    요청이 늦게 오면 예전에는 **다음 사람**의 화면과 기록에 앞사람의 제안문이 들어갔다.
+//  · 완료 화면에서 도착하면, 새로고침해도 남도록 이 탭의 완료 기록 사본도 맞춘다.
+function acceptClosingOffer(owner, result) {
+  if (state !== owner) return;
+  state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
+  state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
+  const stored = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
+  if (state.answers) state.answers.closing_offer = stored;
+  saveDraft();
+  if (state.phase === "complete") {
+    // 이 탭에 저장된 완료 기록은 서버가 받았다고 확인한 것만이다. 그 기록이 있을 때만 맞춘다 —
+    // 확인되지 않은 제출을 여기서 새로 저장하면, 새로고침 뒤 「확인됨」으로 되살아난다.
+    if (state.submitted && stored && loadCompleted()?.response_id === state.submitted.response_id) {
+      state.submitted = { ...state.submitted, answers: { ...(state.submitted.answers || {}), closing_offer: stored } };
+      saveCompleted(state.submitted);
+    }
+    render(false);
+  }
+}
+
 // 완료 화면에 닿았는데 제안이 없으면 여기서 한 번 더 청한다. 참여자가 기록을 읽는
 // 동안 도착하면 그때 화면만 다시 그린다. 이미 시도했으면 다시 하지 않는다.
 function ensureClosingOfferOnComplete() {
   if (state.closingOffer?.text || state.closingOfferRetried) return;
-  if (state.closingOfferStatus === "loading" || !state.closingOfferContext) return;
+  if (state.closingOfferStatus === "loading") return;
+  const context = state.closingOfferContext || closingOfferContextFor();
   state.closingOfferRetried = true;
   state.closingOfferStatus = "loading";
-  requestClosingOffer(state.closingOfferContext, 1)
-    .then((result) => {
-      state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
-      state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
-      state.answers.closing_offer = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
-      saveDraft();
-      if (state.phase === "complete") render(false);
-    })
-    .catch(() => { state.closingOfferStatus = "unavailable"; });
+  const owner = state;
+  requestClosingOffer(context, 1)
+    .then((result) => acceptClosingOffer(owner, result))
+    .catch(() => { if (state === owner) state.closingOfferStatus = "unavailable"; });
 }
 
 async function requestAdaptiveNext(checkpoint) {
@@ -1879,15 +1904,10 @@ async function prepareAdaptiveSummary() {
   // 그대로 기다림에 더해진다. 결과는 완료 화면에서 쓰므로 여기서 기다리지 않고, 도착하면 그때
   // 화면만 다시 그린다. 실패해도 참여는 그대로 간다.
   state.closingOfferContext = context;
+  const owner = state;
   requestClosingOffer(context)
-    .then((result) => {
-      state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
-      state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
-      state.answers.closing_offer = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
-      saveDraft();
-      if (state.phase === "complete") render(false);
-    })
-    .catch(() => { state.closingOfferStatus = "unavailable"; });
+    .then((result) => acceptClosingOffer(owner, result))
+    .catch(() => { if (state === owner) state.closingOfferStatus = "unavailable"; });
   const summary = await createAdaptiveSummary({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, context, answers: state.answers, turns, timeoutMs: 120000 });
   state.answers.depth_summary = {
     summary: summary.summary,
@@ -2034,7 +2054,7 @@ function responseCoordinatePosition(answers = state.answers) {
 }
 
 const AXIS_REVIEW_OPTIONS = {
-  participant_m: [["M1", "느낌과 분위기 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다."], ["M2", "삶과 기억 — 개인의 경험과 관계, 삶의 변화가 기억의 중심에 있습니다."], ["M3", "작품의 생각과 표현 — 형식과 재료, 표현 방식과 새로운 시도가 기억의 중심에 있습니다."], ["M4", "사람과 사회 — 사람과 지역, 공동체와 사회적 의미가 기억의 중심에 있습니다."]],
+  participant_m: [["M1", "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다."], ["M2", "삶과 기억 — 개인의 경험과 관계, 삶의 변화가 기억의 중심에 있습니다."], ["M3", "작품의 생각과 표현 — 형식과 재료, 표현 방식과 새로운 시도가 기억의 중심에 있습니다."], ["M4", "사람과 사회 — 사람과 지역, 공동체와 사회적 의미가 기억의 중심에 있습니다."]],
   participant_s: [["S1", "확장 — 관심과 활동이 새로운 분야, 사람과 장소로 넓어지고 있습니다."], ["S2", "지속 — 익숙한 활동과 관심을 자신의 리듬으로 꾸준히 이어가고 있습니다."], ["S3", "전환 — 역할과 방식, 관심의 중심이 달라지며 새로운 방향으로 움직이고 있습니다."], ["S4", "거리와 한계 — 현재 조건을 살피며 속도와 관계를 다시 조정하고 있습니다."]],
   participant_d: [["D1", "접근과 참여 — 정보와 이동, 관람과 참여 기회가 이어가기 위한 중요한 조건입니다."], ["D2", "개인의 기반 — 생활, 비용, 공간과 스스로 확보할 수 있는 기반이 중요합니다."], ["D3", "관계와 매개 — 동료와 기획자, 비평가, 교육자, 관객과 이어지는 관계가 중요합니다."], ["D4", "제도와 구조 — 지원과 심사, 보상과 장기적인 운영 구조가 중요합니다."]],
 };
@@ -2059,7 +2079,7 @@ function renderAxisReview(field, title) {
 function renderCoordinateModel() {
   const position = responseCoordinatePosition();
   const axisLabels = {
-    M1: t("느낌과 분위기"), M2: t("삶과 기억"), M3: t("작품의 생각과 표현"), M4: t("사람과 사회"),
+    M1: t("감각과 정서"), M2: t("삶과 기억"), M3: t("작품의 생각과 표현"), M4: t("사람과 사회"),
     S1: t("확장"), S2: t("지속"), S3: t("전환"), S4: t("거리와 한계"),
     D1: t("접근과 참여"), D2: t("개인의 기반"), D3: t("관계와 매개"), D4: t("제도와 구조"),
   };
@@ -2109,7 +2129,7 @@ function renderSubmit() {
   return `${screenHeading(t("당신의 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
-    <section class="axis-review"><div class="axis-review-intro"><span>THREE DIRECTIONS · YOUR RECORD</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>
+    <section class="axis-review"><div class="axis-review-intro"><span>${esc(greetingFirst().coordinateLabel)}</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>
     <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${requiredBlock("coordinate-feedback-required", renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]]))}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
@@ -2581,15 +2601,7 @@ let greetingTranslationSeq = 0;
 // 「다시 옮겨 보기」를 누른 사람의 초점. 단추가 사라지면 초점이 문서 맨 위로 떨어진다.
 let arrivalRetryFocusPending = false;
 
-// 쓴 사람이 줄을 바꿔 썼으면 그 모양을 그대로 둔다. 정리문용 규칙(summaryParagraphsOf)은
-// 줄바꿈을 공백으로 펴고 문장을 다시 묶어서, 한 줄에 한 문장씩 쓴 안부가 뭉개졌다.
-// 한 덩어리로 온 긴 글만 정리문과 같은 규칙으로 나눈다(TK 2026-09-23).
-function greetingParagraphsOf(text) {
-  const value = String(text || "").replace(/\r\n?/g, "\n").trim();
-  if (!value) return [];
-  if (value.includes("\n")) return value.split(/\n[ \t]*\n+/).map((part) => part.trim()).filter(Boolean);
-  return summaryParagraphsOf(value);
-}
+// 문단 나누기(greetingParagraphsOf)는 편지함과 함께 쓰므로 greeting-text.js 에 있다.
 
 function arrivalTranslationView(greeting) {
   const simplified = greetingSimple();
@@ -2613,7 +2625,7 @@ function arrivalTranslationView(greeting) {
     ? `<aside class="first-greeting-source"><span>${esc(simplified.arrivalOriginalLabel.split("{language}").join(languageLabel(originalLanguage)))}</span><blockquote lang="${esc(originalLanguage)}">${greetingParagraphsOf(greeting.original_text).map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></aside>`
     : "";
   return {
-    leadClass: `first-greeting-reading${String(lead).length > 160 ? " is-long" : ""}`,
+    leadClass: `first-greeting-reading${String(lead).length > GREETING_LONG_CHARS ? " is-long" : ""}`,
     leadHtml: `<blockquote lang="${esc(leadLanguage)}">${greetingParagraphsOf(lead).map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote>`,
     status,
     statusText,
@@ -3312,7 +3324,7 @@ function renderSurvey() {
 function researchJourney() {
   const landing = ui().landing || {};
   return `<section class="research-journey research-axes" aria-label="${esc(t("설문 구조"))}">
-    <div class="journey-heading"><span>THREE DIRECTIONS · YOUR RECORD</span><strong>${esc(t("기억에서 현재로, 현재에서 이어가기 위한 조건으로 이동합니다."))}</strong></div>
+    <div class="journey-heading"><span>${esc(greetingFirst().coordinateLabel)}</span><strong>${esc(t("기억에서 현재로, 현재에서 이어가기 위한 조건으로 이동합니다."))}</strong></div>
     <div class="journey-steps journey-steps-three">
       <div><span>01</span><strong>${esc(t("기억"))}</strong><p>${esc(t("사람, 작품, 공간, 장면과 오래 남은 이유"))}</p></div>
       <div><span>02</span><strong>${esc(t("현재"))}</strong><p>${esc(t("지금 이어지는 활동, 관람, 역할과 변화"))}</p></div>
@@ -3839,6 +3851,9 @@ document.addEventListener("click", (event) => {
       const firstGreeting = draft.firstGreeting || loadFirstGreeting(responseId);
       const resumedPhase = ["greeting-choice", "greeting-first"].includes(draft.phase) ? draft.phase : "survey";
       state = { phase: resumedPhase, step: mappedStep, contextStep: Number(draft.contextStep || 0), reviewReturnStep: typeof draft.reviewReturnStep === "number" ? draft.reviewReturnStep : undefined, answers, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId, sessionStartedAt: draft.sessionStartedAt || null, language: urlLanguage || draft.language || state.language, feedback: draft.feedback || {}, firstGreeting, researchContact: draft.researchContact || { email: "", consent: false, status: null } };
+      // 제안문은 초안의 answers 에 남아 있다. 되살리지 않으면, 정리문을 다시 만들지 않는 한
+      // 제안문도 다시 청하지 않아 완료 화면에 팝업이 뜨지 않았다(2026-09-23 점검).
+      if (answers.closing_offer?.text) { state.closingOffer = answers.closing_offer; state.closingOfferStatus = "ready"; }
     }
     render(true);
     if (state.phase === "greeting-first" && state.firstGreeting?.status === "loading") beginFirstGreeting();
@@ -4335,7 +4350,15 @@ document.addEventListener("click", (event) => {
     });
     return;
   }
-  if (target.dataset.action === "restart") { clearFirstGreeting(); clearDraft(); clearCompleted(); state = { phase: "intro", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; render(true); }
+  if (target.dataset.action === "restart") {
+    // 페이지를 **새로 불러온다**(2026-09-23). 예전에는 메모리만 비워서, 탭을 한 번 열어 두면
+    // 며칠 전 판이 계속 돌았다 — 고친 화면이 「다시 생긴」 것처럼 보였다(TK: 필수 칸 여백, r56
+    // 에서 고친 것이 r66 에서 옛 모양으로 보임). 기관의 공용 기기도 같다. 새로 불러오면 다음
+    // 사람은 늘 최신 판으로 시작하고, 앞사람의 늦게 온 요청(제안문·번역)이 끼어들 곳도 없어진다.
+    clearFirstGreeting(); clearDraft(); clearCompleted();
+    window.location.reload();
+    return;
+  }
 });
 
 document.addEventListener("input", (event) => {
@@ -4488,9 +4511,11 @@ function restoreCompletedRecord() {
   if (!completed) return;
   state.submitted = completed;
   state.submissionStatus = "confirmed";
-  state.closingOfferSeen = true;
   const offer = completed.answers?.closing_offer;
   if (offer?.text) state.closingOffer = offer;
+  // 이미 받은 제안문이 있으면 창은 다시 띄우지 않는다(한 번만 뜬다). 아직 못 받았으면 본 적이 없는
+  // 것이므로, 새로고침 뒤에 도착하면 그때 띄운다 — 예전에는 늘 「본 것」으로 쳐서 영영 안 떴다.
+  state.closingOfferSeen = Boolean(offer?.text);
   state.phase = "complete";
 }
 

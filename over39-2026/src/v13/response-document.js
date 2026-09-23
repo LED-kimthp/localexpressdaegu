@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r66";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r67";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260923-r66";
-import { normalizedDScope } from "./flow.js?v=v7-20260923-r66";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260923-r67";
+import { normalizedDScope } from "./flow.js?v=v7-20260923-r67";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260923-r66";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260923-r66";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r66";
+import { translate } from "./i18n.js?v=v7-20260923-r67";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260923-r67";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r67";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -525,13 +525,13 @@ function needSection(answers = {}, english = false) {
 }
 
 const AXIS_TEXT = {
-  M1: "느낌과 분위기", M2: "삶과 기억", M3: "작품의 생각과 표현", M4: "사람과 사회",
+  M1: "감각과 정서", M2: "삶과 기억", M3: "작품의 생각과 표현", M4: "사람과 사회",
   S1: "확장", S2: "지속", S3: "전환", S4: "거리와 한계",
   D1: "접근과 참여", D2: "개인의 기반", D3: "관계와 매개", D4: "제도와 구조",
 };
 
 const AXIS_TEXT_EN = {
-  M1: "Feeling and atmosphere", M2: "Life and memory", M3: "Ideas and expression", M4: "People and society",
+  M1: "Senses and emotion", M2: "Life and memory", M3: "Ideas and expression", M4: "People and society",
   S1: "Expansion", S2: "Continuity", S3: "Transition", S4: "Distance and limits",
   D1: "Access and participation", D2: "Personal foundations", D3: "Relationships and mediation", D4: "Institutions and structures",
 };
@@ -741,7 +741,7 @@ export function buildResponseDocument({
   if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation in preparation" : copy.translationPending), status: korean ? copy.translationReady : copy.translationPending });
   const coordinate = recordCoordinate(answers);
   const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
-  // 참여자가 화면에서 본 이름과 코드북 이름이 다르다 — 「느낌과 분위기」 대 「감각·정서」.
+  // 참여자가 화면에서 본 이름과 코드북 이름이 다르다 — 「감각과 정서」 대 「감각·정서」.
   // 화면은 참여자가 방금 고른 말이 맞고, 부록은 코드북 말이 맞다(TK 2026-09-11).
   const codebookText = frameLanguage === "ko"
     ? { ...RESEARCH_LABELS.m_primary, ...RESEARCH_LABELS.s_primary, ...RESEARCH_LABELS.d_primary }
