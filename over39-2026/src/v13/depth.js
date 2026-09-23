@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r63";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r63";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r63";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r64";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r64";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r64";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1291,7 +1291,9 @@ export async function translateResponseSummary({ endpoint, anonKey, mode = "fall
     const response = await withTimeout(fetchImpl(endpoint, {
       method: "POST",
       headers: authHeaders(anonKey),
-      body: JSON.stringify({ operation: "translate_summary", context: { source_language: sourceLanguage, target_language: "ko", text: original, prompt_version: ADAPTIVE_PROMPT_VERSION } }),
+      // 참여자가 화면 앞에서 기다리는 자리다. 서버가 이보다 오래 쓰면 화면이 먼저
+      // 손을 떼고, 다 만들어진 번역은 아무에게도 닿지 않는다.
+      body: JSON.stringify({ operation: "translate_summary", client_wait_ms: timeoutMs, context: { source_language: sourceLanguage, target_language: "ko", text: original, prompt_version: ADAPTIVE_PROMPT_VERSION } }),
     }), timeoutMs);
     if (!response.ok) throw new Error(`AI_HTTP_${response.status}`);
     const body = await response.json();
@@ -1348,7 +1350,9 @@ export function greetingTranslationNeeded(originalLanguage, readerLanguage) {
 
 // 안부 한 통을 읽는 사람의 말로 옮긴다. 실패하면 빈 값을 돌려준다 — 원문은 이미
 // 화면에 있으므로, 번역이 안 됐다고 안부까지 막지 않는다.
-export async function translateArrivedGreeting({ endpoint, anonKey, mode = "fallback", text, sourceLanguage, targetLanguage, fetchImpl = fetch, timeoutMs = 20000 }) {
+// 솔라가 먼저 받고 안 되면 루나가 받는다. 20초는 둘이 쓰기에 모자라 예비를 부르지
+// 못했다. 안부는 이미 화면에 떠 있고 번역은 뒤에서 채우는 자리라 기다리는 사람이 없다.
+export async function translateArrivedGreeting({ endpoint, anonKey, mode = "fallback", text, sourceLanguage, targetLanguage, fetchImpl = fetch, timeoutMs = 45000 }) {
   const original = redactExcerpt(text, 1800);
   if (!original) return { translation: "", run: { status: "skipped", provider: "rules" } };
   if (!greetingTranslationNeeded(sourceLanguage, targetLanguage)) {
@@ -1364,6 +1368,7 @@ export async function translateArrivedGreeting({ endpoint, anonKey, mode = "fall
       headers: authHeaders(anonKey),
       body: JSON.stringify({
         operation: "translate_summary",
+        client_wait_ms: timeoutMs,
         context: { source_language: languageTag(sourceLanguage), target_language: languageTag(targetLanguage), text: original, prompt_version: ADAPTIVE_PROMPT_VERSION },
       }),
     }), timeoutMs);
