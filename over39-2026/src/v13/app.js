@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260922-r58";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260922-r58";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260922-r58";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260922-r58";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260922-r58";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260922-r58";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260922-r58";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260922-r58";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260922-r58";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260922-r58";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260922-r58";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260922-r58";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260922-r58";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260922-r58";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260922-r58";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260922-r58";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260922-r58";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260922-r58";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260922-r58";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260922-r58";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260922-r58";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260922-r58";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260922-r58";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r59";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r59";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r59";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r59";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r59";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r59";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r59";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r59";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r59";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r59";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r59";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r59";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r59";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r59";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r59";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r59";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r59";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r59";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r59";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r59";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r59";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r59";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r59";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "ea385adb14fc-dirty 2026-09-22T08:22:16.854Z";
+const buildStamp = "7ad6e3f93c05-dirty 2026-09-23T00:53:32.363Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1817,6 +1817,10 @@ function renderAdaptiveCheckpoint(checkpoint) {
 
 async function prepareAdaptiveSummary() {
   state.summaryGenerating = true;
+  // 제안을 함께 만든다는 사실을 **그리기 전에** 세운다. 예전에는 그린 뒤에 세웠는데,
+  // 기다리는 동안 다시 그리는 일이 없어 「남기신 말을 한 번 더 읽고 있어요」가
+  // 화면에 한 번도 닿지 못했다(파일럿 5). 실제 요청은 아래에서 띄운다.
+  state.closingOfferStatus = "loading";
   render(false);
   const response = createResponse("adaptive_complete");
   const turns = adaptiveTurns();
@@ -1827,7 +1831,6 @@ async function prepareAdaptiveSummary() {
   // 2026-09-20: 마지막 제안을 여기서 **함께** 띄운다. 같은 재료를 쓰므로 순서대로 부르면 17초가
   // 그대로 기다림에 더해진다. 결과는 완료 화면에서 쓰므로 여기서 기다리지 않고, 도착하면 그때
   // 화면만 다시 그린다. 실패해도 참여는 그대로 간다.
-  state.closingOfferStatus = "loading";
   state.closingOfferContext = context;
   requestClosingOffer(context)
     .then((result) => {
@@ -3526,6 +3529,13 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("click", (event) => {
+  // 창을 덮은 어두운 배경은 단추가 아니라 div 다. 아래 `closest("button")` 앞에서
+  // 먼저 받는다 — 그러지 않으면 배경을 눌러도 아무 일이 없다(파일럿 5).
+  if (event.target.closest?.(".closing-offer-scrim") && !state.closingOfferSeen) {
+    state.closingOfferSeen = true;
+    render(false);
+    return;
+  }
   const target = event.target.closest("button");
   if (!target) return;
   if (target.dataset.feedbackField) {

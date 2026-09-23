@@ -1,5 +1,5 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260922-r58";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260922-r58";
+import { extraCopy } from "./i18n-v038.js?v=v7-20260923-r59";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260923-r59";
 
 const copy = {
   en: {

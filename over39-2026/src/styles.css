@@ -773,7 +773,7 @@ h2:focus {
 
 .text-field {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-5);
 }
 
 /* AI가 이어서 물은 질문과 그 답을 한 덩어리로 묶는다. 답만 남기면 결과보고서 부록에서
