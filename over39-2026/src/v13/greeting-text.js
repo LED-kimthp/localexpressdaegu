@@ -1,6 +1,6 @@
 // 안부 글을 보여 주는 두 자리 — 설문 안의 도착 화면(app.js)과 메일 링크의 편지함(relay.js) —
 // 가 같이 쓰는 것. 한쪽에만 고치면 두 화면이 다르게 보인다(2026-09-23 편지함에 번역을 붙이며 뺌).
-import { summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r67";
+import { summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r68";
 
 // 사람이 읽는 언어 이름. 「원문 · Français」처럼 쓴다. 코드(zh-Hant)를 그대로 보이지 않는다.
 export const LANGUAGE_LABELS = Object.freeze({

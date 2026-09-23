@@ -1,27 +1,27 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r67";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r67";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r67";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r67";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r67";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r67";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r67";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r67";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r67";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r67";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel } from "./greeting-text.js?v=v7-20260923-r67";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r67";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r67";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r67";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r67";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r67";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r67";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r67";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r67";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r67";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r67";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r67";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r67";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r67";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r68";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r68";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r68";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r68";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r68";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r68";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r68";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r68";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r68";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r68";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel } from "./greeting-text.js?v=v7-20260923-r68";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r68";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r68";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r68";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r68";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r68";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r68";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r68";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r68";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r68";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r68";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r68";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r68";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r68";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -30,7 +30,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "01cac654de85-dirty 2026-09-23T10:52:56.891Z";
+const buildStamp = "785b4b231741-dirty 2026-09-23T10:59:20.055Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -778,10 +778,12 @@ function saveExhibitionApplication() {
   }
 }
 
+// 일본어·중국어 안내는 「国、都市」처럼 전각 쉼표를 쓴다. 참여자가 안내대로 적어도 나라와 도시가
+// 갈리도록 전각 쉼표(、，)와 전각 쌍반점(；)도 받는다(2026-09-23).
 function locationValues(value, max = 3) {
-  return String(value || "").split(/[\n;]/).map((item) => item.trim()).filter(Boolean).slice(0, max).map((label) => {
-    if (/^(online|온라인)$/i.test(label)) return { country_code: "", city: "", online: true, label };
-    const [country, city = ""] = label.split(",").map((part) => part.trim());
+  return String(value || "").split(/[\n;；]/).map((item) => item.trim()).filter(Boolean).slice(0, max).map((label) => {
+    if (/^(online|온라인|オンライン|线上|線上|en ligne|en línea|dalam talian)$/i.test(label)) return { country_code: "", city: "", online: true, label };
+    const [country, city = ""] = label.split(/[,，、]/).map((part) => part.trim());
     return { country_code: country, city, online: false, label };
   });
 }
@@ -1374,9 +1376,24 @@ function renderProfile() {
   const locations = values(state.answers.activity_locations).map((location) => location.label || location).join("; ");
   return `${screenHeading("지금의 생활과 활동 범위를 알려주세요.", "원하지 않는 항목은 건너뛸 수 있습니다.")}
     <label class="field-label">${esc(p08.text)}</label>${renderChoices("P08", p08.options)}
-    ${renderText("P09_COUNTRY", { multiline: false, placeholder: "예: 대한민국", label: "현재 머무는 나라 (선택)", field: "residence_country_code", value: state.answers.residence_country_code || "" })}
-    ${renderText("P09_CITY", { multiline: false, placeholder: "예: 대구", label: question("P09").text, field: "residence_city", value: state.answers.residence_city || "" })}
-    ${renderText("P10", { multiline: false, placeholder: "예: KR,대구; 온라인", label: isProfessionalContext() ? question("P10").text_professional : question("P10").text_audience, value: locations })}`;
+    ${renderText("P09_COUNTRY", { multiline: false, placeholder: "나라 이름", label: "현재 머무는 나라 (선택)", field: "residence_country_code", value: state.answers.residence_country_code || "" })}
+    ${renderText("P09_CITY", { multiline: false, placeholder: "도시 이름", label: question("P09").text, field: "residence_city", value: state.answers.residence_city || "" })}
+    ${renderText("P10", { multiline: false, placeholder: "나라, 도시 (여러 곳이면 ;로 나눠 주세요)", label: isProfessionalContext() ? question("P10").text_professional : question("P10").text_audience, value: locations })}
+    ${sameAsResidenceButton()}`;
+}
+
+// 예시에 특정 도시(대구)를 두지 않는다 — 참여자가 그대로 따라 적고, 대구가 아닌 사람에게는
+// 「대구 사람을 위한 설문」처럼 읽혔다(TK 2026-09-23). 대신 문화예술을 만나는 곳은 대개 사는
+// 곳과 같으므로, 위에 적은 나라·도시를 한 번에 옮겨 오는 단추를 둔다. 같은 것을 두 번 쓰지 않게.
+function residenceLocationLabel() {
+  return [state.answers.residence_country_code, state.answers.residence_city].map((part) => String(part || "").trim()).filter(Boolean).join(", ");
+}
+function sameAsResidenceButton() {
+  const label = residenceLocationLabel();
+  if (!label) return "";
+  const current = values(state.answers.activity_locations).map((location) => location.label || location).join("; ");
+  if (current === label) return "";
+  return `<div class="same-as-residence"><button class="text-button" type="button" data-action="locations-same-as-residence">${esc(t("사는 곳과 같아요"))}</button></div>`;
 }
 
 function renderMemoryType() {
@@ -1442,7 +1459,7 @@ function renderMemoryTime() {
   const locationQuestion = question("M07");
   const locationLabel = noRecall() ? locationQuestion.text_no_recall : "장소 — 어디에서 만난 경험인가요?";
   return `${screenHeading(title)}${renderChoices("M06", q.options)}${state.answers.memory_time_band ? renderText("M06_YEAR", { multiline: false, placeholder: "예: 2018", label: "기억나는 연도 (선택)" }) : ""}
-  ${renderText("M07", { multiline: false, placeholder: "예: KR,대구; 온라인", label: locationLabel, value: locations })}
+  ${renderText("M07", { multiline: false, placeholder: "나라, 도시 (여러 곳이면 ;로 나눠 주세요)", label: locationLabel, value: locations })}
     ${isRc2 ? renderMeaningTagsFolded() : ""}`;
 }
 
@@ -3199,7 +3216,7 @@ function renderRc2Complete(response) {
   // 한 번만 뜬다. 닫아도 아래 참여 기록에 그대로 남으므로 잃는 것이 없다.
   const offerText = document.closing_offer?.text || state.closingOffer?.text || "";
   const offerDialog = offerText && !state.closingOfferSeen
-    ? `<div class="closing-offer-scrim" data-action="close-closing-offer"></div><section class="closing-offer-dialog" role="dialog" aria-modal="true" aria-labelledby="closing-offer-dialog-title" tabindex="-1"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2 id="closing-offer-dialog-title">${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(offerText).map((part) => `<p>${esc(part)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p><div class="closing-offer-dialog-actions"><button class="primary-button" type="button" data-action="close-closing-offer">${esc(greetingFirstLocal.closingOfferClose)}</button></div><p class="closing-offer-stays">${esc(greetingFirstLocal.closingOfferStays)}</p></section>`
+    ? `<div class="closing-offer-scrim" data-action="close-closing-offer"></div><section class="closing-offer-dialog" role="dialog" aria-modal="true" aria-labelledby="closing-offer-dialog-title" tabindex="-1"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2 id="closing-offer-dialog-title">${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(offerText).map((part) => `<p>${esc(part)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p><div class="closing-offer-dialog-actions"><button class="primary-button" type="button" data-action="close-closing-offer">${esc(greetingFirstLocal.closingOfferClose)}</button></div></section>`
     : "";
   const offerSection = offerInDocument
     ? ""
@@ -3957,6 +3974,14 @@ document.addEventListener("click", (event) => {
   }
   // 완료 화면에서 「먼저 도착한 안부 읽기」. 받는 기계장치(예약·수신)는 그대로 쓰고,
   // 읽고 난 뒤 돌아갈 곳만 설문이 아니라 안부 남기기로 바꾼다.
+  if (target.dataset.action === "locations-same-as-residence") {
+    const label = residenceLocationLabel();
+    if (!label) return;
+    state.answers.activity_locations = locationValues(label, 3);
+    saveDraft();
+    render(false);
+    return;
+  }
   if (target.dataset.action === "retry-greeting-translation") {
     ensureGreetingTranslation({ retry: true });
     return;

@@ -5320,6 +5320,11 @@ body,
 }
 .greeting-opt-in-options .choice { height: 100%; min-height: 82px; }
 .greeting-opt-in-action { display: flex; justify-content: flex-end; margin-top: 18px; }
+/* 「먼저 도착한 안부 읽기」와 그 아래 「다음 사람에게 어떤 안부를」은 서로 다른 일이다(읽기와
+   남기기). 22px(아래 제목의 윗여백)만 떨어져 한 덩어리로 붙어 보였다(TK 2026-09-23). */
+.greeting-receive-first { margin-bottom: clamp(40px, 6vw, 60px); }
+/* 「사는 곳과 같아요」: 입력칸 바로 아래, 글자 수 표시와 같은 오른쪽 끝에 조용히 둔다. */
+.same-as-residence { display: flex; justify-content: flex-end; margin-top: calc(-1 * var(--space-2)); }
 .greeting-opt-in-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: stretch; margin-top: 22px; }
 .greeting-opt-in-actions > button { min-height: 54px; }
 .greeting-opt-in-saved-note { margin: 14px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
@@ -7214,12 +7219,6 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   display: flex;
   justify-content: flex-end;
   margin-top: 22px;
-}
-.closing-offer-stays {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-size: 11.5px;
-  text-align: right;
 }
 @media (max-width: 640px) {
   .closing-offer-dialog { padding: 24px 20px 20px; }
