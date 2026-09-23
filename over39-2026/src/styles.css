@@ -5894,6 +5894,36 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   line-height: 1.86;
   letter-spacing: -.025em;
 }
+.first-greeting-received .first-greeting-reading blockquote p { margin: 0; }
+.first-greeting-received .first-greeting-reading blockquote p + p { margin-top: .9em; }
+/* 짧은 한 줄은 크게 놓아야 편지처럼 읽힌다. 600자가 그 크기로 오면 화면 몇 장이
+   통째로 글씨가 된다 — 길이에 따라 크기를 내린다(TK 2026-09-23). */
+.first-greeting-received .first-greeting-reading.is-long blockquote {
+  padding: clamp(30px, 4.6vw, 52px) clamp(24px, 6vw, 62px);
+  font-size: clamp(18px, 1.9vw, 23px);
+  line-height: 1.95;
+  letter-spacing: -.015em;
+}
+
+/* 안부를 쓰는 화면: 남은 글자 수와, 번역이 함께 간다는 한 줄. */
+.greeting-message-count {
+  margin: 8px 0 26px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 680;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.greeting-message-count.is-full { color: var(--red); }
+.greeting-translation-note {
+  margin: 18px 0 0;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
 html[lang="ja"] .first-greeting-received blockquote,
 html[lang="ja"] .relay-card-received .relay-letter p { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; }
 html[lang^="zh"] .first-greeting-received blockquote,
@@ -6029,6 +6059,30 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
   border-radius: 50%;
   background: var(--accent);
 }
+/* 축마다 그 사람이 쓴 문장을 한 편씩 놓는다. 세 칸의 글 길이가 서로 달라
+   `align-items: start` 로 두어야 짧은 칸이 늘어나 빈 자리를 만들지 않는다. */
+.completion-coordinate-axes { align-items: start; }
+.completion-coordinate-evidence {
+  margin: 14px 0 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+.completion-coordinate-evidence figcaption {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.5;
+  letter-spacing: .02em;
+}
+.completion-coordinate-evidence blockquote {
+  margin: 7px 0 0;
+  color: var(--ink);
+  font-size: 13.5px;
+  line-height: 1.85;
+  word-break: keep-all;
+}
+.completion-coordinate-evidence blockquote::before { content: "\201C"; }
+.completion-coordinate-evidence blockquote::after { content: "\201D"; }
 .completion-coordinate-disclaimer {
   max-width: 720px;
   margin: 6px 0 0;

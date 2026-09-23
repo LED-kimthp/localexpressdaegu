@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r61";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r61";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r61";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r61";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r61";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r61";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r61";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r61";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r61";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r61";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r61";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r61";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r61";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r61";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r61";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r61";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r61";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r61";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r61";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r61";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r61";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r61";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r61";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r62";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r62";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r62";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r62";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r62";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r62";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r62";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r62";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r62";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r62";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r62";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r62";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r62";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r62";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r62";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r62";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r62";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r62";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r62";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r62";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r62";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r62";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r62";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "976eb75463f3-dirty 2026-09-23T01:17:27.427Z";
+const buildStamp = "976eb75463f3-dirty 2026-09-23T01:51:41.386Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -43,6 +43,9 @@ const aiFunctionUrl = String(window.OVER39_SUPABASE_AI_URL || "").trim();
 const relayFunctionUrl = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
 const supabaseAnonKey = String(window.OVER39_SUPABASE_ANON_KEY || "").trim();
 const globalGreetingsEnabled = window.OVER39_GLOBAL_GREETINGS_ENABLED === true;
+// 안부 한 통의 글자 한도. 한도 자체는 전부터 textarea 에 걸려 있었지만 보이지 않아서,
+// 길게 쓰던 사람은 한도에 닿는 순간 글자가 그냥 안 써졌다(TK 2026-09-23). 숫자를 보인다.
+const GREETING_MESSAGE_MAX = 600;
 const referralEnabled = window.OVER39_REFERRAL_ENABLED === true;
 const aiMode = String(window.OVER39_AI_MODE || "fallback").trim();
 const liveAiEnabled = aiMode === "live" && Boolean(aiFunctionUrl);
@@ -716,7 +719,10 @@ function defaultConnection() {
     receive_opt_in: "",
     receive_scopes: [],
     greeting_connection_preference: "",
-    translation_allowed: "",
+    // 참여자에게 묻지 않는다(TK 2026-09-23). 「아니요」가 골라지면 다른 언어를 쓰는
+    // 사람에게는 이 안부가 아예 닿지 못한다 — 고를 이유가 없는 물음이었다.
+    // 원문과 번역이 함께 가고, 쓰는 화면에서 그 사실을 한 줄로 알린다.
+    translation_allowed: "YES",
     needs: [],
     offers: [],
     reply_modes: [],
@@ -732,7 +738,15 @@ function defaultConnection() {
 }
 
 function loadConnection() { try { return JSON.parse(localStorage.getItem(connectionKey(state.responseId || state.submitted?.response_id)) || "null") || defaultConnection(); } catch { return defaultConnection(); } }
-function getConnection() { state.connection = state.connection || loadConnection(); return state.connection; }
+function getConnection() {
+  state.connection = state.connection || loadConnection();
+  // 전에 시작한 초안에는 빈 값이 들어 있다. 물음을 없앤 뒤로는 그 빈 값을 채울 화면이
+  // 없어서, 예전 초안으로 돌아온 사람은 저장 버튼이 영영 꺼진 채였다(2026-09-23).
+  if (state.connection.translation_allowed !== "YES" && state.connection.translation_allowed !== "NO") {
+    state.connection.translation_allowed = "YES";
+  }
+  return state.connection;
+}
 function saveConnection() { if (state.responseId || state.submitted?.response_id) storageWrite(connectionKey(state.responseId || state.submitted?.response_id), JSON.stringify(getConnection())); }
 
 function loadExhibitionApplication() {
@@ -2828,7 +2842,14 @@ function renderGlobalGreetingsConnection(connection) {
   const stepNav = `<ol class="greeting-stage-nav" aria-label="${esc(copy.stageLabel)}">${steps.map(([id, label], index) => `<li class="${id === currentStage ? "current" : (steps.findIndex(([key]) => key === currentStage) > index ? "complete" : "")}"><span>${index + 1}</span>${esc(label)}</li>`).join("")}</ol>`;
   const receiveSection = `<section class="connection-section receipt-first-choice" role="status"><h2>${esc(local.receiveProfileTitle)}</h2><p>${esc(local.receiveProfileHelp)}</p></section>`;
   const waitingSection = `<section class="connection-section greeting-waiting" role="status"><h2>${esc(local.waitingTitle)}</h2><p>${esc(local.waitingHelp)}</p><button class="primary-button" type="button" data-action="first-greeting">${esc(local.firstGreeting)} <span aria-hidden="true">→</span></button></section>`;
-  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="600" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><aside class="greeting-writing-example" aria-label="${esc(local.messageExampleLabel)}"><span>${esc(local.messageExampleLabel)}</span><p>${esc(local.messageExample)}</p></aside><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<h3>${esc(local.translationTitle)}</h3>${renderConnectionChoices("translation_allowed", [["YES", copy.translatedYes], ["NO", copy.translatedNo]])}</section>`;
+  // ① 예시문은 뺐다 — 남의 문장을 먼저 읽으면 그 결을 따라 쓰게 된다(TK 2026-09-23).
+  // ② 번역 여부를 묻던 물음도 뺐다. 참여자가 고를 이유가 없고, 「아니요」가 골라지면
+  //    다른 언어를 쓰는 사람에게는 이 안부가 아예 닿지 못한다(relay 의 language_incompatible).
+  //    이제는 늘 원문과 번역이 함께 가고, 그 사실을 한 줄로 알린다.
+  // ③ 길게 쓸 수 있으니 남은 글자 수를 눈에 보이게 둔다 — maxlength 만 걸어 두면
+  //    한도에 닿는 순간 글자가 그냥 안 써져서 고장처럼 보인다.
+  const messageLength = String(messageValue).length;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p><textarea class="text-input" data-connection-input="message_text" maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count" placeholder="${esc(copy.messagePlaceholder)}">${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count" aria-live="polite">${messageLength} / ${GREETING_MESSAGE_MAX}</p><h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(local.translationNote)}</p></section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
   const previewSection = `<section class="connection-section greeting-preview"><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;
@@ -2912,13 +2933,30 @@ function rc2AxisValue(response, axis) {
   return responseDocumentFrame(state.language).axis[value] || greetingFirst().coordinateMixed;
 }
 
-function renderCompletionCoordinate(response) {
+// 세 낱말만 놓여 있으면 「왜 그렇게 읽혔는지」가 없어 결과 통보처럼 읽힌다(TK 2026-09-23).
+// 기록 문서가 이미 축마다 참여자의 원문을 근거로 달고 있으므로, 그 문장을 화면의
+// 같은 자리에도 옮긴다 — 새로 만드는 말이 없고, 고르는 것도 연구 쪽이 아니라 이미
+// 저장된 depth_summary.evidence 다.
+function renderCompletionCoordinate(response, doc = null) {
   const local = greetingFirst();
+  const reading = (Array.isArray(doc?.layers) ? doc.layers : []).find((layer) => layer?.id === "research_reading");
+  const evidenceByAxis = new Map((Array.isArray(reading?.axes) ? reading.axes : [])
+    .map((item) => [String(item?.axis || "").toUpperCase(), (Array.isArray(item?.evidence) ? item.evidence : [])
+      .map((entry) => String(entry?.text || "").trim()).filter(Boolean)]));
   const axes = ["M", "S", "D"].map((axis, index) => ({
     label: local.coordinateAxes[index],
     value: rc2AxisValue(response, axis),
+    // 한 축에 두 개까지 저장되지만 화면에서는 첫 문장만 놓는다. 전문은 바로 위
+    // 참여 기록에 그대로 있다.
+    evidence: (evidenceByAxis.get(axis) || [])[0] || "",
   }));
-  return `<section class="completion-coordinate" aria-labelledby="completion-coordinate-title"><div class="archive-label">${esc(local.coordinateLabel)}</div><h2 id="completion-coordinate-title">${esc(local.coordinateTitle)}</h2><p class="completion-coordinate-help">${esc(local.coordinateHelp)}</p><div class="completion-coordinate-axes">${axes.map((axis, index) => `<div><span>${String(index + 1).padStart(2, "0")} · ${esc(axis.label)}</span><strong>${esc(axis.value)}</strong><i aria-hidden="true"></i></div>`).join("")}</div><p class="completion-coordinate-disclaimer">${esc(local.coordinateDisclaimer)}</p></section>`;
+  const axisCells = axes.map((axis, index) => {
+    const quote = axis.evidence
+      ? `<figure class="completion-coordinate-evidence"><figcaption>${esc(local.coordinateEvidenceLabel)}</figcaption><blockquote>${esc(axis.evidence)}</blockquote></figure>`
+      : "";
+    return `<div><span>${String(index + 1).padStart(2, "0")} · ${esc(axis.label)}</span><strong>${esc(axis.value)}</strong>${quote}<i aria-hidden="true"></i></div>`;
+  }).join("");
+  return `<section class="completion-coordinate" aria-labelledby="completion-coordinate-title"><div class="archive-label">${esc(local.coordinateLabel)}</div><h2 id="completion-coordinate-title">${esc(local.coordinateTitle)}</h2><p class="completion-coordinate-help">${esc(local.coordinateHelp)}</p><div class="completion-coordinate-axes">${axisCells}</div><p class="completion-coordinate-disclaimer">${esc(local.coordinateDisclaimer)}</p></section>`;
 }
 
 function renderRc2Complete(response) {
@@ -3006,7 +3044,7 @@ function renderRc2Complete(response) {
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   state.printReference = reference;
   const referenceSection = reference ? `<section class="participant-reference-card"><span>${esc(local.referenceLabel)}</span><strong>${esc(reference)}</strong><p>${esc(local.referenceHelp)}</p></section>` : "";
-  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section>${offerDialog}</main>`;
+  return `<main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="archive-label">${esc(copy.brand)}</div><div class="completion-boundary"><h1 tabindex="-1">${esc(task7Local.completionTitle)}</h1><p class="rc2-complete-lead">${esc(greetingFirstLocal.completionLead)}</p><p class="submit-status" role="status">${esc(statusCopy)}</p></div>${referenceSection}<div class="response-document-preview response-document-final">${renderResponseDocument(document)}</div><div class="export-actions"><button class="secondary-button" type="button" data-action="print-document">${esc(copy.print)}</button>${retryButton}</div>${renderCompletionCoordinate(response, document)}${offerSection}<section class="rc2-greeting-hub"><div class="greeting-hub-copy"><div class="archive-label">${esc(task7Local.greetingProjectLabel)}</div>${greetingChoice}</div></section>${referralEnabled ? `<section class="completion-secondary"><span class="archive-label">${esc(task7Local.secondaryTitle)}</span><div class="completion-secondary-grid"><div class="completion-referral"><h2>${esc(copy.referral)}</h2><button class="secondary-button" type="button" data-action="referral">${esc(copy.referral)} <span aria-hidden="true">→</span></button></div></div></section>` : ""}<div class="export-actions restart-action"><button class="secondary-button" type="button" data-action="restart">${esc(copy.restart)}</button></div></section>${offerDialog}</main>`;
 }
 
 function getReferral() {
@@ -3298,7 +3336,12 @@ function renderFirstGreeting() {
   }
   if (greeting.status === "received") {
     const isSeed = greeting.origin === "core_seed";
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading"><blockquote lang="${esc(greeting.original_language || "ko")}">${esc(greeting.original_text)}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    // 안부 한 통이 600자까지 온다. 한 덩어리 <blockquote> 에 39px 로 찍으면 화면
+    // 몇 장이 통째로 한 문단이 되어 읽히지 않는다(TK 2026-09-23). 쓴 사람이 나눈
+    // 빈 줄을 살리고, 한 덩어리로 왔으면 정리문과 같은 규칙으로 나눈다.
+    const arrivalParagraphs = summaryParagraphsOf(greeting.original_text || "");
+    const arrivalLong = String(greeting.original_text || "").length > 160;
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading${arrivalLong ? " is-long" : ""}"><blockquote lang="${esc(greeting.original_language || "ko")}">${arrivalParagraphs.map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   const unavailable = greeting.status === "unavailable";
   return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(emptyHelpText)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(skipLabel)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;
@@ -4175,7 +4218,15 @@ document.addEventListener("input", (event) => {
   if (input.matches("[data-connection-input]")) {
     const connection = getConnection();
     connection[input.dataset.connectionInput] = input.value;
-    if (input.dataset.connectionInput === "message_text") connection.introduction = input.value;
+    if (input.dataset.connectionInput === "message_text") {
+      connection.introduction = input.value;
+      // 다시 그리면 글 쓰던 자리를 잃는다. 숫자만 갈아 끼운다.
+      const counter = document.getElementById("greeting-message-count");
+      if (counter) {
+        counter.textContent = `${input.value.length} / ${GREETING_MESSAGE_MAX}`;
+        counter.classList.toggle("is-full", input.value.length >= GREETING_MESSAGE_MAX);
+      }
+    }
     saveConnection();
     const saveButton = document.querySelector("button[data-action='save-connection']");
     if (saveButton) saveButton.disabled = !connectionCanSave();
