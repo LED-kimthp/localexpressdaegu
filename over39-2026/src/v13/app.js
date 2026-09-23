@@ -1,27 +1,27 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r69";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r69";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r69";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r69";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r69";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r69";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r69";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r69";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r69";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r69";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260923-r69";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r69";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r69";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r69";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r69";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r69";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r69";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r69";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r69";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r69";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r69";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r69";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r69";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r69";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r70";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r70";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r70";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r70";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r70";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r70";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r70";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r70";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r70";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r70";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260923-r70";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r70";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r70";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r70";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r70";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r70";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r70";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r70";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r70";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r70";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r70";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r70";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r70";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r70";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -34,7 +34,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "785b4b231741-dirty 2026-09-23T11:12:19.660Z";
+const buildStamp = "34a58e5ccb42-dirty 2026-09-23T11:18:59.882Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1793,7 +1793,20 @@ function acceptClosingOffer(owner, result) {
   state.closingOffer = result?.offer ? { text: result.offer, evidence: result.evidence || [], provider: result.run?.provider || null } : null;
   state.closingOfferStatus = result?.offer ? "ready" : "unavailable";
   const stored = state.closingOffer ? { ...state.closingOffer, source: result.source } : null;
-  if (state.answers) state.answers.closing_offer = stored;
+  if (state.answers) {
+    state.answers.closing_offer = stored;
+    // 못 받은 것도 기록에 남긴다. 예전에는 실패하면 아무것도 쓰지 않아, 나중에 「제안문이
+    // 몇 사람에게 못 갔나」를 셀 방법이 없었다 — 팝업이 안 뜬 것도 그래서 늦게 알았다.
+    if (!stored) {
+      state.answers.closing_offer_attempts = [...values(state.answers.closing_offer_attempts), {
+        at: new Date().toISOString(),
+        status: "unavailable",
+        source: result?.source || "unavailable",
+        error_code: result?.error || result?.run?.error_code || null,
+        provider: result?.run?.provider || null,
+      }].slice(-4);
+    }
+  }
   saveDraft();
   // 이 탭에 저장된 완료 기록은 서버가 받았다고 확인한 것만이다. 그 기록이 있을 때만 맞춘다 —
   // 확인되지 않은 제출을 여기서 새로 저장하면, 새로고침 뒤 「확인됨」으로 되살아난다.
