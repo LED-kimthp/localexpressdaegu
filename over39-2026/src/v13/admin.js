@@ -1,6 +1,6 @@
-import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r68";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r68";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r68";
+import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r69";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r69";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r69";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -250,7 +250,7 @@ function otpSentMessage(redirectTo) {
   // (2026-09-09 실측: otp_expired). 링크가 어디로 돌아오는지는 그대로 밝힌다 —
   // 허용목록에 없는 주소는 GoTrue가 오류 없이 Site URL로 갈아치우고 메일은 정상
   // 발송하므로, 이 문장이 없으면 연구자는 실패를 알아차릴 수 없다.
-  return `메일을 보냈습니다. 안에 있는 6자리 숫자를 아래 칸에 넣어주세요. 메일의 링크를 눌러도 되지만, 메일 앱이 링크를 미리 열어보면 실패할 수 있습니다. 링크는 ${redirectTo} 로 돌아옵니다. 다른 주소가 열리면 Supabase의 Authentication → URL Configuration → Redirect URLs에 이 주소가 등록되지 않은 것입니다.`;
+  return `메일을 보냈습니다. **메일 안의 링크를 한 번 누르면** 그대로 들어와집니다 — 직접 칠 것은 없습니다. 링크가 안 되면(메일 앱이 미리 열어본 경우) 같은 메일에 있는 숫자를 아래 칸에 넣어주세요. 돌아올 주소: ${redirectTo}`;
 }
 
 // 링크가 오지 않는 이유는 대개 이 화면 밖에 있다(메일 발송 한도, 이메일 제공자 미설정,
@@ -265,7 +265,16 @@ async function otpFailureMessage(response) {
 
 function renderLogin() {
   const configured = Boolean(supabaseUrl && anonKey);
-  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1><p>${configured ? "등록된 관리자 계정으로 들어갑니다. 비밀번호가 없거나 다른 기기라면 아래에서 숫자 코드를 받으세요." : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}</p>${configured ? `<label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" class="text-input text-input-single" placeholder="research@example.com" /><label for="admin-password">비밀번호</label><input id="admin-password" type="password" autocomplete="current-password" class="text-input text-input-single" placeholder="비밀번호" /><button class="primary-button" data-admin-action="login-password">들어가기</button><p class="ai-health-note" style="margin:22px 0 6px;">비밀번호가 없거나 다른 기기라면</p><button class="secondary-button" data-admin-action="login">메일로 숫자 코드 받기</button><label for="admin-code" style="margin-top:14px;">메일로 받은 숫자 코드</label><input id="admin-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="text-input text-input-single" placeholder="6자리 숫자" /><button class="secondary-button" data-admin-action="verify-code">코드로 들어가기</button>` : ""}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
+  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1>${configured ? `<p>이 기기에서 한 번만 들어오면 그다음부터는 다시 묻지 않습니다. 메일의 링크를 누르는 것으로 끝납니다.</p>
+    <label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" autocomplete="email" class="text-input text-input-single" placeholder="research@example.com" />
+    <button class="primary-button" data-admin-action="login">메일로 로그인 링크 받기</button>
+    <p class="ai-health-note" style="margin:18px 0 6px;">메일 링크가 안 열리면, 같은 메일에 있는 숫자를 넣어주세요.</p>
+    <label for="admin-code">메일에 적힌 숫자</label><input id="admin-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="text-input text-input-single" placeholder="메일에 적힌 숫자를 그대로" />
+    <button class="secondary-button" data-admin-action="verify-code">숫자로 들어가기</button>
+    <details class="admin-password-fallback" style="margin-top:22px;"><summary>비밀번호로 들어가기</summary>
+    <label for="admin-password">비밀번호</label><input id="admin-password" type="password" autocomplete="current-password" class="text-input text-input-single" placeholder="비밀번호" />
+    <button class="secondary-button" data-admin-action="login-password">비밀번호로 들어가기</button>
+    <p class="ai-health-note" style="margin:10px 0 0;">비밀번호는 들어온 뒤 화면 위 「비밀번호 정하기」에서 직접 만드실 수 있습니다.</p></details>` : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
 function statusLabel(item) { return item.status === "completed" ? "완료" : item.status === "in_progress" ? "중단·진행 중" : item.status; }

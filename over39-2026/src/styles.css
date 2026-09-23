@@ -6072,6 +6072,9 @@ html[lang^="zh"] .relay-card-received .relay-letter p { font-family: "Songti SC"
   letter-spacing: -.015em;
 }
 /* 편지함 번역: 「위는 기계 번역」 한 줄과, 그 아래 쓴 사람의 원문(접지 않는다). */
+/* 편지 한 통을 감싸는 덩어리. 옛 `.relay-message`(2026-08 판, 회색 판에 테두리)와 이름이 겹쳐
+   모든 편지가 그 옛 모양으로 다시 그려졌다 — 이름을 갈랐다(2026-09-23 검증). */
+.relay-message-block + .relay-message-block { margin-top: clamp(28px, 4vw, 44px); }
 .relay-translation-status { margin: 12px 0 0; max-width: 640px; color: var(--muted); font-size: 13px; line-height: 1.7; }
 .relay-translation-status:empty { margin: 0; }
 .relay-translation-state .translation-toggle { margin-top: 6px; }

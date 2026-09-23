@@ -75,7 +75,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "이 브라우저는 저장이 막혀 있어, 이 화면을 닫기 전에 연결이 회복되어야 문장이 전해집니다.",
     arrivalReasonLabel: "이 안부가 닿은 이유",
     senderLabel: "이 안부를 남긴 사람",
-    arrivalReason: "앞서 지나간 한 사람이 '다음 사람'에게 맡긴 문장이고, 그 다음 사람이 당신이 되었어요.",
+    arrivalReason: "이 문장을 쓴 사람은 받을 사람을 모른 채, 다음에 이곳에 올 누군가를 떠올리며 썼어요. 오늘 그 누군가가 당신이었어요.",
     arrivalReasonSeed: "지금 당신에게 전할 수 있는, 앞서 남겨진 안부가 아직 없어 이 문장으로 시작합니다. 당신이 마지막에 남기는 한 문장은 다음 사람에게 먼저 도착하는 안부가 될 수 있어요.",
   },
   en: {
@@ -135,7 +135,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "This browser will not let us store anything, so your sentence can only be sent if the connection comes back before you close this screen.",
     arrivalReasonLabel: "Why this greeting reached you",
     senderLabel: "Who left this greeting",
-    arrivalReason: "Someone who came this way before you entrusted this sentence to ‘the next person’ — and that next person turned out to be you.",
+    arrivalReason: "The person who wrote this did not know who would receive it — they wrote it with whoever came here next in mind. Today, that someone was you.",
     arrivalReasonSeed: "There is no earlier greeting we can pass on to you yet, so you begin with this one. The sentence you leave at the end may be the first greeting the next person receives.",
   },
   ja: {
@@ -174,7 +174,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "このブラウザは保存が制限されているため、この画面を閉じる前に接続が戻った場合のみ送ることができます。",
     arrivalReasonLabel: "この便りが届いた理由",
     senderLabel: "この便りを残した人",
-    arrivalReason: "ひと足先にここを通った方が「次の方」に託した文章です。今回それを受け取るのが、あなたです。",
+    arrivalReason: "これを書いた方は、受け取る人を知らないまま、次にここへ来る誰かを思い浮かべて書きました。今日、その誰かがあなたでした。",
     arrivalReasonSeed: "今お届けできる、先に残された便りがまだありません。そこでこの文章から始めます。最後に残していただく一文が、次の方に最初に届く便りになるかもしれません。",
   },
   "zh-Hans": {
@@ -190,7 +190,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "此浏览器已阻止本地存储，只有在您关闭这个页面之前网络恢复，句子才能送出。",
     arrivalReasonLabel: "这封问候抵达您的原因",
     senderLabel: "留下这封问候的人",
-    arrivalReason: "先前经过这里的一位参与者把这句话托付给了“下一个人”，而那个人正是您。",
+    arrivalReason: "写下这段话的人并不知道谁会收到，只是想着下一个来到这里的人写下了它。今天，那个人就是您。",
     arrivalReasonSeed: "目前还没有可以送到您这里的问候，所以先从这句话开始。您最后留下的一句话，可能成为下一位参与者最先收到的问候。",
   },
   "zh-Hant": {
@@ -212,7 +212,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "此瀏覽器已封鎖本機儲存，只有在您關閉這個頁面之前網路恢復，句子才能送出。",
     arrivalReasonLabel: "這封問候抵達您的原因",
     senderLabel: "留下這封問候的人",
-    arrivalReason: "先前經過這裡的一位參與者把這句話託付給了「下一個人」，而那個人正是您。",
+    arrivalReason: "寫下這段話的人並不知道誰會收到，只是想著下一個來到這裡的人寫下了它。今天，那個人就是您。",
     arrivalReasonSeed: "目前還沒有可以送到您這裡的問候，所以先從這句話開始。您最後留下的一句話，可能成為下一位參與者最先收到的問候。",
   },
   fr: {
@@ -228,7 +228,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "Ce navigateur bloque le stockage : la phrase ne pourra partir que si la connexion revient avant que vous ne fermiez cet écran.",
     arrivalReasonLabel: "Pourquoi ce message vous est parvenu",
     senderLabel: "Qui a laissé ce message",
-    arrivalReason: "Une personne passée avant vous a confié cette phrase à « la personne suivante » — et cette personne, c’est vous.",
+    arrivalReason: "La personne qui l’a écrite ne savait pas qui la recevrait : elle pensait à celle ou celui qui viendrait ici ensuite. Aujourd’hui, c’était vous.",
     arrivalReasonSeed: "Aucun message laissé plus tôt ne peut encore vous parvenir ; vous commencez donc par celui-ci. La phrase que vous laisserez à la fin pourra devenir le premier message que recevra la personne suivante.",
   },
   es: {
@@ -244,7 +244,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "Este navegador no permite guardar nada en el equipo: su frase solo podrá enviarse si la conexión vuelve antes de que cierre esta pantalla.",
     arrivalReasonLabel: "Por qué le llegó este saludo",
     senderLabel: "Quién dejó este saludo",
-    arrivalReason: "Alguien que pasó antes que usted confió esta frase a «la siguiente persona», y esa persona resultó ser usted.",
+    arrivalReason: "Quien lo escribió no sabía quién lo recibiría: pensaba en la próxima persona que llegara aquí. Hoy, esa persona fue usted.",
     arrivalReasonSeed: "Todavía no hay ningún saludo anterior que pueda llegarle, así que empieza usted con este. La frase que deje al final puede ser el primer saludo que reciba la siguiente persona.",
   },
   nl: {
@@ -260,7 +260,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "Deze browser laat niet toe dat we iets bewaren. De zin kan daarom alleen weg als u weer verbinding hebt voordat u dit scherm sluit.",
     arrivalReasonLabel: "Waarom deze groet u bereikte",
     senderLabel: "Wie deze groet achterliet",
-    arrivalReason: "Iemand die hier eerder langskwam vertrouwde deze zin toe aan 'de volgende persoon' — en die persoon bent u geworden.",
+    arrivalReason: "Wie dit schreef, wist niet wie het zou ontvangen en dacht aan degene die hier als volgende zou komen. Vandaag was dat u.",
     arrivalReasonSeed: "Er is nog geen eerdere groet die u kan bereiken, dus u begint met deze. De zin die u straks achterlaat, kan de eerste groet worden die de volgende persoon leest.",
   },
   ms: {
@@ -276,7 +276,7 @@ const copy = {
     outgoingPendingHelpNoStorage: "Pelayar ini tidak membenarkan apa-apa disimpan pada peranti: ayat anda hanya dapat dihantar jika sambungan pulih sebelum anda menutup skrin ini.",
     arrivalReasonLabel: "Sebab salam ini sampai kepada anda",
     senderLabel: "Siapa yang meninggalkan salam ini",
-    arrivalReason: "Seseorang yang pernah melalui tempat ini sebelum anda mengamanahkan ayat ini kepada 'orang seterusnya' — dan orang itu ialah anda.",
+    arrivalReason: "Penulisnya tidak tahu siapa yang akan menerimanya — ia ditulis sambil membayangkan sesiapa yang datang ke sini selepas itu. Hari ini, orang itu ialah anda.",
     arrivalReasonSeed: "Belum ada salam terdahulu yang dapat sampai kepada anda, jadi anda bermula dengan yang ini. Ayat yang anda tinggalkan nanti boleh menjadi salam pertama yang diterima oleh orang seterusnya.",
   },
 };
