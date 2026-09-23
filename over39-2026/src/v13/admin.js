@@ -1,6 +1,6 @@
-import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r70";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r70";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r70";
+import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r71";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r71";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r71";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -265,16 +265,15 @@ async function otpFailureMessage(response) {
 
 function renderLogin() {
   const configured = Boolean(supabaseUrl && anonKey);
-  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1>${configured ? `<p>이 기기에서 한 번만 들어오면 그다음부터는 다시 묻지 않습니다. 메일의 링크를 누르는 것으로 끝납니다.</p>
+  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1>${configured ? `<p>이 기기에서 한 번만 들어오면 그다음부터는 다시 묻지 않습니다.</p>
     <label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" autocomplete="email" class="text-input text-input-single" placeholder="research@example.com" />
-    <button class="primary-button" data-admin-action="login">메일로 로그인 링크 받기</button>
-    <p class="ai-health-note" style="margin:18px 0 6px;">메일 링크가 안 열리면, 같은 메일에 있는 숫자를 넣어주세요.</p>
-    <label for="admin-code">메일에 적힌 숫자</label><input id="admin-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="text-input text-input-single" placeholder="메일에 적힌 숫자를 그대로" />
-    <button class="secondary-button" data-admin-action="verify-code">숫자로 들어가기</button>
-    <details class="admin-password-fallback" style="margin-top:22px;"><summary>비밀번호로 들어가기</summary>
     <label for="admin-password">비밀번호</label><input id="admin-password" type="password" autocomplete="current-password" class="text-input text-input-single" placeholder="비밀번호" />
-    <button class="secondary-button" data-admin-action="login-password">비밀번호로 들어가기</button>
-    <p class="ai-health-note" style="margin:10px 0 0;">비밀번호는 들어온 뒤 화면 위 「비밀번호 정하기」에서 직접 만드실 수 있습니다.</p></details>` : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
+    <button class="primary-button" data-admin-action="login-password">들어가기</button>
+    <details class="admin-password-fallback" style="margin-top:22px;"><summary>비밀번호가 기억나지 않거나 다른 기기라면</summary>
+    <button class="secondary-button" data-admin-action="login" style="margin-top:12px;">메일로 로그인 링크 받기</button>
+    <p class="ai-health-note" style="margin:14px 0 6px;">메일 링크를 한 번 누르면 들어와집니다. 링크가 안 열리면 같은 메일의 숫자를 넣어주세요.</p>
+    <label for="admin-code">메일에 적힌 숫자</label><input id="admin-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="text-input text-input-single" placeholder="메일에 적힌 숫자를 그대로" />
+    <button class="secondary-button" data-admin-action="verify-code">숫자로 들어가기</button></details>` : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
 function statusLabel(item) { return item.status === "completed" ? "완료" : item.status === "in_progress" ? "중단·진행 중" : item.status; }
