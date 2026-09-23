@@ -4845,7 +4845,10 @@ body,
 .rc2-greeting-hub {
   position: relative;
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
+  /* 왼쪽 150px 은 장식용 `.greeting-object` 자리였다. 그 그림이 화면에서 빠진 뒤로
+     글이 그 좁은 칸에 갇혀 제목이 한 줄에 한 낱말씩 떨어졌다(2026-09-23).
+     그림을 되살리려면 이 줄을 `150px minmax(0, 1fr)` 로 되돌리고 마크업도 함께 넣는다. */
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(24px, 4vw, 52px);
   align-items: center;
   margin-top: 44px;
