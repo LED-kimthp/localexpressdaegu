@@ -5895,6 +5895,48 @@ html[lang^="zh"] .first-greeting-example blockquote { font-family: "Songti SC", 
   letter-spacing: -.025em;
 }
 .first-greeting-received .first-greeting-reading blockquote p { margin: 0; }
+/* 다른 말로 온 안부: 읽을 수 있는 글이 위, 쓴 사람의 원문이 아래. 원문은 접지 않는다 —
+   위의 큰 글씨는 기계가 옮긴 것이고, 그 사람이 실제로 쓴 문장은 이 자리에 있다. */
+.first-greeting-translating {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.first-greeting-source {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.first-greeting-source > span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: .04em;
+}
+.first-greeting-received .first-greeting-source blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.85;
+  letter-spacing: 0;
+}
+.first-greeting-source blockquote p { margin: 0; }
+.first-greeting-source blockquote p + p { margin-top: .85em; }
+.first-greeting-source > small {
+  display: block;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.7;
+}
 .first-greeting-received .first-greeting-reading blockquote p + p { margin-top: .9em; }
 /* 짧은 한 줄은 크게 놓아야 편지처럼 읽힌다. 600자가 그 크기로 오면 화면 몇 장이
    통째로 글씨가 된다 — 길이에 따라 크기를 내린다(TK 2026-09-23). */

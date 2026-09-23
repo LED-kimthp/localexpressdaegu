@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r62";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r62";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r62";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r62";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r62";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r62";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r62";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r62";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r62";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r62";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r62";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r62";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r62";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r62";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r62";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r62";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r62";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r62";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r62";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r62";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r62";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r62";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r62";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r63";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r63";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r63";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r63";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r63";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r63";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r63";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r63";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r63";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r63";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r63";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r63";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r63";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r63";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r63";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r63";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r63";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r63";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r63";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r63";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r63";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r63";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r63";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "976eb75463f3-dirty 2026-09-23T01:51:41.386Z";
+const buildStamp = "b20149753782-dirty 2026-09-23T02:29:56.623Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2543,6 +2543,27 @@ async function requestGreetingReservation(response, { inlineFirst = false } = {}
   }
 }
 
+// 번역이 실패해도 안부는 그대로 있다. 원문은 이미 화면에 있고, 아래 한 줄만 바뀐다.
+// 한 번 받아 둔 번역은 안부와 함께 저장되므로 새로고침해도 다시 부르지 않는다.
+async function fillGreetingTranslation() {
+  const greeting = state.firstGreeting;
+  if (!greeting || greeting.status !== "received") return;
+  const result = await translateArrivedGreeting({
+    endpoint: aiFunctionUrl,
+    anonKey: supabaseAnonKey,
+    mode: aiMode,
+    text: greeting.original_text,
+    sourceLanguage: greeting.original_language || "ko",
+    targetLanguage: state.language,
+  });
+  // 그 사이에 다른 안부로 넘어갔거나 화면을 떠났으면 덮어쓰지 않는다.
+  if (state.firstGreeting !== greeting) return;
+  greeting.translated_text = result.translation || "";
+  greeting.translation_status = result.translation ? "ready" : "failed";
+  saveFirstGreeting();
+  render(false);
+}
+
 async function beginFirstGreeting() {
   state.phase = "greeting-first";
   state.firstGreeting = { status: "loading", requested_at: new Date().toISOString() };
@@ -2583,6 +2604,11 @@ async function beginFirstGreeting() {
         ? String(reservation.receipt.greeting.connection_reason_snapshot?.sender_display_label || "").slice(0, 80) || null
         : null,
       received_at: new Date().toISOString(),
+      // 읽는 사람의 말과 다르면 옮긴다. 안부를 먼저 띄우고 번역은 뒤에서 가져온다 —
+      // 번역을 기다리느라 안부가 늦게 뜨면, 못 읽는 글 앞에서 기다리는 시간만 길어진다.
+      translation_status: greetingTranslationNeeded(reservation.receipt.greeting.original_language || "ko", state.language) ? "loading" : "none",
+      translated_text: "",
+      translated_language: state.language,
     };
   } else if (reservation.status === "not_active" || reservation.error) {
     state.firstGreeting = { status: "unavailable", reason: reservation.error || "GREETING_NOT_ACTIVE" };
@@ -2592,6 +2618,7 @@ async function beginFirstGreeting() {
   saveFirstGreeting();
   if (state.greetingAfterRecord) clearDraft(); else saveDraft();
   render(true);
+  if (state.firstGreeting?.translation_status === "loading") await fillGreetingTranslation();
 }
 
 function openOutgoingGreeting() {
@@ -3339,9 +3366,22 @@ function renderFirstGreeting() {
     // 안부 한 통이 600자까지 온다. 한 덩어리 <blockquote> 에 39px 로 찍으면 화면
     // 몇 장이 통째로 한 문단이 되어 읽히지 않는다(TK 2026-09-23). 쓴 사람이 나눈
     // 빈 줄을 살리고, 한 덩어리로 왔으면 정리문과 같은 규칙으로 나눈다.
-    const arrivalParagraphs = summaryParagraphsOf(greeting.original_text || "");
-    const arrivalLong = String(greeting.original_text || "").length > 160;
-    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading${arrivalLong ? " is-long" : ""}"><blockquote lang="${esc(greeting.original_language || "ko")}">${arrivalParagraphs.map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></div>${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
+    // 읽을 수 있는 글이 앞에 온다. 다른 말로 온 안부라면 큰 글씨 자리에 번역을 놓고,
+    // 원문은 그 아래에 이름표를 달아 **통째로** 둔다 — 접어 두지 않는다. 번역은 모델이
+    // 만든 글이고, 그 사람이 실제로 쓴 문장은 여기에 그대로 있어야 한다(TK 2026-09-23).
+    const arrivalTranslated = greeting.translation_status === "ready" && String(greeting.translated_text || "").trim();
+    const arrivalLead = arrivalTranslated || greeting.original_text || "";
+    const arrivalParagraphs = summaryParagraphsOf(arrivalLead);
+    const arrivalLong = String(arrivalLead).length > 160;
+    const arrivalNotice = greeting.translation_status === "loading"
+      ? `<p class="first-greeting-translating" role="status">${esc(local.arrivalTranslationLoading)}</p>`
+      : greeting.translation_status === "failed"
+        ? `<p class="first-greeting-translating">${esc(local.arrivalTranslationFailed)}</p>`
+        : "";
+    const arrivalOriginal = arrivalTranslated
+      ? `<aside class="first-greeting-source"><span>${esc(local.arrivalOriginalLabel.replace("{language}", languageLabel(greeting.original_language || "ko")))}</span><blockquote lang="${esc(greeting.original_language || "ko")}">${summaryParagraphsOf(greeting.original_text || "").map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote><small>${esc(local.arrivalTranslationNote)}</small></aside>`
+      : "";
+    return `<main class="first-greeting-layout"><section class="first-greeting-card first-greeting-received greeting-arrival"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(local.receivedTitle)}</h1><p class="first-greeting-help">${esc(isSeed ? local.seedHelp : local.receivedHelp)}</p><div class="first-greeting-reading${arrivalLong ? " is-long" : ""}"><blockquote lang="${esc(arrivalTranslated ? state.language : (greeting.original_language || "ko"))}">${arrivalParagraphs.map((part) => `<p>${esc(part)}</p>`).join("")}</blockquote></div>${arrivalNotice}${arrivalOriginal}${isSeed ? `<aside class="first-greeting-origin"><strong>${esc(local.seedNote)}</strong></aside>` : ""}${greeting.sender_label ? `<aside class="first-greeting-sender"><span>${esc(local.senderLabel)}</span><strong>${esc(greeting.sender_label)}</strong></aside>` : ""}<aside class="first-greeting-arrival-reason"><span>${esc(local.arrivalReasonLabel)}</span><p>${esc(isSeed ? local.arrivalReasonSeed : local.arrivalReason)}</p></aside><div class="first-greeting-continue"><button class="primary-button" type="button" data-action="begin-story">${esc(continueLabel)} <span aria-hidden="true">→</span></button></div></section></main>`;
   }
   const unavailable = greeting.status === "unavailable";
   return `<main class="first-greeting-layout first-greeting-empty-layout"><section class="first-greeting-card first-greeting-empty"><div class="first-greeting-empty-status"><div class="archive-label">${esc(task7().greetingProjectLabel)}</div><h1 tabindex="-1">${esc(unavailable ? local.unavailableTitle : local.waitingTitle)}</h1><p>${esc(emptyHelpText)}</p><button class="primary-button" type="button" data-action="begin-story">${esc(skipLabel)} <span aria-hidden="true">→</span></button></div><aside class="first-greeting-example" aria-label="${esc(simplified.exampleLabel)}"><span>${esc(simplified.exampleLabel)}</span><blockquote lang="${esc(state.language)}">${esc(simplified.exampleText)}</blockquote></aside></section></main>`;

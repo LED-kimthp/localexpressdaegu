@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r62";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r62";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r62";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260923-r63";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260923-r63";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260923-r63";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1317,6 +1317,74 @@ export async function translateResponseSummary({ endpoint, anonKey, mode = "fall
     };
   } catch (error) {
     return { translation_ko: "", run: { status: "fallback", provider: "api", error_code: error.message, latency_ms: Math.round(performance.now() - started), operation: "translate_summary" } };
+  }
+}
+
+// ── 도착한 안부를 읽는 사람의 말로 ────────────────────────────────────────────
+// 스페인 사람에게 프랑스어 안부가 닿으면 그 사람은 한 글자도 못 읽는다(TK 2026-09-23).
+//
+// 언제 옮기는가. 이 판단을 화면 안에 흩어 두면 나중에 아무도 규칙을 말할 수 없으므로
+// 함수 하나로 모은다.
+//  · 어느 쪽 말인지 모르면 옮기지 않는다 — 모르는 채로 옮기면 지어내는 것이다.
+//  · 같은 말이면 옮기지 않는다. 원문이 그대로 가장 좋은 글이다.
+//  · 중국어는 앞자리가 둘 다 zh 라도 자형이 다르면 옮긴다. 번체를 읽는 사람에게
+//    간체를 그대로 두면 읽히긴 해도 남의 나라 글로 보인다.
+//  · 그 밖에는 앞자리만 본다(ko-KR 과 ko 는 같은 말이다).
+const languageBase = (value) => String(value || "").trim().toLowerCase().split(/[-_]/)[0];
+const languageTag = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const [base, ...rest] = raw.split(/[-_]/);
+  return rest.length ? `${base.toLowerCase()}-${rest.join("-")}` : base.toLowerCase();
+};
+
+export function greetingTranslationNeeded(originalLanguage, readerLanguage) {
+  const from = languageTag(originalLanguage);
+  const to = languageTag(readerLanguage);
+  if (!from || !to || from === to) return false;
+  if (languageBase(from) === "zh" && languageBase(to) === "zh") return true;
+  return languageBase(from) !== languageBase(to);
+}
+
+// 안부 한 통을 읽는 사람의 말로 옮긴다. 실패하면 빈 값을 돌려준다 — 원문은 이미
+// 화면에 있으므로, 번역이 안 됐다고 안부까지 막지 않는다.
+export async function translateArrivedGreeting({ endpoint, anonKey, mode = "fallback", text, sourceLanguage, targetLanguage, fetchImpl = fetch, timeoutMs = 20000 }) {
+  const original = redactExcerpt(text, 1800);
+  if (!original) return { translation: "", run: { status: "skipped", provider: "rules" } };
+  if (!greetingTranslationNeeded(sourceLanguage, targetLanguage)) {
+    return { translation: "", run: { status: "skipped", provider: "identity" } };
+  }
+  if (mode !== "live" || !endpoint) {
+    return { translation: "", run: { status: "fallback", provider: "unavailable", error_code: "TRANSLATION_NOT_CONFIGURED" } };
+  }
+  const started = performance.now();
+  try {
+    const response = await withTimeout(fetchImpl(endpoint, {
+      method: "POST",
+      headers: authHeaders(anonKey),
+      body: JSON.stringify({
+        operation: "translate_summary",
+        context: { source_language: languageTag(sourceLanguage), target_language: languageTag(targetLanguage), text: original, prompt_version: ADAPTIVE_PROMPT_VERSION },
+      }),
+    }), timeoutMs);
+    if (!response.ok) throw new Error(`AI_HTTP_${response.status}`);
+    const body = await response.json();
+    const translation = String(body.translation || "").trim();
+    if (!translation) throw new Error("AI_INVALID_TRANSLATION");
+    const provider = String(body.provider || "api").toLowerCase();
+    return {
+      translation,
+      run: {
+        status: "success",
+        source: String(body.source || provider || "api").toLowerCase(),
+        provider,
+        model: body.model || null,
+        latency_ms: Math.round(performance.now() - started),
+        operation: "translate_greeting",
+      },
+    };
+  } catch (error) {
+    return { translation: "", run: { status: "fallback", provider: "api", error_code: error.message, latency_ms: Math.round(performance.now() - started), operation: "translate_greeting" } };
   }
 }
 
