@@ -1,26 +1,26 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r59";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r59";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r59";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r59";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r59";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r59";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r59";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r59";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r59";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r59";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r59";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r59";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r59";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r59";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r59";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r59";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r59";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r59";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r59";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r59";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r59";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r59";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r59";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r60";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r60";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r60";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r60";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r60";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r60";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, isLiveModelSource, translateResponseSummary } from "./depth.js?v=v7-20260923-r60";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r60";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r60";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r60";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r60";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r60";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r60";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r60";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r60";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r60";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r60";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r60";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r60";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r60";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r60";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r60";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r60";
 
 const root = document.querySelector("#root");
 const schemaUrl = "./src/v13/over39_questionnaire_schema_v1.3.1-draft.json";
@@ -29,7 +29,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "7ad6e3f93c05-dirty 2026-09-23T00:53:32.363Z";
+const buildStamp = "cb986e0f039c-dirty 2026-09-23T01:01:28.228Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -644,6 +644,21 @@ function clearDraft() { storageRemove(draftKey); }
 function savePending(response) { try { localStorage.setItem(pendingKey, JSON.stringify(response)); } catch { state.storageBlocked = true; } }
 function loadPending() { try { return JSON.parse(localStorage.getItem(pendingKey) || "null"); } catch { return null; } }
 function clearPending() { storageRemove(pendingKey); }
+
+// 2026-09-23 TK: 「새로고침해도 기록 다시 볼 수 있게.」 제출이 확인되면 초안을 지우는데
+// (같은 기기를 쓰는 다음 사람에게 앞사람의 마지막 화면이 뜨던 것을 막으려고), 그 바람에
+// 참여자가 인쇄 전에 새로고침하면 자기 기록으로 돌아갈 길이 없었다.
+//
+// 그래서 **탭 안에만** 남긴다. `sessionStorage` 는 새로고침을 견디고 탭을 닫으면 사라진다.
+// 같은 기기를 다음 사람이 새 탭으로 열면 아무것도 안 보인다 — 지우는 이유는 그대로 지킨다.
+const completedKey = `over39-${edition}-completed-record`;
+function saveCompleted(response) {
+  try { sessionStorage.setItem(completedKey, JSON.stringify(response)); } catch { /* 막혀 있어도 참여는 그대로 간다. */ }
+}
+function loadCompleted() {
+  try { return JSON.parse(sessionStorage.getItem(completedKey) || "null"); } catch { return null; }
+}
+function clearCompleted() { try { sessionStorage.removeItem(completedKey); } catch { /* 무시 */ } }
 function loadFirstGreeting(responseId = state.responseId) {
   if (!responseId) return null;
   try { return JSON.parse(localStorage.getItem(firstGreetingKey(responseId)) || "null"); } catch { return null; }
@@ -4006,6 +4021,7 @@ document.addEventListener("click", (event) => {
             clearPending();
           }
           await requestResearchContactStorage(state.submitted);
+          saveCompleted(state.submitted);
           state.phase = "complete";
         } else state.phase = "save_failed";
         render(true);
@@ -4113,7 +4129,7 @@ document.addEventListener("click", (event) => {
     });
     return;
   }
-  if (target.dataset.action === "restart") { clearFirstGreeting(); clearDraft(); state = { phase: "intro", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; render(true); }
+  if (target.dataset.action === "restart") { clearFirstGreeting(); clearDraft(); clearCompleted(); state = { phase: "intro", step: 0, answers: {}, submitted: null, submissionStatus: null, exhibitionStatus: null, fixedCheckpointSaving: false, depthGenerating: false, adaptiveGenerating: false, summaryGenerating: false, translationGenerating: false, responseId: null, language: state.language, feedback: {}, referralStatus: null, firstGreeting: null, researchContact: { email: "", consent: false, status: null } }; render(true); }
 });
 
 document.addEventListener("input", (event) => {
@@ -4251,6 +4267,19 @@ window.addEventListener("online", () => {
 // 들어오면 이미 온라인이라 `online` 이벤트가 뜨지 않았다. RC2 인트로에는 「이전 제출
 // 상태 확인」 버튼도 없다(그 버튼은 RC1 분기 전용). 그래서 그 사람의 이야기는 자기 기기
 // localStorage 안에서 영구히 대기했다 — 16명 중 한 명만 겪어도 표본의 6%다.
+// 새로고침해도 자기 기록으로 돌아온다. 창은 다시 띄우지 않는다 — 한 번 읽은 글이
+// 새로고침마다 다시 덮치면 성가시다. 글은 완료 화면 아래에 그대로 있다.
+function restoreCompletedRecord() {
+  const completed = loadCompleted();
+  if (!completed) return;
+  state.submitted = completed;
+  state.submissionStatus = "confirmed";
+  state.closingOfferSeen = true;
+  const offer = completed.answers?.closing_offer;
+  if (offer?.text) state.closingOffer = offer;
+  state.phase = "complete";
+}
+
 if (submitFunctionUrl) {
   try {
     if (readOutbox().length) {
@@ -4260,5 +4289,5 @@ if (submitFunctionUrl) {
 }
 
 Promise.all([schemaUrl, depthBankUrl].map((url) => fetch(url).then((response) => response.ok ? response.json() : Promise.reject(new Error(`load failed: ${url}`)))))
-  .then(([loadedSchema, loadedDepthBank]) => { schema = loadedSchema; depthBank = loadedDepthBank; state.phase = "intro"; render(); })
+  .then(([loadedSchema, loadedDepthBank]) => { schema = loadedSchema; depthBank = loadedDepthBank; restoreCompletedRecord(); if (state.phase !== "complete") state.phase = "intro"; render(); })
   .catch(() => { root.innerHTML = "<main class='shell'><p class='error'>질문 스키마를 불러오지 못했습니다.</p></main>"; });
