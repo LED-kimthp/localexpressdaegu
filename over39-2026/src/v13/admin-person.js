@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r79";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r79";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r79";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r80";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r80";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r80";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -617,8 +617,38 @@ export function renderPersonSheet(sheet, { people = new Map(), known = new Set()
 // ── 인쇄 창 ────────────────────────────────────────────────────────────────
 // 참여자 화면과 같은 스타일시트로 같은 문서를 그린다. 인쇄 규칙(styles.css)이
 // `.response-document-final` 만 남기므로 참여자가 받은 종이와 같은 모양이 나온다.
+// 여러 사람을 한 창에 담을 때는 한 사람이 새 쪽에서 시작한다(제출용으로 모아 뽑는다, TK 2026-09-24).
+export function finalDocumentsPrintHtml(documents = [], { stylesheets = [], title = "" } = {}) {
+  const list = array(documents).filter((item) => item && typeof item === "object");
+  const language = text(list[0]?.display_language) || "ko";
+  const pages = list.map((document) => `<div class="response-document-preview response-document-final admin-final-page">${renderResponseDocument(document)}</div>`).join("");
+  return `<!doctype html><html lang="${esc(language)}"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex, nofollow, noarchive" /><title>${esc(title)}</title>${array(stylesheets).map((href) => `<link rel="stylesheet" href="${esc(href)}" />`).join("")}<style>.admin-final-page + .admin-final-page { margin-top: 48px; } @media print { .admin-final-page + .admin-final-page { margin-top: 0; break-before: page; page-break-before: always; } }</style></head><body data-edition="rc2"><main class="rc2-complete response-document-complete"><section class="rc2-complete-main">${pages}</section></main></body></html>`;
+}
+
 export function responseDocumentPrintHtml(document, { stylesheets = [], title = "" } = {}) {
-  return `<!doctype html><html lang="${esc(text(document?.display_language) || "ko")}"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex, nofollow, noarchive" /><title>${esc(title)}</title>${array(stylesheets).map((href) => `<link rel="stylesheet" href="${esc(href)}" />`).join("")}</head><body data-edition="rc2"><main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="response-document-preview response-document-final">${renderResponseDocument(document || {})}</div></section></main></body></html>`;
+  return finalDocumentsPrintHtml([document || {}], { stylesheets, title });
+}
+
+// 최종 문서만 골라 받는다. 한 사람에 스냅샷이 여럿이면 완료 화면이 그린 제출본(response_document)을
+// 먼저, 없으면 활용 범위 화면에서 만든 초안을, 같으면 나중 것을 쓴다(buildPersonSheet 와 같은 규칙).
+export const FINAL_DOCUMENT_SELECT = [
+  "response_id",
+  "submission_phase",
+  "created_at",
+  "response_document:payload->response_document",
+  "draft:payload->answers->response_document_draft",
+].join(",");
+
+export function pickFinalDocuments(rows = []) {
+  const best = new Map();
+  const rank = (row) => (row?.response_document && typeof row.response_document === "object" ? 2 : row?.draft && typeof row.draft === "object" ? 1 : 0);
+  for (const row of array(rows)) {
+    const id = text(row?.response_id);
+    if (!id || !rank(row)) continue;
+    const current = best.get(id);
+    if (!current || rank(row) > rank(current) || (rank(row) === rank(current) && text(row.created_at) >= text(current.created_at))) best.set(id, row);
+  }
+  return new Map([...best].map(([id, row]) => [id, row.response_document && typeof row.response_document === "object" ? row.response_document : row.draft]));
 }
 
 // 연구용 한 장. 묶음 내보내기와 같은 문서 형식을 한 사람분으로만 — 머리글 없이 그 사람의 기록만.

@@ -1,7 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r79";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r79";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r79";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_FILTERS, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r79";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r80";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r80";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r80";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r80";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -292,6 +292,17 @@ async function loadDetail(responseId) {
   root.querySelector(".dashboard-profile.selected")?.scrollIntoView({ block: "nearest" });
 }
 
+// 최종 PDF 모아 받기: 지금 목록에 보이는 사람들의 최종 문서를 한 번에 받는다. 문서는 한 사람에 수십 KB 라
+// 목록에는 싣지 않고 누를 때 받는다. 응답 ID 를 묶어서 묻는다(주소가 너무 길어지지 않게 40명씩).
+async function loadFinalDocuments(responseIds) {
+  const rows = [];
+  for (let index = 0; index < responseIds.length; index += 40) {
+    const chunk = responseIds.slice(index, index + 40).map((id) => encodeURIComponent(id)).join(",");
+    rows.push(...await api("over39_response_snapshots", `?select=${FINAL_DOCUMENT_SELECT}&response_id=in.(${chunk})&order=created_at.asc`));
+  }
+  return pickFinalDocuments(rows);
+}
+
 // 참여자가 받은 종이를 그대로 연다. 창은 누른 그 순간에 열어야 팝업 차단에 걸리지 않는다 —
 // 자료는 이미 불러와 있으므로 기다릴 것이 없다.
 function openPrintWindow(html, title) {
@@ -301,6 +312,10 @@ function openPrintWindow(html, title) {
     render();
     return;
   }
+  writeAndPrint(win, html, title);
+}
+
+function writeAndPrint(win, html, title) {
   win.document.open();
   win.document.write(html);
   win.document.close();
@@ -705,7 +720,7 @@ function renderDashboard() {
   const rows = sessionRows();
   const on = (view) => (state.view === view ? " active" : "");
   // 도구 단추는 위 한 줄로 올렸다. 왼쪽은 사람 목록만 — 목록이 따로 스크롤된다.
-  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
+  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-final-pdfs" ${state.exportBusy ? "disabled" : ""}>최종 PDF 모아 받기 · ${koNum(rows.filter((row) => state.people.get(row.response_id)?.hasDocument ?? true).length)}명</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
   const tabs = ADMIN_SAMPLE_ORDER.map((value) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${esc(adminSampleLabel(value))} ${koNum(totals[value])}${value === "all" && Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? ` / ${koNum(state.sessionsTotal)}` : ""}</button>`).join("");
   return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
 }
@@ -889,6 +904,32 @@ document.addEventListener("click", async (event) => {
     const stylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].map((link) => link.href);
     const title = state.sheet.record.participantCode || state.sheet.responseId;
     openPrintWindow(responseDocumentPrintHtml(state.sheet.document, { stylesheets, title }), title);
+    return;
+  }
+  if (button.dataset.adminAction === "export-final-pdfs") {
+    if (state.exportBusy) return;
+    const rows = sessionRows();
+    // 창은 누른 그 순간에 연다. 자료를 받은 뒤에 열면 팝업 차단에 걸린다.
+    const win = window.open("", "_blank");
+    if (!win) { state.exportStatus = "새 창이 막혔어요. 이 주소에서 팝업을 허용한 뒤 다시 눌러 주세요."; render(); return; }
+    win.document.write(`<!doctype html><meta charset="utf-8"><title>최종 PDF</title><p style="font-family:sans-serif;padding:24px;">최종 PDF를 모으고 있어요.</p>`);
+    state.exportBusy = true;
+    state.exportStatus = `최종 PDF ${koNum(rows.length)}명분을 모으고 있어요.`;
+    render();
+    try {
+      const documents = await loadFinalDocuments(rows.map((row) => row.response_id));
+      const ordered = rows.map((row) => documents.get(row.response_id)).filter(Boolean);
+      const title = `최종 PDF · ${adminSampleLabel(state.filter)} ${ordered.length}명 · ${new Date().toISOString().slice(0, 10)}`;
+      const stylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].map((link) => link.href);
+      writeAndPrint(win, finalDocumentsPrintHtml(ordered, { stylesheets, title }), title);
+      const missing = rows.length - ordered.length;
+      state.exportStatus = `최종 PDF ${koNum(ordered.length)}명분을 새 창에 열었어요.${missing ? ` 최종 문서가 없는 ${koNum(missing)}명은 빠졌어요.` : ""}`;
+    } catch (error) {
+      win.close();
+      state.exportStatus = error.message === "ADMIN_ACCESS_DENIED" ? "이 계정으로는 최종 PDF를 받을 수 없어요." : "최종 PDF를 모으지 못했어요. 다시 눌러 주세요.";
+    }
+    state.exportBusy = false;
+    render();
     return;
   }
   if (button.dataset.adminAction === "print-person-record") {
