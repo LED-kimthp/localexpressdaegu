@@ -1,9 +1,9 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r86";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r86";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r86";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r86";
-import { greetingVisibilityCopy } from "./stage1-i18n.js?v=v7-20260924-r86";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r86";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r87";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r87";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r87";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r87";
+import { greetingVisibilityCopy } from "./stage1-i18n.js?v=v7-20260924-r87";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r87";
 
 const root = document.querySelector("#greeting-review-root");
 const query = new URLSearchParams(window.location.search);

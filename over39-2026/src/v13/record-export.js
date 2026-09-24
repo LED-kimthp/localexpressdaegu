@@ -698,7 +698,7 @@ function renderRecord(record) {
       ["참여자 확인 코드", record.participantCode],
     ])}</dl>
     <h3>참여자가 승인한 최종 문장</h3>
-    ${record.approved.text ? `<blockquote>${record.approved.korean && record.approved.korean !== record.approved.text ? `<span class="src">원문</span>` : ""}${esc(record.approved.text)}</blockquote>${record.approved.korean && record.approved.korean !== record.approved.text ? `<blockquote><span class="src">한국어 번역</span>${esc(record.approved.korean)}</blockquote>` : ""}<p class="tag">${esc([record.approved.action ? `참여자 선택 ${record.approved.action}` : "", record.approved.summarySource ? `정리 출처 ${record.approved.summarySource}` : "", record.approved.translationStatus].filter(Boolean).join(" · "))}</p>` : `<p class="empty">승인된 문장이 없습니다.</p>`}
+    ${record.approved.text ? `<blockquote>${record.approved.korean && record.approved.korean !== record.approved.text ? `<span class="src">원문</span>` : ""}${esc(record.approved.text)}</blockquote>${polishNote(record, record.approved.text)}${record.approved.korean && record.approved.korean !== record.approved.text ? `<blockquote><span class="src">한국어 번역</span>${esc(record.approved.korean)}</blockquote>` : ""}<p class="tag">${esc([record.approved.action ? `참여자 선택 ${record.approved.action}` : "", record.approved.summarySource ? `정리 출처 ${record.approved.summarySource}` : "", record.approved.translationStatus].filter(Boolean).join(" · "))}</p>` : `<p class="empty">승인된 문장이 없습니다.</p>`}
     <h3>문항별 답</h3>
     ${renderAnswers(record)}
     <h3>AI 후속질문과 답</h3>

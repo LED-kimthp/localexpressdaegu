@@ -7440,6 +7440,21 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 }
 @media (max-width: 820px) {
   .admin-shell .dashboard-profile-list { max-height: 60vh; overflow-y: auto; }
+  /* 휴대폰: 칸이 많은 표는 표 안에서만 옆으로 밀린다. 화면 전체가 밀리던 것(철회·알림 관리)을 막는다. */
+  /* 위(720px)의 min-width: 560px 는 표를 감싼 .ai-health 만 옆으로 밀게 해 두었다. 철회·알림 관리는 그 감싸기가
+     없어 화면 전체가 밀렸다. 표 자체를 화면 폭 안의 스크롤 상자로 만든다. */
+  .admin-shell .dashboard-main .ai-health-table { display: block; min-width: 0; max-width: 100%; overflow-x: auto; }
+  /* 개발 과정 시험 기록은 시험 한 번을 한 덩어리로 위아래로 쌓는다. */
+  .admin-shell .dashboard-main .dev-test-runs,
+  .admin-shell .dev-test-runs tbody,
+  .admin-shell .dev-test-runs tr,
+  .admin-shell .dev-test-runs th,
+  .admin-shell .dev-test-runs td { display: block; width: auto !important; overflow: visible; }
+  .admin-shell .dev-test-runs thead { display: none; }
+  .admin-shell .dev-test-runs tr { padding: 12px 0; border-top: 1px solid var(--line); }
+  .admin-shell .dev-test-runs th,
+  .admin-shell .dev-test-runs td { padding: 2px 0; border: 0; }
+  .admin-shell .dev-test-runs th { color: var(--muted); font-size: 12px; }
 }
 
 @media (max-width: 640px) {

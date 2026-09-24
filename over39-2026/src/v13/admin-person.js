@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r86";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r86";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r86";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r87";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r87";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r87";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -468,7 +468,7 @@ function renderAnswers(sheet) {
   const shown = [...answers.rows.map((row) => text(row.answer)), ...followups.rows.map((row) => text(row.answer))];
   const elsewhere = polish.filter((row) => row.usedPolished && !shown.includes(row.chosen));
   const approvedBlock = approved.text
-    ? `<h3>참여자가 확인한 정리문</h3>${quote(approved.text, approved.korean && approved.korean !== approved.text ? "원문" : "")}${approved.korean && approved.korean !== approved.text ? quote(approved.korean, "한국어 번역") : ""}`
+    ? `<h3>참여자가 확인한 정리문</h3>${quote(approved.text, approved.korean && approved.korean !== approved.text ? "원문" : "")}${polishBlock(polish, approved.text)}${approved.korean && approved.korean !== approved.text ? quote(approved.korean, "한국어 번역") : ""}`
     : `<h3>참여자가 확인한 정리문</h3>${empty("확인한 정리문이 없어요(정리 단계 전에 멈췄거나 직접 쓰기로 했어요).")}`;
   return `${answers.labelled ? "" : `<p class="person-note">옛 판본이라 문항 문구가 저장되지 않았어요. 필드 이름과 값만 보여요.</p>`}
     <div class="person-answers">${blocks.join("")}${pending.map(followupBlock).join("")}</div>
