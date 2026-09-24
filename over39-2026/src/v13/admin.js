@@ -1,8 +1,8 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r87";
-import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260924-r87";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r87";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r87";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r87";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r88";
+import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260924-r88";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r88";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r88";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r88";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -399,7 +399,8 @@ const fold = (key, summary, body, { open = false } = {}) => `<details class="adm
 // 한 사람 = 한 장(TK 2026-09-23). 연구자가 읽는 순서로 ①~⑤를 놓고, 저장된 표들은 지우지 않고
 // 맨 아래 「운영 기록」으로 내린다.
 function renderDetail() {
-  if (!state.selected) return `<div class="empty-match">왼쪽에서 한 사람을 골라 주세요.</div>`;
+  // 고르기 전에는 비워 둔다(TK 2026-09-24 — 안내 한 줄과 그 위 가로줄을 뺐다).
+  if (!state.selected) return "";
   if (!state.detail || !state.sheet) return `<div class="empty-match">이 사람의 기록을 불러오고 있어요.</div>`;
   const d = state.detail;
   const known = new Set(state.sessions.map((row) => row.response_id));
