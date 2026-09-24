@@ -167,14 +167,16 @@ export async function requestTextPolish({ endpoint, anonKey, mode = "fallback", 
 // ── 화면 ────────────────────────────────────────────────────────────────────
 // 적는 칸 아래에 붙는 부분. 적는 칸 자체는 app.js 의 renderText 가 그린다.
 // 칸 위(칸 이름 바로 밑)에 두는 안내. 쓰기 전에 칸 밑 단추로 다듬을 수 있다는 것을 알린다.
-// short: 처음 본 칸이 아니면 한 줄만. 「길게 편하게 써도 된다」는 첫 칸에서 한 번 들으면 된다.
+// short: 처음 본 칸이 아니면 아무것도 두지 않는다 — 칸 밑에 「문장 다듬기」 단추가 늘 있으니
+// 한 번 들으면 된다(TK 2026-09-24: 「이제 안내는 없어도 되겠다」).
 // 「다듬지 않고 쓴 그대로 남길게요」 선택 줄은 뺐다 — 누르지 않으면 다듬지 않으니 끌 것이 없다.
 // off: 전에 그 줄로 끈 사람(이어쓰기 초안). 칸마다 「껐습니다 · 다시 켜기」를 보인다.
 export function renderPolishLead({ copy, esc, short = false, off = false }) {
   if (off) {
     return `<p class="polish-lead is-short is-off">${esc(copy.offNote)} <button class="text-button polish-turn-on" type="button" data-action="polish-on">${esc(copy.turnOn)}</button></p>`;
   }
-  return `<p class="polish-lead${short ? " is-short" : ""}">${esc(short ? copy.noticeShort : copy.notice)}</p>`;
+  if (short) return "";
+  return `<p class="polish-lead">${esc(copy.notice)}</p>`;
 }
 
 // 참여자가 다듬기를 껐는가. 설문 답(answers.text_polish_preference)에 남겨 기록과 관리자 화면에서 보인다.
@@ -203,7 +205,8 @@ export function rejectPolished(polished, { maxLength = 0 } = {}) {
 const MIC_ICON = '<svg class="polish-mic" viewBox="0 0 24 24" width="1.1em" height="1.1em" aria-hidden="true" style="vertical-align:-0.2em;margin:0 0.15em"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
 // text: 지금 칸에 든 글. 단추를 누를 수 있는지(두 글자 이상·다섯 번까지) 가른다.
-export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, text = "", esc }) {
+// lead: 처음 본 다듬기 칸인가. 마이크 안내와 예시는 그 칸에만 둔다 — 뒤 칸은 단추만(TK 2026-09-24).
+export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, text = "", lead = true, esc }) {
   const inBox = entry?.use === "polished" && entry?.polished;
   const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
   // 단추와 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
@@ -211,7 +214,7 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
   const exhausted = polishAttemptsLeft(entry) <= 0;
   const runnable = !busy && canPolishAgain(entry, text);
   const run = off ? "" : `<div class="polish-run"><button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${runnable ? "" : " disabled"}${busy ? ' aria-busy="true"' : ""}>${esc(exhausted ? copy.limit : inBox ? copy.repolish : copy.button)}</button>${statusLine}</div>`;
-  const guide = `<div class="polish-guide">
+  const guide = !lead ? "" : `<div class="polish-guide">
     <p class="polish-hint">${esc(copy.hint).split("{mic}").join(MIC_ICON)}</p>
   </div>`;
   // 칸에 들어 있지 않은 쪽을 아래에 보인다. 다듬은 문장이 칸에 있으면 쓴 글을, 쓴 글로 되돌렸으면 다듬은 문장을.
@@ -226,6 +229,6 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
   </div>`
     : "";
   // 다듬기를 끈 사람에게 「이렇게 다듬습니다」 예시는 쓸모가 없다.
-  const example = off ? "" : `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
+  const example = off || !lead ? "" : `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
   return `<div class="polish-extras" data-polish-extras="${esc(field)}">${off ? statusLine : run}${guide}${other}${example}</div>`;
 }

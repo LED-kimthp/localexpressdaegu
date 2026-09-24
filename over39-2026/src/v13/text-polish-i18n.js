@@ -1,13 +1,9 @@
 // 「문장 다듬기」 문구(2026-09-24). 한국어가 원문이고 여덟 언어는 그 뜻만 옮긴다.
-// optOut·offNote·turnOn: 다듬기 없이 쓴 그대로 내고 싶은 사람이 첫 칸에서 한 번 끈다(TK 2026-09-24). 그 뒤 모든
-// 칸과 안부에 적용되고, 한 줄 안내 자리에서 다시 켤 수 있다.
-// notice 는 참여자가 다듬기 칸을 처음 본 칸에만, 그 뒤 칸은 noticeShort 한 줄(TK 2026-09-24: 칸마다 다섯
-// 문장이 되풀이되면 두세 번째부터는 읽지 않는다).
-// notice 의 {next} 는 그 화면의 실제 단추 이름으로 바뀐다(「다음」·「이 답변에서 이어가기」·「활용 범위 정하기」).
-// 칸 위 안내(notice)의 목적: 기억을 최대한 많이, 길게, 편하게 받는 것(TK). 오타·앞뒤가 안 맞아도
-// 된다고 먼저 말한다. 한국어는 「~됩니다」로 맺는다(TK).
-// 단추를 누르지 않는다 — 참여자가 「다음」을 누를 때 한 번 알아서 다듬는다(TK). button·again·limit 은 지금 화면에
-// 쓰이지 않지만, 단추를 되살릴 때를 위해 아홉 언어 모두 남겨 둔다.
+// offNote·turnOn: r80–r83 에서 다듬기를 끈 사람의 이어쓰기 초안에만 보인다(끄는 선택 줄은 r84 에서 뺐다).
+// notice·hint·예시는 참여자가 다듬기 칸을 처음 본 칸에만 둔다. 그 뒤 칸은 칸 밑 단추만(TK 2026-09-24:
+// 「이제 안내는 없어도 되겠다, 밑에 문장 다듬기 칸이 있으니까」).
+// notice 의 목적: 기억을 최대한 많이, 길게, 편하게 받는 것(TK). 오타·앞뒤가 안 맞아도 된다고 먼저 말한다.
+// 한국어는 「~됩니다」로 맺는다(TK). notice 가 말하는 단추 이름은 button 과 같아야 한다(시험이 잠근다).
 //
 // 예시는 일부러 설문과 상관없는 일상 장면(비 오는 날의 버스와 우산)이다. 문화예술 기억을
 // 예시로 두면 뒤따르는 답이 그 장면 쪽으로 끌려간다. 예시의 「적은 글」은 언어마다 그 말에서
@@ -20,7 +16,6 @@ const copy = {
     working: "다듬고 있습니다",
     limit: "다듬기는 다섯 번까지입니다",
     notice: "떠오르는 기억이나 생각을 순서에 얽매이지 말고, 길게 편하게 적어 주시면 됩니다. 오타가 있거나 앞뒤가 매끄럽지 않아도 괜찮습니다. 다 쓰고 칸 아래 「문장 다듬기」를 누르면 AI가 문맥에 맞게 다듬어 이 칸에 넣어 드립니다. 다듬는 동안 기다리지 않고 이어서 답하셔도 됩니다.",
-    noticeShort: "다 쓰고 칸 아래 「문장 다듬기」를 누르면 오타와 띄어쓰기를 다듬어 이 칸에 넣어 드립니다.",
     offNote: "문장 다듬기를 끄셨습니다. 쓴 글 그대로 남습니다.",
     turnOn: "다시 켜기",
     confirmNext: "다듬은 문장이 칸에 들어갔습니다. 몇 글자 고쳐도 됩니다.",
@@ -45,7 +40,6 @@ const copy = {
     working: "Tidying…",
     limit: "You can tidy up to five times",
     notice: "Write down the memories and thoughts that come to you, as freely and as long as you like, in any order. Typos and sentences that don’t quite fit together are fine. When you have finished, tap “Tidy my sentences” below the box and AI will tidy your text to read naturally and put it in this box. You don’t need to wait while it works — you can carry on answering.",
-    noticeShort: "When you have finished, tap “Tidy my sentences” below the box to tidy typos and spacing; the result goes into this box.",
     offNote: "You turned off tidying. Your text is kept as you write it.",
     turnOn: "Turn back on",
     confirmNext: "The tidied version is now in the box. You can change a few words.",
@@ -69,7 +63,6 @@ const copy = {
     working: "整えています",
     limit: "整えるのは5回までです",
     notice: "思い浮かぶ記憶や考えを、順番を気にせず、長く気楽に書いてください。誤字があっても、前後がうまくつながらなくても大丈夫です。書き終えたら欄の下の「文章を整える」を押すと、AIが文脈に合わせて整え、この欄に入れます。整えている間も、待たずに続けて答えて大丈夫です。",
-    noticeShort: "書き終えたら欄の下の「文章を整える」を押すと、誤字や区切りを整えてこの欄に入れます。",
     offNote: "文章を整える機能をオフにしました。書いたままで残ります。",
     turnOn: "もう一度オンにする",
     confirmNext: "整えた文章が欄に入りました。数文字直しても大丈夫です。",
@@ -93,7 +86,6 @@ const copy = {
     working: "正在整理",
     limit: "最多可以整理五次",
     notice: "想到的记忆或想法，不必在意顺序，尽管放松地多写一些。有错字、前后不太通顺也没关系。写完后按栏下方的「整理句子」，AI会按上下文整理，放进这一栏。整理期间不必等待，可以继续作答。",
-    noticeShort: "写完后按栏下方的「整理句子」，会修改错字和标点，放进这一栏。",
     offNote: "您已关闭整理功能，文字会按原样保留。",
     turnOn: "重新开启",
     confirmNext: "整理后的句子已放进栏里。可以改几个字。",
@@ -117,7 +109,6 @@ const copy = {
     working: "正在整理",
     limit: "最多可以整理五次",
     notice: "想到的記憶或想法，不必在意順序，儘管放鬆地多寫一些。有錯字、前後不太通順也沒關係。寫完後按欄下方的「整理句子」，AI會依上下文整理，放進這一欄。整理期間不必等待，可以繼續作答。",
-    noticeShort: "寫完後按欄下方的「整理句子」，會修改錯字和標點，放進這一欄。",
     offNote: "您已關閉整理功能，文字會按原樣保留。",
     turnOn: "重新開啟",
     confirmNext: "整理後的句子已放進欄裡。可以改幾個字。",
@@ -141,7 +132,6 @@ const copy = {
     working: "Mise au propre…",
     limit: "Jusqu’à cinq fois",
     notice: "Écrivez les souvenirs et les pensées qui vous viennent, librement et aussi longuement que vous le souhaitez, sans vous soucier de l’ordre. Les fautes de frappe ou les phrases qui s’enchaînent mal ne posent pas de problème. Une fois terminé, appuyez sur « Mettre au propre » sous le champ : une IA met votre texte au propre selon le contexte et le place dans ce champ. Inutile d’attendre pendant ce temps, vous pouvez continuer à répondre.",
-    noticeShort: "Une fois terminé, appuyez sur « Mettre au propre » sous le champ pour corriger les fautes et les espaces ; le résultat est placé dans ce champ.",
     offNote: "Vous avez désactivé la mise au propre. Votre texte est gardé tel quel.",
     turnOn: "Réactiver",
     confirmNext: "La version mise au propre est dans le champ. Vous pouvez changer quelques mots.",
@@ -165,7 +155,6 @@ const copy = {
     working: "Ordenando…",
     limit: "Se puede hasta cinco veces",
     notice: "Escriba los recuerdos y pensamientos que le vengan, con calma y tan largo como quiera, sin preocuparse por el orden. No importa si hay erratas o si las frases no encajan del todo. Cuando termine, pulse «Ordenar las frases» debajo del recuadro: una IA ordenará el texto según el contexto y lo pondrá en este recuadro. No hace falta esperar mientras tanto; puede seguir respondiendo.",
-    noticeShort: "Cuando termine, pulse «Ordenar las frases» debajo del recuadro para corregir erratas y espacios; el resultado se pondrá en este recuadro.",
     offNote: "Ha desactivado el ordenado. Su texto se guarda tal cual.",
     turnOn: "Volver a activar",
     confirmNext: "La versión ordenada ya está en el recuadro. Puede cambiar unas palabras.",
@@ -189,7 +178,6 @@ const copy = {
     working: "Bezig met opschonen…",
     limit: "Opschonen kan tot vijf keer",
     notice: "Schrijf de herinneringen en gedachten op die bij u opkomen, vrij en zo lang als u wilt, in welke volgorde dan ook. Tikfouten of zinnen die niet goed aansluiten zijn geen probleem. Als u klaar bent, drukt u op ‘Tekst opschonen’ onder het vak: een AI schoont uw tekst op volgens de samenhang en zet die in dit vak. U hoeft intussen niet te wachten; u kunt gewoon verder antwoorden.",
-    noticeShort: "Als u klaar bent, drukt u op ‘Tekst opschonen’ onder het vak om tikfouten en spaties te verbeteren; het resultaat komt in dit vak.",
     offNote: "U hebt opschonen uitgezet. Uw tekst blijft zoals u hem schrijft.",
     turnOn: "Weer aanzetten",
     confirmNext: "De opgeschoonde versie staat nu in het vak. U kunt een paar woorden aanpassen.",
@@ -213,7 +201,6 @@ const copy = {
     working: "Sedang mengemaskan…",
     limit: "Boleh dikemaskan hingga lima kali",
     notice: "Tuliskan kenangan dan fikiran yang terlintas, sepanjang dan sebebas yang anda mahu, tanpa perlu risau tentang urutan. Salah taip atau ayat yang kurang bersambung tidak mengapa. Setelah selesai, tekan “Kemaskan ayat” di bawah kotak, dan AI akan mengemaskan tulisan anda mengikut konteks lalu memasukkannya ke dalam kotak ini. Anda tidak perlu menunggu semasa ia berjalan; teruskan sahaja menjawab.",
-    noticeShort: "Setelah selesai, tekan “Kemaskan ayat” di bawah kotak untuk membetulkan salah taip dan jarak; hasilnya dimasukkan ke dalam kotak ini.",
     offNote: "Anda telah mematikan fungsi kemaskan. Tulisan anda kekal seperti asal.",
     turnOn: "Hidupkan semula",
     confirmNext: "Ayat yang dikemaskan sudah ada dalam kotak. Anda boleh ubah beberapa perkataan.",

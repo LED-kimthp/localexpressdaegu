@@ -4240,7 +4240,7 @@ Object.assign(extraCopy.en || (extraCopy.en = {}), {
 // v0.4.0: balanced credits and sentence-based conceptual choices
 const v040Copy = {
   en: {
-    "주최·주관": "Organized by", "총괄기획": "Lead planning", "후원": "Supported by", "문의": "Contact",
+    "주최·주관": "Organized by", "총괄기획": "Lead planning", "후원": "Supported by", "문의": "Contact", "복사했습니다.": "Copied",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Knock, knock—are you still working there?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "We welcome work you are continuing, work you have kept for a long time, and work you would like to bring out again.",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Senses and emotion — The colours, sounds, atmosphere of the space, and emotions from that moment have stayed with me.",
@@ -4249,7 +4249,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "People and society — Relationships with people and meanings connected to place and society have remained in my memory."
   },
   ja: {
-    "주최·주관": "主催・主管", "총괄기획": "総括企画", "후원": "助成", "문의": "お問い合わせ",
+    "주최·주관": "主催・主管", "총괄기획": "総括企画", "후원": "助成", "문의": "お問い合わせ", "복사했습니다.": "コピーしました",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "トントン、そこでは今も制作を続けていますか？",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "今続けている作品、長く大切にしてきた作品、もう一度取り出したい作品をお待ちしています。",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "感覚と情緒 — 色や音、空間の雰囲気、その時に感じた気持ちが長く残っています。",
@@ -4258,7 +4258,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "人と社会 — 人との関係、地域や社会に関する意味が記憶に残っています。"
   },
   zh: {
-    "주최·주관": "主辦・承辦", "총괄기획": "總策劃", "후원": "支持", "문의": "联系",
+    "주최·주관": "主辦・承辦", "총괄기획": "總策劃", "후원": "支持", "문의": "联系", "복사했습니다.": "已複製",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "叩、叩、叩，您還在那裡持續創作嗎？",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "我們期待您正在持續的作品、長久珍藏的作品，以及想再次取出的作品。",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "感官與情感 — 色彩、聲音、空間氛圍與當時的情感長久留在記憶中。",
@@ -4267,7 +4267,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "人與社會 — 與人的關係，以及關於地方與社會的意義留在記憶中。"
   },
   nl: {
-    "주최·주관": "Organisatie", "총괄기획": "Algemene leiding", "후원": "Ondersteund door", "문의": "Contact",
+    "주최·주관": "Organisatie", "총괄기획": "Algemene leiding", "후원": "Ondersteund door", "문의": "Contact", "복사했습니다.": "Gekopieerd",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Klop, klop—werkt u daar nog steeds?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "We verwelkomen werk waaraan u doorgaat, werk dat u lang hebt bewaard en werk dat u opnieuw wilt tonen.",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Zintuigen en emotie — De kleuren, geluiden, sfeer van de ruimte en emoties van dat moment zijn lang gebleven.",
@@ -4276,7 +4276,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Mensen en samenleving — Relaties met mensen en betekenissen rond plaats en samenleving zijn in mijn herinnering gebleven."
   },
   es: {
-    "주최·주관": "Organiza", "총괄기획": "Dirección general", "후원": "Con el apoyo de", "문의": "Contacto",
+    "주최·주관": "Organiza", "총괄기획": "Dirección general", "후원": "Con el apoyo de", "문의": "Contacto", "복사했습니다.": "Copiado",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Toc, toc, ¿todavía sigue trabajando ahí?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Esperamos obras que continúa desarrollando, obras que ha guardado durante mucho tiempo y obras que desea volver a mostrar.",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Sentidos y emoción — Los colores, sonidos, la atmósfera del espacio y las emociones de aquel momento han permanecido.",
@@ -4285,7 +4285,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Personas y sociedad — Han quedado en mi memoria las relaciones con otras personas y los sentidos vinculados al lugar y la sociedad."
   },
   fr: {
-    "주최·주관": "Organisation", "총괄기획": "Direction générale", "후원": "Avec le soutien de", "문의": "Contact",
+    "주최·주관": "Organisation", "총괄기획": "Direction générale", "후원": "Avec le soutien de", "문의": "Contact", "복사했습니다.": "Copié",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Toc, toc, travaillez-vous encore là-bas ?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Nous attendons les œuvres que vous poursuivez, celles que vous avez longtemps gardées et celles que vous souhaitez ressortir.",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Sens et émotion — Les couleurs, les sons, l’atmosphère du lieu et les émotions de ce moment sont restés longtemps.",
@@ -4294,7 +4294,7 @@ const v040Copy = {
     "사람과 사회 — 사람과의 관계, 지역과 사회에 관한 의미가 기억에 남아 있습니다.": "Personnes et société — Les relations humaines et les significations liées au territoire et à la société sont restées dans ma mémoire."
   },
   ms: {
-    "주최·주관": "Penganjur", "총괄기획": "Perancangan keseluruhan", "후원": "Dengan sokongan", "문의": "Hubungi",
+    "주최·주관": "Penganjur", "총괄기획": "Perancangan keseluruhan", "후원": "Dengan sokongan", "문의": "Hubungi", "복사했습니다.": "Disalin",
     "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "Tok, tok, tok—adakah anda masih berkarya di sana?",
     "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "Kami menantikan karya yang masih anda teruskan, karya yang lama disimpan, dan karya yang ingin anda keluarkan semula.",
     "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "Deria dan emosi — Warna, bunyi, suasana ruang dan emosi ketika itu kekal lama dalam ingatan.",
@@ -9062,6 +9062,7 @@ Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
   "총괄기획": "总体策划",
   "후원": "赞助",
   "문의": "咨询",
+  "복사했습니다.": "已复制",
   "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "叩、叩、叩，您还在那里创作吗？",
   "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "无论是现在正在延续的创作、长久珍藏的创作，还是想再次拿出来的创作，我们都在等待。",
   "기억·현재·조건의 세 축을 따라 경험을 살피고, 마지막에는 답변을 참여 기록으로 정리한 뒤 기억 4 × 현재 4 × 조건 4가 만나는 64개 좌표를 함께 확인합니다.": "沿着记忆、当下与条件三个轴线审视经验，最后把回答整理成参与记录，并一同确认记忆 4 × 当下 4 × 条件 4 交会而成的64个坐标中所在的位置。",
@@ -9546,6 +9547,7 @@ Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
   "총괄기획": "總體策劃",
   "후원": "贊助",
   "문의": "諮詢",
+  "복사했습니다.": "已複製",
   "똑, 똑, 똑, 거기 아직 작업하고 계신가요?": "叩、叩、叩，您還在那裡創作嗎？",
   "지금 이어가고 있는 작업, 오래 간직해온 작업, 다시 꺼내고 싶은 작업을 기다립니다.": "無論是現在正在延續的創作、長久珍藏的創作，還是想再次拿出來的創作，我們都在等待。",
   "감각과 정서 — 색과 소리, 공간의 분위기와 그때 느낀 감정이 오래 남아 있습니다.": "感官與情感 — 色彩、聲音、空間氛圍與當時的情感長久留在記憶中。",
