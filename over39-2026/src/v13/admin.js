@@ -1,7 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r77";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r77";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r77";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_INDEX_SELECT, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r77";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r78";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r78";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r78";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_FILTERS, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r78";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -361,7 +361,7 @@ function listCard(item) {
   const person = state.people.get(item.response_id);
   const flag = (on, label) => `<span class="${on ? "is-on" : ""}">${label} ${on ? "✓" : "·"}</span>`;
   const flags = person
-    ? `<p class="dashboard-profile-flags">${flag(person.hasOffer, "제안문")}${flag(person.wrote > 0, "안부")}${flag(person.delivered > 0, "전달")}</p>`
+    ? `<p class="dashboard-profile-flags">${flag(person.wrote > 0, "안부")}${flag(person.delivered > 0, "전달")}${flag(person.received > 0, "받음")}${flag(person.hasOffer, "제안문")}</p>`
     : "";
   // 표본 이름표는 「전체」를 볼 때만 단다 — 한 표본만 볼 때는 모든 줄에 같은 말이다.
   const where = [person?.place?.city, person?.language && person.language !== "ko" ? languageLabel(person.language) : ""].filter(Boolean).join(" · ");
@@ -666,7 +666,7 @@ function listCountHtml(rows) {
 
 function listHtml(rows) {
   if (rows.length) return rows.map(listCard).join("");
-  return `<p class="list-empty">${state.list.query || activeCriteriaCount(state.list) ? "조건에 맞는 사람이 없어요." : "아직 응답이 없어요."}</p>`;
+  return `<p class="list-empty">${state.list.query || state.list.greeting || activeCriteriaCount(state.list) ? "조건에 맞는 사람이 없어요." : "아직 응답이 없어요."}</p>`;
 }
 
 function renderListControls() {
@@ -676,7 +676,11 @@ function renderListControls() {
   const select = (key, label, options) => `<label class="list-filter"><span>${esc(label)}</span><select data-list-filter="${esc(key)}">${option("", "전체", !c[key])}${options.map(([value, text]) => option(value, text, c[key] === value)).join("")}</select></label>`;
   const active = activeCriteriaCount(c);
   const ageLabel = (code) => LABELS.age_band?.[code] || code;
+  // 안부가 중심이라 필터 칸에 접어 두지 않고 목록 바로 위에 둔다. 같은 단추를 다시 누르면 풀린다.
+  const counts = greetingCounts(state.sessions, state.people, state.filter);
+  const greetingButtons = `<div class="list-greeting" role="group" aria-label="안부"><span>안부</span>${Object.entries(GREETING_FILTERS).map(([value, label]) => `<button type="button" data-list-greeting="${esc(value)}" aria-pressed="${c.greeting === value}" class="${c.greeting === value ? "active" : ""}">${esc(label)} <b>${koNum(counts[value])}</b></button>`).join("")}</div>`;
   return `<div class="list-controls">
+    ${greetingButtons}
     <input type="search" id="admin-search" class="text-input text-input-single" aria-label="표기·기록 코드·지역·언어로 찾기" placeholder="표기·기록 코드·지역으로 찾기" value="${esc(c.query)}" autocomplete="off" />
     <label class="list-filter list-sort"><span>정렬</span><select data-list-filter="sort">${Object.entries(LIST_SORTS).map(([value, label]) => option(value, label, c.sort === value)).join("")}</select></label>
     <details class="list-filters" data-fold="list-filters" ${state.folds["list-filters"] || active ? "open" : ""}><summary>필터${active ? ` · ${active}개 켜짐` : ""}</summary>
@@ -691,7 +695,7 @@ function renderListControls() {
       ${select("check", "확인할 것", Object.entries(LIST_CHECKS))}
       </div>
       <p class="list-note">사는 곳은 참여자가 적은 나라·도시로 나눠요.</p>
-      ${active || c.query ? `<button type="button" class="text-button" data-admin-action="list-reset">조건 모두 지우기</button>` : ""}
+      ${active || c.query || c.greeting ? `<button type="button" class="text-button" data-admin-action="list-reset">조건 모두 지우기</button>` : ""}
     </details>
   </div>`;
 }
@@ -900,6 +904,13 @@ document.addEventListener("click", async (event) => {
     if (target && state.filter !== "all" && target.sample_type !== state.filter) state.filter = target.sample_type;
     state.view = "responses";
     return loadDetail(button.dataset.responseId);
+  }
+  if (button.dataset.listGreeting) {
+    state.list.greeting = state.list.greeting === button.dataset.listGreeting ? "" : button.dataset.listGreeting;
+    render();
+    const list = root.querySelector("#admin-list");
+    if (list) list.scrollTop = 0;
+    return;
   }
   if (button.dataset.adminFilter || button.dataset.adminAction === "list-reset") {
     if (button.dataset.adminFilter) state.filter = button.dataset.adminFilter;

@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r77";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r77";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r77";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r78";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r78";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r78";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -180,7 +180,7 @@ export function buildPeopleIndex({ snapshots = [], greetings = [] } = {}) {
   const ensure = (responseId) => {
     const id = text(responseId);
     if (!id) return null;
-    if (!people.has(id)) people.set(id, { ...labelFrom({ responseId: id }), mode: "", place: placeOf(), language: "", ageBand: "", hasOffer: false, hasDocument: false, wrote: 0, delivered: 0, received: 0 });
+    if (!people.has(id)) people.set(id, { ...labelFrom({ responseId: id }), mode: "", place: placeOf(), language: "", ageBand: "", hasOffer: false, hasDocument: false, wrote: 0, delivered: 0, received: 0, receivedProject: 0 });
     return people.get(id);
   };
   for (const [id, row] of collected.kept) {
@@ -205,8 +205,12 @@ export function buildPeopleIndex({ snapshots = [], greetings = [] } = {}) {
       sender.wrote += 1;
       if (isDelivered(greeting)) sender.delivered += 1;
     }
+    // 「받음」은 다른 참여자가 쓴 안부를 받은 것만 센다. 프로젝트가 준비한 첫 안부는 따로.
     const receiver = ensure(greeting?.receiver_record_id);
-    if (receiver && isDelivered(greeting)) receiver.received += 1;
+    if (receiver && isDelivered(greeting)) {
+      if (text(greeting.origin) === "core_seed") receiver.receivedProject += 1;
+      else receiver.received += 1;
+    }
   }
   return people;
 }
@@ -219,14 +223,21 @@ function parseJson(value) {
 
 // ── 목록: 검색·필터·정렬 ──────────────────────────────────────────────────────
 // 100명이 넘으면 스크롤로 찾을 수 없다(TK 2026-09-24). 조건은 전부 목록 안에서만 거른다 — 새로 묻지 않는다.
-export const EMPTY_LIST_CRITERIA = Object.freeze({ query: "", status: "", place: "", city: "", language: "", mode: "", route: "", age: "", check: "", sort: "recent" });
+export const EMPTY_LIST_CRITERIA = Object.freeze({ query: "", greeting: "", status: "", place: "", city: "", language: "", mode: "", route: "", age: "", check: "", sort: "recent" });
+
+// 안부가 관리자 화면의 중심이다(TK 2026-09-24) — 누가 남겼고, 누구에게 닿았고, 누가 받았는가.
+// 목록 위에 늘 보이는 단추로 둔다.
+export const GREETING_FILTERS = Object.freeze({
+  wrote: "안부를 남김",
+  delivered: "남긴 안부가 전달됨",
+  waiting: "남겼지만 아직 기다림",
+  received: "다른 참여자의 안부를 받음",
+  none: "안부를 남기지 않음",
+});
 
 export const LIST_CHECKS = Object.freeze({
   no_offer: "제안문 못 받음",
   no_document: "최종 PDF 없음",
-  no_greeting: "안부 안 남김",
-  not_delivered: "안부가 아직 안 닿음",
-  received: "안부를 받음",
 });
 
 export const LIST_SORTS = Object.freeze({ recent: "최근 저장 순", oldest: "오래된 순", name: "표기 가나다순", city: "지역순", language: "쓴 언어순" });
@@ -238,10 +249,28 @@ function matchesCheck(check, session, person) {
   if (!person) return false;
   if (check === "no_offer") return completed(session) && !person.hasOffer;
   if (check === "no_document") return completed(session) && !person.hasDocument;
-  if (check === "no_greeting") return completed(session) && person.wrote === 0;
-  if (check === "not_delivered") return person.wrote > 0 && person.delivered === 0;
-  if (check === "received") return person.received > 0;
   return true;
+}
+
+export function matchesGreeting(value, session, person) {
+  if (!value) return true;
+  const wrote = person?.wrote || 0;
+  const delivered = person?.delivered || 0;
+  if (value === "wrote") return wrote > 0;
+  if (value === "delivered") return delivered > 0;
+  if (value === "waiting") return wrote > delivered;
+  if (value === "received") return (person?.received || 0) > 0;
+  if (value === "none") return completed(session) && wrote === 0;
+  return true;
+}
+
+// 안부 단추 옆의 사람 수. 지금 보는 표본 안에서만 센다(다른 필터와 무관하게 늘 같은 기준).
+export function greetingCounts(sessions = [], people = new Map(), sample = "research") {
+  const inSample = array(sessions).filter((session) => !sample || sample === "all" || text(session?.sample_type) === sample);
+  return Object.fromEntries(Object.keys(GREETING_FILTERS).map((value) => [
+    value,
+    inSample.filter((session) => matchesGreeting(value, session, people.get(text(session?.response_id)))).length,
+  ]));
 }
 
 // 찾는 글자: 표기·기록 코드·응답 ID·지역·나라·언어. 서술 원문은 목록에 없으므로 찾지 않는다.
@@ -269,6 +298,7 @@ export function filterSessions(sessions = [], people = new Map(), { sample = "re
     if (c.mode === "shown" && !(person && person.mode && person.mode !== "ANONYMOUS")) return false;
     if (c.age && person?.ageBand !== c.age) return false;
     if (!matchesCheck(c.check, session, person)) return false;
+    if (!matchesGreeting(c.greeting, session, person)) return false;
     if (terms.length) {
       const hay = haystack(session, person);
       if (!terms.every((term) => hay.includes(term))) return false;

@@ -207,8 +207,16 @@ export function polishButtonLabel(copy, entry, busy) {
 // 칸 위(칸 이름 바로 밑)에 두는 한 줄. 쓰기 전에 「다음」에서 글이 다듬어진다는 것을 알린다.
 // 단추 이름은 화면마다 다르다(이어지는 질문은 「이 답변에서 이어가기」, 마지막은 「활용 범위 정하기」).
 // 안내가 없는 단추 이름을 말하면 참여자는 그 단추를 찾는다 — 그 화면의 실제 이름을 넣는다.
-export function renderPolishLead({ copy, esc, nextLabel = "" }) {
-  return `<p class="polish-lead">${esc(copy.notice.split("{next}").join(nextLabel || copy.nextFallback || "다음"))}</p>`;
+// short: 처음 본 칸이 아니면 한 줄만. 「길게 편하게 써도 된다」는 첫 칸에서 한 번 들으면 된다.
+export function renderPolishLead({ copy, esc, nextLabel = "", short = false }) {
+  const text = short ? copy.noticeShort : copy.notice;
+  return `<p class="polish-lead${short ? " is-short" : ""}">${esc(text.split("{next}").join(nextLabel || copy.nextFallback || "다음"))}</p>`;
+}
+
+// 긴 안내를 보일 칸인가. 처음 본 다듬기 칸을 기억해 두고(leadField) 그 칸에서만 길게 보인다 —
+// 앞으로 돌아가 그 칸을 다시 봐도 긴 안내가 그대로다.
+export function polishLeadIsShort(leadField, field) {
+  return Boolean(leadField) && leadField !== field;
 }
 
 // 다듬은 문장을 받지 않을 때. 칸 한도를 넘거나(maxlength), 서버가 가린 개인정보 자리표시

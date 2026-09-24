@@ -7344,6 +7344,12 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .admin-shell .queue-head em { font-style: normal; }
 .admin-shell .dashboard-filters { flex-wrap: wrap; }
 .list-controls { display: grid; gap: var(--space-2); }
+/* 안부 단추: 목록 위에 늘 보인다(TK 2026-09-24 — 관리자 화면의 중심). */
+.list-greeting { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 0 4px; border-top: 1px solid var(--line); }
+.list-greeting > span { flex-basis: 100%; color: var(--ink); font-size: 12px; font-weight: 700; }
+.list-greeting button { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
+.list-greeting button b { margin-left: 2px; font-weight: 700; }
+.list-greeting button.active { border-color: var(--ink); background: var(--ink); color: var(--surface); }
 .list-controls .text-input-single { min-height: 40px; font-size: 14px; }
 .list-filter { display: grid; gap: 3px; }
 .list-filter > span { color: var(--muted); font-size: 11px; font-weight: 700; }

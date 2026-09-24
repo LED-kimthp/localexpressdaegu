@@ -1,4 +1,4 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260924-r77";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260924-r78";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";

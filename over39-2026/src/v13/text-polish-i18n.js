@@ -1,4 +1,6 @@
 // 「문장 다듬기」 문구(2026-09-24). 한국어가 원문이고 여덟 언어는 그 뜻만 옮긴다.
+// notice 는 참여자가 다듬기 칸을 처음 본 칸에만, 그 뒤 칸은 noticeShort 한 줄(TK 2026-09-24: 칸마다 다섯
+// 문장이 되풀이되면 두세 번째부터는 읽지 않는다).
 // notice 의 {next} 는 그 화면의 실제 단추 이름으로 바뀐다(「다음」·「이 답변에서 이어가기」·「활용 범위 정하기」).
 // 칸 위 안내(notice)의 목적: 기억을 최대한 많이, 길게, 편하게 받는 것(TK). 오타·앞뒤가 안 맞아도
 // 된다고 먼저 말한다. 한국어는 「~됩니다」로 맺는다(TK).
@@ -17,6 +19,7 @@ const copy = {
     again: "한 번 더 다듬기",
     limit: "다듬기는 다섯 번까지입니다",
     notice: "떠오르는 기억이나 생각을 순서에 얽매이지 말고, 길게 편하게 적어 주시면 됩니다. 오타가 있거나 앞뒤가 매끄럽지 않아도 괜찮습니다. 이어지는 대로 적어 주시면 「{next}」 단추를 누를 때 AI가 문맥에 맞게 다듬어 이 칸에 먼저 보여 드립니다. 확인하고 「이 글로 제출」을 누르면 넘어갑니다. 쓰는 동안에는 글이 바뀌지 않습니다.",
+    noticeShort: "「{next}」 단추를 누르면 AI가 오타와 띄어쓰기를 다듬어 이 칸에 먼저 보여 드립니다.",
     nextFallback: "다음",
     confirmNext: "다듬은 문장이 칸에 들어갔습니다. 몇 글자 고쳐도 됩니다. 이대로 좋으면 「이 글로 제출」을 눌러 주세요.",
     submitNext: "이 글로 제출",
@@ -43,6 +46,7 @@ const copy = {
     again: "Tidy once more",
     limit: "You can tidy up to five times",
     notice: "Write down the memories and thoughts that come to you, as freely and as long as you like, in any order. Typos and sentences that don’t quite fit together are fine. When you tap “{next}”, AI tidies your text to read naturally and shows it in this box first. Check it and tap “Submit this text” to move on. Your text does not change while you are writing.",
+    noticeShort: "When you tap “{next}”, AI tidies typos and spacing and shows the result in this box first.",
     nextFallback: "Next",
     confirmNext: "The tidied version is now in the box. You can change a few words. If it looks right, tap “Submit this text”.",
     submitNext: "Submit this text",
@@ -68,6 +72,7 @@ const copy = {
     again: "もう一度整える",
     limit: "整えるのは5回までです",
     notice: "思い浮かぶ記憶や考えを、順番を気にせず、長く気楽に書いてください。誤字があっても、前後がうまくつながらなくても大丈夫です。「{next}」を押すと、AIが文脈に合わせて整えた文をまずこの欄に表示します。確認して「この文章で提出」を押すと進みます。書いている間は文章は変わりません。",
+    noticeShort: "「{next}」を押すと、AIが誤字や区切りを整えて、まずこの欄に表示します。",
     nextFallback: "次へ",
     confirmNext: "整えた文章が欄に入りました。数文字直しても大丈夫です。よければ「この文章で提出」を押してください。",
     submitNext: "この文章で提出",
@@ -93,6 +98,7 @@ const copy = {
     again: "再整理一次",
     limit: "最多可以整理五次",
     notice: "想到的记忆或想法，不必在意顺序，尽管放松地多写一些。有错字、前后不太通顺也没关系。按「{next}」时，AI会按上下文整理，先在这一栏显示给您。确认后按「用这段文字提交」即可继续。书写期间文字不会改动。",
+    noticeShort: "按「{next}」后，AI会修改错字和标点，先在这一栏显示。",
     nextFallback: "下一步",
     confirmNext: "整理后的句子已放进栏里。可以改几个字。如果没问题，请按「用这段文字提交」。",
     submitNext: "用这段文字提交",
@@ -118,6 +124,7 @@ const copy = {
     again: "再整理一次",
     limit: "最多可以整理五次",
     notice: "想到的記憶或想法，不必在意順序，儘管放鬆地多寫一些。有錯字、前後不太通順也沒關係。按「{next}」時，AI會依上下文整理，先在這一欄顯示給您。確認後按「用這段文字提交」即可繼續。書寫期間文字不會改動。",
+    noticeShort: "按「{next}」後，AI會修改錯字和標點，先在這一欄顯示。",
     nextFallback: "下一步",
     confirmNext: "整理後的句子已放進欄裡。可以改幾個字。如果沒問題，請按「用這段文字提交」。",
     submitNext: "用這段文字提交",
@@ -143,6 +150,7 @@ const copy = {
     again: "Remettre au propre",
     limit: "Jusqu’à cinq fois",
     notice: "Écrivez les souvenirs et les pensées qui vous viennent, librement et aussi longuement que vous le souhaitez, sans vous soucier de l’ordre. Les fautes de frappe ou les phrases qui s’enchaînent mal ne posent pas de problème. Quand vous appuyez sur « {next} », une IA met votre texte au propre selon le contexte et l’affiche d’abord dans ce champ. Vérifiez-le et appuyez sur « Valider ce texte » pour continuer. Votre texte ne change pas pendant que vous écrivez.",
+    noticeShort: "Quand vous appuyez sur « {next} », une IA corrige les fautes et les espaces et affiche d’abord le résultat dans ce champ.",
     nextFallback: "Suivant",
     confirmNext: "La version mise au propre est dans le champ. Vous pouvez changer quelques mots. Si elle vous convient, appuyez sur « Valider ce texte ».",
     submitNext: "Valider ce texte",
@@ -168,6 +176,7 @@ const copy = {
     again: "Ordenar otra vez",
     limit: "Se puede hasta cinco veces",
     notice: "Escriba los recuerdos y pensamientos que le vengan, con calma y tan largo como quiera, sin preocuparse por el orden. No importa si hay erratas o si las frases no encajan del todo. Al pulsar «{next}», una IA ordena el texto según el contexto y lo muestra primero en este recuadro. Revíselo y pulse «Enviar este texto» para seguir. Mientras escribe, el texto no cambia.",
+    noticeShort: "Al pulsar «{next}», una IA corrige las erratas y los espacios y muestra primero el resultado en este recuadro.",
     nextFallback: "Siguiente",
     confirmNext: "La versión ordenada ya está en el recuadro. Puede cambiar unas palabras. Si le parece bien, pulse «Enviar este texto».",
     submitNext: "Enviar este texto",
@@ -193,6 +202,7 @@ const copy = {
     again: "Nog eens opschonen",
     limit: "Opschonen kan tot vijf keer",
     notice: "Schrijf de herinneringen en gedachten op die bij u opkomen, vrij en zo lang als u wilt, in welke volgorde dan ook. Tikfouten of zinnen die niet goed aansluiten zijn geen probleem. Als u op ‘{next}’ drukt, schoont een AI uw tekst op volgens de samenhang en toont die eerst in dit vak. Controleer hem en druk op ‘Deze tekst indienen’ om verder te gaan. Tijdens het schrijven verandert uw tekst niet.",
+    noticeShort: "Als u op ‘{next}’ drukt, verbetert een AI tikfouten en spaties en toont het resultaat eerst in dit vak.",
     nextFallback: "Volgende",
     confirmNext: "De opgeschoonde versie staat nu in het vak. U kunt een paar woorden aanpassen. Als het goed is, drukt u op ‘Deze tekst indienen’.",
     submitNext: "Deze tekst indienen",
@@ -218,6 +228,7 @@ const copy = {
     again: "Kemaskan sekali lagi",
     limit: "Boleh dikemaskan hingga lima kali",
     notice: "Tuliskan kenangan dan fikiran yang terlintas, sepanjang dan sebebas yang anda mahu, tanpa perlu risau tentang urutan. Salah taip atau ayat yang kurang bersambung tidak mengapa. Apabila anda menekan “{next}”, AI akan mengemaskan tulisan anda mengikut konteks dan menunjukkannya dahulu dalam kotak ini. Semak dan tekan “Hantar teks ini” untuk teruskan. Tulisan anda tidak berubah semasa anda menulis.",
+    noticeShort: "Apabila anda menekan “{next}”, AI akan membetulkan salah taip dan jarak, lalu menunjukkannya dahulu dalam kotak ini.",
     nextFallback: "Seterusnya",
     confirmNext: "Ayat yang dikemaskan sudah ada dalam kotak. Anda boleh ubah beberapa perkataan. Jika sudah sesuai, tekan “Hantar teks ini”.",
     submitNext: "Hantar teks ini",
