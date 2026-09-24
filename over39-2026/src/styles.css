@@ -4092,7 +4092,10 @@ h2:focus {
 .response-document-project-note p { margin: 6px 0; font-size: 10.5px; line-height: 1.6; }
 
 .research-contact-section .text-input-single { margin-top: 10px; }
-.research-contact-section .final-check { margin-top: 14px; }
+/* 이 줄에 모양이 없어(label 이 글줄 안에 놓였다) 체크 칸이 글보다 올라가 있었고, 위 칸과의 여백(14px)도
+   먹지 않았다(TK 2026-09-24). 체크 칸과 글을 한 줄 가운데에 맞춘다. */
+.research-contact-section .final-check { display: flex; align-items: center; gap: 10px; margin: 16px 0 6px; cursor: pointer; }
+.research-contact-section .final-check input { flex: 0 0 auto; width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
 .receipt-first-choice .receive-profile { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
 .receipt-first-choice .receive-profile p { max-width: 560px; margin-bottom: 0; }
 .greeting-waiting { text-align: center; }
@@ -7479,7 +7482,7 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .text-field-polish .polish-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .text-field-polish .polish-again { min-height: 44px; padding: 0 18px; font-size: 14px; }
 /* 칸 바로 밑 「문장 다듬기」와 알림 줄(TK 2026-09-24). 누르고 아래 질문으로 내려가도 되게 칸 곁에 둔다. */
-.text-field-polish .polish-run { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
+.text-field-polish .polish-run { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; }
 .text-field-polish .polish-run .polish-again { min-height: 48px; padding: 0 28px; font-size: 15px; }
 .text-field-polish .polish-run .polish-again[aria-busy="true"] { color: var(--muted); }
 /* 기억을 길게 적는 칸이다. 다른 칸보다 조금 크게(TK 2026-09-24: 「입력창이 작아」). */
@@ -7487,3 +7490,14 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 @media (max-width: 760px) { .text-field-polish textarea.text-input { min-height: 220px; } }
 .text-field-polish .polish-optout { display: flex; gap: var(--space-3); align-items: flex-start; margin-top: calc(var(--space-2) * -1); color: var(--ink); font-size: 15px; line-height: 1.6; cursor: pointer; }
 .text-field-polish .polish-lead.is-off { color: var(--muted); }
+
+/* 세 방향(기억·현재·이어가기 위한 조건) 가운데 어디를 묻는지 한 줄(TK 2026-09-24). 도움말보다 한 걸음 조용하게. */
+.interview-copy .axis-note { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.6; word-break: keep-all; }
+
+/* 「지금 기록으로 충분해요」 아래, 벌려서 따로 두는 「더 적을게요」(TK 2026-09-24). */
+.community-more { margin-top: 40px; }
+.community-more > .field-label { margin: 0 0 var(--space-3); color: var(--muted); font-weight: 600; }
+
+/* 필수 묶음(record-confirm) 바로 뒤에 오는 글 칸이 묶음 테두리에 붙어 있었다 —
+   「조금 더 설명하고 싶어요」 아래 「함께 남길 설명」(TK 2026-09-24). 선택지 목록 뒤와 같은 결로 띄운다. */
+.record-confirm + .text-field { margin-top: 28px; }

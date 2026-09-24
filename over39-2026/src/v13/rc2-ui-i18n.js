@@ -858,6 +858,132 @@ export function rc2UiCopy(language = "ko") {
   return copy[language] || copy.en;
 }
 
+// 2026-09-24 TK 둘러보기에서 고친 문장. 옛 한국어 문장에 걸린 번역은 그대로 두고, 새 문장은 여기서 먼저 찾는다.
+// 「살펴볼게요」(들여다본다는 느낌) → 물음꼴·「들려주세요」를 섞어 끝말이 겹치지 않게, 「표시할 수 있어요」 → 「있습니다」,
+// 「현재」 화면의 세 방향 한 줄.
+const revisedPhrases = {
+  "en": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "This feels right — keep the three directions shown here as the position of this record.",
+    "더 떠오르는 이름이나 장면이 있다면": "If another name or scene comes to mind",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "An interest that continued by another route counts too: films, books, comics, webtoons, music, things you watched online. What interest remained when you were not going to venues?",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Practising alone, people you met now and then, something you were learning, someone you cared for all count. What remained when there was no stage and nothing to show?",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Work notes, sketches, research, conversations with peers, even thoughts while resting all count. What remained when there was no support and nothing to show?",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "There does not need to be one clear moment. Gradual or repeated changes can also be recorded.",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "How does that memory or activity touch your life now?",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "How does that experience carry into your interests and choices now?",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Please tell us about the conditions that have shaped how you work now.",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Please tell us about the conditions that have shaped how you attend and what interests you now.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Of the three directions — memory, the present, and the conditions for keeping going — these questions are about the second: the present.",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Please choose what comes closest among daily life, travel, information, the people who were with you, and the atmosphere of a place. If none of these apply, or you are not sure yet, you may say so.",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Please choose what comes closest among your living circumstances, your roles, your relationships, and conditions in the field. If none of these apply, or you are not sure yet, you may say so."
+  },
+  "ja": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "このままでよいです — 今見えている三つの方向を今回の記録の位置として残します。",
+    "더 떠오르는 이름이나 장면이 있다면": "ほかに思い浮かぶ名前や場面があれば",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "映画、本、漫画、ウェブトゥーン、音楽、オンラインで見たもののように、別の道で続いた関心も含まれます。劇場や展示室に行かなかった時期にも残っていた関心は、何だったでしょうか。",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "ひとりの練習、ときどき集まった人たち、学んでいたこと、世話していたことも、すべて含まれます。舞台も発表もなかった時期にも残っていたものは、何だったでしょうか。",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "制作ノート、習作、資料調べ、仲間との会話、休みながら考えたことも、すべて含まれます。支援も発表もなかった時期にも残っていたものは、何だったでしょうか。",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "はっきりした一点がなくても大丈夫です。ゆっくり変わったことや、何度も変わった経験も記録します。",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "その記憶や活動は、今の暮らしとどのようにつながっているでしょうか。",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "その経験は、今の関心や選択にどのようにつながっているでしょうか。",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "今の活動のあり方に、ともに作用した条件を聞かせてください。",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "今の鑑賞や関心のあり方に、ともに作用した条件を聞かせてください。",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "記憶・現在・続けていくための条件という三つの方向のうち、二つ目の「現在」についての質問です。",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "日常、移動、情報、一緒にいた人、空間の雰囲気の中から、近いものを選んでください。当てはまる条件がない場合や、まだ分からない場合も、そのまま選べます。",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "暮らし、役割、関係、現場の条件の中から、近いものを選んでください。当てはまる条件がない場合や、まだ分からない場合も、そのまま選べます。"
+  },
+  "zh-Hans": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "就这样吧 — 把现在看见的三个方向留下作为这次记录的位置。",
+    "더 떠오르는 이름이나 장면이 있다면": "如果还想起别的名字或场景",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "通过电影、书、漫画、网络漫画、音乐、网上看到的内容等其他途径延续的兴趣，也算在内。在不去剧场或展馆的时候，留下来的兴趣是什么呢？",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "独自练习、偶尔聚会的人、正在学的东西、照顾过的人或事，都算在内。在没有舞台也没有发表的时候，留下来的是什么呢？",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "工作笔记、习作、查资料、与同行的交谈、休息时的思考，都算在内。在没有支持也没有发表的时候，留下来的是什么呢？",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "没有明确的一个时点也没关系；逐渐改变或多次变化的经验也可以记下来。",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "那段记忆或活动，与您现在的生活有着怎样的联系呢？",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "那段经历，如何延续到您现在的兴趣与选择中呢？",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "请告诉我们，哪些条件共同影响了您现在的活动方式。",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "请告诉我们，哪些条件共同影响了您现在观赏与关注的方式。",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "在记忆、当下、继续所需的条件这三个方向中，这里是关于第二个方向“当下”的问题。",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "请从日常、移动、资讯、同行的人与空间氛围之中选择较接近的内容。若没有符合的条件，或还不确定，也可以就这样标示。",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "请从生活、角色、关系与现场条件之中选择较接近的内容。若没有符合的条件，或还不确定，也可以就这样标示。"
+  },
+  "zh-Hant": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "就這樣吧 — 把現在看見的三個方向留下作為這次記錄的位置。",
+    "더 떠오르는 이름이나 장면이 있다면": "如果還想起別的名字或場景",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "透過電影、書、漫畫、網路漫畫、音樂、網上看到的內容等其他途徑延續的興趣，也算在內。在不去劇場或展館的時候，留下來的興趣是什麼呢？",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "獨自練習、偶爾聚會的人、正在學的東西、照顧過的人或事，都算在內。在沒有舞台也沒有發表的時候，留下來的是什麼呢？",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "工作筆記、習作、查資料、與同行的交談、休息時的思考，都算在內。在沒有支持也沒有發表的時候，留下來的是什麼呢？",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "沒有明確的一個時點也沒關係；逐漸改變或多次變化的經驗也可以記下來。",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "那段記憶或活動，與您現在的生活有著怎樣的聯繫呢？",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "那段經歷，如何延續到您現在的興趣與選擇中呢？",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "請告訴我們，哪些條件共同影響了您現在的活動方式。",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "請告訴我們，哪些條件共同影響了您現在觀賞與關注的方式。",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "在記憶、當下、繼續所需的條件這三個方向中，這裡是關於第二個方向「當下」的問題。",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "請從日常、移動、資訊、同行的人與空間氛圍之中選擇較接近的內容。若沒有符合的條件，或還不確定，也可以就這樣標示。",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "請從生活、角色、關係與現場條件之中選擇較接近的內容。若沒有符合的條件，或還不確定，也可以就這樣標示。"
+  },
+  "fr": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "Cela me convient — Gardez les trois directions affichées comme position de ce récit.",
+    "더 떠오르는 이름이나 장면이 있다면": "Si un autre nom ou une autre scène vous vient",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "Un intérêt qui a continué par un autre chemin compte aussi : films, livres, bandes dessinées, webtoons, musique, choses vues en ligne. Quel intérêt restait-il quand vous n’alliez pas dans les salles ?",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Une pratique solitaire, des gens vus de temps en temps, un apprentissage, quelqu’un dont vous preniez soin : tout compte. Que restait-il quand il n’y avait ni scène ni présentation ?",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Carnets de travail, esquisses, recherches, conversations entre pairs, même les réflexions pendant une pause : tout compte. Que restait-il quand il n’y avait ni soutien ni présentation ?",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "Ce n’est pas grave s’il n’y a pas eu un moment précis. Nous pouvons aussi garder trace d’un changement lent ou répété.",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "Comment ce souvenir ou cette activité rejoint-il votre vie d’aujourd’hui ?",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "Comment cette expérience se prolonge-t-elle dans vos intérêts et vos choix d’aujourd’hui ?",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Parlez-nous des conditions qui ont pesé sur votre façon de travailler aujourd’hui.",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Parlez-nous des conditions qui ont pesé sur votre façon de fréquenter l’art et sur vos intérêts aujourd’hui.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Des trois directions — la mémoire, le présent et les conditions pour continuer —, ces questions portent sur la deuxième : le présent.",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Choisissez ce qui vous correspond le mieux parmi la vie quotidienne, les déplacements, l’information, les personnes présentes et l’atmosphère des lieux. Si aucune condition ne s’applique ou si vous ne savez pas encore, vous pouvez l’indiquer tel quel.",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Choisissez ce qui vous correspond le mieux parmi votre vie, vos rôles, vos relations et les conditions du terrain. Si aucune condition ne s’applique ou si vous ne savez pas encore, vous pouvez l’indiquer tel quel."
+  },
+  "es": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "Así está bien — Guarde las tres direcciones mostradas como la posición de este registro.",
+    "더 떠오르는 이름이나 장면이 있다면": "Si le viene a la mente otro nombre o escena",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "También cuenta un interés que siguió por otro camino: películas, libros, cómics, webtoons, música, cosas vistas en línea. ¿Qué interés quedaba cuando no iba a las salas?",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Practicar a solas, personas con las que se reunía de vez en cuando, algo que estaba aprendiendo, alguien a quien cuidaba: todo cuenta. ¿Qué quedaba cuando no había escenario ni presentaciones?",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Cuadernos de trabajo, bocetos, investigación, conversaciones con colegas, incluso lo pensado mientras descansaba: todo cuenta. ¿Qué quedaba cuando no había apoyo ni presentaciones?",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "No pasa nada si no hubo un momento claro. También registramos cambios graduales o repetidos.",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "¿Cómo se relaciona ese recuerdo o esa actividad con su vida de ahora?",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "¿Cómo continúa esa experiencia en sus intereses y elecciones de ahora?",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Cuéntenos qué condiciones han influido en su manera actual de trabajar.",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Cuéntenos qué condiciones han influido en su manera actual de asistir y en sus intereses.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "De las tres direcciones —la memoria, el presente y las condiciones para seguir—, estas preguntas tratan de la segunda: el presente.",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Elija lo que más se le acerque entre la vida cotidiana, los desplazamientos, la información, las personas que le acompañaron y el ambiente de los espacios. Si ninguna condición se aplica o aún no lo sabe, puede indicarlo tal cual.",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Elija lo que más se le acerque entre su vida, sus papeles, sus relaciones y las condiciones del terreno. Si ninguna condición se aplica o aún no lo sabe, puede indicarlo tal cual."
+  },
+  "nl": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "Zo is het goed — Bewaar de getoonde drie richtingen als positie van dit verslag.",
+    "더 떠오르는 이름이나 장면이 있다면": "Als er nog een naam of scène bij u opkomt",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "Een interesse die via een andere weg doorging telt ook mee: films, boeken, strips, webtoons, muziek, dingen die u online zag. Welke interesse bleef er over toen u niet naar zalen ging?",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Alleen oefenen, mensen die u af en toe zag, iets wat u aan het leren was, iemand voor wie u zorgde: het telt allemaal mee. Wat bleef er over toen er geen podium en geen presentatie was?",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Werkaantekeningen, schetsen, onderzoek, gesprekken met vakgenoten, zelfs gedachten tijdens een pauze: het telt allemaal mee. Wat bleef er over toen er geen steun en geen presentatie was?",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "Het is niet erg als er geen duidelijk moment was. We nemen ook een geleidelijke of herhaalde verandering mee.",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "Hoe raakt die herinnering of activiteit uw leven van nu?",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "Hoe loopt die ervaring door in uw interesses en keuzes van nu?",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Vertel ons welke omstandigheden meespelen in hoe u nu werkt.",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Vertel ons welke omstandigheden meespelen in hoe u nu bezoekt en waar uw interesse ligt.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Van de drie richtingen — herinnering, het heden en de voorwaarden om door te gaan — gaan deze vragen over de tweede: het heden.",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Kies wat het dichtst bij u ligt: het dagelijks leven, verplaatsingen, informatie, de mensen die erbij waren of de sfeer van de ruimte. Als geen enkele voorwaarde van toepassing is of u het nog niet weet, kunt u dat gewoon aangeven.",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Kies wat het dichtst bij u ligt: uw leven, uw rollen, uw relaties of de omstandigheden in het veld. Als geen enkele voorwaarde van toepassing is of u het nog niet weet, kunt u dat gewoon aangeven."
+  },
+  "ms": {
+    "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "Begini sudah baik — Simpan tiga arah yang dipaparkan sebagai kedudukan rekod ini.",
+    "더 떠오르는 이름이나 장면이 있다면": "Jika ada nama atau adegan lain yang terlintas",
+    "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "Minat yang berterusan melalui jalan lain juga dikira: filem, buku, komik, webtoon, muzik, apa yang anda tonton dalam talian. Minat apakah yang masih tinggal ketika anda tidak pergi ke tempat persembahan atau pameran?",
+    "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Berlatih seorang diri, orang yang sesekali anda temui, sesuatu yang sedang anda pelajari, seseorang yang anda jaga, semuanya dikira. Apakah yang masih tinggal ketika tiada pentas dan tiada persembahan?",
+    "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Nota kerja, lakaran, kajian, perbualan dengan rakan sekerja, malah fikiran semasa berehat, semuanya dikira. Apakah yang masih tinggal ketika tiada sokongan dan tiada persembahan?",
+    "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.": "Tidak mengapa jika tiada satu masa yang jelas. Kami juga merekod perubahan yang perlahan atau berulang.",
+    "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?": "Bagaimanakah ingatan atau kegiatan itu berkait dengan kehidupan anda sekarang?",
+    "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "Bagaimanakah pengalaman itu berterusan dalam minat dan pilihan anda sekarang?",
+    "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Ceritakan kepada kami syarat yang turut mempengaruhi cara kegiatan anda sekarang.",
+    "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Ceritakan kepada kami syarat yang turut mempengaruhi cara anda menonton dan minat anda sekarang.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Daripada tiga arah — ingatan, masa kini, dan syarat untuk terus berjalan — soalan-soalan ini tentang arah kedua: masa kini.",
+    "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Pilih yang paling hampir antara kehidupan harian, pergerakan, maklumat, orang yang bersama anda dan suasana ruang. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya.",
+    "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Pilih yang paling hampir antara kehidupan, peranan, hubungan dan keadaan di lapangan. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya."
+  }
+};
+
 export function rc2UiPhrase(language = "ko", source = "") {
-  return phrases[language]?.[source] || null;
+  return revisedPhrases[language]?.[source] || phrases[language]?.[source] || null;
 }

@@ -24,9 +24,11 @@ export const POLISH_MAX_ATTEMPTS = 5;
 export const POLISH_TIMEOUT_MS = 20000;
 export const POLISH_STATE_KEY = "text_polish";
 
-// 다듬기를 붙이지 않는 칸. 응답 정리의 고친 문장은 이미 참여자가 AI 초안을 고치는 자리이고,
-// 기관 의견은 연구 응답이 아니며, C01 은 이름을 적는 칸이다.
-export const POLISH_EXCLUDED_IDS = Object.freeze(new Set(["participant_revision", "feedback_must_fix", "feedback_other", "C01"]));
+// 다듬기를 붙이지 않는 칸. 기관 의견은 연구 응답이 아니며, C01 은 이름을 적는 칸이다.
+// 응답 정리의 「고친 문장」(participant_revision)은 2026-09-24 부터 붙인다(TK: 「일부 문장을 고치는 것도
+// 문장 다듬기 넣어 줘」). 다듬어도 확인은 참여자가 칸에 보이는 글로 하고, 다듬었다는 사실은 확인 기록
+// (participant_approved_provenance.polish)에 남는다.
+export const POLISH_EXCLUDED_IDS = Object.freeze(new Set(["feedback_must_fix", "feedback_other", "C01"]));
 
 export function polishLetterCount(value) {
   return (String(value || "").match(/[\p{L}\p{N}]/gu) || []).length;
@@ -40,6 +42,14 @@ export function canPolishText(value) {
 export function polishEntry(answers, field) {
   const entry = answers?.[POLISH_STATE_KEY]?.[field];
   return entry && typeof entry === "object" ? entry : null;
+}
+
+// 답 칸과 맞는 다듬기 기록만 쓴다. 답이 다른 길로 바뀌었으면(회수함으로 옮김, 응답 정리의 초안 채우기,
+// 경로 바꾸기) 남은 기록은 옛 글의 것이다 — 그것을 칸에 되살리면 참여자가 지운 글이 돌아온다.
+export function livePolishEntry(answers, field) {
+  const entry = polishEntry(answers, field);
+  if (!entry) return null;
+  return answerFromPolish(entry) === String(answers?.[field] ?? "") ? entry : null;
 }
 
 export function polishAttemptsLeft(entry) {
@@ -208,9 +218,9 @@ const MIC_ICON = '<svg class="polish-mic" viewBox="0 0 24 24" width="1.1em" heig
 // lead: 처음 본 다듬기 칸인가. 마이크 안내와 예시는 그 칸에만 둔다 — 뒤 칸은 단추만(TK 2026-09-24).
 export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, text = "", lead = true, esc }) {
   const inBox = entry?.use === "polished" && entry?.polished;
-  const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
+  const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : "";
   // 단추와 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
-  const statusLine = `<p class="polish-status${busy ? " is-busy" : ["polished", "confirm"].includes(status) ? " is-done" : ""}" role="status">${esc(statusText)}</p>`;
+  const statusLine = `<p class="polish-status${busy ? " is-busy" : status === "confirm" ? " is-done" : ""}" role="status">${esc(statusText)}</p>`;
   const exhausted = polishAttemptsLeft(entry) <= 0;
   const runnable = !busy && canPolishAgain(entry, text);
   const run = off ? "" : `<div class="polish-run"><button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${runnable ? "" : " disabled"}${busy ? ' aria-busy="true"' : ""}>${esc(exhausted ? copy.limit : inBox ? copy.repolish : copy.button)}</button>${statusLine}</div>`;

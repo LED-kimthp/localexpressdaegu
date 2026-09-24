@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r85";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r85";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r85";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r85";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r85";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r85";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r85";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r85";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r85";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r85";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r85";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r85";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r85";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r85";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r85";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r85";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r85";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r85";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r85";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r85";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r85";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r85";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r85";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r85";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r85";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r85";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r86";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r86";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r86";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r86";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r86";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r86";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r86";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r86";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r86";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r86";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r86";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r86";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r86";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r86";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r86";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r86";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r86";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r86";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r86";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r86";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r86";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r86";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r86";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r86";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r86";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r86";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "aa44c2cacd96-dirty 2026-09-24T06:09:53.837Z";
+const buildStamp = "43829ccb1578-dirty 2026-09-24T06:36:15.924Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -938,7 +938,7 @@ function renderText(id, { placeholder = "짧게 적어도 괜찮습니다.", mul
   const polishable = isPolishable(id, multiline);
   // 참여자가 처음 본 다듬기 칸. 그 칸에만 긴 안내를 보인다. 이어쓰기 초안에도 남는다(saveDraft).
   if (polishable && !state.polishLeadField) state.polishLeadField = answerField;
-  const entry = polishable ? polishEntry(state.answers, answerField) : null;
+  const entry = polishable ? livePolishEntry(state.answers, answerField) : null;
   // 칸에 보이는 글이 곧 남는 글이다. 다듬었으면 다듬은 문장이, 되돌렸으면 쓴 글이 들어 있다.
   const currentValue = entry ? answerFromPolish(entry) : value === undefined ? answerFor(id) || "" : value;
   const fieldAttr = field ? ` data-input-field="${esc(field)}"` : "";
@@ -1025,6 +1025,9 @@ function confirmParticipantSynthesis() {
     final_text: finalText,
     confirmed_at: confirmedAt,
   };
+  // 「고친 문장」을 문장 다듬기로 다듬었으면 그 사실을 확인 기록에 남긴다. 확인한 글은 칸에 보인 글 그대로다.
+  const revisionPolish = ["EDIT", "REWRITE"].includes(provenance.action) ? livePolishEntry(state.answers, "participant_revision") : null;
+  if (revisionPolish) provenance.polish = { used: revisionPolish.use === "polished", attempts: Number(revisionPolish.attempts || 0), written: String(revisionPolish.written || "") };
   state.answers.participant_approved_text = finalText;
   state.answers.participant_approved_provenance = provenance;
   state.answers.synthesis_confirmation = provenance;
@@ -1113,14 +1116,15 @@ function purposeForScreen(id = activeScreens()[state.step]) {
   return isRc2 ? rc2QuestionPurposes[id] || "" : "";
 }
 
-function screenHeading(title, help = "", purpose = purposeForScreen()) {
+// note: 도움말 아래 한 줄(세 방향 가운데 어디인지 같은 것).
+function screenHeading(title, help = "", purpose = purposeForScreen(), note = "") {
   const id = activeScreens()[state.step];
   const topic = isRc2 ? (ui().topics[id] || (Object.hasOwn(ALL_ADAPTIVE_SCREEN_MAP, id) ? ui().deepQuestionStage : "") || (state.language === "ko" ? (rc2QuestionTopics[id] || "") : "")) : "";
   const localizedTitle = t(title);
   const heading = topic && !String(title).includes("—") ? `${t(topic)} — ${localizedTitle}` : localizedTitle;
   const kicker = isRc2 ? "" : `<div class="interview-kicker">PUBLIC MEMORY INTERVIEW · INSTITUTION RC1</div>`;
   const purposeBlock = !isRc2 && purpose ? `<div class="question-purpose"><span>이 질문이 살피는 내용</span><p>${esc(t(purpose))}</p></div>` : "";
-  return `<div class="interview-head"><div class="interview-copy">${kicker}<h2 id="question-title" tabindex="-1">${esc(heading)}</h2>${help ? `<p>${esc(t(help))}</p>` : ""}${purposeBlock}</div></div><div class="answer-panel">`;
+  return `<div class="interview-head"><div class="interview-copy">${kicker}<h2 id="question-title" tabindex="-1">${esc(heading)}</h2>${help ? `<p>${esc(t(help))}</p>` : ""}${note ? `<p class="axis-note">${esc(t(note))}</p>` : ""}${purposeBlock}</div></div><div class="answer-panel">`;
 }
 
 function renderConsent() {
@@ -1190,7 +1194,8 @@ function renderPracticePublicState() {
   const help = audience
     ? ui().practiceHelp.AUDIENCE
     : ui().practiceHelp[kind] || ui().practiceHelp.PROFESSIONAL;
-  return `${screenHeading(copy.activityHeading, help)}
+  // 세 방향 가운데 어디를 묻는지 한 줄(TK 2026-09-24: 「좌표에 대한 문구가 있어야 할 것 같아」).
+  return `${screenHeading(copy.activityHeading, help, undefined, "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.")}
     <label class="field-label">${esc(copy.p14)}</label>
     ${renderChoices("P14", audience ? creative.options_audience : creative.options_professional)}
     <label class="field-label">${esc(copy.p15)}</label>
@@ -1201,10 +1206,10 @@ function renderStateBackground() {
   const p16 = question("P16");
   const audience = isAudienceContext();
   const copy = contextAwareCopy(state.answers, state.language);
-  const title = audience ? "지금의 관람과 관심 방식에 함께 작용한 조건을 살펴볼게요." : "현재의 활동 방식에 함께 작용한 조건을 살펴볼게요.";
+  const title = audience ? "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요." : "지금의 활동 방식에 함께 작용한 조건을 들려주세요.";
   const help = audience
-    ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요."
-    : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있어요.";
+    ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다."
+    : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.";
   return `${screenHeading(title, help)}
     <label class="field-label">${esc(copy.p16)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5, exclusive: ["NONE", "UNSURE"] })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}`;
 }
@@ -1344,8 +1349,8 @@ function renderMemoryToPresent() {
   const audience = isAudienceContext();
   const title = audience ? "당신에게 남아 있는 장면과 생각을 들었어요." : "당신에게 남아 있는 장면을 들었어요.";
   const help = audience
-    ? "이제 그 경험이 현재의 관심과 선택에 어떻게 이어져 있는지 살펴볼게요."
-    : "이제 그 기억이나 활동이 지금의 삶과 어떤 관계에 있는지 살펴볼게요.";
+    ? "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?"
+    : "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?";
   const rawMemory = [state.answers.memory_clue_text, state.answers.memory_meaning_text, state.answers.memory_name_text]
     .map((value) => String(value || "").trim()).find(Boolean);
   const excerpt = rawMemory ? `${rawMemory.slice(0, 132)}${rawMemory.length > 132 ? "…" : ""}` : "";
@@ -1371,7 +1376,7 @@ function renderTransition() {
   const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.transition_state;
   const showText = stateValue && !["SKIP", "UNSURE"].includes(stateValue);
-  return `${screenHeading(title, "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록합니다.")}
+  return `${screenHeading(title, "분명한 한 시점이 없어도 괜찮아요. 서서히 달라졌거나 여러 번 바뀐 경험도 함께 기록하려 합니다.")}
     ${renderChoices("P11", p11.options)}
     ${showText ? `<div class="transition-detail-field">${renderText("P12", { field: "transition_text", value: state.answers.transition_text || "", placeholder: ui().transitionPlaceholder, label: transitionDetailLabel(stateValue, copy, p12) })}</div>` : ""}`;
 }
@@ -1391,10 +1396,10 @@ function renderContinuity() {
   // 2026-09-20: 첫 검토(총괄기획)가 「보이지 않는 지속? 어디서? 어떻게? 왜?」라고 되물었다.
   // 물음은 「그때도 계속하던 일」로 바꾸고, 도움말이 보기(어떻게)와 묻는 이유(왜)를 든다.
   const help = audience
-    ? "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심이 무엇인지 찾으려고 묻습니다."
+    ? "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?"
     : kind === "EVERYDAY"
-      ? "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것이 무엇인지 찾으려고 묻습니다."
-      : "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것이 무엇인지 찾으려고 묻습니다.";
+      ? "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?"
+      : "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?";
   return `${screenHeading(copy.p13, help)}
     ${renderChoices("P13", p13.options)}
     ${shouldShowP13Text(stateValue) ? renderText("P13_TEXT", { field: "invisible_continuity_text", value: state.answers.invisible_continuity_text || "", placeholder, label: audience ? p13Text.text_audience : p13Text.text }) : ""}`;
@@ -1610,8 +1615,16 @@ function renderCommunity() {
   // 여는 것은 범위를 넘는다. renderText는 store[0](community_note_text)만 쓴다.
   return `${screenHeading("다른 이름이나 장면을 하나 더 남길까요?", "이 단계는 선택 사항입니다. 지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.")}
     ${state.summaryGenerating ? processingSignal("응답을 정리하고 있어요") : ""}
-    ${renderChoices("C00", c00.options)}
+    ${renderCommunityOptIn(c00.options)}
     ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(c02.text)}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
+}
+
+// 「지금 기록으로 충분해요」를 먼저, 사이를 벌려 「더 적을게요」를 아래에 따로 둔다. 나란히 두면 한 번 더
+// 하라는 권유처럼 읽힌다 — 성실하게 남겼으면 한 번이면 족하다(TK 2026-09-24). 값(YES·NO)과 저장은 그대로다.
+function renderCommunityOptIn(options) {
+  const enough = options.filter((option) => optionValue(option) === "NO");
+  const more = options.filter((option) => optionValue(option) !== "NO");
+  return `${renderChoices("C00", enough)}<div class="community-more"><p class="field-label">${esc(t("더 떠오르는 이름이나 장면이 있다면"))}</p>${renderChoices("C00", more)}</div>`;
 }
 
 function renderFixedCheckpoint() {
@@ -2190,7 +2203,7 @@ function renderSubmit() {
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
     <section class="axis-review"><div class="axis-review-intro"><span>${esc(greetingFirst().coordinateLabel)}</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>
-    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${requiredBlock("coordinate-feedback-required", renderChoices("coordinate_feedback", [["CLOSE", "이 세 방향이 가까워요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]]))}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
+    <section class="coordinate-feedback"><h3>${esc(t("세 방향이 만나는 자리"))}</h3><p>${esc(t("이 표시는 사람의 고정된 유형이 아니라, 이번 응답이 현재 놓인 위치와 기록에서 읽힌 방향을 함께 살펴보는 구조입니다. 시간이 지나거나 상황이 달라지면 이 위치도 달라질 수 있어요."))}</p>${renderCoordinateModel()}${requiredBlock("coordinate-feedback-required", renderChoices("coordinate_feedback", [["CLOSE", "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요."], ["MIXED", "두 흐름이 함께 보여요 — 한 방향에서 두 흐름이 함께 느껴지면 둘 다 표시할 수 있어요."], ["DIFFERENT", "조금 더 설명하고 싶어요 — 세 방향을 고른 뒤, 남기고 싶은 말을 자유롭게 덧붙여 주세요."]]))}${["MIXED", "DIFFERENT"].includes(state.answers.coordinate_feedback) ? renderText("coordinate_feedback_text", { field: "coordinate_feedback_text", value: state.answers.coordinate_feedback_text || "", label: t("함께 남길 설명"), placeholder: t("두 방향이 함께 느껴지는 이유나 덧붙일 내용을 적어주세요.") }) : ""}</section>
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
 
@@ -4639,7 +4652,7 @@ function polishStoreFor(field) {
     };
   }
   return {
-    entry: () => polishEntry(state.answers, field),
+    entry: () => livePolishEntry(state.answers, field),
     text: () => String(state.answers[field] || ""),
     set: (entry) => setPolishEntry(field, entry),
     after: (id) => afterTextAnswerChanged(id, field),
@@ -4815,7 +4828,7 @@ document.addEventListener("input", (event) => {
   }
   const item = question(id);
   const field = input.dataset.inputField || (item ? storedField(item) : id === "M06_YEAR" ? "memory_year_optional" : id === "P05_YEAR" ? "activity_start_year" : id === "M07" ? "memory_locations" : "activity_locations");
-  const polished = input.dataset.polishRole === "written" ? polishEntry(state.answers, field) : null;
+  const polished = input.dataset.polishRole === "written" ? livePolishEntry(state.answers, field) : null;
   if (polished) {
     // 다듬은 문장이 칸에 있으면 그 문장을, 되돌렸으면 쓴 글을 고친다. 쓴 글의 기록은 따로 남는다.
     const wasEdited = polishedBoxEdited(polished);
