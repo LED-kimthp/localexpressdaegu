@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r78";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r78";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r78";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r79";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r79";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r79";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -353,6 +353,35 @@ const latestWith = (snapshots, pick) => array(snapshots)
 
 const baseOperation = (name) => text(name).split(":")[0];
 
+// 안부 칸의 문장 다듬기(설문 끝 안부 쓰기). 기록은 안부 행이 아니라 connection_update 스냅샷의
+// payload.message_exchange.message_polish 에 남는다 — 모양은 text_polish[field] 와 같다. greeting_id 로 잇고,
+// 없으면 고른 글로 잇는다. 편지함에서 이어 쓴 안부에는 다듬기가 없다.
+function greetingPolishFrom(snapshots = []) {
+  return array(snapshots)
+    .map((row) => row?.payload?.message_exchange)
+    .filter((exchange) => exchange && typeof exchange.message_polish === "object" && exchange.message_polish)
+    .map((exchange) => {
+      const entry = exchange.message_polish;
+      return {
+        greetingId: text(exchange.greeting_id),
+        chosen: text(polishChosenText(entry)),
+        written: text(entry.written),
+        usedPolished: entry.use === "polished" && Boolean(text(entry.polished)),
+        editedAfter: entry.use === "polished" && entry.edited !== undefined && entry.edited !== null && text(entry.edited) !== text(entry.polished),
+        reverted: entry.use !== "polished" && Boolean(text(entry.polished)),
+      };
+    });
+}
+
+// 번호로 먼저 잇고, 안 맞으면 고른 글로 잇는다. 설문 쪽은 안부 번호가 아직 없을 때 「응답ID-greeting」이라는
+// 임시 이름을 넣어서(app.js), 그 경우 번호로는 이어지지 않는다.
+function polishForGreeting(sheet, greeting) {
+  const rows = array(sheet.greetingPolish);
+  return rows.find((row) => row.greetingId && row.greetingId === text(greeting.id))
+    || rows.find((row) => row.chosen && row.chosen === text(greeting.original_text))
+    || null;
+}
+
 /**
  * 다섯 칸에 들어갈 자료. 줄이지 않는다 — 원문은 원문대로 넘긴다.
  * @param {{session?: object, snapshots?: Array<object>, revision?: object, consentEvents?: Array<object>, sent?: Array<object>, received?: Array<object>, aiRuns?: Array<object>}} input
@@ -392,6 +421,7 @@ export function buildPersonSheet({ session = {}, snapshots = [], revision = null
     documentFromDraft: Boolean(responseDocument) && !documentRow?.payload?.response_document,
     confirmedAt: text(best?.payload?.document_confirmation?.confirmed_at) || text(responseDocument?.confirmed_at),
     sent: array(sent).slice().sort(byTime),
+    greetingPolish: greetingPolishFrom(snapshots),
     received: array(received).slice().sort(byTime),
   };
 }
@@ -501,7 +531,12 @@ function renderGreetingsWritten(sheet) {
     const choice = SENDER_VISIBILITY_CHOICE[text(greeting.sender_visibility)];
     return `<div class="person-greeting">
       <p class="person-greeting-head"><strong>${esc(where)}</strong><span>${esc(when(greeting.created_at))}</span></p>
-      ${quote(greeting.original_text, `원문 · ${text(greeting.original_language) || "언어 미기록"}`)}
+      ${(() => {
+        const polish = polishForGreeting(sheet, greeting);
+        const language = text(greeting.original_language) || "언어 미기록";
+        if (!polish?.usedPolished) return `${quote(greeting.original_text, `원문 · ${language}`)}${polish?.reverted ? `<p class="person-polish">AI가 다듬은 문장을 받았지만 처음 쓴 글을 골랐어요.</p>` : ""}`;
+        return `${quote(greeting.original_text, `남긴 글 · ${language}`)}<p class="person-polish is-polished">AI가 다듬은 문장 · 참여자가 고름${polish.editedAfter ? " · 그 뒤 직접 고침" : ""}</p>${polish.written ? quote(polish.written, "처음 쓴 글") : ""}`;
+      })()}
       ${text(greeting.translated_text) ? quote(greeting.translated_text, `번역 · ${text(greeting.translated_language)}`) : ""}
       <dl class="person-facts"><div><dt>고른 표기</dt><dd>${esc(choice ? `「${choice}」` : "기록 없음(익명으로 다룸)")}</dd></div><div><dt>보이는 모습</dt><dd>${esc(senderFace(greeting))}</dd></div><div><dt>지금</dt><dd>${esc(GREETING_STATUS_LABEL[text(greeting.status)] || text(greeting.status))}</dd></div></dl>
     </div>`;
