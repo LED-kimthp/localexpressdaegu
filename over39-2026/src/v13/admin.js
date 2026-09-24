@@ -1,6 +1,6 @@
-import { VERDICT_COPY, aiHealthSummary } from "./ai-health.js?v=v7-20260923-r71";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260923-r71";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260923-r71";
+import { OPERATIONS, OPERATION_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r72";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r72";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r72";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -312,7 +312,7 @@ function renderDetail() {
     ${detailSection("오류·운영 로그", d.over39_operational_events, (row) => `<article><strong>${esc(row.event_type)} · ${esc(row.severity)}</strong><p>${esc(JSON.stringify(row.details))}</p></article>`)}`;
 }
 
-const OPERATION_LABEL = { anchor_followup: "후속 질문", summarize_adaptive: "참여 기록 정리" };
+// 이름표는 ai-health.js 한 곳에 있다(마지막 제안까지 셋).
 const GRADE_LABEL = { ok: "정상", warn: "확인 필요", stop: "보류", unknown: "자료 부족" };
 
 function pct(value) { return `${(value * 100).toFixed(1)}%`; }
@@ -334,12 +334,43 @@ function aiHealthRow(name, stats) {
 function renderAiHealth() {
   if (state.aiRunsError) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>${esc(state.aiRunsError)}</p></section>`;
   if (!state.aiRuns) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>불러오는 중입니다.</p></section>`;
-  const summary = aiHealthSummary(state.aiRuns);
+  // 기본은 **연구 표본**이다. 테스트는 우리가 확인하며 만든 것이라 참여자의 경험이 아닌데,
+  // 예전에는 전부 섞어 세어서 화면의 실패율이 오늘 하루의 시험 기록이었다(TK 2026-09-23).
+  const scope = state.aiHealthScope || "research";
+  const sampleTypes = sampleTypeIndex(state.sessions);
+  const summary = aiHealthSummary(state.aiRuns, { sampleTypes, sampleType: scope === "all" ? "" : scope });
   const errors = summary.errorCodes.slice(0, 6);
+  const scopeTabs = [["research", "연구"], ["institution_review", "기관"], ["test", "테스트"], ["all", "전체"]]
+    .map(([value, label]) => `<button type="button" data-ai-health-scope="${esc(value)}" class="${scope === value ? "active" : ""}">${esc(label)}</button>`).join("");
+
+  // 사람 수로 먼저 말한다. 「398회 중 147회」보다 「13명 중 3명」이 판단하기 쉽다.
+  const stages = OPERATIONS.map((name) => {
+    const stats = summary.byOperation[name];
+    const expected = stats.peopleExpected || 0;
+    const missed = stats.peopleMissed || 0;
+    if (!expected) return `<div class="ai-stage ai-stage-unknown"><span>${esc(OPERATION_LABEL[name])}</span><strong>아직 없음</strong><small>이 표본에서 부른 적이 없어요.</small></div>`;
+    const grade = missed === 0 ? "ok" : missed / expected >= 0.2 ? "stop" : "warn";
+    const detail = missed === 0
+      ? `${expected}명 모두 받았어요.`
+      : `${expected}명 가운데 ${missed}명이 못 받았어요.`;
+    return `<div class="ai-stage ai-health-grade-${esc(grade)}"><span>${esc(OPERATION_LABEL[name])}</span><strong>${missed === 0 ? "모두 받음" : `${missed}명 못 받음`}</strong><small>${esc(detail)}</small></div>`;
+  }).join("");
+
+  const totalMissed = OPERATIONS.reduce((sum, name) => sum + (summary.byOperation[name].peopleMissed || 0), 0);
+  const scopeName = { research: "연구", institution_review: "기관", test: "테스트", all: "전체" }[scope];
+  const headline = summary.participants === 0
+    ? "이 표본에는 아직 AI를 부른 기록이 없어요."
+    : totalMissed === 0
+      ? `${scopeName} 표본 ${summary.participants}명 모두, 받아야 할 것을 받았어요.`
+      : `${scopeName} 표본 ${summary.participants}명 가운데 ${totalMissed}명이 받아야 할 것을 못 받았어요.`;
+
   return `<section class="detail-section ai-health">
     <h2>AI 운영 지표</h2>
-    <p class="ai-health-verdict ai-health-grade-${esc(summary.verdict)}">${esc(VERDICT_COPY[summary.verdict])}</p>
-    <p class="ai-health-note">참여자가 받아야 할 질문이나 정리를 받지 못한 경우를 셉니다. 실패해도 참여자 화면에는 오류가 보이지 않으므로, 배포를 넓히기 전에 이 숫자로 판단해 주세요.</p>
+    <div class="ai-health-scope">${scopeTabs}</div>
+    <p class="ai-health-verdict ai-health-grade-${esc(totalMissed === 0 && summary.participants ? "ok" : summary.participants ? (totalMissed / Math.max(1, summary.participants) >= 0.2 ? "stop" : "warn") : "unknown")}">${esc(headline)}</p>
+    <p class="ai-health-note">참여자 화면에는 실패가 보이지 않아요. 질문이 그냥 안 나오거나, 정리를 직접 쓰게 됩니다. 그래서 여기 숫자로만 알 수 있어요.</p>
+    <div class="ai-stages">${stages}</div>
+    <details class="ai-health-detail"><summary>자세히 보기 (호출 단위·속도·오류 코드)</summary>
     <dl class="ai-health-totals">
       <div><dt>참여자</dt><dd>${summary.participants}명</dd></div>
       <div><dt>AI 호출</dt><dd>${summary.runs}회</dd></div>
@@ -349,10 +380,11 @@ function renderAiHealth() {
     </dl>
     <table class="ai-health-table">
       <thead><tr><th scope="col">단계</th><th scope="col">호출</th><th scope="col">정상</th><th scope="col">못 받음</th><th scope="col">비율</th><th scope="col">중간값</th><th scope="col">상위 5%</th><th scope="col">판정</th></tr></thead>
-      <tbody>${Object.entries(summary.byOperation).map(([name, stats]) => aiHealthRow(name, stats)).join("")}</tbody>
+      <tbody>${OPERATIONS.map((name) => aiHealthRow(name, summary.byOperation[name])).join("")}</tbody>
     </table>
     ${errors.length ? `<h3>오류 코드</h3><ul class="ai-health-errors">${errors.map((item) => `<li><code>${esc(item.code)}</code> ${item.count}회</li>`).join("")}</ul>` : ""}
-    <p class="ai-health-note">최근 2,000건 기준입니다.</p>
+    <p class="ai-health-note">최근 2,000건 기준입니다. 오류 코드는 표본을 가리지 않고 셉니다.</p>
+    </details>
   </section>`;
 }
 
@@ -626,6 +658,7 @@ async function loadRecordBundle(sampleTypes) {
 document.addEventListener("click", async (event) => {
   const button = event.target.closest("button");
   if (!button) return;
+  if (button.dataset.aiHealthScope) { state.aiHealthScope = button.dataset.aiHealthScope; render(); return; }
   if (button.dataset.adminAction === "ai-health") return loadAiRuns();
   if (button.dataset.adminAction === "research-insights") return loadResearchInsights();
   if (button.dataset.adminAction === "care") return loadCare();

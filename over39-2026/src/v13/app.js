@@ -1,27 +1,27 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260923-r71";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260923-r71";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260923-r71";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260923-r71";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260923-r71";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260923-r71";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260923-r71";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260923-r71";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260923-r71";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260923-r71";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260923-r71";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260923-r71";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260923-r71";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260923-r71";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260923-r71";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260923-r71";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260923-r71";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260923-r71";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260923-r71";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260923-r71";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260923-r71";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260923-r71";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260923-r71";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260923-r71";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r72";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r72";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r72";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r72";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r72";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r72";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r72";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r72";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r72";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r72";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r72";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r72";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r72";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r72";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r72";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r72";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r72";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r72";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r72";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r72";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r72";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r72";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r72";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r72";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -34,7 +34,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c7c113eb4ffe-dirty 2026-09-23T11:35:30.621Z";
+const buildStamp = "c7c113eb4ffe-dirty 2026-09-24T00:46:54.447Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2158,6 +2158,15 @@ function renderSubmit() {
     <p class="submit-scope-note">${esc(storageNotice)}</p>`;
 }
 
+// 01·02 를 동의로 채워 둔다. 둘 다 비어 있을 때만 — 이미 고른 사람의 선택은 건드리지 않는다.
+// 단추가 켜질지 정하는 `canContinue` 보다 먼저 불려야 해서 화면을 그리기 전에 부른다.
+function ensureUseScopeDefaults() {
+  if (state.answers.policy_research_use || state.answers.policy_quote_use) return;
+  state.answers.policy_research_use = "ANON_ANALYSIS";
+  state.answers.policy_quote_use = "ANON_EXCERPT";
+  state.answers.use_scope_mode = "default_accept";
+}
+
 function renderUseScope() {
   const researchUse = state.answers.policy_research_use || "";
   const quoteUse = state.answers.policy_quote_use || "";
@@ -2190,11 +2199,21 @@ function renderUseScope() {
   // 「연구 범위에서 마무리」로 간다. 개인정보를 덜 쓰는 쪽이 기본값이어야 한다.
   //
   // 흔한 경우의 누름 수: 여섯 번 → 한 번. 하나씩 정하고 싶은 사람은 접힌 곳을 편다.
-  const bothChosen = researchUse === "ANON_ANALYSIS" && quoteUse === "ANON_EXCERPT";
-  const eachTouched = Boolean((researchUse || quoteUse) && !bothChosen);
-  return `${screenHeading(consent.title, local.useScopeHelp)}
-    <button type="button" class="use-scope-both ${bothChosen ? "selected" : ""}" data-use-both="1" aria-pressed="${bothChosen}"><strong>${esc(consent.useScopeBoth)}</strong><small>${esc(consent.researchYes)}</small><small>${esc(consent.quoteYes)}</small></button>
-    <details class="use-scope-detail"${eachTouched ? " open" : ""}><summary>${esc(consent.useScopeEach)}</summary>
+  //
+  // 2026-09-24 TK: 「안 할 경우에만 누르고 그냥 지나가게 해. 마무리 자리라서 쉽게 가야 해.」
+  // 한 번 누르던 것도 없앴다. 01·02 는 동의가 기본값이고(`ensureUseScopeDefaults`), 화면은 그
+  // 상태를 문장으로 보여 준다. 바꾸고 싶은 사람만 접힌 곳을 편다. 저장 단추를 누르는 것이
+  // 보여 준 내용에 대한 동의가 된다. 기본값으로 지나갔는지 직접 골랐는지는 기록에
+  // `use_scope_mode` 로 따로 남긴다 — 나중에 「그 사람이 직접 골랐나」를 물으면 답할 수 있게.
+  // 03 은 그대로 꺼진 것이 기본이다. 켜면 이메일을 받아야 해서, 켜 두면 오히려 한 칸이 늘어난다.
+  const changed = state.answers.use_scope_mode === "participant_chosen";
+  const defaultLines = [
+    researchUse === "ANON_ANALYSIS" ? consent.researchYes : consent.researchNo,
+    quoteUse === "ANON_EXCERPT" ? consent.quoteYes : consent.quoteNo,
+  ];
+  return `${screenHeading(consent.useScopeDefaultTitle || consent.title, local.useScopeHelp)}
+    <section class="use-scope-default"><p>${esc(consent.useScopeDefaultLead || "")}</p><ul>${defaultLines.map((line) => `<li>${esc(line)}</li>`).join("")}</ul></section>
+    <details class="use-scope-detail"${changed ? " open" : ""}><summary>${esc(consent.useScopeChange || consent.useScopeEach)}</summary>
     <section class="use-scope-section"><span>01 · ${esc(t("정책연구"))}</span><h3>${esc(consent.researchQ)}</h3><div class="use-scope-grid">${choice("policy_research_use", "ANON_ANALYSIS", consent.researchYes, "")}${choice("policy_research_use", "INTERNAL_ONLY", consent.researchNo, "")}</div></section>
     <section class="use-scope-section"><span>02 · ${esc(t("문장 인용"))}</span><h3>${esc(consent.quoteQ)}</h3><div class="use-scope-grid">${choice("policy_quote_use", "ANON_EXCERPT", consent.quoteYes, "")}${choice("policy_quote_use", "NO_QUOTE", consent.quoteNo, "")}</div></section>
     </details>
@@ -3327,6 +3346,7 @@ function renderSurvey() {
   const id = screens[state.step];
   const meta = progressMeta(id);
   const adaptiveScreen = Boolean(adaptiveScreenCheckpoint[id]);
+  if (id === "USE_SCOPE") ensureUseScopeDefaults();
   const nextLabel = isRc2 && id === "CONSENT"
     ? greetingFirst().consentContinue
     : id === "USE_SCOPE"
@@ -3342,14 +3362,16 @@ function renderSurvey() {
   // 2026-09-21 파일럿 2: 정리문을 기다리는 88초 동안 화면에서 바뀌는 것이 「다음」 단추 글자뿐이고
   // 「이전」까지 꺼져 있어 「고장났나」 싶은 시간이 된다. 이미 다른 화면들이 쓰는 조용한 진행
   // 표시를 여기에도 둔다 — 새 문구를 만들지 않고, 무슨 일이 일어나는지 보이게만 한다.
-  const waitingSignal = state.summaryGenerating || state.translationGenerating || state.adaptiveGenerating || state.depthGenerating
+  // 이어지는 질문과 심화 질문은 본문이 이미 「다음 질문을 준비하고 있어요」를 보여 준다. 여기서도
+  // 「답변을 읽고 있어요」를 내면 두 줄이 겹쳐 보였다(TK 2026-09-24). 본문에 자리가 없는 정리·번역만 여기서 알린다.
+  const waitingSignal = state.summaryGenerating || state.translationGenerating
     ? processingSignal(state.summaryGenerating
       ? (state.closingOfferStatus === "loading" ? greetingFirst().closingOfferWait : "기록을 정리하고 있어요. 조금 걸릴 수 있어요.")
       : "답변을 읽고 있어요")
     : "";
   const backAction = "back";
   const nextAction = "next";
-  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}</div>${waitingSignal}<div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
+  return `<main class="interview-layout"><section class="interview-panel" aria-live="polite" aria-labelledby="question-title"><div class="progress-track" role="progressbar" aria-label="Survey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}"><span style="width:${meta.progress}%"></span></div><div class="interview-meta"><span>${esc(t(meta.label))}</span>${meta.count ? `<strong>${esc(t(meta.count))}</strong>` : ""}</div>${screenBody(id)}${waitingSignal}</div><div class="survey-actions"><button class="secondary-button" type="button" data-action="${backAction}" ${state.step === 0 || state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating ? "disabled" : ""}><span aria-hidden="true">←</span> ${esc(t("이전"))}</button>${typeof state.reviewReturnStep === "number" ? `<button class="text-button" type="button" data-action="return-to-review">${esc(greetingUiCopy(state.language).back)}</button>` : "<span></span>"}<button class="primary-button" type="button" data-action="${nextAction}" ${nextDisabled ? "disabled" : ""}>${esc(t(nextLabel))} <span aria-hidden="true">→</span></button></div></section></main>`;
 }
 
 function researchJourney() {
@@ -3855,6 +3877,8 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.useField) {
+    // 01·02 를 직접 건드렸으면 기본값으로 지나간 것이 아니다.
+    if (["policy_research_use", "policy_quote_use"].includes(target.dataset.useField)) state.answers.use_scope_mode = "participant_chosen";
     // 껐다 켜는 단추(03)는 같은 값을 다시 누르면 고르지 않은 상태로 돌아간다.
     const clearing = target.dataset.useToggle && state.answers[target.dataset.useField] === target.dataset.useValue;
     state.answers[target.dataset.useField] = clearing ? "" : target.dataset.useValue;

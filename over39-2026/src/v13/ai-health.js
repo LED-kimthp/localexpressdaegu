@@ -1,4 +1,4 @@
-import { isLiveModelSource } from "./depth.js?v=v7-20260923-r71";
+import { isLiveModelSource } from "./depth.js?v=v7-20260924-r72";
 // Reads `over39_ai_runs` and answers one question: is it safe to widen the distribution?
 //
 // A rate-limited or failed AI call is invisible to the participant - the follow-up simply
@@ -7,13 +7,39 @@ import { isLiveModelSource } from "./depth.js?v=v7-20260923-r71";
 // they should have, and nobody can be asked again. So the failure has to be counted rather
 // than noticed. These are counts over completed runs, not a live health check.
 
-export const OPERATIONS = ["anchor_followup", "summarize_adaptive"];
+// 참여자가 받아야 하는 것 셋. 이 화면이 답해야 하는 물음은 하나다 —
+// **실제 참여자가 받아야 할 것을 받았는가.**
+export const OPERATIONS = ["anchor_followup", "summarize_adaptive", "closing_offer"];
+
+export const OPERATION_LABEL = {
+  anchor_followup: "이어 묻는 질문",
+  summarize_adaptive: "참여 기록 정리",
+  closing_offer: "마지막 제안",
+};
+
+// 실행 기록의 operation 은 「anchor_followup:P13_TEXT」, 「summarize_adaptive:axes」처럼 뒤에
+// 꼬리가 붙어 저장된다. 예전에는 꼬리 없는 이름만 표에 세어서, 꼬리 붙은 것들이 표에서 통째로
+// 빠졌다 — 표의 분모와 위의 「AI 호출」 수가 서로 달랐다(2026-09-23).
+export function baseOperation(name) {
+  const value = String(name || "").split(":")[0];
+  return OPERATIONS.includes(value) ? value : "";
+}
+
+// 표본을 가른다. 테스트는 우리가 확인하며 만든 것이라 참여자의 경험이 아니다.
+export function sampleTypeIndex(sessions = []) {
+  const index = new Map();
+  for (const row of Array.isArray(sessions) ? sessions : []) {
+    if (row?.response_id) index.set(row.response_id, row.sample_type || "test");
+  }
+  return index;
+}
 
 // Chosen to be readable rather than clever: a launch is widened when almost everyone got the
 // AI they were supposed to get. `warn` is "look before widening", `stop` is "do not widen".
 export const THRESHOLDS = {
   anchor_followup: { warn: 0.1, stop: 0.2 },
   summarize_adaptive: { warn: 0.05, stop: 0.12 },
+  closing_offer: { warn: 0.1, stop: 0.25 },
   rate_limited: { warn: 0.02, stop: 0.08 },
 };
 
@@ -43,8 +69,13 @@ function emptyOperation() {
  * @param {Array<object>} runs rows from `over39_ai_runs`
  * @returns aggregate counts plus a widen/hold verdict
  */
-export function aiHealthSummary(runs = []) {
-  const rows = Array.isArray(runs) ? runs : [];
+export function aiHealthSummary(runs = [], { sampleTypes = null, sampleType = "" } = {}) {
+  const all = Array.isArray(runs) ? runs : [];
+  // 표본을 고르면 그 표본의 응답만 센다. 표본을 알 수 없는 실행(참여 기록 목록 밖의 옛 응답)은
+  // 「연구」로 셈해 놓고 없는 셈 치지 않는다 — 빠뜨리는 쪽이 더 나쁘다.
+  const rows = sampleType && sampleTypes
+    ? all.filter((row) => (sampleTypes.get(row?.response_id) || "research") === sampleType)
+    : all;
   const participants = new Set();
   const errorCodes = new Map();
   const operations = Object.fromEntries(OPERATIONS.map((name) => [name, emptyOperation()]));
@@ -61,7 +92,7 @@ export function aiHealthSummary(runs = []) {
     if (Number.isFinite(attempts) && attempts > 1) retried += 1;
     if (row?.error_code) errorCodes.set(row.error_code, (errorCodes.get(row.error_code) || 0) + 1);
 
-    const bucket = operations[row?.operation];
+    const bucket = operations[baseOperation(row?.operation)];
     if (!bucket) continue;
     bucket.total += 1;
     if (isRateLimited) bucket.rateLimited += 1;
@@ -95,10 +126,37 @@ export function aiHealthSummary(runs = []) {
     };
   }
 
+  // 사람 수로도 센다. 「호출 398회 중 147회 실패」보다 「13명 중 3명이 못 받음」이 판단하기 쉽다.
+  const peopleMissing = {};
+  for (const name of OPERATIONS) peopleMissing[name] = { expected: new Set(), missed: new Set() };
+  for (const row of rows) {
+    const name = baseOperation(row?.operation);
+    if (!name || !row?.response_id) continue;
+    peopleMissing[name].expected.add(row.response_id);
+    const delivered = row?.status === "success" && (!row?.source || isLiveModelSource(row.source));
+    if (!delivered) peopleMissing[name].missed.add(row.response_id);
+  }
+  // 한 사람이 같은 단계를 여러 번 부를 수 있다. 한 번이라도 받았으면 받은 것으로 센다.
+  for (const name of OPERATIONS) {
+    for (const row of rows) {
+      if (baseOperation(row?.operation) !== name || !row?.response_id) continue;
+      const delivered = row?.status === "success" && (!row?.source || isLiveModelSource(row.source));
+      if (delivered) peopleMissing[name].missed.delete(row.response_id);
+    }
+    byOperation[name].peopleExpected = peopleMissing[name].expected.size;
+    byOperation[name].peopleMissed = peopleMissing[name].missed.size;
+  }
+
   const rateLimitedRate = ratio(rateLimited, rows.length);
+  // 정리문이 한 번도 안 돌았다면 아무도 끝까지 가지 않은 것이므로 판단할 수 없다 — 그 규칙은
+  // 그대로 둔다. 다른 단계는 부른 적이 있을 때만 판정에 넣는다. 제안문을 표에 넣은 뒤
+  // (2026-09-23) 제안문이 없던 옛 회차가 통째로 「자료 부족」이 되어 나머지를 덮었다.
   const grades = [
-    ...OPERATIONS.map((name) => byOperation[name].grade),
-    rows.length ? gradeFor("rate_limited", rateLimitedRate) : "unknown",
+    byOperation.summarize_adaptive.grade,
+    ...OPERATIONS.filter((name) => name !== "summarize_adaptive")
+      .map((name) => byOperation[name].grade)
+      .filter((grade) => grade !== "unknown"),
+    ...(rows.length ? [gradeFor("rate_limited", rateLimitedRate)] : []),
   ];
 
   return {
