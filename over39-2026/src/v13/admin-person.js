@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r83";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r83";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r83";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r84";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r84";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r84";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);

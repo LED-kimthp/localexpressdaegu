@@ -1,19 +1,15 @@
 // 「문장 다듬기」(TK 2026-09-24).
 //
 // 받은 요청은 「글쓰기가 어렵다」였다. 생각을 문장으로 만드는 것까지 참여자에게 맡기지 않는다.
-// 낱말만, 오타째, 자판의 마이크로 말해서 적어도 되고, 원하면 단추 하나로 솔라가 오타·띄어쓰기를
-// 고친 문장을 **적던 칸 안에** 넣어 준다. 단추도 없다 — 참여자가 「다음」을 누를 때 한 번 알아서
-// 다듬는다(TK 2026-09-24: 「물어보지 말고 클릭하게 하지 말고」). 칸을 떠날 때는 다듬지 않는다 —
-// 휴대폰에서는 스크롤하려고 칸 밖을 누르는 일이 잦아, 그때 글이 바뀌면 놀란다(TK). 언제 바뀌는지가
-// 늘 같아야 한다. 그래서 그 사실을 칸 **위에**, 쓰기 전에 알린다(renderPolishLead).
+// 낱말만, 오타째, 자판의 마이크로 말해서 적어도 되고, 칸 **바로 밑** 「문장 다듬기」를 누르면 솔라가
+// 오타·띄어쓰기를 고친 문장을 **적던 칸 안에** 넣어 준다.
+// 처음에는 「다음」을 누를 때 저절로 다듬었다(r77–r83). 그런데 글 칸 아래에 고를 것이 이어지는
+// 화면에서는 「다음」이 맨 아래에 있고 다듬은 문장은 맨 위 칸에 들어가, 올라가 확인하고 다시 내려와
+// 눌러야 했다(TK 2026-09-24). 그래서 단추를 칸 밑에 두고, 누른 뒤에는 기다리지 않고 아래 질문에
+// 답해도 되게 했다. 「다음」은 다듬기를 붙잡지 않는다 — 누르지 않았으면 쓴 글 그대로 넘어간다.
 // **쓰는 동안에는 글을 바꾸지 않는다.** 멈출 때마다 다듬게 했더니 생각하는 사이에 글이 바뀌고,
 // 이어 쓰면 앞부분까지 또 바뀌고, 휴대폰 자판·받아쓰기와 부딪혔다(시연에서 확인한 것).
-// 「다음」을 눌렀을 때 다듬을 글이 있으면 화면을 잠깐 붙잡고, 다듬은 문장을 보여 준 뒤 「다음」을
-// 한 번 더 받는다 — 바뀐 글을 보지 않고 넘어가는 일이 없게. 그때 단추 이름은 「이 글로 제출」이다 —
-// 똑같이 「다음」이면 「이대로 낼게요」인지 「또 바꿀래요」인지 가를 수 없었다(TK 시험). 한 번 더 다듬고
-// 싶으면 칸 아래 「다시 다듬기」. AI 가 늦거나 실패하면 붙잡지 않는다.
-// 다듬기 전에 쓴 글은 칸 아래에 보이고 「쓴 글로 되돌리기」로 돌아간다. 되돌린 칸은 다시 자동으로
-// 다듬지 않는다. 칸에 보이는 글이 곧 남는 글이다.
+// 다듬기 전에 쓴 글은 칸 아래에 보이고 「쓴 글로 되돌리기」로 돌아간다. 칸에 보이는 글이 곧 남는 글이다.
 //
 // 지키는 것 셋:
 // ① 다듬기는 고르는 것이다. 누르지 않아도, 솔라가 실패해도 쓴 글 그대로 넘어간다.
@@ -22,10 +18,8 @@
 // ③ 답 칸(`answers[field]`)에는 참여자가 고른 글이 들어간다. 그래서 이어지는 질문·응답 정리·
 //    마지막 제안이 따로 고치지 않아도 참여자가 고른 문장을 읽는다.
 
-// 한 칸에서 자동으로 다듬는 횟수의 상한. 「다음」을 누를 때마다 부르므로 비용을 묶어 둔다.
+// 한 칸에서 다듬는 횟수의 상한. 「다시 다듬기」를 누를 때마다 부르므로 비용을 묶어 둔다.
 export const POLISH_MAX_ATTEMPTS = 5;
-// 「다음」을 붙잡아 두는 최대 시간. 이보다 늦으면 쓴 글 그대로 넘어간다.
-export const POLISH_HOLD_MS = 8000;
 // 서버(CLIENT_WAIT_MS.polish_text)와 같은 값이다. 한쪽을 바꾸면 다른 쪽도 바꾼다.
 export const POLISH_TIMEOUT_MS = 20000;
 export const POLISH_STATE_KEY = "text_polish";
@@ -74,34 +68,14 @@ export function withPolishResult(entry, { source, polished, run = null, at = new
     edited: polished,
     use: "polished",
     attempts: Number(entry?.attempts || 0) + 1,
-    // 이 글은 이미 다듬었다 — 같은 글로 다시 부르지 않는다.
-    checked: polished,
-    auto_off: false,
     history: [...(entry?.history || []), { at, status: "success", source, polished, ...polishRunFields(run) }],
   };
 }
 
-// 지금 칸의 글을 자동으로 다듬을 것인가. 되돌린 칸, 이미 다듬은 글, 방금 실패한 글, 상한에 닿은 칸은 아니다.
-// 「다음」에서 자동으로 다듬을 만한 길이. 「없음」「모름」처럼 짧은 글을 다듬느라 화면을 붙잡지 않는다.
-export const POLISH_AUTO_MIN_LETTERS = 5;
-
-export function shouldAutoPolish(entry, boxText) {
-  const text = String(boxText || "");
-  if (polishLetterCount(text) < POLISH_AUTO_MIN_LETTERS) return false;
-  if (entry?.auto_off) return false;
-  // 다듬은 문장이 칸에 들어가 있으면 다시 다듬지 않는다. 몇 글자 고치고 「다음」을 누를 때마다
-  // 또 붙잡으면, 고친 글자가 다시 바뀌고 참여자는 끝없이 확인해야 한다.
-  if (entry?.use === "polished" && entry?.polished) return false;
-  if (polishAttemptsLeft(entry) <= 0) return false;
-  if (entry?.checked === text) return false;
-  if (entry?.failed_on === text) return false;
-  return true;
-}
-
-// 실패는 횟수에 넣지 않는다. 참여자 탓이 아니다.
+// 실패는 횟수에 넣지 않는다. 참여자 탓이 아니다. 단추는 그대로 켜져 있어 다시 누를 수 있다.
 export function withPolishFailure(entry, { source, run = null, at = new Date().toISOString() }) {
   const base = entry || { written: source, polished: "", edited: "", use: "written", attempts: 0, history: [] };
-  return { ...base, failed_on: source, history: [...(base.history || []), { at, status: "failed", source, ...polishRunFields(run) }] };
+  return { ...base, history: [...(base.history || []), { at, status: "failed", source, ...polishRunFields(run) }] };
 }
 
 // 칸을 고치면 지금 칸에 든 쪽이 고쳐진다. 다듬은 문장이 들어 있으면 그 문장을(몇 글자만
@@ -122,21 +96,15 @@ export function polishSource(answers, field) {
   return { text: String(entry.written || ""), previousPolished: "" };
 }
 
-// 다듬은 문장이 칸에 들어 있는가. 그러면 「다음」 대신 「이 글로 제출」을 보인다.
-export function polishedInBox(entry) {
-  return Boolean(entry?.use === "polished" && entry?.polished);
-}
-
-// 「다시 다듬기」: 다듬은 문장을 몇 글자 고친 뒤 참여자가 직접 한 번 더 부르는 것. 자동 규칙
-// (다듬은 문장이 든 칸은 다시 다듬지 않는다)을 넘어서지만 상한과 최소 글자는 지킨다.
+// 칸 밑 단추를 누를 수 있는가(「문장 다듬기」도 「다시 다듬기」도). 두 글자 이상, 다섯 번까지.
 export function canPolishAgain(entry, boxText) {
   return canPolishText(boxText) && polishAttemptsLeft(entry) > 0;
 }
 
-// 되돌리면 그 칸은 더 자동으로 다듬지 않는다. 다듬은 문장으로 다시 바꾸면 다시 켠다.
+// 「쓴 글로 되돌리기」·「다듬은 문장으로 바꾸기」. 두 글은 모두 기록에 남는다.
 export function withPolishUse(entry, use) {
   const polished = use === "polished" && entry?.polished;
-  return { ...entry, use: polished ? "polished" : "written", auto_off: !polished };
+  return { ...entry, use: polished ? "polished" : "written" };
 }
 
 function polishRunFields(run) {
@@ -198,26 +166,15 @@ export async function requestTextPolish({ endpoint, anonKey, mode = "fallback", 
 
 // ── 화면 ────────────────────────────────────────────────────────────────────
 // 적는 칸 아래에 붙는 부분. 적는 칸 자체는 app.js 의 renderText 가 그린다.
-export function polishButtonLabel(copy, entry, busy) {
-  if (busy) return copy.working;
-  if (polishAttemptsLeft(entry) <= 0) return copy.limit;
-  return Number(entry?.attempts || 0) > 0 ? copy.again : copy.button;
-}
-
-// 칸 위(칸 이름 바로 밑)에 두는 한 줄. 쓰기 전에 「다음」에서 글이 다듬어진다는 것을 알린다.
-// 단추 이름은 화면마다 다르다(이어지는 질문은 「이 답변에서 이어가기」, 마지막은 「활용 범위 정하기」).
-// 안내가 없는 단추 이름을 말하면 참여자는 그 단추를 찾는다 — 그 화면의 실제 이름을 넣는다.
+// 칸 위(칸 이름 바로 밑)에 두는 안내. 쓰기 전에 칸 밑 단추로 다듬을 수 있다는 것을 알린다.
 // short: 처음 본 칸이 아니면 한 줄만. 「길게 편하게 써도 된다」는 첫 칸에서 한 번 들으면 된다.
-// off: 참여자가 다듬기를 껐다. 첫 칸에는 끄는 선택 줄이 있고(체크된 채로), 뒤 칸에는 「껐습니다 · 다시 켜기」.
-export function renderPolishLead({ copy, esc, nextLabel = "", short = false, off = false }) {
-  const label = nextLabel || copy.nextFallback || "다음";
-  if (short && off) {
+// 「다듬지 않고 쓴 그대로 남길게요」 선택 줄은 뺐다 — 누르지 않으면 다듬지 않으니 끌 것이 없다.
+// off: 전에 그 줄로 끈 사람(이어쓰기 초안). 칸마다 「껐습니다 · 다시 켜기」를 보인다.
+export function renderPolishLead({ copy, esc, short = false, off = false }) {
+  if (off) {
     return `<p class="polish-lead is-short is-off">${esc(copy.offNote)} <button class="text-button polish-turn-on" type="button" data-action="polish-on">${esc(copy.turnOn)}</button></p>`;
   }
-  const text = (short ? copy.noticeShort : copy.notice).split("{next}").join(label);
-  const lead = `<p class="polish-lead${short ? " is-short" : ""}${off ? " is-off" : ""}">${esc(text)}</p>`;
-  if (short) return lead;
-  return `${lead}<label class="polish-optout"><input type="checkbox" data-polish-optout${off ? " checked" : ""} /><span>${esc(copy.optOut)}</span></label>`;
+  return `<p class="polish-lead${short ? " is-short" : ""}">${esc(short ? copy.noticeShort : copy.notice)}</p>`;
 }
 
 // 참여자가 다듬기를 껐는가. 설문 답(answers.text_polish_preference)에 남겨 기록과 관리자 화면에서 보인다.
@@ -245,11 +202,15 @@ export function rejectPolished(polished, { maxLength = 0 } = {}) {
 // (나이 드신 분일수록 키보드에 마이크가 있는 줄 모른다). 키보드에서 같은 그림을 찾게 한다.
 const MIC_ICON = '<svg class="polish-mic" viewBox="0 0 24 24" width="1.1em" height="1.1em" aria-hidden="true" style="vertical-align:-0.2em;margin:0 0.15em"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
-export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, esc }) {
+// text: 지금 칸에 든 글. 단추를 누를 수 있는지(두 글자 이상·다섯 번까지) 가른다.
+export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, text = "", esc }) {
   const inBox = entry?.use === "polished" && entry?.polished;
   const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
-  // 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
+  // 단추와 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
   const statusLine = `<p class="polish-status${busy ? " is-busy" : ["polished", "confirm"].includes(status) ? " is-done" : ""}" role="status">${esc(statusText)}</p>`;
+  const exhausted = polishAttemptsLeft(entry) <= 0;
+  const runnable = !busy && canPolishAgain(entry, text);
+  const run = off ? "" : `<div class="polish-run"><button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${runnable ? "" : " disabled"}${busy ? ' aria-busy="true"' : ""}>${esc(exhausted ? copy.limit : inBox ? copy.repolish : copy.button)}</button>${statusLine}</div>`;
   const guide = `<div class="polish-guide">
     <p class="polish-hint">${esc(copy.hint).split("{mic}").join(MIC_ICON)}</p>
   </div>`;
@@ -261,10 +222,10 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
     ? `<div class="polish-other" data-polish-result="${esc(field)}">
     <p class="polish-other-label">${esc(inBox ? copy.originalLabel : copy.polishedLabel)}</p>
     <blockquote class="polish-other-text">${esc(inBox ? entry.written : entry.edited ?? entry.polished)}</blockquote>
-    <div class="polish-actions">${inBox && canPolishAgain(entry, answerFromPolish(entry)) ? `<button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${busy ? " disabled" : ""}>${esc(copy.repolish)}</button>` : ""}${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
+    <div class="polish-actions">${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
   </div>`
     : "";
   // 다듬기를 끈 사람에게 「이렇게 다듬습니다」 예시는 쓸모가 없다.
   const example = off ? "" : `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
-  return `<div class="polish-extras" data-polish-extras="${esc(field)}">${statusLine}${guide}${other}${example}</div>`;
+  return `<div class="polish-extras" data-polish-extras="${esc(field)}">${off ? statusLine : run}${guide}${other}${example}</div>`;
 }
