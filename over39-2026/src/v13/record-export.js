@@ -22,13 +22,6 @@ export const SAMPLE_LABELS = Object.freeze({
   auxiliary_only: "부가 기록만 있는 응답",
 });
 
-// 이 묶음은 비식별 자료가 아니다. 파일을 받는 사람이 그것을 모르면 취급이 어긋난다.
-export const HANDLING_NOTICE = Object.freeze([
-  "이 파일은 참여자가 직접 쓴 서술 원문을 그대로 담습니다. 비식별 자료가 아닙니다.",
-  "글 안의 지명·기관·사람 이름으로 개인이 식별될 수 있습니다. 연구팀 안에서만 다루고, 공개·인용에는 참여자가 승인한 문장과 동의 범위를 먼저 확인해 주세요.",
-  "이메일과 연락처는 연구 응답과 분리 보관하는 설계이므로 이 묶음에 들어가지 않습니다.",
-]);
-
 // 연락처는 `over39_contacts`에 분리 보관하는 설계다. 그래도 옛 응답의 payload.answers에
 // `contact.email` 같은 값이 섞여 들어올 수 있으므로, 이름 규칙으로 한 번 더 막는다.
 // 설계가 지키는 약속을 파일 하나가 깨는 일은 없어야 한다.
@@ -108,8 +101,7 @@ export function isContactField(name) {
 
 /**
  * 답 전체가 연락처인지. 문항 이름이 무엇이든 값이 곧 연락처면 이 묶음에 담지 않는다.
- * 서술 안에 섞여 있는 연락처는 지우지 않는다. 원문을 잘라내면 연구 자료가 줄고,
- * 이 파일은 애초에 식별 가능한 서술을 담는 파일이라고 첫머리에 밝히고 있다.
+ * 서술 안에 섞여 있는 연락처는 지우지 않는다. 원문을 잘라내면 연구 자료가 줄어든다.
  */
 export function isContactValue(value) {
   const written = String(value ?? "").trim();
@@ -584,9 +576,6 @@ h2 { font-size: 17px; margin: 0 0 4px; }
 h3 { font-size: 13px; margin: 22px 0 6px; text-transform: none; letter-spacing: 0.02em; color: #6a5f57; }
 p { margin: 0 0 8px; }
 .kicker { font-size: 11px; letter-spacing: 0.18em; color: #8a7d73; margin: 0 0 10px; }
-.notice { border: 1.5px solid #14110f; padding: 14px 16px; margin: 0 0 18px; background: #f7f4f1; }
-.notice p { margin: 0 0 6px; }
-.notice p:last-child { margin: 0; }
 .meta { border-top: 1px solid #d8d0c9; border-bottom: 1px solid #d8d0c9; padding: 12px 0; margin: 0 0 18px;
   display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px 18px; }
 .meta div { font-size: 12px; }
@@ -623,8 +612,6 @@ td .raw { display: block; font-size: 11px; color: #8a7d73; margin-top: 3px; }
 .empty { font-size: 12px; color: #8a7d73; }
 .chip { display: inline-block; font-size: 11px; border: 1px solid #14110f; padding: 1px 7px; margin: 0 4px 4px 0; }
 .chip.no { border-color: #b8aca3; color: #8a7d73; }
-.record-gaps { font-size: 12px; background: #fffdf7; border: 1px solid #d8d0c9; padding: 10px 14px; margin: 12px 0 0; }
-.record-gaps ul { margin: 4px 0 0; padding-left: 18px; }
 @media print {
   @page { size: A4; margin: 16mm 14mm; }
   body { padding: 0; font-size: 10.5pt; line-height: 1.6; }
@@ -632,7 +619,7 @@ td .raw { display: block; font-size: 11px; color: #8a7d73; margin-top: 3px; }
   /* 참여자 1명 = 종이 1장 이상. 기록이 서로 이어 붙지 않아야 100장을 셀 수 있다. */
   .record { break-before: page; page-break-before: always; border-top-width: 2px; margin-top: 0; padding-top: 12px; }
   .record:first-of-type { break-before: auto; page-break-before: auto; }
-  .qa, blockquote, tr, .record-facts, .record-gaps { break-inside: avoid; page-break-inside: avoid; }
+  .qa, blockquote, tr, .record-facts { break-inside: avoid; page-break-inside: avoid; }
   h2, h3 { break-after: avoid; page-break-after: avoid; }
   a { text-decoration: none; color: inherit; }
 }
@@ -709,8 +696,6 @@ function renderRecord(record) {
       ["시작 경로", record.route],
       ["응답 ID", record.responseId],
       ["참여자 확인 코드", record.participantCode],
-      ["질문지 판본", record.versions.questionnaire],
-      ["배포 판본", record.versions.release],
     ])}</dl>
     <h3>참여자가 승인한 최종 문장</h3>
     ${record.approved.text ? `<blockquote>${record.approved.korean && record.approved.korean !== record.approved.text ? `<span class="src">원문</span>` : ""}${esc(record.approved.text)}</blockquote>${record.approved.korean && record.approved.korean !== record.approved.text ? `<blockquote><span class="src">한국어 번역</span>${esc(record.approved.korean)}</blockquote>` : ""}<p class="tag">${esc([record.approved.action ? `참여자 선택 ${record.approved.action}` : "", record.approved.summarySource ? `정리 출처 ${record.approved.summarySource}` : "", record.approved.translationStatus].filter(Boolean).join(" · "))}</p>` : `<p class="empty">승인된 문장이 없습니다.</p>`}
@@ -724,7 +709,6 @@ function renderRecord(record) {
     ${renderCoordinate(record)}
     <h3>동의</h3>
     ${renderConsent(record)}
-    ${record.gaps.length ? `<div class="record-gaps"><strong>이 기록에서 빠진 것</strong><ul>${record.gaps.map((gap) => `<li>${esc(gap)}</li>`).join("")}</ul></div>` : ""}
   </article>`;
 }
 
@@ -732,19 +716,27 @@ function renderRecord(record) {
  * 묶음 자료를 인쇄 가능한 HTML 한 파일로 만든다. 스크립트도 외부 요청도 없다.
  * @param {ReturnType<typeof buildRecordBundle>} bundle
  */
-export function renderRecordBundleHtml(bundle) {
+// 머리는 제목과 사람 수 한 줄뿐이다. 취급 안내·세션 행 수·형식 판본 같은 기계용 숫자는 싣지 않는다(TK 2026-09-24:
+// 「필요할 때만」). 내보내기가 실제로 잘리거나 실패했을 때만 그 사실(meta.notes)을 적는다.
+// `single` 은 관리자 화면의 「연구용 기록 한 장」 — 머리 없이 그 사람의 기록만.
+export function renderRecordBundleHtml(bundle, { single = false } = {}) {
   const meta = bundle?.meta || {};
   const records = array(bundle?.records);
-  const title = `〈만 39세 이상〉 참여 기록 묶음 · ${array(meta.sampleLabels).join(" + ") || "표본 미지정"} · ${records.length}명`;
-  const excluded = Object.entries(meta.excluded || {});
-  const gaps = [
-    records.length ? "" : "담긴 기록이 없습니다. 표본 구분과 관리자 권한을 확인해 주세요.",
-    array(meta.missingSnapshot).length ? `스냅샷을 찾지 못해 서술이 비어 있는 응답 ${meta.missingSnapshot.length}건: ${meta.missingSnapshot.join(", ")}` : "",
-    array(meta.unlabelledPayloads).length ? `문항 문구가 저장되지 않은 옛 응답 ${meta.unlabelledPayloads.length}건: ${meta.unlabelledPayloads.join(", ")}` : "",
-    meta.records > meta.withApprovedText ? `승인된 최종 문장이 없는 기록 ${meta.records - meta.withApprovedText}건 (정리 단계 전에 멈춘 응답을 포함해 그대로 담았습니다)` : "",
-    excluded.length ? `이 파일에 담지 않은 표본: ${excluded.map(([type, count]) => `${SAMPLE_LABELS[type] || type} ${count}건`).join(" · ")}` : "",
-    ...array(meta.notes),
-  ].filter(Boolean);
+  const sample = array(meta.sampleLabels).join(" + ") || "표본 미지정";
+  const title = single && records[0]
+    ? `${records[0].displayLabel.label}${records[0].participantCode ? ` · ${records[0].participantCode}` : ""}`
+    : `〈만 39세 이상〉 참여 기록 · ${sample} ${records.length}명`;
+  const notes = array(meta.notes).map(text).filter(Boolean);
+  const problems = notes.length ? `<div class="gaps"><ul>${notes.map((line) => `<li>${esc(line)}</li>`).join("")}</ul></div>` : "";
+  const header = single
+    ? problems
+    : `<header>
+  <p class="kicker">OVER39 · PARTICIPATION RECORDS</p>
+  <h1>${esc(title)}</h1>
+  <p class="tag">${esc(text(meta.generatedAt).slice(0, 10))}</p>
+  ${problems}
+</header>
+<nav class="toc"><strong>목차</strong><ol>${records.map((record) => `<li><a href="#record-${String(record.order).padStart(3, "0")}">${esc(record.displayLabel.label)} · ${esc(record.submittedAt.slice(0, 10) || "시각 미기록")}</a></li>`).join("")}</ol></nav>`;
 
   return `<!doctype html>
 <html lang="ko">
@@ -755,27 +747,7 @@ export function renderRecordBundleHtml(bundle) {
 <style>${STYLE}</style>
 </head>
 <body>
-<header>
-  <p class="kicker">OVER39 · PARTICIPATION RECORDS</p>
-  <h1>${esc(title)}</h1>
-  <div class="notice">${HANDLING_NOTICE.map((line) => `<p>${esc(line)}</p>`).join("")}</div>
-  <dl class="meta">${dl([
-    ["담긴 기록", `${records.length}명`],
-    ["표본 구분", array(meta.sampleLabels).join(" + ")],
-    ["완료된 응답", `${meta.completed ?? 0}명`],
-    ["승인 문장 있음", `${meta.withApprovedText ?? 0}명`],
-    ["후속질문 기록 있음", `${meta.withFollowups ?? 0}명`],
-    ["참여자 표기 남김", `${meta.withDisplayLabel ?? 0}명`],
-    ["AI가 다듬은 문장을 고른 기록", `${meta.withPolishedChoice ?? 0}명`],
-    ["읽은 세션 행", `${meta.sessionsSeen ?? 0}건`],
-    ["읽은 스냅샷", `${meta.snapshotsSeen ?? 0}건 (같은 사람의 중복 ${meta.snapshotsCollapsed ?? 0}건 접음)`],
-    ["만든 시각", meta.generatedAt],
-    ["형식 판본", bundle?.version],
-  ])}</dl>
-  ${gaps.length ? `<div class="gaps"><strong>이 파일에 담기지 않은 것</strong><ul>${gaps.map((line) => `<li>${esc(line)}</li>`).join("")}</ul></div>` : ""}
-  <p class="tag">인쇄하거나 PDF로 저장하면 참여자 1명이 새 쪽에서 시작합니다.</p>
-</header>
-<nav class="toc"><strong>목차</strong><ol>${records.map((record) => `<li><a href="#record-${String(record.order).padStart(3, "0")}">${esc(record.displayLabel.label)} · ${esc(record.submittedAt.slice(0, 10) || "시각 미기록")}</a></li>`).join("")}</ol></nav>
+${header}
 <main>${records.map(renderRecord).join("") || `<p class="empty">담긴 기록이 없습니다.</p>`}</main>
 </body>
 </html>

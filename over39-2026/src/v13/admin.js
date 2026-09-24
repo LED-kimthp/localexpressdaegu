@@ -1,7 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r75";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r75";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r75";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_INDEX_SELECT, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r75";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r76";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r76";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r76";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_INDEX_SELECT, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r76";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -250,7 +250,7 @@ function renderCare() {
     <table class="ai-health-table"><thead><tr><th scope="col">응답 ID</th><th scope="col">요청 시각</th><th scope="col">상태</th><th scope="col">처리</th></tr></thead><tbody>${withdrawalRows || `<tr><td colspan="4">철회 요청 없음</td></tr>`}</tbody></table>
   </section>
   <section class="admin-detail-section"><h2>안부 알림 <span>${pendingCount}명 대기</span></h2>
-    <p>참여자가 남긴 알림용 이메일과, 마지막 알림 이후 도착해 아직 열리지 않은 안부 수입니다. 「메일용 링크」로 새 편지함 링크를 만들어 알림 메일에 붙이고, 보낸 뒤 「보냄 표시」를 누르세요. 이메일은 이 화면과 발송 계정 밖으로 나가지 않습니다.</p>
+    <p>참여자가 남긴 알림용 이메일과, 마지막 알림 이후 도착해 아직 열리지 않은 안부 수입니다. 「메일용 링크」로 새 편지함 링크를 만들어 알림 메일에 붙이고, 보낸 뒤 「보냄 표시」를 누르세요.</p>
     ${state.care.notificationsError ? `<p class="error">${esc(state.care.notificationsError)}</p>` : `<table class="ai-health-table"><thead><tr><th scope="col">이메일</th><th scope="col">응답 ID</th><th scope="col">상태</th><th scope="col">대기</th><th scope="col">마지막 알림</th><th scope="col">동작</th></tr></thead><tbody>${notificationRows || `<tr><td colspan="6">알림 신청 없음</td></tr>`}</tbody></table>`}
     ${state.careLink ? `<p class="admin-relay-link">메일용 링크 (${esc(state.careLink.response_id)}): <a href="${esc(state.careLink.url)}" target="_blank" rel="noreferrer">${esc(state.careLink.url)}</a></p>` : ""}
   </section>`;
@@ -374,7 +374,7 @@ function detailSection(title, rows, renderer) {
 
 function relayComposer() {
   if (!isRc2Admin || !state.selected) return "";
-  return `<section class="admin-detail-section relay-composer"><h2>익명 안부 중계</h2><p>연구자가 직접 상대 응답을 확인한 뒤, 안부나 질문을 익명 링크로 전달합니다. 연락처와 이름은 이 화면에 표시하지 않습니다.</p><label for="relay-target">받는 응답 ID</label><input id="relay-target" class="text-input text-input-single" placeholder="상대 응답 ID" /><label for="relay-message">전할 안부 또는 질문</label><textarea id="relay-message" class="text-input" maxlength="1400" placeholder="연구팀을 통해 전할 짧은 안부나 질문을 적어 주세요."></textarea><label for="relay-reason">연결을 살펴본 이유 (운영 기록)</label><input id="relay-reason" class="text-input text-input-single" maxlength="1200" placeholder="예: 서로 다른 지역에서 비슷한 조건을 이야기했습니다." /><button class="primary-button" data-admin-action="prepare-relay">익명 전달 링크 만들기</button>${state.relayError ? `<p class="error">${esc(state.relayError)}</p>` : ""}${state.relayResult ? `<p class="admin-relay-link">전달용 링크: <a href="${esc(state.relayResult)}" target="_blank" rel="noreferrer">${esc(state.relayResult)}</a></p>` : ""}</section>`;
+  return `<section class="admin-detail-section relay-composer"><h2>익명 안부 중계</h2><p>연구자가 직접 상대 응답을 확인한 뒤, 안부나 질문을 익명 링크로 전달합니다.</p><label for="relay-target">받는 응답 ID</label><input id="relay-target" class="text-input text-input-single" placeholder="상대 응답 ID" /><label for="relay-message">전할 안부 또는 질문</label><textarea id="relay-message" class="text-input" maxlength="1400" placeholder="연구팀을 통해 전할 짧은 안부나 질문을 적어 주세요."></textarea><label for="relay-reason">연결을 살펴본 이유 (운영 기록)</label><input id="relay-reason" class="text-input text-input-single" maxlength="1200" placeholder="예: 서로 다른 지역에서 비슷한 조건을 이야기했습니다." /><button class="primary-button" data-admin-action="prepare-relay">익명 전달 링크 만들기</button>${state.relayError ? `<p class="error">${esc(state.relayError)}</p>` : ""}${state.relayResult ? `<p class="admin-relay-link">전달용 링크: <a href="${esc(state.relayResult)}" target="_blank" rel="noreferrer">${esc(state.relayResult)}</a></p>` : ""}</section>`;
 }
 
 // 다시 그려도 펼친 칸이 접히지 않게 한다(목록 표시가 뒤늦게 도착할 때 등).
@@ -429,7 +429,7 @@ function renderPolishHealth(polish) {
     ? `${polish.runs}회 가운데 ${polish.failed}회는 다듬지 못했어요. 그때는 참여자가 쓴 글 그대로 넘어가요.`
     : `${polish.runs}회 모두 닿았어요.`;
   const codes = polish.errorCodes.slice(0, 4).map((item) => `${item.code} ${item.count}회`).join(" · ");
-  return `<div class="ai-stages ai-stages-aside"><div class="ai-stage ${polish.failed ? "ai-health-grade-warn" : "ai-health-grade-ok"}"><span>${esc(POLISH_LABEL)} · 판정 밖</span><strong>${polish.participants}명 · ${polish.runs}회</strong><small>${esc(detail)}${polish.noChange ? ` 고칠 곳이 없던 ${polish.noChange}회는 실패로 세지 않아요.` : ""}${codes ? ` (${esc(codes)})` : ""}</small></div></div>`;
+  return `<div class="ai-stages ai-stages-aside"><div class="ai-stage ${polish.failed ? "ai-health-grade-warn" : "ai-health-grade-ok"}"><span>${esc(POLISH_LABEL)} · 판정 밖</span><strong>${polish.participants}명 · ${polish.runs}회</strong><small>${esc(detail)}${polish.noChange ? ` 고칠 곳이 없던 ${polish.noChange}회는 따로 셌어요.` : ""}${codes ? ` (${esc(codes)})` : ""}</small></div></div>`;
 }
 
 function renderAiHealth() {
@@ -486,7 +486,7 @@ function renderAiHealth() {
       <tbody>${OPERATIONS.map((name) => aiHealthRow(name, summary.byOperation[name])).join("")}</tbody>
     </table>
     ${errors.length ? `<h3>오류 코드</h3><ul class="ai-health-errors">${errors.map((item) => `<li><code>${esc(item.code)}</code> ${item.count}회</li>`).join("")}</ul>` : ""}
-    <p class="ai-health-note">질문·정리·제안은 최근 2,000건, 문장 다듬기는 따로 최근 2,000건 기준이에요. 위 합계와 오류 코드에는 문장 다듬기가 들어 있지 않아요.</p>
+    <p class="ai-health-note">질문·정리·제안은 최근 2,000건, 문장 다듬기는 따로 최근 2,000건 기준이에요. 문장 다듬기는 위 「문장 다듬기」 칸에 따로 셌어요.</p>
     </details>
   </section>`;
 }
@@ -545,7 +545,7 @@ function renderResearchInsights() {
   return `<section class="detail-section ai-health">
     <h2>연구 지표</h2>
     <p class="ai-health-verdict${readable === "shares" ? "" : " ai-health-grade-warn"}">${esc(READABILITY_COPY[readable])}</p>
-    <p class="ai-health-note">〈만 39세 이상〉은 누가 살아남았는지를 세는 조사가 아닙니다. 이 화면은 사람의 경로가 보이기 시작하는지를 확인하는 데만 씁니다. 개별 응답의 원문, 이름, 연락처는 여기에 나타나지 않습니다.</p>
+    <p class="ai-health-note">〈만 39세 이상〉은 누가 살아남았는지를 세는 조사가 아닙니다. 이 화면은 사람의 경로가 보이기 시작하는지를 확인하는 데만 씁니다.</p>
     <div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap;">
       <button class="secondary-button" data-insights-sample="research" aria-pressed="${!state.insightsIncludeTest}" style="${state.insightsIncludeTest ? "" : "border-color:var(--line-dark);font-weight:700;"}">참여자만 ${sample.research}</button>
       <button class="secondary-button" data-insights-sample="with-test" aria-pressed="${state.insightsIncludeTest}" style="${state.insightsIncludeTest ? "border-color:var(--line-dark);font-weight:700;" : ""}">테스트 포함 ${sample.research + sample.test}</button>
@@ -615,7 +615,7 @@ function renderResearchInsights() {
     ${insightNames("기억이 놓인 지역", summary.memory.places, { note: "M07은 국가·도시만 받습니다. 작업실·극장·서점 같은 장소 이름은 현재 문항에 없습니다." })}
 
     ${insightTable("기억에는 남았지만 기록에서는 빠진 이름 · 떠올린 이유", summary.community.reason, "community_recall_reason", readable, { note: `이름을 하나 더 남긴 응답 ${summary.community.optIn}건. 그 가운데 "한동안 소식이나 기록을 만나기 어려워서"가 ${summary.community.lessVisible}건입니다.`, column: "이유", missingNote: (count) => `이 단계는 선택 사항입니다. 이름을 남기지 않은 응답 ${count}건은 분모에서 제외했습니다.` })}
-    ${insightNames("두 사람 이상이 같은 이름을 적은 경우", summary.community.names, { note: "이 연구가 찾는 이름이므로 표시합니다. 어떤 참여자가 적었는지는 나타나지 않습니다." })}
+    ${insightNames("두 사람 이상이 같은 이름을 적은 경우", summary.community.names)}
 
     <h3 style="margin:26px 0 6px;font-size:15px;">현재 비어 있는 조건과 바라는 변화</h3>
     <p class="ai-health-note">D1~D4는 응답 범위와 역할에 따라 문항 문구가 달라집니다. 합산하지 않고 범위별로 나눠 셉니다. 역할 범위는 코드끼리 비교할 수 없습니다.</p>
@@ -690,7 +690,7 @@ function renderListControls() {
       ${select("age", "연령대", facets.ages.map(([value, count]) => [value, `${ageLabel(value)} (${count})`]))}
       ${select("check", "확인할 것", Object.entries(LIST_CHECKS))}
       </div>
-      <p class="list-note">국적은 묻지 않아요. 사는 곳은 참여자가 적은 나라·도시로 가르고, 적지 않았으면 「알 수 없음」이에요.</p>
+      <p class="list-note">사는 곳은 참여자가 적은 나라·도시로 나눠요.</p>
       ${active || c.query ? `<button type="button" class="text-button" data-admin-action="list-reset">조건 모두 지우기</button>` : ""}
     </details>
   </div>`;
@@ -922,9 +922,9 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.adminAction === "set-password") {
     // 여기서 정하면 다음부터 메일 없이 들어올 수 있다. 이 화면에는 참여자가 쓴 이야기
     // 전부가 있으므로, 짧거나 다른 곳에서 쓰던 비밀번호를 그대로 받지 않는다.
-    const next = window.prompt("새 비밀번호 (12자 이상, 여기서만 쓰는 것으로)");
+    const next = window.prompt("새 비밀번호 (12자 이상)");
     if (next === null) return;
-    if (next.length < 12) { window.alert("비밀번호가 12자보다 짧습니다. 이 화면에는 참여자들의 이야기가 모두 있어, 이 한 줄이 유일한 문이 됩니다."); return; }
+    if (next.length < 12) { window.alert("12자 이상으로 정해 주세요."); return; }
     const again = window.prompt("한 번 더 넣어주세요");
     if (again === null) return;
     if (again !== next) { window.alert("두 번 넣은 비밀번호가 다릅니다."); return; }

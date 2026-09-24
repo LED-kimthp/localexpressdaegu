@@ -9,7 +9,7 @@
 // '경력 단절'이라는 하나의 상태를 만들지 않는다. 활동 상태는 P14×P15로 나눠서 세고,
 // M/S/D 좌표는 status를 섞지 않고, 역할은 provenance를 섞지 않고, NO_RECALL과
 // "큰 간극 없음"은 결측이 아니라 유효한 응답으로 센다.
-import { normalizedDScope } from "./flow.js?v=v7-20260924-r75";
+import { normalizedDScope } from "./flow.js?v=v7-20260924-r76";
 
 // n이 작을 때 비율은 경향처럼 읽힌다. 20 미만에서는 화면에 비율을 내보내지 않고 원수만 쓴다.
 export const SMALL_SAMPLE_THRESHOLD = 20;
@@ -99,7 +99,7 @@ export const PAUSED_PUBLIC_STATES = Object.freeze(["BOTH_PAUSED", "AUDIENCE_PAUS
 export const CAREER_BREAK_MISREAD = Object.freeze([
   Object.freeze({
     field: "public_activity_state", position: "column", code: "MAKING_NOT_SHOWING",
-    note: "제작이나 핵심 활동은 이어지고 공개만 쉬고 있는 자리입니다. \"보이지 않는다 = 멈췄다\"가 아니라는 것을 직접 보여주는 칸이므로 '경력 단절'로 읽지 마세요.",
+    note: "제작이나 핵심 활동은 이어지고 공개만 쉬고 있는 자리입니다.",
   }),
   Object.freeze({
     field: "creative_work_state", position: "row", code: "RESEARCH_RECORD",
@@ -770,7 +770,7 @@ export function researchInsights(input = {}, options = {}) {
 
 export const READABILITY_COPY = Object.freeze({
   none: "아직 집계할 연구 표본이 없습니다.",
-  counts: `표본이 ${SMALL_SAMPLE_THRESHOLD}건 미만입니다. 비율은 표시하지 않습니다. 경향으로 읽지 마세요.`,
+  counts: `비율은 표본이 ${SMALL_SAMPLE_THRESHOLD}건이 되면 함께 보여요.`,
   shares: "비율은 각 문항에 답한 사람 수를 분모로 합니다. 다중선택은 합이 100%를 넘습니다.",
 });
 

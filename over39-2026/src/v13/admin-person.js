@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r75";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r75";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r75";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r76";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r76";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r76";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -556,11 +556,12 @@ export function responseDocumentPrintHtml(document, { stylesheets = [], title = 
   return `<!doctype html><html lang="${esc(text(document?.display_language) || "ko")}"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex, nofollow, noarchive" /><title>${esc(title)}</title>${array(stylesheets).map((href) => `<link rel="stylesheet" href="${esc(href)}" />`).join("")}</head><body data-edition="rc2"><main class="rc2-complete response-document-complete"><section class="rc2-complete-main"><div class="response-document-preview response-document-final">${renderResponseDocument(document || {})}</div></section></main></body></html>`;
 }
 
-// 연구용 한 장. 묶음 내보내기와 같은 문서 형식을 한 사람분으로만 만든다.
+// 연구용 한 장. 묶음 내보내기와 같은 문서 형식을 한 사람분으로만 — 머리글 없이 그 사람의 기록만.
+// 이 종이들은 모아서 철한다(TK 2026-09-24). 설명이 필요하면 철할 때 표지 한 장이면 된다.
 export function personRecordPrintHtml({ session = {}, snapshots = [], revision = null, consentEvents = [] } = {}) {
   const bundle = buildRecordBundle(
     { sessions: [session], snapshots, revisions: revision ? [revision] : [], consentEvents },
     { sampleTypes: [text(session.sample_type) || "research"] },
   );
-  return renderRecordBundleHtml(bundle);
+  return renderRecordBundleHtml(bundle, { single: true });
 }
