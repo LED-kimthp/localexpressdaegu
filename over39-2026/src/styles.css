@@ -7258,3 +7258,101 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .use-scope-default p { margin: 0 0 10px; color: var(--muted); font-size: 14px; line-height: 1.65; }
 .use-scope-default ul { display: grid; gap: 8px; margin: 0; padding-left: 1.1em; }
 .use-scope-default li { font-size: 16px; font-weight: 640; line-height: 1.6; }
+
+/* 2026-09-24 관리자 「한 사람 = 한 장」(TK 2026-09-23). 연구자가 읽는 순서 ①~⑤.
+   admin-person.js 가 그린다. 저장된 표들은 맨 아래 「운영 기록」(.admin-fold)으로 접혀 있다. */
+.person-head { padding-bottom: var(--space-6); }
+.person-head h1 { margin: 10px 0 18px; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.2; }
+.person-head h1 small { margin-left: var(--space-2); color: var(--muted); font-size: 13px; font-weight: 500; }
+.person-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 22px; margin: 0; }
+.person-facts dt { color: var(--muted); font-size: 11px; font-weight: 700; }
+.person-facts dd { margin: 3px 0 0; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.person-toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
+.person-toc button { display: inline-flex; align-items: baseline; gap: 6px; min-height: 34px; padding: 6px 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; cursor: pointer; }
+.person-toc button:hover { border-color: var(--ink); }
+.person-toc button span { font-weight: 700; }
+.person-toc button small { color: var(--muted); font-size: 11px; }
+.person-section { scroll-margin-top: var(--space-4); }
+.person-section h2 { align-items: baseline; justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
+.person-section h2 .person-no { display: inline-grid; place-items: center; flex: 0 0 auto; width: 24px; height: 24px; border: 1px solid var(--ink); border-radius: 50%; color: var(--ink); font-size: 12px; }
+.person-section h2 .person-title { color: var(--ink); }
+.person-section h2 .person-meta { margin-left: auto; font-size: 13px; font-weight: 500; }
+.person-section h3 { margin: 26px 0 10px; font-size: 14px; }
+.person-section h3 span { color: var(--muted); font-weight: 400; }
+
+.person-qa { padding: 14px 0; border-top: 1px solid color-mix(in srgb, var(--line) 65%, transparent); }
+.person-qa:first-child { padding-top: 0; border-top: 0; }
+.person-q { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.person-a { margin: 6px 0 0; font-size: 15px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.person-tag { display: block; margin-bottom: 2px; color: var(--faint); font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+/* 이어진 질문은 그것을 부른 문항 바로 밑에 들여서 놓는다. 실제로 오간 순서다. */
+.person-qa.is-followup { margin-left: var(--space-5); padding-left: var(--space-4); border-top: 0; border-left: 2px solid var(--line-dark); }
+.person-quote { margin: 10px 0; padding: 12px 16px; border-left: 2px solid var(--ink); background: var(--surface); font-size: 15px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.person-quote > span { display: block; margin-bottom: 4px; color: var(--muted); font-size: 11px; font-weight: 700; white-space: normal; }
+.person-offer { max-width: 68ch; }
+.person-offer p { margin: 0 0 12px; font-size: 15px; line-height: 1.85; }
+.person-evidence,
+.person-attempts { display: grid; gap: 6px; margin: 0; padding-left: 1.1em; font-size: 14px; line-height: 1.65; }
+.person-note { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.person-empty { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.person-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.person-preview { margin-top: 18px; }
+.person-preview > summary,
+.admin-fold > summary { color: var(--ink); font-size: 14px; font-weight: 700; cursor: pointer; }
+.person-preview .response-document-preview { margin-top: 14px; }
+
+.person-greeting,
+.person-route { padding: 16px 0; border-top: 1px solid color-mix(in srgb, var(--line) 65%, transparent); }
+.person-greeting-head { display: flex; justify-content: space-between; gap: var(--space-3); margin: 0; font-size: 14px; }
+.person-greeting-head span { color: var(--muted); font-size: 12px; }
+.person-greeting .person-facts { margin-top: 10px; }
+.person-route-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 10px; margin: 0; font-size: 15px; }
+.person-arrow { color: var(--muted); font-size: 13px; font-weight: 700; }
+.person-route-status { margin-left: auto; color: var(--muted); font-size: 12px; }
+.person-link { padding: 0; border: 0; border-bottom: 1px solid var(--ink); background: none; color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+.person-link.is-plain { border-bottom: 0; font-weight: 600; cursor: default; }
+.person-reason { margin-top: 10px; padding: 10px 14px; background: var(--surface-soft); font-size: 13px; line-height: 1.65; }
+.person-reason > span { display: block; color: var(--muted); font-size: 11px; font-weight: 700; }
+.person-reason p { margin: 4px 0 0; }
+.person-reason ul { margin: 6px 0 0; padding-left: 1.1em; }
+
+.admin-fold { padding: 20px 0; border-top: 1px solid var(--line); }
+.admin-fold[open] > summary { margin-bottom: var(--space-2); }
+.admin-fold .admin-detail-section:first-of-type { border-top: 0; }
+.dashboard-profile-flags { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.dashboard-profile .dashboard-profile-flags span { color: var(--faint); font-size: 11px; }
+.dashboard-profile .dashboard-profile-flags span.is-on { color: var(--ink); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .person-qa.is-followup { margin-left: var(--space-2); }
+  .person-route-status { width: 100%; margin-left: 0; }
+  .person-section h2 .person-meta { width: 100%; margin-left: 34px; }
+}
+
+/* ── 문장 다듬기 (설문 창, 2026-09-24) ─────────────────────────────────────────
+   적는 칸 아래에 안내 한 줄, 단추, AI 안내, 접힌 예시. 누르면 다듬은 문장이 적던 칸에
+   들어가고, 다듬기 전에 쓴 글이 그 아래에 읽기용으로 보인다. 나이 드신 참여자를 생각해 단추는
+   손가락 크기(48px)로, 안내는 글자 수 표시보다 크게 둔다. */
+.text-field-polish .polish-guide { display: grid; gap: var(--space-2); margin-top: calc(var(--space-2) * -1); }
+.text-field-polish .polish-hint { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.6; }
+.text-field-polish .polish-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.text-field-polish .polish-button { min-height: 48px; padding: 0 22px; font-size: 15px; }
+.text-field-polish .polish-button[aria-busy="true"] { color: var(--muted); }
+.text-field-polish .polish-notice { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.text-field-polish .polish-example summary { display: inline-block; min-height: 32px; padding: 4px 0; color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.text-field-polish .polish-example dl { display: grid; gap: var(--space-3); margin: var(--space-2) 0 0; padding: var(--space-4); background: var(--surface-soft); }
+.text-field-polish .polish-example dl div { display: grid; gap: 4px; }
+.text-field-polish .polish-example dt { color: var(--muted); font-size: 12px; font-weight: 700; }
+.text-field-polish .polish-example dd { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.7; }
+.text-field-polish .polish-status { margin: 0; color: var(--red); font-size: 14px; line-height: 1.6; }
+.text-field-polish .polish-status:empty { display: none; }
+.text-field-polish .polish-status.is-done { color: var(--ink); font-weight: 700; }
+.text-field-polish .polish-other { display: grid; gap: var(--space-2); padding: var(--space-4); border-left: 3px solid var(--line); background: var(--surface-soft); }
+.text-field-polish .polish-other-label { margin: 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+.text-field-polish .polish-other-text { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.75; white-space: pre-wrap; }
+.text-field-polish .polish-use { justify-self: start; min-height: 44px; font-size: 14px; }
+.text-field-polish .polish-status.is-busy { color: var(--muted); }
+.text-field-polish .polish-extras { display: grid; gap: var(--space-3); margin-top: calc(var(--space-2) * -1); }
+.text-field-polish .polish-extras .polish-guide { margin-top: 0; }
+.text-field-polish .polish-lead { margin: calc(var(--space-2) * -1) 0 0; padding: var(--space-3) var(--space-4); border-left: 3px solid var(--line-dark); background: var(--surface); color: var(--ink); font-size: 15px; line-height: 1.65; }
+.primary-button[aria-busy="true"] { opacity: .6; }

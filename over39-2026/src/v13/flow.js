@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260924-r72";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260924-r73";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -79,6 +79,9 @@ const KEEP_ON_ROUTE_CHANGE = new Set([
   // 2026-09-20: 시작 시각은 ISO 문자열이라 looksLikeWriting 이 「글」로 보고 회수 칸으로 옮겼다.
   // 첫 P01 클릭 한 번에 모든 참여자의 시작 시각이 answers 에서 사라지고 있었다.
   "survey_started_at",
+  // 「문장 다듬기」의 원문 기록. 글이 아니라 객체라 looksLikeWriting 이 못 알아보고 버린다 —
+  // 그러면 경로를 한 번 바꾸는 것만으로 참여자가 처음 쓴 글이 사라진다.
+  "text_polish",
   ...PARTICIPANT_CONTEXT_FIELDS,
 ]);
 

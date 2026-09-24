@@ -657,7 +657,7 @@
       "show_if": "route = AUDIENCE and M01 = NO_RECALL",
       "text": "특정한 작품이 떠오르지 않아도 괜찮아요. 요즘 문화예술을 가깝게 또는 멀게 느끼는 순간이 있다면 한 가지 들려주세요.",
       "help": "특정 작품의 이름이나 전시를 다시 떠올릴 필요는 없어요.",
-      "max_chars": 480,
+      "max_chars": 800,
       "store": [
         "no_recall_relation_text"
       ]
@@ -1841,7 +1841,7 @@
       "show_if": "D03 has value and D03 != NONE",
       "text": "선택한 경험이 실제 활동, 기억 또는 관계에 어떤 영향을 주었는지 짧게 적어주세요.",
       "help": "한두 문장으로 적어도 괜찮습니다. 원하지 않으면 건너뛸 수 있습니다.",
-      "max_chars": 480,
+      "max_chars": 800,
       "store": [
         "d_context_evidence_text",
         "d_context_evidence_audio_ref"

@@ -339,7 +339,11 @@ function coordinateFromPayload(payload) {
     stages,
     derivedFrom,
     // 참여자가 실제로 읽은 문장. 표시 언어가 한국어가 아니어도 그대로 남긴다.
-    participantReading: array(readingLayer?.paragraphs).map(text).filter(Boolean),
+    // 문단이 {screen, appendix} 로 저장되는 판(response-document.js)이 있어, 글자로만 다루면
+    // 「[object Object]」가 찍혔다(2026-09-24, 연구 표본 문단 20개). 화면에서 읽은 쪽을 쓴다.
+    participantReading: array(readingLayer?.paragraphs)
+      .map((paragraph) => (paragraph && typeof paragraph === "object" ? text(paragraph.screen || paragraph.appendix) : text(paragraph)))
+      .filter(Boolean),
     // 참여자가 확인한 좌표가 없으면 실제로 남아 있는 마지막 단계를 쓴다. 참여 기록 문서에
     // 캐시된 좌표를 먼저 보면, 중간에 멈춘 응답에서 저장된 단계와 다른 값이 머리에 오른다.
     final: stages.find((stage) => stage.stage === "participant_final")

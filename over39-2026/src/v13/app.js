@@ -1,27 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r72";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r72";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r72";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r72";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r72";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r72";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r72";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r72";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r72";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r72";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r72";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r72";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r72";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r72";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r72";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r72";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r72";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r72";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r72";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r72";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r72";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r72";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r72";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r72";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r73";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r73";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r73";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r73";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r73";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r73";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r73";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r73";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r73";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r73";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r73";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r73";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r73";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r73";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r73";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r73";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r73";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r73";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r73";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r73";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r73";
+import { POLISH_EXCLUDED_IDS, POLISH_HOLD_MS, POLISH_STATE_KEY, answerFromPolish, polishEntry, renderPolishExtras, renderPolishLead, requestTextPolish, shouldAutoPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r73";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r73";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r73";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r73";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r73";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -34,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c7c113eb4ffe-dirty 2026-09-24T00:46:54.447Z";
+const buildStamp = "3e81611520b9-dirty 2026-09-24T02:57:31.536Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -911,16 +913,39 @@ function characterLimitLabel(limit) {
   return template === "최대 {n}자" ? `최대 ${limit}자` : template.replace("{n}", String(limit));
 }
 
+// 「문장 다듬기」를 붙이는 칸: 여러 줄로 적는 서술 칸 전부(이름·연도·나라 같은 한 줄 칸은 빼고,
+// POLISH_EXCLUDED_IDS 도 뺀다). AI 가 꺼져 있으면(시험 모드) 단추도 안내도 그리지 않는다 —
+// 누를 수 없는 단추를 보여 주지 않는다.
+const polishBusy = new Set();
+const polishStatus = new Map();
+function isPolishable(id, multiline) {
+  return Boolean(multiline && isRc2 && liveAiEnabled && !POLISH_EXCLUDED_IDS.has(id) && !String(id).startsWith("feedback_"));
+}
+
 function renderText(id, { placeholder = "짧게 적어도 괜찮습니다.", multiline = true, label = "", field = "", value = undefined, maxChars = null } = {}) {
   const inputId = `input-${id}-${field || "default"}`.replaceAll(".", "-");
   const item = question(id);
   const limit = Number(maxChars || item?.max_chars || 800);
-  const currentValue = value === undefined ? answerFor(id) || "" : value;
+  const answerField = field || storedField(item) || id;
+  const polishable = isPolishable(id, multiline);
+  const entry = polishable ? polishEntry(state.answers, answerField) : null;
+  // 칸에 보이는 글이 곧 남는 글이다. 다듬었으면 다듬은 문장이, 되돌렸으면 쓴 글이 들어 있다.
+  const currentValue = entry ? answerFromPolish(entry) : value === undefined ? answerFor(id) || "" : value;
   const fieldAttr = field ? ` data-input-field="${esc(field)}"` : "";
+  const polishAttr = polishable ? ` data-polish-role="written" data-polish-field="${esc(answerField)}"` : "";
+  // 다듬기가 붙는 칸은 흐린 안내 글을 비운다. 안내는 칸 위(renderPolishLead)가 하고, 칸 안의 흐린
+  // 글이 진짜 글처럼 보여 커서를 그 뒤로 옮기려는 일이 있었다(TK 2026-09-24).
+  const placeholderAttr = polishable ? "" : ` placeholder="${esc(t(placeholder))}"`;
   const input = multiline
-    ? `<textarea id="${esc(inputId)}" class="text-input" data-input-id="${esc(id)}"${fieldAttr} maxlength="${limit}" placeholder="${esc(t(placeholder))}">${esc(currentValue)}</textarea>`
+    ? `<textarea id="${esc(inputId)}" class="text-input" data-input-id="${esc(id)}"${fieldAttr}${polishAttr} maxlength="${limit}"${placeholderAttr}>${esc(currentValue)}</textarea>`
     : `<input id="${esc(inputId)}" class="text-input text-input-single" data-input-id="${esc(id)}"${fieldAttr} value="${esc(currentValue)}" placeholder="${esc(t(placeholder))}" />`;
-  return `<div class="text-field">${label ? `<label class="text-field-label" for="${esc(inputId)}">${esc(t(label))}</label>` : ""}${input}${multiline ? `<span class="text-field-meta">${esc(characterLimitLabel(limit))}</span>` : ""}</div>`;
+  const extras = polishable
+    ? renderPolishExtras({ copy: textPolishCopy(state.language), id, field: answerField, entry, busy: polishBusy.has(answerField), status: polishStatus.get(answerField) || "", esc })
+    : "";
+  const labelHtml = label ? `<label class="text-field-label" for="${esc(inputId)}">${esc(t(label))}</label>` : "";
+  const meta = multiline ? `<span class="text-field-meta">${esc(characterLimitLabel(limit))}</span>` : "";
+  if (polishable) return `<div class="text-field text-field-polish" data-polish-field="${esc(answerField)}">${labelHtml}${renderPolishLead({ copy: textPolishCopy(state.language), esc })}${input}${meta}${extras}</div>`;
+  return `<div class="text-field">${labelHtml}${input}${meta}</div>`;
 }
 
 function renderOtherInput(id, label = "기타 내용을 짧게 적어주세요.") {
@@ -3895,6 +3920,16 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
+  if (target.dataset.action === "polish-use") {
+    const field = target.dataset.polishField;
+    const entry = polishEntry(state.answers, field);
+    if (!entry) return;
+    setPolishEntry(field, withPolishUse(entry, target.dataset.polishUse));
+    polishStatus.delete(field);
+    afterTextAnswerChanged(target.dataset.polishId || field, field);
+    render(false);
+    return;
+  }
   if (target.dataset.action === "open-call") { window.open(openCallUrl(), "_blank", "noopener,noreferrer"); return; }
   if (target.dataset.action === "notice") { state.phase = "notice"; render(true); return; }
   // 2026-09-20: 참여자가 언제 시작했는지를 아무 데서도 기록하지 않고 있었다. 세션 행은 첫 서버
@@ -4180,6 +4215,8 @@ document.addEventListener("click", (event) => {
     const screens = activeScreens();
     const id = screens[state.step];
     if (!canContinue(id) || state.submissionStatus === "sending") return;
+    // 「문장 다듬기」: 다듬을 글이 있으면 여기서 한 번 붙잡는다.
+    if (holdForPolish()) return;
 
     // 도중에 그만둔 사람의 기록을 남긴다. 적응형 경로는 맨 마지막 저장 버튼을 누르기
     // 전까지 서버로 아무것도 보내지 않아서, 25분을 쓰고 중간에 창을 닫은 사람은 아예
@@ -4434,6 +4471,120 @@ document.addEventListener("click", (event) => {
   }
 });
 
+// 글 칸의 답이 바뀐 뒤 해야 하는 일. 직접 타이핑했을 때와 「문장 다듬기」로 바뀌었을 때가
+// 같아야 한다 — 다듬은 문장으로 답이 바뀌었는데 이어지는 질문이 옛 글을 붙들고 있으면 안 된다.
+function afterTextAnswerChanged(id, field) {
+  if (isRc2 && /^depth_[ms]_text$/.test(field)) clearDepthAfter(field === "depth_m_text" ? "M" : "S");
+  if (isRc2 && ["NO_RECALL_RELATION", "M02", "M04_TEXT", "P18", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT", "D04", "M06_YEAR", "M07", "P09_COUNTRY", "P10"].includes(id)) reconcileAnchorsAfterResearchEdit(id);
+  else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
+  if (isRc2 && ["participant_revision", "display_name"].includes(field)) {
+    clearDocumentConfirmation();
+    // 확인은 취소됐는데 버튼은 `renderChoices`가 그린 DOM 그대로 ✓를 달고 남아 있었다.
+    // 참여자에게는 필수 항목이 채워진 화면인데 `다음`만 끝까지 꺼져 있는 것으로 보인다.
+    // 여기서 다시 그리면 한글 조합 중 커서가 튀므로 표시만 직접 끈다.
+    document.querySelectorAll('[data-choice-id="synthesis_confirmation_ack"]').forEach((button) => {
+      button.classList.remove("selected");
+      button.setAttribute("aria-pressed", "false");
+      const mark = button.querySelector("span[aria-hidden='true']");
+      if (mark) mark.textContent = "";
+    });
+  }
+  saveDraft();
+  const activeId = activeScreens()[state.step];
+  const nextButton = document.querySelector("button.primary-button[data-action='next']");
+  if (nextButton) nextButton.disabled = !canContinue(activeId);
+}
+
+function setPolishEntry(field, entry) {
+  state.answers[POLISH_STATE_KEY] = { ...(state.answers[POLISH_STATE_KEY] || {}), [field]: entry };
+  state.answers[field] = answerFromPolish(entry);
+}
+
+function polishedBoxEdited(entry) {
+  return Boolean(entry?.use === "polished" && entry?.polished && String(entry.edited ?? entry.polished) !== entry.polished);
+}
+
+// 칸 아래(알림 줄·쓴 글·되돌리기)만 다시 그린다. 칸 자체는 건드리지 않는다.
+function refreshPolishExtras(field) {
+  const node = document.querySelector(`.polish-extras[data-polish-extras="${CSS.escape(field)}"]`);
+  if (!node) return;
+  const id = document.querySelector(`textarea[data-polish-field="${CSS.escape(field)}"]`)?.dataset.inputId || field;
+  node.outerHTML = renderPolishExtras({ copy: textPolishCopy(state.language), id, field, entry: polishEntry(state.answers, field), busy: polishBusy.has(field), status: polishStatus.get(field) || "", esc });
+}
+
+// 칸 하나를 다듬는다. 돌려주는 값: 다듬은 문장이 칸에 들어갔는가.
+// 실패해도 쓴 글은 그대로이고, 같은 글로는 다시 부르지 않는다(failed_on).
+async function polishTextField(id, field) {
+  if (polishBusy.has(field)) return false;
+  const entry = polishEntry(state.answers, field);
+  const source = String(state.answers[field] || "");
+  if (!shouldAutoPolish(entry, source)) return false;
+  // 질문은 오타를 읽어 내는 데만 쓴다(서버 지시문). 화면에 보이는 질문과 칸 이름을 그대로 보낸다.
+  const box = document.querySelector(`.text-field-polish[data-polish-field="${CSS.escape(field)}"]`);
+  const question = [document.querySelector("main h1")?.textContent, box?.querySelector(".text-field-label")?.textContent].filter(Boolean).join(" · ");
+  const screenKey = currentScreenKey();
+  polishBusy.add(field);
+  polishStatus.delete(field);
+  refreshPolishExtras(field);
+  const result = await requestTextPolish({ endpoint: aiFunctionUrl, anonKey: supabaseAnonKey, mode: aiMode, text: source, question, attempt: Number(entry?.attempts || 0) + 1, responseId: state.responseId });
+  polishBusy.delete(field);
+  // 기다리는 사이에 다음 화면으로 갔으면(늦어서 붙잡지 않고 넘긴 경우) 결과를 넣지 않는다.
+  // 참여자가 보지 않은 문장이 답이 된다.
+  if (currentScreenKey() !== screenKey) {
+    setPolishEntry(field, withPolishFailure(polishEntry(state.answers, field), { source, run: { ...result.run, error_code: result.text ? "POLISH_LEFT_SCREEN" : result.run?.error_code } }));
+    saveDraft();
+    return false;
+  }
+  // 기다리는 사이에 칸을 고쳤으면, 다듬은 문장은 이미 옛 글의 것이다. 방금 쓴 말을 덮지 않는다.
+  if (String(state.answers[field] || "") !== source) {
+    refreshPolishExtras(field);
+    return false;
+  }
+  if (result.text && result.text.trim() !== source.trim()) {
+    setPolishEntry(field, withPolishResult(polishEntry(state.answers, field), { source, polished: result.text, run: result.run }));
+    polishStatus.set(field, "confirm");
+    afterTextAnswerChanged(id, field);
+    return true;
+  }
+  // 고칠 것이 없었거나 실패했다. 어느 쪽이든 쓴 글 그대로 넘어간다.
+  setPolishEntry(field, withPolishFailure(polishEntry(state.answers, field), { source, run: result.text ? { ...result.run, error_code: "POLISH_NO_CHANGE" } : result.run }));
+  saveDraft();
+  return false;
+}
+
+// 「다음」을 눌렀을 때 다듬을 글이 있으면 한 번 붙잡는다(text-polish.js 머리말).
+// 다듬은 문장이 들어가면 화면을 그대로 두고 「다음」을 한 번 더 받는다. 고칠 것이 없거나,
+// 실패하거나, POLISH_HOLD_MS 안에 오지 않으면 붙잡지 않고 넘어간다 — AI 가 설문을 막으면 안 된다.
+let polishHolding = false;
+let polishBypassKey = null;
+function holdForPolish() {
+  if (!isRc2 || !liveAiEnabled) return false;
+  const key = currentScreenKey();
+  if (polishBypassKey === key) { polishBypassKey = null; return false; }
+  if (polishHolding) return true;
+  const targets = [...document.querySelectorAll('textarea[data-polish-role="written"]')]
+    .map((node) => ({ id: node.dataset.inputId, field: node.dataset.polishField }))
+    .filter(({ field }) => shouldAutoPolish(polishEntry(state.answers, field), String(state.answers[field] || "")));
+  if (!targets.length) return false;
+  polishHolding = true;
+  const jobs = Promise.all(targets.map(({ id, field }) => polishTextField(id, field)));
+  // 「다음」은 화면 아래에 있고 알림 줄은 칸 밑에 있다. 무엇을 기다리는지 보이게 올린다.
+  document.querySelector(".polish-status.is-busy")?.scrollIntoView({ block: "center", behavior: "smooth" });
+  document.querySelector("button.primary-button[data-action='next']")?.setAttribute("aria-busy", "true");
+  Promise.race([jobs, new Promise((resolve) => setTimeout(() => resolve(null), POLISH_HOLD_MS))]).then((results) => {
+    polishHolding = false;
+    if (currentScreenKey() !== key) return;
+    if (Array.isArray(results) && results.some(Boolean)) {
+      render(false);
+      document.querySelector(".polish-status.is-done")?.scrollIntoView({ block: "center", behavior: "smooth" });
+      return;
+    }
+    polishBypassKey = key;
+    document.querySelector("button.primary-button[data-action='next']")?.click();
+  });
+  return true;
+}
+
 document.addEventListener("input", (event) => {
   const input = event.target;
   // maxlength는 붙여넣기·타이핑을 소리 없이 자른다. 한도에 닿는 순간, 잘렸다는 사실과
@@ -4504,27 +4655,23 @@ document.addEventListener("input", (event) => {
   }
   const item = question(id);
   const field = input.dataset.inputField || (item ? storedField(item) : id === "M06_YEAR" ? "memory_year_optional" : id === "P05_YEAR" ? "activity_start_year" : id === "M07" ? "memory_locations" : "activity_locations");
-  state.answers[field] = id === "M07" ? locationValues(input.value, 2) : id === "P10" ? locationValues(input.value, 3) : input.value;
-  if (isRc2 && /^depth_[ms]_text$/.test(field)) clearDepthAfter(field === "depth_m_text" ? "M" : "S");
-  if (isRc2 && ["NO_RECALL_RELATION", "M02", "M04_TEXT", "P18", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT", "D04", "M06_YEAR", "M07", "P09_COUNTRY", "P10"].includes(id)) reconcileAnchorsAfterResearchEdit(id);
-  else if (isRc2 && field === "d_context_evidence_text") reconcileAnchorsAfterResearchEdit("D04");
-  if (isRc2 && ["participant_revision", "display_name"].includes(field)) {
-    clearDocumentConfirmation();
-    // 확인은 취소됐는데 버튼은 `renderChoices`가 그린 DOM 그대로 ✓를 달고 남아 있었다.
-    // 참여자에게는 필수 항목이 채워진 화면인데 `다음`만 끝까지 꺼져 있는 것으로 보인다.
-    // 여기서 다시 그리면 한글 조합 중 커서가 튀므로 표시만 직접 끈다.
-    document.querySelectorAll('[data-choice-id="synthesis_confirmation_ack"]').forEach((button) => {
-      button.classList.remove("selected");
-      button.setAttribute("aria-pressed", "false");
-      const mark = button.querySelector("span[aria-hidden='true']");
-      if (mark) mark.textContent = "";
-    });
+  const polished = input.dataset.polishRole === "written" ? polishEntry(state.answers, field) : null;
+  if (polished) {
+    // 다듬은 문장이 칸에 있으면 그 문장을, 되돌렸으면 쓴 글을 고친다. 쓴 글의 기록은 따로 남는다.
+    const wasEdited = polishedBoxEdited(polished);
+    setPolishEntry(field, withBoxEdit(polished, input.value));
+    // 다듬은 문장에 손을 대는 순간 「쓴 글로 되돌리기」가 사라져야 하고, 알림 줄도 거둔다.
+    // 칸은 다시 그리지 않는다 — 한글 조합 중에 커서가 튄다.
+    if (polishStatus.has(field) || wasEdited !== polishedBoxEdited(polishEntry(state.answers, field))) {
+      polishStatus.delete(field);
+      refreshPolishExtras(field);
+    }
+  } else {
+    state.answers[field] = id === "M07" ? locationValues(input.value, 2) : id === "P10" ? locationValues(input.value, 3) : input.value;
   }
-  saveDraft();
-  const activeId = activeScreens()[state.step];
-  const nextButton = document.querySelector("button.primary-button[data-action='next']");
-  if (nextButton) nextButton.disabled = !canContinue(activeId);
+  afterTextAnswerChanged(id, field);
 });
+
 
 document.addEventListener("change", (event) => {
   const input = event.target;

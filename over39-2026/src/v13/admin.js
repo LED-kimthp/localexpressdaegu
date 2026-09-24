@@ -1,6 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r72";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r72";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r72";
+import { OPERATIONS, OPERATION_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r73";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r73";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r73";
+import { GREETING_INDEX_SELECT, PERSON_SNAPSHOT_SELECT, buildPeopleIndex, buildPersonSheet, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r73";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -9,7 +10,8 @@ const relayEndpoint = String(window.OVER39_SUPABASE_RELAY_URL || "");
 const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
 const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
-let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, status: "loading", filter: "all", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
+// 목록의 기본은 **연구** 표본이다. 전체로 두면 테스트 269건 사이에서 열여섯 분을 찾아야 했다(TK 2026-09-23).
+let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, sheet: null, detailSource: null, detailNotice: "", people: new Map(), peopleError: "", folds: {}, status: "loading", filter: "research", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
 
 // 매직링크가 돌아올 주소. 토큰은 프래그먼트로 오므로 `#`을, 표본 쿼리가 붙은 채 열렸을
 // 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
@@ -113,6 +115,23 @@ async function loadSessions() {
   state.sessions = rows;
   state.sessionsTotal = rows.total;
   state.status = "ready";
+  render();
+  loadPeople();
+}
+
+// 목록 한 줄마다 누구인지(표기·기록 코드)와 「제안문 · 안부 · 전달」을 붙인다. 목록을 먼저
+// 그리고 뒤따라 채운다 — 이것이 늦거나 실패해도 목록과 한 사람의 장은 그대로 쓸 수 있다.
+async function loadPeople() {
+  try {
+    const [snapshots, greetings] = await Promise.all([
+      fetchAllRows("over39_response_snapshots", { select: PERSON_SNAPSHOT_SELECT, orderKey: "created_at.asc,id.asc" }),
+      fetchAllRows("over39_greetings", { select: GREETING_INDEX_SELECT }),
+    ]);
+    state.people = buildPeopleIndex({ snapshots, greetings });
+    state.peopleError = "";
+  } catch {
+    state.peopleError = "목록의 표기와 「제안문 · 안부 · 전달」 표시를 불러오지 못했어요. 한 사람씩 누르면 기록은 볼 수 있어요.";
+  }
   render();
 }
 
@@ -233,13 +252,58 @@ function renderCare() {
 async function loadDetail(responseId) {
   state.selected = responseId;
   state.detail = null;
+  state.sheet = null;
+  state.detailSource = null;
+  state.detailNotice = "";
   state.relayResult = null;
   state.relayError = "";
   render();
+  const id = encodeURIComponent(responseId);
   const tables = ["over39_fixed_answers", "over39_axis_snapshots", "over39_depth_questions", "over39_depth_answers", "over39_ai_runs", "over39_participant_revisions", "over39_consent_events", "over39_connection_profiles", "over39_institution_feedback", "over39_operational_events"];
-  const results = await Promise.all(tables.map((table) => api(table, `?select=*&response_id=eq.${encodeURIComponent(responseId)}`).catch(() => [])));
+  // 한 사람의 장(①~⑤)은 스냅샷 원문과 안부 두 방향을 더 읽는다. 안부 표에는 response_id 가
+  // 없다 — 보낸 쪽·받은 쪽을 따로 묻는다.
+  const [results, snapshots, sent, received] = await Promise.all([
+    Promise.all(tables.map((table) => api(table, `?select=*&response_id=eq.${id}`).catch(() => []))),
+    api("over39_response_snapshots", `?select=*&response_id=eq.${id}&order=created_at.asc`).catch(() => []),
+    api("over39_greetings", `?select=*&sender_record_id=eq.${id}&order=created_at.asc`).catch(() => []),
+    api("over39_greetings", `?select=*&receiver_record_id=eq.${id}&order=created_at.asc`).catch(() => []),
+  ]);
+  // 불러오는 사이 다른 사람을 눌렀으면 이 결과로 그 사람의 장을 덮지 않는다.
+  if (state.selected !== responseId) return;
   state.detail = Object.fromEntries(tables.map((table, index) => [table, results[index]]));
+  const session = state.sessions.find((row) => row.response_id === responseId) || { response_id: responseId };
+  // 같은 응답에 수정이 여러 번 남을 수 있다. 마지막 승인 문장이 참여자의 뜻이다(record-export.js 와 같은 규칙).
+  const revision = [...state.detail.over39_participant_revisions]
+    .sort((a, b) => String(a.updated_at || a.created_at || "").localeCompare(String(b.updated_at || b.created_at || ""))).pop() || null;
+  state.detailSource = { session, snapshots, revision, consentEvents: state.detail.over39_consent_events };
+  state.sheet = buildPersonSheet({ ...state.detailSource, sent, received, aiRuns: state.detail.over39_ai_runs });
   render();
+  root.querySelector(".dashboard-main")?.scrollIntoView({ block: "start" });
+}
+
+// 참여자가 받은 종이를 그대로 연다. 창은 누른 그 순간에 열어야 팝업 차단에 걸리지 않는다 —
+// 자료는 이미 불러와 있으므로 기다릴 것이 없다.
+function openPrintWindow(html, title) {
+  const win = window.open("", "_blank");
+  if (!win) {
+    state.detailNotice = "새 창이 막혔어요. 이 주소에서 팝업을 허용한 뒤 다시 눌러 주세요.";
+    render();
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  // 브라우저는 창 제목을 PDF 파일 이름으로 쓴다. 참여자 화면과 같이 참여 기록 코드로.
+  if (title) win.document.title = title;
+  let printed = false;
+  const print = () => {
+    if (printed || win.closed) return;
+    printed = true;
+    win.focus();
+    win.print();
+  };
+  win.addEventListener("load", () => window.setTimeout(print, 200));
+  window.setTimeout(print, 3000);   // load 를 주지 않는 브라우저 대비
 }
 
 // 허용목록에 없는 `redirect_to`는 GoTrue가 오류로 돌려주지 않는다. 조용히 Site URL로
@@ -265,7 +329,7 @@ async function otpFailureMessage(response) {
 
 function renderLogin() {
   const configured = Boolean(supabaseUrl && anonKey);
-  return `<main class="admin-login"><div class="archive-label">OVER39 · RC1 ADMIN</div><h1>연구자 확인</h1>${configured ? `<p>이 기기에서 한 번만 들어오면 그다음부터는 다시 묻지 않습니다.</p>
+  return `<main class="admin-login"><div class="archive-label">OVER39 · RC2 ADMIN</div><h1>연구자 확인</h1>${configured ? `<p>이 기기에서 한 번만 들어오면 그다음부터는 다시 묻지 않습니다.</p>
     <label for="admin-email">관리자 이메일</label><input id="admin-email" type="email" autocomplete="email" class="text-input text-input-single" placeholder="research@example.com" />
     <label for="admin-password">비밀번호</label><input id="admin-password" type="password" autocomplete="current-password" class="text-input text-input-single" placeholder="비밀번호" />
     <button class="primary-button" data-admin-action="login-password">들어가기</button>
@@ -276,13 +340,20 @@ function renderLogin() {
     <button class="secondary-button" data-admin-action="verify-code">숫자로 들어가기</button></details>` : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
-function statusLabel(item) { return item.status === "completed" ? "완료" : item.status === "in_progress" ? "중단·진행 중" : item.status; }
 function sessionRows() {
   return state.sessions.filter((item) => state.filter === "all" || item.sample_type === state.filter);
 }
 
+const SAMPLE_SHORT = { research: "연구", test: "테스트", institution_review: "기관" };
+
+// 한 줄에 「누구인지」와 다섯 칸 가운데 셋의 유무를 싣는다. 기호만으로 알리지 않는다 — 글자가 먼저다.
 function listCard(item) {
-  return `<button class="dashboard-profile ${state.selected === item.response_id ? "selected" : ""}" data-response-id="${esc(item.response_id)}"><div><span>${esc(item.sample_type)}</span><strong>${esc(item.institution_code || "DIRECT")}</strong></div><p>${esc(item.route || "경로 미선택")} · ${esc(statusLabel(item))}</p><small>${esc(new Date(item.updated_at).toLocaleString("ko-KR"))}</small></button>`;
+  const person = state.people.get(item.response_id);
+  const flag = (on, label) => `<span class="${on ? "is-on" : ""}">${label} ${on ? "✓" : "·"}</span>`;
+  const flags = person
+    ? `<p class="dashboard-profile-flags">${flag(person.hasOffer, "제안문")}${flag(person.wrote > 0, "안부")}${flag(person.delivered > 0, "전달")}</p>`
+    : "";
+  return `<button class="dashboard-profile ${state.selected === item.response_id ? "selected" : ""}" data-response-id="${esc(item.response_id)}"><div><span>${esc(SAMPLE_SHORT[item.sample_type] || item.sample_type)}</span><strong>${esc(person ? personLabelText(person) : shortId(item.response_id))}</strong></div><p>${esc(routeLabel(item.route))} · ${esc(sessionStatusLabel(item.status))}${item.institution_code ? ` · ${esc(item.institution_code)}` : ""}</p>${flags}<small>${esc(new Date(item.updated_at).toLocaleString("ko-KR"))}</small></button>`;
 }
 
 function detailSection(title, rows, renderer) {
@@ -294,11 +365,20 @@ function relayComposer() {
   return `<section class="admin-detail-section relay-composer"><h2>익명 안부 중계</h2><p>연구자가 직접 상대 응답을 확인한 뒤, 안부나 질문을 익명 링크로 전달합니다. 연락처와 이름은 이 화면에 표시하지 않습니다.</p><label for="relay-target">받는 응답 ID</label><input id="relay-target" class="text-input text-input-single" placeholder="상대 응답 ID" /><label for="relay-message">전할 안부 또는 질문</label><textarea id="relay-message" class="text-input" maxlength="1400" placeholder="연구팀을 통해 전할 짧은 안부나 질문을 적어 주세요."></textarea><label for="relay-reason">연결을 살펴본 이유 (운영 기록)</label><input id="relay-reason" class="text-input text-input-single" maxlength="1200" placeholder="예: 서로 다른 지역에서 비슷한 조건을 이야기했습니다." /><button class="primary-button" data-admin-action="prepare-relay">익명 전달 링크 만들기</button>${state.relayError ? `<p class="error">${esc(state.relayError)}</p>` : ""}${state.relayResult ? `<p class="admin-relay-link">전달용 링크: <a href="${esc(state.relayResult)}" target="_blank" rel="noreferrer">${esc(state.relayResult)}</a></p>` : ""}</section>`;
 }
 
+// 다시 그려도 펼친 칸이 접히지 않게 한다(목록 표시가 뒤늦게 도착할 때 등).
+const fold = (key, summary, body, { open = false } = {}) => `<details class="admin-fold" data-fold="${esc(key)}" ${open || state.folds[key] ? "open" : ""}><summary>${esc(summary)}</summary>${body}</details>`;
+
+// 한 사람 = 한 장(TK 2026-09-23). 연구자가 읽는 순서로 ①~⑤를 놓고, 저장된 표들은 지우지 않고
+// 맨 아래 「운영 기록」으로 내린다.
 function renderDetail() {
-  if (!state.selected) return `<div class="empty-match">왼쪽에서 응답을 선택해 주세요.</div>`;
-  if (!state.detail) return `<div class="empty-match">응답 기록을 불러오는 중입니다.</div>`;
+  if (!state.selected) return `<div class="empty-match">왼쪽에서 한 사람을 골라 주세요.</div>`;
+  if (!state.detail || !state.sheet) return `<div class="empty-match">이 사람의 기록을 불러오고 있어요.</div>`;
   const d = state.detail;
-  return `<div class="dashboard-kicker">RESPONSE TRACE · ${esc(state.selected)}</div>
+  const known = new Set(state.sessions.map((row) => row.response_id));
+  return `${state.detailNotice ? `<p class="error" role="status">${esc(state.detailNotice)}</p>` : ""}
+    ${renderPersonSheet(state.sheet, { people: state.people, known })}
+    ${isRc2Admin ? fold("relay", "연구자가 직접 안부 잇기 (익명 중계)", relayComposer(), { open: Boolean(state.relayResult || state.relayError) }) : ""}
+    ${fold("ops", "운영 기록 · 저장된 표 그대로", `<div class="dashboard-kicker">RESPONSE TRACE · ${esc(state.selected)}</div>
     ${detailSection("고정질문 원문과 기여", d.over39_fixed_answers, (row) => `<article><strong>${esc(row.question_id)} · ${esc(row.axis || "맥락")} · ${esc(row.evidence_level || "context")}</strong><p>${esc(JSON.stringify(row.answer))}</p></article>`)}
     ${detailSection("좌표 스냅샷", d.over39_axis_snapshots, (row) => `<article><strong>${esc(row.stage)} · ${esc(row.status)}</strong><p>${esc(row.coordinate_scope || "범위 미기록")} · ${esc([row.m_primary, row.s_primary, row.d_primary].filter(Boolean).join(" · ") || "정보 부족")} ${row.coordinate_candidate ? `· 내부 후보 ${row.coordinate_candidate}` : ""}</p></article>`)}
     ${detailSection("심화질문 3개", d.over39_depth_questions, (row) => `<article><strong>${row.position}. ${esc(row.axis)} · ${esc(row.source)}</strong><p>${esc(row.prompt)}</p><small>의도: ${esc(row.participant_intent)}${row.prompt_version ? ` · ${esc(row.prompt_version)}` : ""}</small></article>`)}
@@ -307,9 +387,8 @@ function renderDetail() {
     ${detailSection("참여자 수정·승인", d.over39_participant_revisions, (row) => `<article><strong>${esc(row.participant_action || "미확인")}</strong><p>${esc(row.participant_approved_text || row.participant_revision || "공개 승인문 없음")}</p></article>`)}
     ${detailSection("동의 이벤트", d.over39_consent_events, (row) => `<article><strong>${esc(row.consent_type)}</strong><p>${row.granted ? "동의" : "동의하지 않음"} · ${esc(row.event_type)}</p></article>`)}
     ${detailSection("관계 참여", d.over39_connection_profiles, (row) => `<article><strong>${row.opted_in ? "연결 대기" : "참여하지 않음"}</strong><p>${esc((row.needs || []).join(" · "))}</p></article>`)}
-    ${relayComposer()}
     ${detailSection("기관 피드백", d.over39_institution_feedback, (row) => `<article><p>${esc(JSON.stringify(row.feedback))}</p></article>`)}
-    ${detailSection("오류·운영 로그", d.over39_operational_events, (row) => `<article><strong>${esc(row.event_type)} · ${esc(row.severity)}</strong><p>${esc(JSON.stringify(row.details))}</p></article>`)}`;
+    ${detailSection("오류·운영 로그", d.over39_operational_events, (row) => `<article><strong>${esc(row.event_type)} · ${esc(row.severity)}</strong><p>${esc(JSON.stringify(row.details))}</p></article>`)}`)}`;
 }
 
 // 이름표는 ai-health.js 한 곳에 있다(마지막 제안까지 셋).
@@ -555,7 +634,7 @@ function renderDashboard() {
   const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
   // 큐 머리의 숫자 하나가 가장 많이 읽힌다. 잘렸을 때는 그 자리에서 "500 / 전체"로 보여준다.
   const queueCount = Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? `${koNum(totals.all)} / ${koNum(state.sessionsTotal)}` : koNum(totals.all);
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC1</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
 }
 
 function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
@@ -712,7 +791,28 @@ document.addEventListener("click", async (event) => {
   }
   // 표본을 바꾸는 것은 다시 집계하는 일이므로 재요청 없이 화면만 다시 그린다.
   if (button.dataset.insightsSample) { state.insightsIncludeTest = button.dataset.insightsSample === "with-test"; render(); return; }
-  if (button.dataset.responseId) { state.view = "responses"; return loadDetail(button.dataset.responseId); }
+  if (button.dataset.personJump) { document.getElementById(button.dataset.personJump)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (button.dataset.adminAction === "print-person-document") {
+    if (!state.sheet?.document) return;
+    const stylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].map((link) => link.href);
+    const title = state.sheet.record.participantCode || state.sheet.responseId;
+    openPrintWindow(responseDocumentPrintHtml(state.sheet.document, { stylesheets, title }), title);
+    return;
+  }
+  if (button.dataset.adminAction === "print-person-record") {
+    if (!state.detailSource) return;
+    const code = state.sheet?.record.participantCode || state.selected;
+    openPrintWindow(personRecordPrintHtml(state.detailSource), `${code} 연구용 기록`);
+    return;
+  }
+  if (button.dataset.responseId) {
+    // ⑤에서 상대를 누르면 그 사람의 장으로 간다. 상대가 다른 표본이면(예: 테스트에서 온 안부)
+    // 목록도 그 표본으로 옮겨, 왼쪽에서 누가 골라졌는지 보이게 한다.
+    const target = state.sessions.find((row) => row.response_id === button.dataset.responseId);
+    if (target && state.filter !== "all" && target.sample_type !== state.filter) state.filter = target.sample_type;
+    state.view = "responses";
+    return loadDetail(button.dataset.responseId);
+  }
   if (button.dataset.adminFilter) { state.filter = button.dataset.adminFilter; render(); return; }
   if (button.dataset.adminAction === "logout") {
     // 이 기기에 오래 남는 로그인이 되었으므로, 나갈 때는 서버에서도 토큰을 무른다. 그러지 않으면
@@ -870,6 +970,12 @@ document.addEventListener("click", async (event) => {
     download(`over39-research-summary-${new Date().toISOString().slice(0, 10)}.csv`, [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n"), "text/csv;charset=utf-8");
   }
 });
+
+// 펼친 칸을 기억한다. `toggle` 은 거품이 일지 않으므로 잡는 단계에서 듣는다.
+document.addEventListener("toggle", (event) => {
+  const key = event.target?.dataset?.fold;
+  if (key) state.folds[key] = event.target.open;
+}, true);
 
 window.addEventListener("storage", (event) => {
   if (event.key !== sessionKey) return;
