@@ -1,6 +1,6 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r73";
-import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20260924-r73";
-import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r73";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r74";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20260924-r74";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r74";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();

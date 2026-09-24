@@ -1,7 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r73";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r73";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r73";
-import { GREETING_INDEX_SELECT, PERSON_SNAPSHOT_SELECT, buildPeopleIndex, buildPersonSheet, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r73";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r74";
+import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r74";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r74";
+import { GREETING_INDEX_SELECT, PERSON_SNAPSHOT_SELECT, buildPeopleIndex, buildPersonSheet, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r74";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -141,7 +141,14 @@ async function loadAiRuns() {
   render();
   try {
     // Only the columns the summary reads, newest first. `output_raw` carries upstream_attempts.
-    state.aiRuns = await api("over39_ai_runs", "?select=response_id,operation,status,source,latency_ms,http_status,error_code,output_raw,started_at&order=started_at.desc&limit=2000");
+    // 문장 다듬기(r73~)는 서술 칸마다·「다음」마다 부르므로 금방 수천 건이 된다. 한 창(최근 2,000건)에
+    // 섞어 받으면 질문·정리·제안 기록이 밀려나 표가 비어 간다. 따로 받는다.
+    const columns = "?select=response_id,operation,status,source,latency_ms,http_status,error_code,output_raw,started_at&order=started_at.desc&limit=2000";
+    const [core, polish] = await Promise.all([
+      api("over39_ai_runs", `${columns}&operation=not.like.polish_text*`),
+      api("over39_ai_runs", `${columns}&operation=like.polish_text*`).catch(() => []),
+    ]);
+    state.aiRuns = [...core, ...polish];
   } catch (error) {
     state.aiRuns = [];
     state.aiRunsError = error.message === "ADMIN_ACCESS_DENIED" ? "이 계정으로는 AI 실행 기록을 볼 수 없습니다." : "AI 실행 기록을 불러오지 못했습니다.";
@@ -410,6 +417,16 @@ function aiHealthRow(name, stats) {
   </tr>`;
 }
 
+// 문장 다듬기는 판정 밖에 따로 둔다. 실패해도 참여자가 쓴 글 그대로 넘어가 「못 받은 사람」이 없다.
+function renderPolishHealth(polish) {
+  if (!polish?.runs) return `<div class="ai-stages ai-stages-aside"><div class="ai-stage ai-stage-unknown"><span>${esc(POLISH_LABEL)}</span><strong>아직 없음</strong><small>이 표본에서 부른 적이 없어요.</small></div></div>`;
+  const detail = polish.failed
+    ? `${polish.runs}회 가운데 ${polish.failed}회는 다듬지 못했어요. 그때는 참여자가 쓴 글 그대로 넘어가요.`
+    : `${polish.runs}회 모두 닿았어요.`;
+  const codes = polish.errorCodes.slice(0, 4).map((item) => `${item.code} ${item.count}회`).join(" · ");
+  return `<div class="ai-stages ai-stages-aside"><div class="ai-stage ${polish.failed ? "ai-health-grade-warn" : "ai-health-grade-ok"}"><span>${esc(POLISH_LABEL)} · 판정 밖</span><strong>${polish.participants}명 · ${polish.runs}회</strong><small>${esc(detail)}${polish.noChange ? ` 고칠 곳이 없던 ${polish.noChange}회는 실패로 세지 않아요.` : ""}${codes ? ` (${esc(codes)})` : ""}</small></div></div>`;
+}
+
 function renderAiHealth() {
   if (state.aiRunsError) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>${esc(state.aiRunsError)}</p></section>`;
   if (!state.aiRuns) return `<section class="detail-section"><h2>AI 운영 지표</h2><p>불러오는 중입니다.</p></section>`;
@@ -449,6 +466,7 @@ function renderAiHealth() {
     <p class="ai-health-verdict ai-health-grade-${esc(totalMissed === 0 && summary.participants ? "ok" : summary.participants ? (totalMissed / Math.max(1, summary.participants) >= 0.2 ? "stop" : "warn") : "unknown")}">${esc(headline)}</p>
     <p class="ai-health-note">참여자 화면에는 실패가 보이지 않아요. 질문이 그냥 안 나오거나, 정리를 직접 쓰게 됩니다. 그래서 여기 숫자로만 알 수 있어요.</p>
     <div class="ai-stages">${stages}</div>
+    ${renderPolishHealth(summary.polish)}
     <details class="ai-health-detail"><summary>자세히 보기 (호출 단위·속도·오류 코드)</summary>
     <dl class="ai-health-totals">
       <div><dt>참여자</dt><dd>${summary.participants}명</dd></div>
@@ -462,7 +480,7 @@ function renderAiHealth() {
       <tbody>${OPERATIONS.map((name) => aiHealthRow(name, summary.byOperation[name])).join("")}</tbody>
     </table>
     ${errors.length ? `<h3>오류 코드</h3><ul class="ai-health-errors">${errors.map((item) => `<li><code>${esc(item.code)}</code> ${item.count}회</li>`).join("")}</ul>` : ""}
-    <p class="ai-health-note">최근 2,000건 기준입니다. 오류 코드는 표본을 가리지 않고 셉니다.</p>
+    <p class="ai-health-note">질문·정리·제안은 최근 2,000건, 문장 다듬기는 따로 최근 2,000건 기준이에요. 위 합계와 오류 코드에는 문장 다듬기가 들어 있지 않아요.</p>
     </details>
   </section>`;
 }

@@ -9,7 +9,9 @@
 // **쓰는 동안에는 글을 바꾸지 않는다.** 멈출 때마다 다듬게 했더니 생각하는 사이에 글이 바뀌고,
 // 이어 쓰면 앞부분까지 또 바뀌고, 휴대폰 자판·받아쓰기와 부딪혔다(시연에서 확인한 것).
 // 「다음」을 눌렀을 때 다듬을 글이 있으면 화면을 잠깐 붙잡고, 다듬은 문장을 보여 준 뒤 「다음」을
-// 한 번 더 받는다 — 바뀐 글을 보지 않고 넘어가는 일이 없게. AI 가 늦거나 실패하면 붙잡지 않는다.
+// 한 번 더 받는다 — 바뀐 글을 보지 않고 넘어가는 일이 없게. 그때 단추 이름은 「이 글로 제출」이다 —
+// 똑같이 「다음」이면 「이대로 낼게요」인지 「또 바꿀래요」인지 가를 수 없었다(TK 시험). 한 번 더 다듬고
+// 싶으면 칸 아래 「다시 다듬기」. AI 가 늦거나 실패하면 붙잡지 않는다.
 // 다듬기 전에 쓴 글은 칸 아래에 보이고 「쓴 글로 되돌리기」로 돌아간다. 되돌린 칸은 다시 자동으로
 // 다듬지 않는다. 칸에 보이는 글이 곧 남는 글이다.
 //
@@ -117,6 +119,17 @@ export function polishSource(answers, field) {
   return { text: String(entry.written || ""), previousPolished: "" };
 }
 
+// 다듬은 문장이 칸에 들어 있는가. 그러면 「다음」 대신 「이 글로 제출」을 보인다.
+export function polishedInBox(entry) {
+  return Boolean(entry?.use === "polished" && entry?.polished);
+}
+
+// 「다시 다듬기」: 다듬은 문장을 몇 글자 고친 뒤 참여자가 직접 한 번 더 부르는 것. 자동 규칙
+// (다듬은 문장이 든 칸은 다시 다듬지 않는다)을 넘어서지만 상한과 최소 글자는 지킨다.
+export function canPolishAgain(entry, boxText) {
+  return canPolishText(boxText) && polishAttemptsLeft(entry) > 0;
+}
+
 // 되돌리면 그 칸은 더 자동으로 다듬지 않는다. 다듬은 문장으로 다시 바꾸면 다시 켠다.
 export function withPolishUse(entry, use) {
   const polished = use === "polished" && entry?.polished;
@@ -193,7 +206,7 @@ export function renderPolishLead({ copy, esc }) {
 
 export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", esc }) {
   const inBox = entry?.use === "polished" && entry?.polished;
-  const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
+  const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
   // 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
   const statusLine = `<p class="polish-status${busy ? " is-busy" : ["polished", "confirm"].includes(status) ? " is-done" : ""}" role="status">${esc(statusText)}</p>`;
   const guide = `<div class="polish-guide">
@@ -207,7 +220,7 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
     ? `<div class="polish-other" data-polish-result="${esc(field)}">
     <p class="polish-other-label">${esc(inBox ? copy.originalLabel : copy.polishedLabel)}</p>
     <blockquote class="polish-other-text">${esc(inBox ? entry.written : entry.edited ?? entry.polished)}</blockquote>
-    ${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}
+    <div class="polish-actions">${inBox && polishAttemptsLeft(entry) > 0 ? `<button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${busy ? " disabled" : ""}>${esc(copy.repolish)}</button>` : ""}${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
   </div>`
     : "";
   const example = `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;

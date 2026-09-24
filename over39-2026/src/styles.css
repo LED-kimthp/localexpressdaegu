@@ -7322,6 +7322,11 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .dashboard-profile-flags { display: flex; flex-wrap: wrap; gap: 4px 10px; }
 .dashboard-profile .dashboard-profile-flags span { color: var(--faint); font-size: 11px; }
 .dashboard-profile .dashboard-profile-flags span.is-on { color: var(--ink); font-weight: 700; }
+/* 문장 다듬기(r73~): AI가 다듬은 문장을 고른 답에는 그 사실과 처음 쓴 글을 붙인다. */
+.person-polish { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.person-polish.is-polished { color: var(--ink); font-weight: 700; }
+.person-polish + .person-quote { margin-top: 6px; font-size: 14px; }
+.ai-stages-aside { margin-top: 0; }
 
 @media (max-width: 640px) {
   .person-qa.is-followup { margin-left: var(--space-2); }
@@ -7356,3 +7361,5 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .text-field-polish .polish-extras .polish-guide { margin-top: 0; }
 .text-field-polish .polish-lead { margin: calc(var(--space-2) * -1) 0 0; padding: var(--space-3) var(--space-4); border-left: 3px solid var(--line-dark); background: var(--surface); color: var(--ink); font-size: 15px; line-height: 1.65; }
 .primary-button[aria-busy="true"] { opacity: .6; }
+.text-field-polish .polish-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.text-field-polish .polish-again { min-height: 44px; padding: 0 18px; font-size: 14px; }

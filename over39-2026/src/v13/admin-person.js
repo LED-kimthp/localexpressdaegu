@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { SAMPLE_LABELS, buildRecord, buildRecordBundle, collectSnapshots, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r73";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r73";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r73";
+import { SAMPLE_LABELS, buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r74";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r74";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r74";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -197,24 +197,38 @@ const section = (no, id, title, meta, body) => `<section class="admin-detail-sec
 const empty = (line) => `<p class="person-empty">${esc(line)}</p>`;
 const quote = (value, label = "") => `<blockquote class="person-quote">${label ? `<span>${esc(label)}</span>` : ""}${esc(value)}</blockquote>`;
 
+// 「문장 다듬기」(r73~): 답 칸에는 참여자가 고른 글이 들어간다. AI가 다듬은 문장을 골랐으면 그렇다고
+// 적고 처음 쓴 글을 바로 밑에 둔다 — 표시 없이 두면 AI 문장을 참여자의 원문으로 읽게 된다.
+function polishBlock(polish, value) {
+  const row = polishForValue(polish, value);
+  if (!row) return "";
+  if (row.reverted) return `<p class="person-polish">AI가 다듬은 문장을 받았지만 처음 쓴 글을 골랐어요.</p>`;
+  return `<p class="person-polish is-polished">AI가 다듬은 문장 · 참여자가 고름${row.editedAfter ? " · 그 뒤 직접 고침" : ""}</p>${row.written ? quote(row.written, "처음 쓴 글") : ""}`;
+}
+
 // ① 문항과 이어진 질문을 실제로 오간 순서대로 놓는다. 이어진 질문은 그것을 부른 문항 바로 뒤에.
 function renderAnswers(sheet) {
   const { answers, followups, narratives, approved } = sheet.record;
+  const polish = array(sheet.record.polish);
   if (!answers.rows.length && !followups.rows.length) {
     return empty(sheet.record.gaps[0] || "읽을 수 있는 답이 없어요.");
   }
   const pending = [...followups.rows];
-  const followupBlock = (row) => `<div class="person-qa is-followup"><p class="person-q"><span class="person-tag">이어진 질문${row.checkpoint ? ` · ${esc(row.checkpoint)}` : ""}</span>${esc(row.prompt || "질문 문구가 저장되지 않았어요.")}</p><p class="person-a">${esc(row.answer || "답을 남기지 않았어요.")}</p></div>`;
+  const followupBlock = (row) => `<div class="person-qa is-followup"><p class="person-q"><span class="person-tag">이어진 질문${row.checkpoint ? ` · ${esc(row.checkpoint)}` : ""}</span>${esc(row.prompt || "질문 문구가 저장되지 않았어요.")}</p><p class="person-a">${esc(row.answer || "답을 남기지 않았어요.")}</p>${polishBlock(polish, row.answer)}</div>`;
   const blocks = answers.rows.map((row) => {
     const after = pending.filter((item) => item.checkpoint && item.checkpoint === row.id);
     after.forEach((item) => pending.splice(pending.indexOf(item), 1));
-    return `<div class="person-qa"><p class="person-q"><span class="person-tag">${esc(row.id)}${row.axis ? ` · ${esc(row.axis)}` : ""}</span>${esc(row.question)}</p><p class="person-a">${esc(row.answer)}</p></div>${after.map(followupBlock).join("")}`;
+    return `<div class="person-qa"><p class="person-q"><span class="person-tag">${esc(row.id)}${row.axis ? ` · ${esc(row.axis)}` : ""}</span>${esc(row.question)}</p><p class="person-a">${esc(row.answer)}</p>${polishBlock(polish, row.answer)}</div>${after.map(followupBlock).join("")}`;
   });
+  // 문항 표·이어진 질문 어디에도 이어지지 않은 다듬기(좌표 의견 칸 등). 조용히 빠지지 않게 따로 둔다.
+  const shown = [...answers.rows.map((row) => text(row.answer)), ...followups.rows.map((row) => text(row.answer))];
+  const elsewhere = polish.filter((row) => row.usedPolished && !shown.includes(row.chosen));
   const approvedBlock = approved.text
     ? `<h3>참여자가 확인한 정리문</h3>${quote(approved.text, approved.korean && approved.korean !== approved.text ? "원문" : "")}${approved.korean && approved.korean !== approved.text ? quote(approved.korean, "한국어 번역") : ""}`
     : `<h3>참여자가 확인한 정리문</h3>${empty("확인한 정리문이 없어요(정리 단계 전에 멈췄거나 직접 쓰기로 했어요).")}`;
   return `${answers.labelled ? "" : `<p class="person-note">옛 판본이라 문항 문구가 저장되지 않았어요. 필드 이름과 값만 보여요.</p>`}
     <div class="person-answers">${blocks.join("")}${pending.map(followupBlock).join("")}</div>
+    ${elsewhere.length ? `<h3>다른 칸에서 AI가 다듬은 문장을 고른 글</h3>${elsewhere.map((row) => `${quote(row.chosen, `${row.field} · 참여자가 고른 글`)}${quote(row.written, `${row.field} · 처음 쓴 글`)}`).join("")}` : ""}
     ${narratives.length ? `<h3>다른 칸에 나타나지 않은 서술</h3>${narratives.map((item) => quote(item.text, item.field)).join("")}` : ""}
     ${approvedBlock}`;
 }
@@ -319,10 +333,12 @@ export function renderPersonSheet(sheet, { people = new Map(), known = new Set()
   const name = record.displayLabel?.label || person?.name || "익명";
   const code = record.participantCode || person?.code || "";
   const followupCount = record.followups.rows.length;
+  const polishedCount = array(record.polish).filter((row) => row.usedPolished).length;
+  const answersMeta = `${record.answers.rows.length}문항${followupCount ? ` · 이어진 질문 ${followupCount}` : ""}${polishedCount ? ` · AI가 다듬은 칸 ${polishedCount}` : ""}`;
   const delivered = sheet.sent.filter(isDelivered).length;
   const receivedCount = sheet.received.filter(isDelivered).length;
   const toc = [
-    ["answers", "1", "답변", `${record.answers.rows.length}문항${followupCount ? ` · 이어진 질문 ${followupCount}` : ""}`],
+    ["answers", "1", "답변", answersMeta],
     ["offer", "2", "제안문", sheet.offer?.text ? "받음" : "없음"],
     ["document", "3", "최종 PDF", sheet.document ? "있음" : "없음"],
     ["written", "4", "남긴 안부", sheet.sent.length ? `${sheet.sent.length}통` : "없음"],
@@ -342,7 +358,7 @@ export function renderPersonSheet(sheet, { people = new Map(), known = new Set()
       <dl class="person-facts">${facts.map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>
       <nav class="person-toc" aria-label="이 사람의 기록 차례">${toc.map(([id, no, title, meta]) => `<button type="button" data-person-jump="person-${id}"><span aria-hidden="true">${no}</span>${esc(title)}<small>${esc(meta)}</small></button>`).join("")}</nav>
     </header>
-    ${section("1", "answers", "어떤 답변을 했나", `${record.answers.rows.length}문항${followupCount ? ` · 이어진 질문 ${followupCount}` : ""}`, renderAnswers(sheet))}
+    ${section("1", "answers", "어떤 답변을 했나", answersMeta, renderAnswers(sheet))}
     ${section("2", "offer", "어떤 제안문을 받았나", sheet.offer?.text ? "받음" : "없음", renderOffer(sheet))}
     ${section("3", "document", "최종 PDF", sheet.document ? "있음" : "없음", renderDocument(sheet))}
     ${section("4", "written", "안부를 어떻게 남겼나", sheet.sent.length ? `${sheet.sent.length}통` : "없음", renderGreetingsWritten(sheet))}

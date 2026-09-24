@@ -1,4 +1,4 @@
-import { isLiveModelSource } from "./depth.js?v=v7-20260924-r73";
+import { isLiveModelSource } from "./depth.js?v=v7-20260924-r74";
 // Reads `over39_ai_runs` and answers one question: is it safe to widen the distribution?
 //
 // A rate-limited or failed AI call is invisible to the participant - the follow-up simply
@@ -23,6 +23,44 @@ export const OPERATION_LABEL = {
 export function baseOperation(name) {
   const value = String(name || "").split(":")[0];
   return OPERATIONS.includes(value) ? value : "";
+}
+
+// 「문장 다듬기」(r73~). 참여자가 「다음」을 누를 때 서술 칸마다 부르고(칸당 최대 5번), 실패해도
+// 참여자가 쓴 글 그대로 넘어간다 — 「받아야 할 것을 못 받은」 사람이 생기지 않는다. 그래서 위 셋과
+// 같은 판정에 넣지 않고, 호출 수·한도 초과·오류 코드 합계에서도 뺀다. 섞으면 1인당 호출이 몇 배로
+// 부풀고, 다듬기의 한도 초과가 질문·정리의 판정을 움직인다. 따로 센다.
+export const POLISH_OPERATION = "polish_text";
+export const POLISH_LABEL = "문장 다듬기";
+export const isPolishRun = (row) => String(row?.operation || "").split(":")[0] === POLISH_OPERATION;
+// 고칠 곳이 없던 것은 실패가 아니다(text-polish.js 의 POLISH_NO_CHANGE).
+const POLISH_NOT_A_FAILURE = new Set(["POLISH_NO_CHANGE"]);
+
+export function polishSummary(rows = []) {
+  const people = new Set();
+  const errorCodes = new Map();
+  const latencies = [];
+  let succeeded = 0;
+  let noChange = 0;
+  let failed = 0;
+  for (const row of rows) {
+    if (row?.response_id) people.add(row.response_id);
+    if (Number.isFinite(row?.latency_ms)) latencies.push(row.latency_ms);
+    const code = String(row?.error_code || "");
+    if (POLISH_NOT_A_FAILURE.has(code)) noChange += 1;
+    else if (row?.status === "success") succeeded += 1;
+    else failed += 1;
+    if (code && !POLISH_NOT_A_FAILURE.has(code)) errorCodes.set(code, (errorCodes.get(code) || 0) + 1);
+  }
+  const sorted = latencies.sort((a, b) => a - b);
+  return {
+    runs: rows.length,
+    participants: people.size,
+    succeeded,
+    noChange,
+    failed,
+    latencyP50: percentile(sorted, 0.5),
+    errorCodes: [...errorCodes.entries()].sort((a, b) => b[1] - a[1]).map(([errorCode, count]) => ({ code: errorCode, count })),
+  };
 }
 
 // 표본을 가른다. 테스트는 우리가 확인하며 만든 것이라 참여자의 경험이 아니다.
@@ -73,9 +111,12 @@ export function aiHealthSummary(runs = [], { sampleTypes = null, sampleType = ""
   const all = Array.isArray(runs) ? runs : [];
   // 표본을 고르면 그 표본의 응답만 센다. 표본을 알 수 없는 실행(참여 기록 목록 밖의 옛 응답)은
   // 「연구」로 셈해 놓고 없는 셈 치지 않는다 — 빠뜨리는 쪽이 더 나쁘다.
-  const rows = sampleType && sampleTypes
+  const sampled = sampleType && sampleTypes
     ? all.filter((row) => (sampleTypes.get(row?.response_id) || "research") === sampleType)
     : all;
+  // 문장 다듬기는 따로 센다(위 POLISH_OPERATION 설명). 아래의 모든 합계는 다듬기를 뺀 것이다.
+  const polishRows = sampled.filter(isPolishRun);
+  const rows = sampled.filter((row) => !isPolishRun(row));
   const participants = new Set();
   const errorCodes = new Map();
   const operations = Object.fromEntries(OPERATIONS.map((name) => [name, emptyOperation()]));
@@ -168,6 +209,7 @@ export function aiHealthSummary(runs = [], { sampleTypes = null, sampleType = ""
     rateLimitedGrade: rows.length ? gradeFor("rate_limited", rateLimitedRate) : "unknown",
     retried,
     byOperation,
+    polish: polishSummary(polishRows),
     errorCodes: [...errorCodes.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => ({ code, count })),
     verdict: grades.includes("stop") ? "stop" : grades.includes("warn") ? "warn" : grades.includes("unknown") ? "unknown" : "ok",
   };

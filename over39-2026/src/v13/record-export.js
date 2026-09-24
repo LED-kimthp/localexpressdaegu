@@ -378,6 +378,51 @@ function consentFromPayload(payload, events) {
   };
 }
 
+// 「문장 다듬기」(r73~, text-polish.js). 서술 칸의 답(answers[field])에는 참여자가 **고른** 글이
+// 들어간다 — AI가 다듬은 문장을 골랐으면 그 문장이다. 처음 쓴 글은 answers.text_polish[field].written
+// 에만 있다. 원문·AI 문장·참여자의 선택은 따로 읽혀야 하므로(AGENTS.md 연구 계약) 문서에 함께 싣는다.
+// 고른 글을 정하는 규칙은 text-polish.js 의 answerFromPolish 와 같다 — 시험이 둘을 맞춘다.
+// 이 모듈은 참여자 화면 모듈에 기대지 않으므로 규칙을 옮겨 적는다.
+export function polishChosenText(entry) {
+  if (!entry || typeof entry !== "object") return "";
+  return entry.use === "polished" && entry.polished ? String(entry.edited ?? entry.polished) : String(entry.written || "");
+}
+
+// 「고칠 곳이 없다」는 실패가 아니다. 다듬기가 한 번도 닿지 못한 횟수만 센다.
+const POLISH_NOT_A_FAILURE = new Set(["POLISH_NO_CHANGE"]);
+
+export function polishFromPayload(payload) {
+  const entries = payload?.answers?.text_polish;
+  if (!entries || typeof entries !== "object") return [];
+  return Object.entries(entries)
+    .filter(([field, entry]) => entry && typeof entry === "object" && !isContactField(field))
+    .map(([field, entry]) => {
+      const usedPolished = entry.use === "polished" && Boolean(text(entry.polished));
+      return {
+        field,
+        written: text(entry.written),
+        polished: text(entry.polished),
+        chosen: text(polishChosenText(entry)),
+        usedPolished,
+        // 다듬은 문장을 고른 뒤 칸에서 직접 더 고쳤는가.
+        editedAfter: usedPolished && entry.edited !== undefined && entry.edited !== null && text(entry.edited) !== text(entry.polished),
+        // AI 문장을 받았지만 쓴 글로 되돌렸는가.
+        reverted: !usedPolished && Boolean(text(entry.polished)),
+        attempts: Number(entry.attempts || 0),
+        failures: array(entry.history).filter((item) => text(item?.status) !== "success" && !POLISH_NOT_A_FAILURE.has(text(item?.error_code))).length,
+      };
+    })
+    .filter((row) => row.written || row.polished);
+}
+
+/** 답으로 보인 글이 다듬기를 거친 것인지. 문항 번호가 아니라 글로 잇는다 — 이어지는 질문의 답 칸처럼
+ * 문항표에 없는 칸도 다듬어지기 때문이다. */
+export function polishForValue(polish, value) {
+  const shown = text(value);
+  if (!shown) return null;
+  return array(polish).find((row) => row.chosen === shown && (row.usedPolished || row.reverted)) || null;
+}
+
 /**
  * 한 사람의 문서 하나. payload 하나를 사람이 읽는 구조로 옮기기만 하고, 줄이지 않는다.
  * @param {{session?: object, snapshot?: object, revision?: object, consentEvents?: Array<object>}} input
@@ -444,6 +489,7 @@ export function buildRecord({ session = {}, snapshot = null, revision = null, co
     answers,
     narratives,
     followups,
+    polish: polishFromPayload(payload),
     coordinate,
     consent: consentFromPayload(payload, consentEvents),
     gaps,
@@ -506,6 +552,7 @@ export function buildRecordBundle(input = {}, options = {}) {
       withApprovedText: records.filter((record) => record.approved.text).length,
       withFollowups: records.filter((record) => record.followups.rows.length).length,
       withDisplayLabel: records.filter((record) => record.displayLabel.provided).length,
+      withPolishedChoice: records.filter((record) => array(record.polish).some((row) => row.usedPolished)).length,
       snapshotsSeen: collected.seen,
       snapshotsCollapsed: collected.collapsed,
       missingSnapshot: records.filter((record) => !record.answers.rows.length).map((record) => record.responseId),
@@ -566,6 +613,9 @@ th, td { text-align: left; vertical-align: top; padding: 7px 9px; border-bottom:
 th[scope="col"] { font-size: 11px; letter-spacing: 0.08em; color: #6a5f57; border-bottom: 1.5px solid #14110f; }
 th[scope="row"] { width: 38%; font-weight: 600; }
 td .raw { display: block; font-size: 11px; color: #8a7d73; margin-top: 3px; }
+.polish-note { display: block; font-size: 11px; color: #8a7d73; margin-top: 4px; }
+.polish-written { display: block; margin-top: 4px; padding: 6px 9px; border-left: 2px solid #b8aca3; background: #f7f4f1; white-space: pre-wrap; overflow-wrap: anywhere; }
+.polish-written b { display: block; font-size: 11px; color: #8a7d73; font-weight: 600; }
 .qa { border-bottom: 1px solid #e4ded8; padding: 10px 0; }
 .qa .q { font-weight: 700; margin: 0 0 4px; }
 .qa .a { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
@@ -593,14 +643,28 @@ const dl = (pairs) => pairs
   .map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`)
   .join("");
 
+// 다듬기를 거친 답 밑에 붙는 표시. 다듬은 문장을 골랐으면 처음 쓴 글을 함께 싣는다.
+function polishNote(record, value) {
+  const row = polishForValue(record.polish, value);
+  if (!row) return "";
+  if (row.reverted) return `<span class="polish-note">AI가 다듬은 문장을 받았지만 참여자가 처음 쓴 글을 골랐습니다.</span>`;
+  return `<span class="polish-note">AI가 다듬은 문장 · 참여자가 고름${row.editedAfter ? " · 그 뒤 직접 고침" : ""}</span>${row.written ? `<span class="polish-written"><b>처음 쓴 글</b>${esc(row.written)}</span>` : ""}`;
+}
+
+// 문항 표·후속질문 어디에도 이어지지 않은 다듬기. 다듬은 문장을 고른 칸이 조용히 빠지지 않게 한다.
+function unmatchedPolish(record) {
+  const shown = [...record.answers.rows.map((row) => row.answer), ...record.followups.rows.map((row) => row.answer)].map(text);
+  return array(record.polish).filter((row) => row.usedPolished && !shown.includes(row.chosen));
+}
+
 function renderAnswers(record) {
   if (!record.answers.rows.length) return `<p class="empty">문항별 답을 읽을 수 없습니다.</p>`;
-  return `<table><thead><tr><th scope="col">문항</th><th scope="col">답</th></tr></thead><tbody>${record.answers.rows.map((row) => `<tr><th scope="row">${esc(row.question)}${row.id && row.id !== row.question ? `<br /><span class="tag">${esc(row.id)}${row.axis ? ` · ${esc(row.axis)}` : ""}</span>` : ""}</th><td>${esc(row.answer)}${row.raw ? `<span class="raw">저장된 값: ${esc(row.raw)}</span>` : ""}</td></tr>`).join("")}</tbody></table>`;
+  return `<table><thead><tr><th scope="col">문항</th><th scope="col">답</th></tr></thead><tbody>${record.answers.rows.map((row) => `<tr><th scope="row">${esc(row.question)}${row.id && row.id !== row.question ? `<br /><span class="tag">${esc(row.id)}${row.axis ? ` · ${esc(row.axis)}` : ""}</span>` : ""}</th><td>${esc(row.answer)}${row.raw ? `<span class="raw">저장된 값: ${esc(row.raw)}</span>` : ""}${polishNote(record, row.answer)}</td></tr>`).join("")}</tbody></table>`;
 }
 
 function renderFollowups(record) {
   if (!record.followups.rows.length) return `<p class="empty">후속질문 기록이 없습니다.</p>`;
-  return record.followups.rows.map((row) => `<div class="qa"><p class="q">${row.position}. ${esc(row.prompt || "질문 문구가 저장되지 않았습니다.")}</p><p class="a">${esc(row.answer || "답을 남기지 않았습니다.")}</p><p class="tag">${esc([row.checkpoint, row.axis ? `${row.axis}축` : "", row.source, row.model, row.selfCheck ? `자기확인 ${row.selfCheck}` : "", row.needReason].filter(Boolean).join(" · ") || "출처 미기록")}</p></div>`).join("");
+  return record.followups.rows.map((row) => `<div class="qa"><p class="q">${row.position}. ${esc(row.prompt || "질문 문구가 저장되지 않았습니다.")}</p><p class="a">${esc(row.answer || "답을 남기지 않았습니다.")}</p>${polishNote(record, row.answer)}<p class="tag">${esc([row.checkpoint, row.axis ? `${row.axis}축` : "", row.source, row.model, row.selfCheck ? `자기확인 ${row.selfCheck}` : "", row.needReason].filter(Boolean).join(" · ") || "출처 미기록")}</p></div>`).join("");
 }
 
 function renderCoordinate(record) {
@@ -654,6 +718,7 @@ function renderRecord(record) {
     ${renderAnswers(record)}
     <h3>AI 후속질문과 답</h3>
     ${renderFollowups(record)}
+    ${unmatchedPolish(record).length ? `<h3>다른 칸에서 AI가 다듬은 문장을 고른 글</h3>${unmatchedPolish(record).map((row) => `<blockquote><span class="src">${esc(row.field)} · 참여자가 고른 글</span>${esc(row.chosen)}</blockquote><blockquote><span class="src">${esc(row.field)} · 처음 쓴 글</span>${esc(row.written)}</blockquote>`).join("")}` : ""}
     ${record.narratives.length ? `<h3>다른 칸에 나타나지 않은 참여자 서술</h3>${record.narratives.map((item) => `<blockquote><span class="src">${esc(item.field)}</span>${esc(item.text)}</blockquote>`).join("")}` : ""}
     <h3>참여 기록의 좌표와 근거</h3>
     ${renderCoordinate(record)}
@@ -701,6 +766,7 @@ export function renderRecordBundleHtml(bundle) {
     ["승인 문장 있음", `${meta.withApprovedText ?? 0}명`],
     ["후속질문 기록 있음", `${meta.withFollowups ?? 0}명`],
     ["참여자 표기 남김", `${meta.withDisplayLabel ?? 0}명`],
+    ["AI가 다듬은 문장을 고른 기록", `${meta.withPolishedChoice ?? 0}명`],
     ["읽은 세션 행", `${meta.sessionsSeen ?? 0}건`],
     ["읽은 스냅샷", `${meta.snapshotsSeen ?? 0}건 (같은 사람의 중복 ${meta.snapshotsCollapsed ?? 0}건 접음)`],
     ["만든 시각", meta.generatedAt],
