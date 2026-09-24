@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260924-r81";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260924-r81";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260924-r81";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260924-r82";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20260924-r82";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260924-r82";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,

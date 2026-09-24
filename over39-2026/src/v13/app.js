@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r81";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r81";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r81";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r81";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r81";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r81";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r81";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r81";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r81";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r81";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r81";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r81";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r81";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r81";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r81";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r81";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r81";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r81";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r81";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r81";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r81";
-import { POLISH_EXCLUDED_IDS, POLISH_HOLD_MS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, polishEntry, polishLeadIsShort, polishTurnedOff, polishedInBox, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, shouldAutoPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r81";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r81";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r81";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r81";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r81";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r82";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r82";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r82";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r82";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r82";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r82";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r82";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r82";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r82";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r82";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r82";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r82";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r82";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r82";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r82";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r82";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r82";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r82";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r82";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r82";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r82";
+import { POLISH_EXCLUDED_IDS, POLISH_HOLD_MS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, polishEntry, polishLeadIsShort, polishTurnedOff, polishedInBox, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, shouldAutoPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r82";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r82";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r82";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r82";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r82";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "a83756507db3-dirty 2026-09-24T04:43:26.992Z";
+const buildStamp = "6801f86ea1ec-dirty 2026-09-24T04:47:28.796Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -3687,6 +3687,7 @@ function render(focusHeading = false) {
   bindInteractiveMotion();
   // 언어를 바꿨든, 이어쓰기로 돌아왔든, 새로고침했든 여기 한 곳에서 판단한다.
   if (state.phase === "greeting-first") ensureGreetingTranslation();
+  syncBackGuard();
   requestAnimationFrame(() => {
     // 창이 떴으면 그리로 초점을 옮긴다. 안 옮기면 화면 낭독기는 창이 열린 줄 모르고,
     // 키보드만 쓰는 사람은 닫기 단추까지 탭으로 한참 내려가야 한다.
@@ -3871,6 +3872,56 @@ document.addEventListener("keydown", (event) => {
   if (state.closingOfferSeen || !document.querySelector(".closing-offer-dialog")) return;
   state.closingOfferSeen = true;
   render(false);
+});
+
+// 「이전」 한 번. 화면의 「이전」 단추와 휴대폰·브라우저의 뒤로 가기가 같은 길을 쓴다.
+function goBackOneStep() {
+  let previous = Math.max(0, state.step - 1);
+  // 앞으로 갈 때는 질문이 없는 앵커 화면을 건너뛰지만, 뒤로 갈 때는 그 화면에 그대로
+  // 착지했다. 거기서는 아무것도 생성되고 있지 않은데도 "다음 질문을 준비하고 있어요"가
+  // 계속 떠 있어서, 20~30분을 쓴 참여자가 기다리는 쪽을 택할 수 있다. 뒤로 가는 길에서도
+  // 같은 화면을 건너뛴다 — 문구를 고치는 대신 그 화면을 만나지 않게 한다.
+  if (isRc2) {
+    const screens = activeScreens();
+    while (previous > 0) {
+      const checkpoint = adaptiveScreenCheckpoint[screens[previous]];
+      if (!checkpoint || state.adaptiveGenerating || currentAdaptiveTurn(checkpoint)) break;
+      previous -= 1;
+    }
+  }
+  state.step = previous;
+  saveDraft();
+  render(!isRc2);
+}
+
+// 휴대폰·태블릿·브라우저의 뒤로 가기를 「이전」처럼(TK 2026-09-24). 설문은 한 페이지 안에서 화면만
+// 바꾸므로, 그대로 두면 뒤로 가기가 설문을 떠나 카카오톡이나 홈페이지로 가 버렸다(답은 이 기기에
+// 남지만 참여자에게는 「설문이 사라졌다」로 보인다). 설문 중에는 브라우저 기록에 한 칸을 끼워 두고,
+// 뒤로 가기로 그 칸이 빠지면 「이전」을 한 번 누른 것으로 받는다. 첫 질문에서는 끼우지 않는다 —
+// 그때의 뒤로 가기는 원래대로 설문을 떠난다. AI 가 다음 질문·정리문을 만드는 동안에는 그 자리에 머문다.
+let backGuardArmed = false;
+function syncBackGuard() {
+  try {
+    if (backGuardArmed || state.phase !== "survey" || state.step <= 0) return;
+    history.pushState({ over39Back: true }, "");
+    backGuardArmed = true;
+  } catch {
+    // 기록을 쓸 수 없는 환경이면 뒤로 가기는 원래대로 움직인다. 「이전」 단추는 그대로 있다.
+  }
+}
+function backNavigationBlocked() {
+  return Boolean(state.fixedCheckpointSaving || state.depthGenerating || state.adaptiveGenerating || state.summaryGenerating || state.translationGenerating || state.submissionStatus === "sending");
+}
+window.addEventListener("popstate", () => {
+  if (!backGuardArmed) return;
+  backGuardArmed = false;
+  if (state.phase !== "survey") return;
+  if (state.step > 0 && !backNavigationBlocked()) {
+    goBackOneStep();
+    return;
+  }
+  // 기다리는 중이면 그 자리에 머물고, 다음 뒤로 가기도 다시 받는다.
+  syncBackGuard();
 });
 
 document.addEventListener("click", (event) => {
@@ -4217,22 +4268,7 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.action === "back") {
-    let previous = Math.max(0, state.step - 1);
-    // 앞으로 갈 때는 질문이 없는 앵커 화면을 건너뛰지만, 뒤로 갈 때는 그 화면에 그대로
-    // 착지했다. 거기서는 아무것도 생성되고 있지 않은데도 "다음 질문을 준비하고 있어요"가
-    // 계속 떠 있어서, 20~30분을 쓴 참여자가 기다리는 쪽을 택할 수 있다. 뒤로 가는 길에서도
-    // 같은 화면을 건너뛴다 — 문구를 고치는 대신 그 화면을 만나지 않게 한다.
-    if (isRc2) {
-      const screens = activeScreens();
-      while (previous > 0) {
-        const checkpoint = adaptiveScreenCheckpoint[screens[previous]];
-        if (!checkpoint || state.adaptiveGenerating || currentAdaptiveTurn(checkpoint)) break;
-        previous -= 1;
-      }
-    }
-    state.step = previous;
-    saveDraft();
-    render(!isRc2);
+    goBackOneStep();
     return;
   }
   if (target.dataset.action === "retry-adaptive") {
