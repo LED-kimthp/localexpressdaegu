@@ -1,7 +1,7 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r74";
-import { SAMPLE_LABELS, buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r74";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r74";
-import { GREETING_INDEX_SELECT, PERSON_SNAPSHOT_SELECT, buildPeopleIndex, buildPersonSheet, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r74";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r75";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r75";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r75";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, GREETING_INDEX_SELECT, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r75";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -11,7 +11,7 @@ const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
 const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 // 목록의 기본은 **연구** 표본이다. 전체로 두면 테스트 269건 사이에서 열여섯 분을 찾아야 했다(TK 2026-09-23).
-let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, sheet: null, detailSource: null, detailNotice: "", people: new Map(), peopleError: "", folds: {}, status: "loading", filter: "research", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
+let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, sheet: null, detailSource: null, detailNotice: "", people: new Map(), peopleError: "", folds: {}, list: { ...EMPTY_LIST_CRITERIA }, status: "loading", filter: "research", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
 
 // 매직링크가 돌아올 주소. 토큰은 프래그먼트로 오므로 `#`을, 표본 쿼리가 붙은 채 열렸을
 // 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
@@ -285,7 +285,11 @@ async function loadDetail(responseId) {
   state.detailSource = { session, snapshots, revision, consentEvents: state.detail.over39_consent_events };
   state.sheet = buildPersonSheet({ ...state.detailSource, sent, received, aiRuns: state.detail.over39_ai_runs });
   render();
-  root.querySelector(".dashboard-main")?.scrollIntoView({ block: "start" });
+  // 오른쪽만 맨 위로. 왼쪽 목록은 누른 자리에 그대로 둔다(render 가 스크롤 위치를 지킨다).
+  const main = root.querySelector(".dashboard-main");
+  if (main) main.scrollTop = 0;
+  if (main && main.getBoundingClientRect().top < 0) main.scrollIntoView({ block: "start" });   // 좁은 화면: 창 전체가 스크롤된다
+  root.querySelector(".dashboard-profile.selected")?.scrollIntoView({ block: "nearest" });
 }
 
 // 참여자가 받은 종이를 그대로 연다. 창은 누른 그 순간에 열어야 팝업 차단에 걸리지 않는다 —
@@ -347,11 +351,10 @@ function renderLogin() {
     <button class="secondary-button" data-admin-action="verify-code">숫자로 들어가기</button></details>` : "Supabase URL과 anon key가 아직 설정되지 않았습니다."}${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</main>`;
 }
 
+// 왼쪽 목록: 표본 → 검색·필터 → 정렬(admin-person.js). 100명이 넘으면 스크롤로 찾을 수 없다(TK 2026-09-24).
 function sessionRows() {
-  return state.sessions.filter((item) => state.filter === "all" || item.sample_type === state.filter);
+  return filterSessions(state.sessions, state.people, { sample: state.filter, ...state.list });
 }
-
-const SAMPLE_SHORT = { research: "연구", test: "테스트", institution_review: "기관" };
 
 // 한 줄에 「누구인지」와 다섯 칸 가운데 셋의 유무를 싣는다. 기호만으로 알리지 않는다 — 글자가 먼저다.
 function listCard(item) {
@@ -360,7 +363,9 @@ function listCard(item) {
   const flags = person
     ? `<p class="dashboard-profile-flags">${flag(person.hasOffer, "제안문")}${flag(person.wrote > 0, "안부")}${flag(person.delivered > 0, "전달")}</p>`
     : "";
-  return `<button class="dashboard-profile ${state.selected === item.response_id ? "selected" : ""}" data-response-id="${esc(item.response_id)}"><div><span>${esc(SAMPLE_SHORT[item.sample_type] || item.sample_type)}</span><strong>${esc(person ? personLabelText(person) : shortId(item.response_id))}</strong></div><p>${esc(routeLabel(item.route))} · ${esc(sessionStatusLabel(item.status))}${item.institution_code ? ` · ${esc(item.institution_code)}` : ""}</p>${flags}<small>${esc(new Date(item.updated_at).toLocaleString("ko-KR"))}</small></button>`;
+  // 표본 이름표는 「전체」를 볼 때만 단다 — 한 표본만 볼 때는 모든 줄에 같은 말이다.
+  const where = [person?.place?.city, person?.language && person.language !== "ko" ? languageLabel(person.language) : ""].filter(Boolean).join(" · ");
+  return `<button class="dashboard-profile ${state.selected === item.response_id ? "selected" : ""}" data-response-id="${esc(item.response_id)}"><div>${state.filter === "all" ? `<span>${esc(adminSampleLabel(item.sample_type))}</span>` : ""}<strong>${esc(person ? personLabelText(person) : shortId(item.response_id))}</strong></div><p>${esc(routeLabel(item.route))} · ${esc(sessionStatusLabel(item.status))}${where ? ` · ${esc(where)}` : ""}${item.institution_code ? ` · ${esc(item.institution_code)}` : ""}</p>${flags}<small>${esc(new Date(item.updated_at).toLocaleString("ko-KR"))}</small></button>`;
 }
 
 function detailSection(title, rows, renderer) {
@@ -436,7 +441,7 @@ function renderAiHealth() {
   const sampleTypes = sampleTypeIndex(state.sessions);
   const summary = aiHealthSummary(state.aiRuns, { sampleTypes, sampleType: scope === "all" ? "" : scope });
   const errors = summary.errorCodes.slice(0, 6);
-  const scopeTabs = [["research", "연구"], ["institution_review", "기관"], ["test", "테스트"], ["all", "전체"]]
+  const scopeTabs = ADMIN_SAMPLE_ORDER.map((value) => [value, adminSampleLabel(value)])
     .map(([value, label]) => `<button type="button" data-ai-health-scope="${esc(value)}" class="${scope === value ? "active" : ""}">${esc(label)}</button>`).join("");
 
   // 사람 수로 먼저 말한다. 「398회 중 147회」보다 「13명 중 3명」이 판단하기 쉽다.
@@ -453,12 +458,13 @@ function renderAiHealth() {
   }).join("");
 
   const totalMissed = OPERATIONS.reduce((sum, name) => sum + (summary.byOperation[name].peopleMissed || 0), 0);
-  const scopeName = { research: "연구", institution_review: "기관", test: "테스트", all: "전체" }[scope];
+  // 참여자는 「참여자 14명」, 나머지는 「테스트 표본 269명」처럼 읽힌다.
+  const scopeName = scope === "research" ? "참여자" : `${adminSampleLabel(scope)} 표본`;
   const headline = summary.participants === 0
     ? "이 표본에는 아직 AI를 부른 기록이 없어요."
     : totalMissed === 0
-      ? `${scopeName} 표본 ${summary.participants}명 모두, 받아야 할 것을 받았어요.`
-      : `${scopeName} 표본 ${summary.participants}명 가운데 ${totalMissed}명이 받아야 할 것을 못 받았어요.`;
+      ? `${scopeName} ${summary.participants}명 모두, 받아야 할 것을 받았어요.`
+      : `${scopeName} ${summary.participants}명 가운데 ${totalMissed}명이 받아야 할 것을 못 받았어요.`;
 
   return `<section class="detail-section ai-health">
     <h2>AI 운영 지표</h2>
@@ -541,7 +547,7 @@ function renderResearchInsights() {
     <p class="ai-health-verdict${readable === "shares" ? "" : " ai-health-grade-warn"}">${esc(READABILITY_COPY[readable])}</p>
     <p class="ai-health-note">〈만 39세 이상〉은 누가 살아남았는지를 세는 조사가 아닙니다. 이 화면은 사람의 경로가 보이기 시작하는지를 확인하는 데만 씁니다. 개별 응답의 원문, 이름, 연락처는 여기에 나타나지 않습니다.</p>
     <div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap;">
-      <button class="secondary-button" data-insights-sample="research" aria-pressed="${!state.insightsIncludeTest}" style="${state.insightsIncludeTest ? "" : "border-color:var(--line-dark);font-weight:700;"}">연구 표본만 ${sample.research}</button>
+      <button class="secondary-button" data-insights-sample="research" aria-pressed="${!state.insightsIncludeTest}" style="${state.insightsIncludeTest ? "" : "border-color:var(--line-dark);font-weight:700;"}">참여자만 ${sample.research}</button>
       <button class="secondary-button" data-insights-sample="with-test" aria-pressed="${state.insightsIncludeTest}" style="${state.insightsIncludeTest ? "border-color:var(--line-dark);font-weight:700;" : ""}">테스트 포함 ${sample.research + sample.test}</button>
     </div>
     <dl class="ai-health-totals">
@@ -648,14 +654,78 @@ function sessionCapNotice() {
   return `<p class="ai-health-note" role="status" style="margin:8px 0 0;">전체 ${koNum(total)}건 가운데 최근 ${koNum(shown)}건만 표시하고 있습니다. 위 표본 카운트도 이 ${koNum(shown)}건에서 센 수이므로 전체 표본 크기가 아닙니다. 내보내기와 연구 지표는 이 상한을 쓰지 않습니다.</p>`;
 }
 
-function renderDashboard() {
-  const totals = { all: state.sessions.length, institution_review: state.sessions.filter((item) => item.sample_type === "institution_review").length, test: state.sessions.filter((item) => item.sample_type === "test").length, research: state.sessions.filter((item) => item.sample_type === "research").length };
-  // 큐 머리의 숫자 하나가 가장 많이 읽힌다. 잘렸을 때는 그 자리에서 "500 / 전체"로 보여준다.
-  const queueCount = Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? `${koNum(totals.all)} / ${koNum(state.sessionsTotal)}` : koNum(totals.all);
-  return `<div class="site-shell dashboard-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header><main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div><span>RESPONSE QUEUE</span><strong>${queueCount}</strong></div><div class="dashboard-filters">${[["all", "전체"], ["institution_review", "기관"], ["test", "테스트"], ["research", "연구"]].map(([value, label]) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${label} ${totals[value]}</button>`).join("")}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}<button class="secondary-button" data-admin-action="research-insights">연구 지표</button><button class="secondary-button" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button" data-admin-action="care">철회·알림 관리</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map((type) => SAMPLE_LABELS[type] || type).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button>${state.exportStatus ? `<p class="ai-health-note" style="margin:8px 0 0;" role="status">${esc(state.exportStatus)}</p>` : ""}</div><div class="dashboard-profile-list">${sessionRows().map(listCard).join("") || "<p>응답 없음</p>"}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
+// 큰 숫자는 지금 보고 있는 표본의 사람 수다. 기본은 참여자(연구 표본) — 테스트 269건은 중요한 숫자가 아니다.
+function sampleTotals() {
+  return Object.fromEntries(ADMIN_SAMPLE_ORDER.map((type) => [type, type === "all" ? state.sessions.length : state.sessions.filter((item) => item.sample_type === type).length]));
 }
 
-function render() { root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard(); }
+function listCountHtml(rows) {
+  const inSample = sampleTotals()[state.filter] ?? 0;
+  return rows.length === inSample ? koNum(inSample) : `${koNum(rows.length)}<small> / ${koNum(inSample)}</small>`;
+}
+
+function listHtml(rows) {
+  if (rows.length) return rows.map(listCard).join("");
+  return `<p class="list-empty">${state.list.query || activeCriteriaCount(state.list) ? "조건에 맞는 사람이 없어요." : "아직 응답이 없어요."}</p>`;
+}
+
+function renderListControls() {
+  const c = state.list;
+  const facets = listFacets(state.sessions, state.people, state.filter);
+  const option = (value, label, selected) => `<option value="${esc(value)}"${selected ? " selected" : ""}>${esc(label)}</option>`;
+  const select = (key, label, options) => `<label class="list-filter"><span>${esc(label)}</span><select data-list-filter="${esc(key)}">${option("", "전체", !c[key])}${options.map(([value, text]) => option(value, text, c[key] === value)).join("")}</select></label>`;
+  const active = activeCriteriaCount(c);
+  const ageLabel = (code) => LABELS.age_band?.[code] || code;
+  return `<div class="list-controls">
+    <input type="search" id="admin-search" class="text-input text-input-single" aria-label="표기·기록 코드·지역·언어로 찾기" placeholder="표기·기록 코드·지역으로 찾기" value="${esc(c.query)}" autocomplete="off" />
+    <label class="list-filter list-sort"><span>정렬</span><select data-list-filter="sort">${Object.entries(LIST_SORTS).map(([value, label]) => option(value, label, c.sort === value)).join("")}</select></label>
+    <details class="list-filters" data-fold="list-filters" ${state.folds["list-filters"] || active ? "open" : ""}><summary>필터${active ? ` · ${active}개 켜짐` : ""}</summary>
+      <div class="list-filter-grid">
+      ${select("status", "진행", [["completed", "완료"], ["stopped", "중단·진행 중"]])}
+      ${select("place", "사는 곳", Object.entries(PLACE_LABEL))}
+      ${select("city", "지역", facets.cities.map(([value, count]) => [value, `${value} (${count})`]))}
+      ${select("language", "쓴 언어", facets.languages.map(([value, count]) => [value, `${languageLabel(value)} (${count})`]))}
+      ${select("mode", "표기", [["anonymous", "익명"], ["shown", "이름·별명을 남김"]])}
+      ${select("route", "시작 경로", facets.routes.map(([value, count]) => [value, `${routeLabel(value)} (${count})`]))}
+      ${select("age", "연령대", facets.ages.map(([value, count]) => [value, `${ageLabel(value)} (${count})`]))}
+      ${select("check", "확인할 것", Object.entries(LIST_CHECKS))}
+      </div>
+      <p class="list-note">국적은 묻지 않아요. 사는 곳은 참여자가 적은 나라·도시로 가르고, 적지 않았으면 「알 수 없음」이에요.</p>
+      ${active || c.query ? `<button type="button" class="text-button" data-admin-action="list-reset">조건 모두 지우기</button>` : ""}
+    </details>
+  </div>`;
+}
+
+function renderDashboard() {
+  const totals = sampleTotals();
+  const rows = sessionRows();
+  const on = (view) => (state.view === view ? " active" : "");
+  // 도구 단추는 위 한 줄로 올렸다. 왼쪽은 사람 목록만 — 목록이 따로 스크롤된다.
+  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
+  const tabs = ADMIN_SAMPLE_ORDER.map((value) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${esc(adminSampleLabel(value))} ${koNum(totals[value])}${value === "all" && Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? ` / ${koNum(state.sessionsTotal)}` : ""}</button>`).join("");
+  return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
+}
+
+// 글자를 칠 때마다 목록과 숫자만 바꾼다. 화면 전체를 다시 그리면 검색 칸이 커서를 잃는다.
+function updateList() {
+  const rows = sessionRows();
+  const list = root.querySelector("#admin-list");
+  // 조건이 바뀌면 목록 맨 위부터 보인다. 내려 둔 자리에 남으면 걸러진 목록이 중간부터 보인다.
+  if (list) { list.innerHTML = listHtml(rows); list.scrollTop = 0; }
+  const count = root.querySelector("#admin-list-count");
+  if (count) count.innerHTML = listCountHtml(rows);
+}
+
+// 다시 그려도 왼쪽 목록과 오른쪽 기록이 보던 자리에 머문다. 둘이 따로 스크롤되므로 따로 지킨다.
+function render() {
+  const listTop = root.querySelector("#admin-list")?.scrollTop || 0;
+  const mainTop = root.querySelector(".dashboard-main")?.scrollTop || 0;
+  root.innerHTML = !state.session ? renderLogin() : state.status === "loading" ? "<main class='admin-login'><p>관리자 권한을 확인하고 있습니다.</p></main>" : renderDashboard();
+  const list = root.querySelector("#admin-list");
+  if (list) list.scrollTop = listTop;
+  const main = root.querySelector(".dashboard-main");
+  if (main) main.scrollTop = mainTop;
+}
 
 // 참여 기록 묶음은 500명에서 몇 MB가 된다. 예전에는 click() 직후 곧바로 URL을 취소했는데,
 // 큰 blob에서는 브라우저가 저장을 시작하기 전에 주소가 사라져 1~2분 기다린 내보내기가
@@ -831,7 +901,14 @@ document.addEventListener("click", async (event) => {
     state.view = "responses";
     return loadDetail(button.dataset.responseId);
   }
-  if (button.dataset.adminFilter) { state.filter = button.dataset.adminFilter; render(); return; }
+  if (button.dataset.adminFilter || button.dataset.adminAction === "list-reset") {
+    if (button.dataset.adminFilter) state.filter = button.dataset.adminFilter;
+    else state.list = { ...EMPTY_LIST_CRITERIA, sort: state.list.sort };
+    render();
+    const list = root.querySelector("#admin-list");
+    if (list) list.scrollTop = 0;
+    return;
+  }
   if (button.dataset.adminAction === "logout") {
     // 이 기기에 오래 남는 로그인이 되었으므로, 나갈 때는 서버에서도 토큰을 무른다. 그러지 않으면
     // 다른 탭이 다음 갱신 때 세션을 되살린다.
@@ -961,7 +1038,7 @@ document.addEventListener("click", async (event) => {
     if (state.exportBusy) return;
     const sampleTypes = exportSampleTypes();
     state.exportBusy = true;
-    state.exportStatus = `${sampleTypes.map((type) => SAMPLE_LABELS[type] || type).join(" + ")} 기록을 모으는 중입니다. 500명 규모에서는 1~2분이 걸립니다.`;
+    state.exportStatus = `${sampleTypes.map(adminSampleLabel).join(" + ")} 기록을 모으는 중입니다. 500명 규모에서는 1~2분이 걸립니다.`;
     render();
     try {
       const bundle = await loadRecordBundle(sampleTypes);
@@ -987,6 +1064,21 @@ document.addEventListener("click", async (event) => {
     const fields = ["response_id", "sample_type", "include_in_policy_statistics", "institution_code", "route", "coordinate_scope", "status", "questionnaire_version", "classification_version", "source_language", "m_primary", "s_primary", "d_primary", "coordinate_status", "participant_action", "relationship_opt_in", "has_institution_feedback", "completed_at"];
     download(`over39-research-summary-${new Date().toISOString().slice(0, 10)}.csv`, [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n"), "text/csv;charset=utf-8");
   }
+});
+
+// 찾기는 칠 때마다, 필터·정렬은 고를 때마다 목록에 반영한다.
+document.addEventListener("input", (event) => {
+  if (event.target?.id !== "admin-search") return;
+  state.list.query = event.target.value;
+  updateList();
+});
+document.addEventListener("change", (event) => {
+  const key = event.target?.dataset?.listFilter;
+  if (!key) return;
+  state.list[key] = event.target.value;
+  render();
+  const list = root.querySelector("#admin-list");
+  if (list) list.scrollTop = 0;
 });
 
 // 펼친 칸을 기억한다. `toggle` 은 거품이 일지 않으므로 잡는 단계에서 듣는다.

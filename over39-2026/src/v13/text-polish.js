@@ -151,7 +151,7 @@ function authHeaders(anonKey) {
   return { "Content-Type": "application/json", ...(anonKey ? { Authorization: `Bearer ${anonKey}`, apikey: anonKey } : {}) };
 }
 
-export async function requestTextPolish({ endpoint, anonKey, mode = "fallback", text, question = "", previousPolished = "", attempt = 1, responseId = null, fetchImpl = fetch, timeoutMs = POLISH_TIMEOUT_MS }) {
+export async function requestTextPolish({ endpoint, anonKey, mode = "fallback", text, question = "", previousPolished = "", attempt = 1, responseId = null, language = "", fetchImpl = fetch, timeoutMs = POLISH_TIMEOUT_MS }) {
   const source = String(text || "").trim();
   if (!canPolishText(source)) return { text: "", run: { status: "skipped", provider: "rules", error_code: "POLISH_TEXT_TOO_SHORT" } };
   if (mode !== "live" || !endpoint) return { text: "", run: { status: "fallback", provider: "unavailable", error_code: "POLISH_NOT_CONFIGURED" } };
@@ -171,6 +171,8 @@ export async function requestTextPolish({ endpoint, anonKey, mode = "fallback", 
           question: String(question || "").trim().slice(0, 400),
           ...(previousPolished ? { previous_polished: String(previousPolished) } : {}),
           attempt,
+          // 참여자가 고른 화면 언어. 서버가 누구에게 맡길지 고를 때 쓴다(말레이어는 글만으로 가르기 어렵다).
+          ...(language ? { language } : {}),
           ...(responseId ? { response_id: responseId } : {}),
         },
       }),

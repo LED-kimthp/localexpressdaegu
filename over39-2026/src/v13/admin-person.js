@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { SAMPLE_LABELS, buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r74";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r74";
-import { LABELS } from "./research-insights.js?v=v7-20260924-r74";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r75";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r75";
+import { LABELS } from "./research-insights.js?v=v7-20260924-r75";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -72,6 +72,13 @@ export const PERSON_SNAPSHOT_SELECT = [
   "participant_code:payload->>participant_code",
   "offer:payload->answers->closing_offer->>text",
   "document_status:payload->response_document->>status",
+  // 목록의 검색·필터·정렬(TK 2026-09-24). 짧은 코드와 참여자가 적은 지명뿐 — 서술 원문은 싣지 않는다.
+  "residence_country:payload->answers->>residence_country_code",
+  "residence_city:payload->answers->>residence_city",
+  "activity_locations:payload->answers->activity_locations",
+  "interface_language:payload->>interface_language",
+  "source_language:payload->>source_language",
+  "age_band:payload->answers->>age_band",
 ].join(",");
 
 export const GREETING_INDEX_SELECT = "id,sender_record_id,receiver_record_id,status,origin";
@@ -94,6 +101,72 @@ function labelFrom({ mode, name, code, responseId }) {
 
 export const personLabelText = (person) => (person ? `${person.name} · ${person.short}` : "");
 
+// ── 관리자 화면의 표본 이름 ─────────────────────────────────────────────────────
+// 「연구」라고 쓰면 실제 참여자라는 뜻이 안 읽혔다(TK 2026-09-24). 화면에서는 「참여자」라고 쓰고,
+// 참여자를 맨 앞에, 테스트는 뒤에 둔다. 연구용 문서(record-export.js)의 「연구 표본」은 그대로 둔다.
+export const ADMIN_SAMPLE_ORDER = Object.freeze(["research", "institution_review", "test", "all"]);
+export const ADMIN_SAMPLE_LABEL = Object.freeze({ research: "참여자", institution_review: "기관", test: "테스트", all: "전체", auxiliary_only: "부가 기록" });
+export const adminSampleLabel = (type) => ADMIN_SAMPLE_LABEL[text(type)] || text(type) || "미기록";
+
+// ── 사는 곳 ──────────────────────────────────────────────────────────────────
+// 나라·도시는 참여자가 자기 언어로 적는 칸이다(「대한민국」「South Korea」「日本」, 「대구」「Daegu」
+// 「대한민국, 대구」). 국적은 묻지 않으므로 「외국인/국내인」은 **사는 곳의 나라**로 대신한다.
+const squash = (value) => text(value).toLowerCase().replace(/[\s.·'’()\-]/gu, "");
+const KOREA_NAMES = new Set([
+  "대한민국", "한국", "남한", "kr", "kor", "korea", "southkorea", "republicofkorea", "korearepublicof", "korea,republicof",
+  "韓国", "韩国", "韓國", "大韓民国", "大韩民国", "大韓民國", "coréedusud", "coreedusud", "coreadelsur", "zuidkorea", "koreaselatan", "südkorea",
+]);
+// 여러 표기로 들어오는 도시를 하나로 묶는다. 목록에 없는 도시는 적힌 그대로 둔다.
+const CITY_ALIASES = [
+  ["대구", ["대구", "대구시", "대구광역시", "daegu", "大邱", "テグ", "大邱市"]],
+  ["서울", ["서울", "서울시", "서울특별시", "seoul", "ソウル", "首尔", "首爾"]],
+  ["부산", ["부산", "부산시", "부산광역시", "busan", "pusan", "釜山", "プサン"]],
+  ["인천", ["인천", "인천광역시", "incheon", "仁川"]],
+  ["광주", ["광주", "광주광역시", "gwangju", "光州"]],
+  ["대전", ["대전", "대전광역시", "daejeon", "大田"]],
+  ["울산", ["울산", "울산광역시", "ulsan", "蔚山"]],
+  ["경북", ["경북", "경상북도", "gyeongbuk", "gyeongsangbukdo"]],
+];
+const CITY_BY_ALIAS = new Map(CITY_ALIASES.flatMap(([city, names]) => names.map((name) => [squash(name), city])));
+const KOREAN_CITIES = new Set(CITY_ALIASES.map(([city]) => city));
+
+export const isKoreaName = (value) => KOREA_NAMES.has(squash(value));
+
+// 「대한민국, 대구」「日本、京都市」처럼 나라와 도시가 한 칸에 들어온 것을 가른다.
+function splitPlace(value) {
+  return text(value).split(/[,、，·\/]/u).map((part) => part.trim()).filter(Boolean);
+}
+
+export function normalizeCity(value) {
+  const parts = splitPlace(value).filter((part) => !isKoreaName(part));
+  const last = parts.at(-1) || "";
+  return CITY_BY_ALIAS.get(squash(last)) || last;
+}
+
+/**
+ * 사는 곳을 국내·해외·알 수 없음으로 가른다. 나라를 읽을 수 없고 한국 도시도 아니면 「알 수 없음」이다 —
+ * 추측해서 채우지 않는다.
+ */
+export function placeOf({ country = "", city = "", activity = [] } = {}) {
+  const activityRows = array(activity).filter((item) => item && typeof item === "object" && !item.online);
+  const cityParts = splitPlace(city);
+  const cityName = normalizeCity(city) || normalizeCity(activityRows[0]?.city);
+  // 나라는 사는 나라 칸 → 도시 칸 앞에 함께 적힌 나라(「日本、京都市」) → 활동 지역의 나라 순으로 읽는다.
+  const countryText = text(country) || (cityParts.length > 1 ? cityParts[0] : "") || text(activityRows[0]?.country_code);
+  let kind = "unknown";
+  // 나라 칸에 도시를 적은 경우(「대구」)도 있어 한국 도시 이름도 국내로 본다.
+  if (countryText) kind = isKoreaName(countryText) || KOREAN_CITIES.has(normalizeCity(countryText)) ? "domestic" : "abroad";
+  else if (KOREAN_CITIES.has(cityName)) kind = "domestic";
+  const cityFromCountry = KOREAN_CITIES.has(normalizeCity(countryText)) ? normalizeCity(countryText) : "";
+  return { kind, city: cityName || cityFromCountry, country: countryText };
+}
+export const PLACE_LABEL = Object.freeze({ domestic: "국내", abroad: "해외", unknown: "알 수 없음" });
+
+// 표기 방식. 익명을 고른 사람과 이름·별명을 남긴 사람을 가른다.
+export const DISPLAY_MODE_LABEL = Object.freeze({ ANONYMOUS: "익명", NAME: "이름", NICKNAME: "별명", INITIAL: "이니셜" });
+export const LANGUAGE_LABEL = Object.freeze({ ko: "한국어", en: "영어", ja: "일본어", "zh-Hans": "중국어 간체", "zh-Hant": "중국어 번체", nl: "네덜란드어", es: "스페인어", fr: "프랑스어", ms: "말레이어" });
+export const languageLabel = (code) => LANGUAGE_LABEL[text(code)] || text(code) || "미기록";
+
 /**
  * 목록 한 줄씩의 사람 정보. 스냅샷은 사람당 여러 행이므로 가장 완성된 것 하나로 접되,
  * 제안문은 **어느** 스냅샷에든 있으면 받은 것으로 센다 — 늦게 도착한 제안은 나중 행에만 있다.
@@ -107,7 +180,7 @@ export function buildPeopleIndex({ snapshots = [], greetings = [] } = {}) {
   const ensure = (responseId) => {
     const id = text(responseId);
     if (!id) return null;
-    if (!people.has(id)) people.set(id, { ...labelFrom({ responseId: id }), hasOffer: false, hasDocument: false, wrote: 0, delivered: 0, received: 0 });
+    if (!people.has(id)) people.set(id, { ...labelFrom({ responseId: id }), mode: "", place: placeOf(), language: "", ageBand: "", hasOffer: false, hasDocument: false, wrote: 0, delivered: 0, received: 0 });
     return people.get(id);
   };
   for (const [id, row] of collected.kept) {
@@ -117,7 +190,14 @@ export function buildPeopleIndex({ snapshots = [], greetings = [] } = {}) {
       name: row.display_name || row.document_name,
       code: row.reference_code || row.participant_code,
       responseId: id,
-    }), { hasOffer: withOffer.has(id), hasDocument: withDocument.has(id) });
+    }), {
+      mode: text(row.display_name_mode),
+      place: placeOf({ country: row.residence_country, city: row.residence_city, activity: parseJson(row.activity_locations) }),
+      language: text(row.source_language || row.interface_language),
+      ageBand: text(row.age_band),
+      hasOffer: withOffer.has(id),
+      hasDocument: withDocument.has(id),
+    });
   }
   for (const greeting of array(greetings)) {
     const sender = ensure(greeting?.sender_record_id);
@@ -130,6 +210,110 @@ export function buildPeopleIndex({ snapshots = [], greetings = [] } = {}) {
   }
   return people;
 }
+
+// PostgREST 는 `->` 로 뽑은 json 을 그대로 준다. 어떤 경로로 문자열이 되어 와도 읽는다.
+function parseJson(value) {
+  if (typeof value !== "string") return value ?? null;
+  try { return JSON.parse(value); } catch { return null; }
+}
+
+// ── 목록: 검색·필터·정렬 ──────────────────────────────────────────────────────
+// 100명이 넘으면 스크롤로 찾을 수 없다(TK 2026-09-24). 조건은 전부 목록 안에서만 거른다 — 새로 묻지 않는다.
+export const EMPTY_LIST_CRITERIA = Object.freeze({ query: "", status: "", place: "", city: "", language: "", mode: "", route: "", age: "", check: "", sort: "recent" });
+
+export const LIST_CHECKS = Object.freeze({
+  no_offer: "제안문 못 받음",
+  no_document: "최종 PDF 없음",
+  no_greeting: "안부 안 남김",
+  not_delivered: "안부가 아직 안 닿음",
+  received: "안부를 받음",
+});
+
+export const LIST_SORTS = Object.freeze({ recent: "최근 저장 순", oldest: "오래된 순", name: "표기 가나다순", city: "지역순", language: "쓴 언어순" });
+
+const completed = (session) => text(session?.status) === "completed";
+
+function matchesCheck(check, session, person) {
+  if (!check) return true;
+  if (!person) return false;
+  if (check === "no_offer") return completed(session) && !person.hasOffer;
+  if (check === "no_document") return completed(session) && !person.hasDocument;
+  if (check === "no_greeting") return completed(session) && person.wrote === 0;
+  if (check === "not_delivered") return person.wrote > 0 && person.delivered === 0;
+  if (check === "received") return person.received > 0;
+  return true;
+}
+
+// 찾는 글자: 표기·기록 코드·응답 ID·지역·나라·언어. 서술 원문은 목록에 없으므로 찾지 않는다.
+function haystack(session, person) {
+  return [
+    session?.response_id, session?.institution_code, routeLabel(session?.route),
+    person?.name, person?.code, person?.place?.city, person?.place?.country, PLACE_LABEL[person?.place?.kind],
+    person?.language, languageLabel(person?.language), DISPLAY_MODE_LABEL[person?.mode],
+  ].map((value) => text(value).toLowerCase()).join(" ");
+}
+
+export function filterSessions(sessions = [], people = new Map(), { sample = "research", ...criteria } = {}) {
+  const c = { ...EMPTY_LIST_CRITERIA, ...criteria };
+  const terms = text(c.query).toLowerCase().split(/\s+/u).filter(Boolean);
+  const rows = array(sessions).filter((session) => {
+    if (sample && sample !== "all" && text(session?.sample_type) !== sample) return false;
+    const person = people.get(text(session?.response_id));
+    if (c.status === "completed" && !completed(session)) return false;
+    if (c.status === "stopped" && completed(session)) return false;
+    if (c.route && text(session?.route) !== c.route) return false;
+    if (c.place && (person?.place?.kind || "unknown") !== c.place) return false;
+    if (c.city && person?.place?.city !== c.city) return false;
+    if (c.language && (person?.language || text(session?.source_language)) !== c.language) return false;
+    if (c.mode === "anonymous" && !(person && (person.mode === "ANONYMOUS" || !person.mode))) return false;
+    if (c.mode === "shown" && !(person && person.mode && person.mode !== "ANONYMOUS")) return false;
+    if (c.age && person?.ageBand !== c.age) return false;
+    if (!matchesCheck(c.check, session, person)) return false;
+    if (terms.length) {
+      const hay = haystack(session, person);
+      if (!terms.every((term) => hay.includes(term))) return false;
+    }
+    return true;
+  });
+  const time = (session) => text(session?.updated_at);
+  const key = (session) => {
+    const person = people.get(text(session?.response_id));
+    if (c.sort === "name") return person?.name || "";
+    if (c.sort === "city") return person?.place?.city || "";
+    if (c.sort === "language") return languageLabel(person?.language || session?.source_language);
+    return "";
+  };
+  return rows.sort((a, b) => {
+    if (c.sort === "oldest") return time(a).localeCompare(time(b));
+    if (c.sort === "recent" || !LIST_SORTS[c.sort]) return time(b).localeCompare(time(a));
+    // 값이 없는 사람(지역을 적지 않음 등)은 맨 뒤에 모은다.
+    const ka = key(a);
+    const kb = key(b);
+    if (!ka !== !kb) return ka ? -1 : 1;
+    return ka.localeCompare(kb, "ko") || time(b).localeCompare(time(a));
+  });
+}
+
+// 고를 수 있는 값만 보인다. 지금 표본에 실제로 있는 도시·언어·연령대·경로를 센다.
+export function listFacets(sessions = [], people = new Map(), sample = "research") {
+  const inSample = array(sessions).filter((session) => !sample || sample === "all" || text(session?.sample_type) === sample);
+  const count = (pick) => {
+    const counts = new Map();
+    for (const session of inSample) {
+      const value = pick(session, people.get(text(session?.response_id)));
+      if (value) counts.set(value, (counts.get(value) || 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]), "ko"));
+  };
+  return {
+    cities: count((_, person) => person?.place?.city),
+    languages: count((session, person) => person?.language || text(session?.source_language)),
+    ages: count((_, person) => person?.ageBand),
+    routes: count((session) => text(session?.route)),
+  };
+}
+
+export const activeCriteriaCount = (criteria = {}) => ["status", "place", "city", "language", "mode", "route", "age", "check"].filter((key) => text(criteria[key])).length;
 
 // ── 한 사람 ────────────────────────────────────────────────────────────────
 const latestWith = (snapshots, pick) => array(snapshots)
@@ -345,7 +529,7 @@ export function renderPersonSheet(sheet, { people = new Map(), known = new Set()
     ["routes", "5", "오간 길", `보냄 ${delivered} · 받음 ${receivedCount}`],
   ];
   const facts = [
-    ["표본", SAMPLE_LABELS[text(sheet.session.sample_type)] || text(sheet.session.sample_type)],
+    ["표본", adminSampleLabel(sheet.session.sample_type)],
     ["시작 경로", routeLabel(record.route)],
     ["진행", sessionStatusLabel(sheet.session.status)],
     ["응답 시각", when(record.submittedAt)],
