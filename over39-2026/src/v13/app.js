@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r80";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r80";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r80";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r80";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r80";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r80";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r80";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r80";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r80";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r80";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r80";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r80";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r80";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r80";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r80";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r80";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r80";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r80";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r80";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r80";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r80";
-import { POLISH_EXCLUDED_IDS, POLISH_HOLD_MS, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, polishEntry, polishLeadIsShort, polishedInBox, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, shouldAutoPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r80";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r80";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r80";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r80";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r80";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r81";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r81";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r81";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r81";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r81";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r81";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r81";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r81";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r81";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r81";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r81";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r81";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r81";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r81";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r81";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r81";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r81";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r81";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r81";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r81";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r81";
+import { POLISH_EXCLUDED_IDS, POLISH_HOLD_MS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, polishEntry, polishLeadIsShort, polishTurnedOff, polishedInBox, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, shouldAutoPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r81";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r81";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r81";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r81";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r81";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "60e84f9b4374-dirty 2026-09-24T04:28:45.520Z";
+const buildStamp = "a83756507db3-dirty 2026-09-24T04:43:26.992Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -923,6 +923,11 @@ const polishStatus = new Map();
 let renderedPolishFields = new Set();
 // 칸 위 안내가 말할 단추 이름. 화면마다 다르다 — 없는 이름을 말하면 참여자가 그 단추를 찾는다.
 let polishNextLabel = "";
+// 참여자가 첫 칸에서 다듬기를 껐는가(TK 2026-09-24). 설문을 마친 뒤 안부 화면에서도 같은 선택을 따른다.
+function polishOff() {
+  return polishTurnedOff(state.answers) || polishTurnedOff(state.submitted?.answers);
+}
+
 function isPolishable(id, multiline) {
   return Boolean(multiline && isRc2 && liveAiEnabled && !POLISH_EXCLUDED_IDS.has(id) && !String(id).startsWith("feedback_"));
 }
@@ -948,11 +953,11 @@ function renderText(id, { placeholder = "짧게 적어도 괜찮습니다.", mul
     ? `<textarea id="${esc(inputId)}" class="text-input" data-input-id="${esc(id)}"${fieldAttr}${polishAttr} maxlength="${limit}"${placeholderAttr}>${esc(currentValue)}</textarea>`
     : `<input id="${esc(inputId)}" class="text-input text-input-single" data-input-id="${esc(id)}"${fieldAttr} value="${esc(currentValue)}" placeholder="${esc(t(placeholder))}" />`;
   const extras = polishable
-    ? renderPolishExtras({ copy: textPolishCopy(state.language), id, field: answerField, entry, busy: polishBusy.has(answerField), status: polishStatus.get(answerField) || "", esc })
+    ? renderPolishExtras({ copy: textPolishCopy(state.language), id, field: answerField, entry, busy: polishBusy.has(answerField), status: polishStatus.get(answerField) || "", off: polishOff(), esc })
     : "";
   const labelHtml = label ? `<label class="text-field-label" for="${esc(inputId)}">${esc(t(label))}</label>` : "";
   const meta = multiline ? `<span class="text-field-meta">${esc(characterLimitLabel(limit))}</span>` : "";
-  if (polishable) return `<div class="text-field text-field-polish" data-polish-field="${esc(answerField)}">${labelHtml}${renderPolishLead({ copy: textPolishCopy(state.language), esc, nextLabel: polishNextLabel, short: polishLeadIsShort(state.polishLeadField, answerField) })}${input}${meta}${extras}</div>`;
+  if (polishable) return `<div class="text-field text-field-polish" data-polish-field="${esc(answerField)}">${labelHtml}${renderPolishLead({ copy: textPolishCopy(state.language), esc, nextLabel: polishNextLabel, short: polishLeadIsShort(state.polishLeadField, answerField), off: polishOff() })}${input}${meta}${extras}</div>`;
   return `<div class="text-field">${labelHtml}${input}${meta}</div>`;
 }
 
@@ -3105,8 +3110,8 @@ function renderGlobalGreetingsConnection(connection) {
   const greetingPolishable = isRc2 && liveAiEnabled;
   const greetingPolishEntry = greetingPolishable ? polishStoreFor(GREETING_POLISH_FIELD).entry() : null;
   const polishCopy = textPolishCopy(state.language);
-  const greetingPolishOpen = greetingPolishable ? `<div class="text-field-polish greeting-polish" data-polish-field="${GREETING_POLISH_FIELD}">${renderPolishLead({ copy: polishCopy, esc, nextLabel: local.previewAction, short: true })}` : "";
-  const greetingPolishClose = greetingPolishable ? `${renderPolishExtras({ copy: polishCopy, id: "greeting", field: GREETING_POLISH_FIELD, entry: greetingPolishEntry, busy: polishBusy.has(GREETING_POLISH_FIELD), status: polishStatus.get(GREETING_POLISH_FIELD) || "", esc })}</div>` : "";
+  const greetingPolishOpen = greetingPolishable ? `<div class="text-field-polish greeting-polish" data-polish-field="${GREETING_POLISH_FIELD}">${renderPolishLead({ copy: polishCopy, esc, nextLabel: local.previewAction, short: true, off: polishOff() })}` : "";
+  const greetingPolishClose = greetingPolishable ? `${renderPolishExtras({ copy: polishCopy, id: "greeting", field: GREETING_POLISH_FIELD, entry: greetingPolishEntry, busy: polishBusy.has(GREETING_POLISH_FIELD), status: polishStatus.get(GREETING_POLISH_FIELD) || "", off: polishOff(), esc })}</div>` : "";
   const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p>${greetingPolishOpen}<textarea class="text-input" data-connection-input="message_text"${greetingPolishable ? ` data-polish-field="${GREETING_POLISH_FIELD}" data-input-id="greeting"` : ""} maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count"${greetingPolishable ? "" : ` placeholder="${esc(copy.messagePlaceholder)}"`}>${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count">${messageLength} / ${GREETING_MESSAGE_MAX}</p>${greetingPolishClose}<h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(connection.translation_allowed === "NO" ? local.translationNoteOriginalOnly : local.translationNote)}</p></section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
@@ -3945,6 +3950,13 @@ document.addEventListener("click", (event) => {
     render(false);
     return;
   }
+  if (target.dataset.action === "polish-on") {
+    delete state.answers[POLISH_PREFERENCE_KEY];
+    if (state.submitted?.answers) delete state.submitted.answers[POLISH_PREFERENCE_KEY];
+    saveDraft();
+    render(false);
+    return;
+  }
   if (target.dataset.action === "polish-again") {
     const field = target.dataset.polishField;
     polishTextField(target.dataset.polishId || field, field, { force: true }).then(() => {
@@ -4578,7 +4590,7 @@ function refreshPolishExtras(field) {
   const node = document.querySelector(`.polish-extras[data-polish-extras="${CSS.escape(field)}"]`);
   if (!node) return;
   const id = document.querySelector(`textarea[data-polish-field="${CSS.escape(field)}"]`)?.dataset.inputId || field;
-  node.outerHTML = renderPolishExtras({ copy: textPolishCopy(state.language), id, field, entry: polishStoreFor(field).entry(), busy: polishBusy.has(field), status: polishStatus.get(field) || "", esc });
+  node.outerHTML = renderPolishExtras({ copy: textPolishCopy(state.language), id, field, entry: polishStoreFor(field).entry(), busy: polishBusy.has(field), status: polishStatus.get(field) || "", off: polishOff(), esc });
 }
 
 // 칸 하나를 다듬는다. 돌려주는 값: 다듬은 문장이 칸에 들어갔는가.
@@ -4640,7 +4652,7 @@ async function polishTextField(id, field, { force = false } = {}) {
 let polishHolding = false;
 let polishBypassKey = null;
 function holdForPolish() {
-  if (!isRc2 || !liveAiEnabled) return false;
+  if (!isRc2 || !liveAiEnabled || polishOff()) return false;
   const key = currentScreenKey();
   if (polishBypassKey === key) { polishBypassKey = null; return false; }
   if (polishHolding) return true;
@@ -4677,7 +4689,7 @@ function holdForPolish() {
 // 다듬은 문장이 들어가면 단추가 「이 글로 제출」이 되고, 늦거나 고칠 게 없으면 그대로 넘어간다.
 let greetingPolishBypass = false;
 function holdGreetingForPolish() {
-  if (!isRc2 || !liveAiEnabled) return false;
+  if (!isRc2 || !liveAiEnabled || polishOff()) return false;
   if (greetingPolishBypass) { greetingPolishBypass = false; return false; }
   if (polishHolding) return true;
   const store = polishStoreFor(GREETING_POLISH_FIELD);
@@ -4805,6 +4817,14 @@ document.addEventListener("input", (event) => {
 
 document.addEventListener("change", (event) => {
   const input = event.target;
+  // 「다듬지 않고 쓴 그대로 남길게요」 — 그 뒤 모든 칸과 안부에서 다듬지 않는다.
+  if (input.matches("[data-polish-optout]")) {
+    if (input.checked) state.answers[POLISH_PREFERENCE_KEY] = "off";
+    else delete state.answers[POLISH_PREFERENCE_KEY];
+    saveDraft();
+    render(false);
+    return;
+  }
   if (input.matches("[data-research-contact-consent]")) {
     state.researchContact = { ...(state.researchContact || {}), consent: input.checked, status: null };
     saveDraft();

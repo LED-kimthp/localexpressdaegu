@@ -208,9 +208,22 @@ export function polishButtonLabel(copy, entry, busy) {
 // 단추 이름은 화면마다 다르다(이어지는 질문은 「이 답변에서 이어가기」, 마지막은 「활용 범위 정하기」).
 // 안내가 없는 단추 이름을 말하면 참여자는 그 단추를 찾는다 — 그 화면의 실제 이름을 넣는다.
 // short: 처음 본 칸이 아니면 한 줄만. 「길게 편하게 써도 된다」는 첫 칸에서 한 번 들으면 된다.
-export function renderPolishLead({ copy, esc, nextLabel = "", short = false }) {
-  const text = short ? copy.noticeShort : copy.notice;
-  return `<p class="polish-lead${short ? " is-short" : ""}">${esc(text.split("{next}").join(nextLabel || copy.nextFallback || "다음"))}</p>`;
+// off: 참여자가 다듬기를 껐다. 첫 칸에는 끄는 선택 줄이 있고(체크된 채로), 뒤 칸에는 「껐습니다 · 다시 켜기」.
+export function renderPolishLead({ copy, esc, nextLabel = "", short = false, off = false }) {
+  const label = nextLabel || copy.nextFallback || "다음";
+  if (short && off) {
+    return `<p class="polish-lead is-short is-off">${esc(copy.offNote)} <button class="text-button polish-turn-on" type="button" data-action="polish-on">${esc(copy.turnOn)}</button></p>`;
+  }
+  const text = (short ? copy.noticeShort : copy.notice).split("{next}").join(label);
+  const lead = `<p class="polish-lead${short ? " is-short" : ""}${off ? " is-off" : ""}">${esc(text)}</p>`;
+  if (short) return lead;
+  return `${lead}<label class="polish-optout"><input type="checkbox" data-polish-optout${off ? " checked" : ""} /><span>${esc(copy.optOut)}</span></label>`;
+}
+
+// 참여자가 다듬기를 껐는가. 설문 답(answers.text_polish_preference)에 남겨 기록과 관리자 화면에서 보인다.
+export const POLISH_PREFERENCE_KEY = "text_polish_preference";
+export function polishTurnedOff(answers) {
+  return answers?.[POLISH_PREFERENCE_KEY] === "off";
 }
 
 // 긴 안내를 보일 칸인가. 처음 본 다듬기 칸을 기억해 두고(leadField) 그 칸에서만 길게 보인다 —
@@ -228,13 +241,17 @@ export function rejectPolished(polished, { maxLength = 0 } = {}) {
   return null;
 }
 
-export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", esc }) {
+// 화면 키보드의 마이크 버튼과 같은 모양. 「마이크 버튼」이라는 말만으로는 어떤 모양인지 떠올리기 어렵다
+// (나이 드신 분일수록 키보드에 마이크가 있는 줄 모른다). 키보드에서 같은 그림을 찾게 한다.
+const MIC_ICON = '<svg class="polish-mic" viewBox="0 0 24 24" width="1.1em" height="1.1em" aria-hidden="true" style="vertical-align:-0.2em;margin:0 0.15em"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", off = false, esc }) {
   const inBox = entry?.use === "polished" && entry?.polished;
   const statusText = busy ? copy.working : status === "failed" ? copy.failed : status === "nothing" ? copy.nothingMore : status === "confirm" && inBox ? copy.confirmNext : status === "polished" && inBox ? copy.polishedIn : "";
   // 알림(다듬는 중·다듬었다·실패했다)은 칸 바로 밑에 둔다 — 아래에 두면 휴대폰에서 눈에 안 띈다.
   const statusLine = `<p class="polish-status${busy ? " is-busy" : ["polished", "confirm"].includes(status) ? " is-done" : ""}" role="status">${esc(statusText)}</p>`;
   const guide = `<div class="polish-guide">
-    <p class="polish-hint">${esc(copy.hint)}</p>
+    <p class="polish-hint">${esc(copy.hint).split("{mic}").join(MIC_ICON)}</p>
   </div>`;
   // 칸에 들어 있지 않은 쪽을 아래에 보인다. 다듬은 문장이 칸에 있으면 쓴 글을, 쓴 글로 되돌렸으면 다듬은 문장을.
   // 다듬은 문장에 손을 댄 뒤에는 되돌리기를 숨긴다. 되돌리면 그 뒤에 쓴 말이 칸에서 사라진다.
@@ -247,6 +264,7 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
     <div class="polish-actions">${inBox && canPolishAgain(entry, answerFromPolish(entry)) ? `<button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${busy ? " disabled" : ""}>${esc(copy.repolish)}</button>` : ""}${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
   </div>`
     : "";
-  const example = `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
+  // 다듬기를 끈 사람에게 「이렇게 다듬습니다」 예시는 쓸모가 없다.
+  const example = off ? "" : `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
   return `<div class="polish-extras" data-polish-extras="${esc(field)}">${statusLine}${guide}${other}${example}</div>`;
 }

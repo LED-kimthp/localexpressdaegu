@@ -7345,10 +7345,11 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .admin-shell .dashboard-filters { flex-wrap: wrap; }
 .list-controls { display: grid; gap: var(--space-2); }
 /* 안부 단추: 목록 위에 늘 보인다(TK 2026-09-24 — 관리자 화면의 중심). */
-.list-greeting { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 0 4px; border-top: 1px solid var(--line); }
-.list-greeting > span { flex-basis: 100%; color: var(--ink); font-size: 12px; font-weight: 700; }
-.list-greeting button { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
-.list-greeting button b { margin-left: 2px; font-weight: 700; }
+/* 한 줄에 하나씩, 이름은 왼쪽·사람 수는 오른쪽 끝에 맞춘다(TK: 길이가 제각각이라 들쭉날쭉했다). */
+.list-greeting { display: grid; gap: 4px; padding: 10px 0 4px; border-top: 1px solid var(--line); }
+.list-greeting > span { margin-bottom: 2px; color: var(--ink); font-size: 12px; font-weight: 700; }
+.list-greeting button { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); width: 100%; min-height: 32px; padding: 0 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+.list-greeting button b { flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; }
 .list-greeting button.active { border-color: var(--ink); background: var(--ink); color: var(--surface); }
 .list-controls .text-input-single { min-height: 40px; font-size: 14px; }
 .list-filter { display: grid; gap: 3px; }
@@ -7405,7 +7406,11 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .text-field-polish .polish-other { display: grid; gap: var(--space-2); padding: var(--space-4); border-left: 3px solid var(--line); background: var(--surface-soft); }
 .text-field-polish .polish-other-label { margin: 0; color: var(--muted); font-size: 13px; font-weight: 700; }
 .text-field-polish .polish-other-text { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.75; white-space: pre-wrap; }
-.text-field-polish .polish-use { justify-self: start; min-height: 44px; font-size: 14px; }
+/* 밑줄은 글자 바로 밑에(text-decoration). .text-button 의 border-bottom 은 누르기 쉽게 키운 단추의 맨 아래에
+   그려져 글자와 떨어져 보였다(TK 2026-09-24). 누르는 크기는 padding 으로 지킨다. */
+.text-field-polish .polish-use,
+.text-field-polish .polish-turn-on { justify-self: start; min-height: 44px; padding: 10px 2px; border-bottom: 0; color: var(--ink); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.text-field-polish .polish-lead .polish-turn-on { min-height: 0; margin-left: 6px; padding: 6px 2px; font-size: 15px; vertical-align: baseline; }
 .text-field-polish .polish-status.is-busy { color: var(--muted); }
 .text-field-polish .polish-extras { display: grid; gap: var(--space-3); margin-top: calc(var(--space-2) * -1); }
 .text-field-polish .polish-extras .polish-guide { margin-top: 0; }
@@ -7413,3 +7418,5 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .primary-button[aria-busy="true"] { opacity: .6; }
 .text-field-polish .polish-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .text-field-polish .polish-again { min-height: 44px; padding: 0 18px; font-size: 14px; }
+.text-field-polish .polish-optout { display: flex; gap: var(--space-3); align-items: flex-start; margin-top: calc(var(--space-2) * -1); color: var(--ink); font-size: 15px; line-height: 1.6; cursor: pointer; }
+.text-field-polish .polish-lead.is-off { color: var(--muted); }

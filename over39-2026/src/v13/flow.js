@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260924-r80";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260924-r81";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -82,6 +82,8 @@ const KEEP_ON_ROUTE_CHANGE = new Set([
   // 「문장 다듬기」의 원문 기록. 글이 아니라 객체라 looksLikeWriting 이 못 알아보고 버린다 —
   // 그러면 경로를 한 번 바꾸는 것만으로 참여자가 처음 쓴 글이 사라진다.
   "text_polish",
+  // 참여자가 다듬기를 끈 선택. 경로를 바꿔도 본인이 고른 것이 그대로여야 한다.
+  "text_polish_preference",
   ...PARTICIPANT_CONTEXT_FIELDS,
 ]);
 
