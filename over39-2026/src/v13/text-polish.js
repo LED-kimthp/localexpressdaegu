@@ -82,9 +82,12 @@ export function withPolishResult(entry, { source, polished, run = null, at = new
 }
 
 // 지금 칸의 글을 자동으로 다듬을 것인가. 되돌린 칸, 이미 다듬은 글, 방금 실패한 글, 상한에 닿은 칸은 아니다.
+// 「다음」에서 자동으로 다듬을 만한 길이. 「없음」「모름」처럼 짧은 글을 다듬느라 화면을 붙잡지 않는다.
+export const POLISH_AUTO_MIN_LETTERS = 5;
+
 export function shouldAutoPolish(entry, boxText) {
   const text = String(boxText || "");
-  if (!canPolishText(text)) return false;
+  if (polishLetterCount(text) < POLISH_AUTO_MIN_LETTERS) return false;
   if (entry?.auto_off) return false;
   // 다듬은 문장이 칸에 들어가 있으면 다시 다듬지 않는다. 몇 글자 고치고 「다음」을 누를 때마다
   // 또 붙잡으면, 고친 글자가 다시 바뀌고 참여자는 끝없이 확인해야 한다.
@@ -202,8 +205,19 @@ export function polishButtonLabel(copy, entry, busy) {
 }
 
 // 칸 위(칸 이름 바로 밑)에 두는 한 줄. 쓰기 전에 「다음」에서 글이 다듬어진다는 것을 알린다.
-export function renderPolishLead({ copy, esc }) {
-  return `<p class="polish-lead">${esc(copy.notice)}</p>`;
+// 단추 이름은 화면마다 다르다(이어지는 질문은 「이 답변에서 이어가기」, 마지막은 「활용 범위 정하기」).
+// 안내가 없는 단추 이름을 말하면 참여자는 그 단추를 찾는다 — 그 화면의 실제 이름을 넣는다.
+export function renderPolishLead({ copy, esc, nextLabel = "" }) {
+  return `<p class="polish-lead">${esc(copy.notice.split("{next}").join(nextLabel || copy.nextFallback || "다음"))}</p>`;
+}
+
+// 다듬은 문장을 받지 않을 때. 칸 한도를 넘거나(maxlength), 서버가 가린 개인정보 자리표시
+// ([email removed] 같은 것)가 들어 있으면 참여자가 쓴 이메일·전화번호가 칸에서 사라진다.
+export function rejectPolished(polished, { maxLength = 0 } = {}) {
+  const text = String(polished || "");
+  if (maxLength > 0 && text.length > maxLength) return "POLISH_OVER_LIMIT";
+  if (/\[(?:email|phone|id) removed\]/i.test(text)) return "POLISH_REDACTED_PLACEHOLDER";
+  return null;
 }
 
 export function renderPolishExtras({ copy, id, field, entry = null, busy = false, status = "", esc }) {
@@ -222,7 +236,7 @@ export function renderPolishExtras({ copy, id, field, entry = null, busy = false
     ? `<div class="polish-other" data-polish-result="${esc(field)}">
     <p class="polish-other-label">${esc(inBox ? copy.originalLabel : copy.polishedLabel)}</p>
     <blockquote class="polish-other-text">${esc(inBox ? entry.written : entry.edited ?? entry.polished)}</blockquote>
-    <div class="polish-actions">${inBox && polishAttemptsLeft(entry) > 0 ? `<button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${busy ? " disabled" : ""}>${esc(copy.repolish)}</button>` : ""}${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
+    <div class="polish-actions">${inBox && canPolishAgain(entry, answerFromPolish(entry)) ? `<button class="secondary-button polish-again" type="button" data-action="polish-again" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}"${busy ? " disabled" : ""}>${esc(copy.repolish)}</button>` : ""}${edited ? "" : `<button class="text-button polish-use" type="button" data-action="polish-use" data-polish-field="${esc(field)}" data-polish-id="${esc(id)}" data-polish-use="${inBox ? "written" : "polished"}">${esc(inBox ? copy.restoreWritten : copy.restorePolished)}</button>`}</div>
   </div>`
     : "";
   const example = `<details class="polish-example"><summary>${esc(copy.exampleSummary)}</summary><dl><div><dt>${esc(copy.exampleWrittenLabel)}</dt><dd>${esc(copy.exampleWritten)}</dd></div><div><dt>${esc(copy.examplePolishedLabel)}</dt><dd>${esc(copy.examplePolished)}</dd></div></dl></details>`;
