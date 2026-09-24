@@ -1,7 +1,8 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r82";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r82";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r82";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r82";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260924-r83";
+import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260924-r83";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260924-r83";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260924-r83";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260924-r83";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -720,9 +721,31 @@ function renderDashboard() {
   const rows = sessionRows();
   const on = (view) => (state.view === view ? " active" : "");
   // 도구 단추는 위 한 줄로 올렸다. 왼쪽은 사람 목록만 — 목록이 따로 스크롤된다.
-  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-final-pdfs" ${state.exportBusy ? "disabled" : ""}>최종 PDF 모아 받기 · ${koNum(rows.filter((row) => state.people.get(row.response_id)?.hasDocument ?? true).length)}명</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
+  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button><button class="secondary-button${on("dev-tests")}" data-admin-action="dev-tests">개발 과정 시험 기록</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-final-pdfs" ${state.exportBusy ? "disabled" : ""}>최종 PDF 모아 받기 · ${koNum(rows.filter((row) => state.people.get(row.response_id)?.hasDocument ?? true).length)}명</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
   const tabs = ADMIN_SAMPLE_ORDER.map((value) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${esc(adminSampleLabel(value))} ${koNum(totals[value])}${value === "all" && Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? ` / ${koNum(state.sessionsTotal)}` : ""}</button>`).join("");
-  return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : state.view === "dev-tests" ? renderDevTests() : renderDetail()}</section></main></div>`;
+}
+
+// 개발 과정 시험 기록(TK 2026-09-24). 보고서에 「개발하면서 응답을 이렇게 시험했다」를 쓸 때의 근거.
+function renderDevTests() {
+  const summary = devTestSummary(state.sessions);
+  const t = summary.totals;
+  const runRows = summary.runs.map((run) => `<tr><th scope="row">${esc(koreaTime(run.startedAt))}</th><td><strong>${esc(run.title)}</strong><ul class="dev-test-checked">${run.checked.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></td><td>${run.responseIds.length}건${run.extra ? `<br /><small>${esc(run.extra)}</small>` : ""}</td><td>${esc(run.result)}</td><td>${run.remaining.length ? `${run.cleaned}건 정리 · ${run.remaining.length}건 테스트 표본에 남음` : "정리함"}</td></tr>`).join("");
+  const dayRows = summary.tests.days.map((item) => `<tr><th scope="row">${esc(item.date)}</th><td>${item.total}</td><td>${item.completed}</td></tr>`).join("");
+  return `<section class="detail-section ai-health dev-tests">
+    <h2>개발 과정 시험 기록</h2>
+    <p class="ai-health-note">개발하면서 서버와 화면을 시험하느라 만든 응답이에요.</p>
+    <h3>정리한 자동 시험</h3>
+    <p class="ai-health-verdict">자동 시험 ${t.runs}번 · 시험 응답 ${t.responses}건 (${esc(t.from)} ~ ${esc(t.to)})</p>
+    <p class="ai-health-note">${t.cleaned}건은 시험이 끝난 뒤 정리했고${t.remaining ? `, ${t.remaining}건은 테스트 표본에 남아 있어요` : "요"}. 시험 장부: ${esc(DEV_TEST_LEDGER_PLACE)}</p>
+    <table class="ai-health-table dev-test-runs"><thead><tr><th scope="col">시각</th><th scope="col">시험과 확인한 것</th><th scope="col">시험 응답</th><th scope="col">결과</th><th scope="col">정리</th></tr></thead><tbody>${runRows}</tbody></table>
+    <h3>지금 남아 있는 테스트 기록</h3>
+    <p class="ai-health-verdict">테스트 표본 ${koNum(summary.tests.total)}건${summary.tests.first ? ` (${esc(summary.tests.first)} ~ ${esc(summary.tests.last)})` : ""} · 끝까지 마친 기록 ${koNum(summary.tests.completed)}건</p>
+    <p class="ai-health-note">개발하며 화면과 흐름을 시험한 기록이에요${summary.tests.fromAuto ? `(위 자동 시험에서 남은 ${summary.tests.fromAuto}건 포함)` : ""}. 기관 검토용 응답 ${koNum(summary.institutionReview)}건은 따로예요.</p>
+    <details class="ai-health-detail"><summary>날짜별로 보기</summary>
+      <table class="ai-health-table"><thead><tr><th scope="col">처음 기록된 날</th><th scope="col">테스트 기록</th><th scope="col">끝까지 마침</th></tr></thead><tbody>${dayRows || `<tr><td colspan="3">기록 없음</td></tr>`}</tbody></table>
+    </details>
+  </section>`;
 }
 
 // 글자를 칠 때마다 목록과 숫자만 바꾼다. 화면 전체를 다시 그리면 검색 칸이 커서를 잃는다.
@@ -848,6 +871,7 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.adminAction === "ai-health") return loadAiRuns();
   if (button.dataset.adminAction === "research-insights") return loadResearchInsights();
   if (button.dataset.adminAction === "care") return loadCare();
+  if (button.dataset.adminAction === "dev-tests") { state.view = "dev-tests"; render(); return; }
   if (button.dataset.adminAction === "care-withdraw-record") {
     const responseId = document.querySelector("#care-withdraw-id")?.value.trim();
     const submitEndpoint = String(window.OVER39_SUPABASE_SUBMIT_URL || "");

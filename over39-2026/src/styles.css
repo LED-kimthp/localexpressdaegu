@@ -7327,6 +7327,17 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .person-polish.is-polished { color: var(--ink); font-weight: 700; }
 .person-polish + .person-quote { margin-top: 6px; font-size: 14px; }
 .ai-stages-aside { margin-top: 0; }
+/* 개발 과정 시험 기록(TK 2026-09-24). */
+.dev-tests h3 { margin: 26px 0 8px; font-size: 15px; }
+.dev-test-checked { margin: 6px 0 0; padding-left: 1.1em; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.dev-test-runs td small { color: var(--muted); }
+.dev-test-runs { table-layout: fixed; width: 100%; }
+.dev-test-runs th,
+.dev-test-runs td { text-align: left; vertical-align: top; }
+.dev-test-runs th:nth-child(1) { width: 110px; }
+.dev-test-runs th:nth-child(3) { width: 90px; }
+.dev-test-runs th:nth-child(4) { width: 28%; }
+.dev-test-runs th:nth-child(5) { width: 110px; }
 
 /* 2026-09-24 TK: 목록이 100명을 넘으면 창 전체가 함께 내려가 찾기 어려웠다. 도구 단추는 위 한 줄로 올리고,
    왼쪽 목록과 오른쪽 기록이 각자 스크롤된다. 검색·필터·정렬은 목록 머리에 붙어 있다. */
