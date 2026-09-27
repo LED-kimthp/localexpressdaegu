@@ -1,4 +1,4 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260924-r88";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260927-r89";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
@@ -331,81 +331,81 @@ export function anchorContextFingerprint(anchorId, context = {}) {
 
 const FALLBACKS = {
   ko: {
-    M04_TEXT: "방금 적은 이유 가운데 지금도 가장 선명하게 남아 있는 한 가지를 조금 더 들려주세요.",
+    M04_TEXT: "방금 적으신 것 가운데, 지금도 가장 선명한 한 가지는 무엇일까요?",
     P12: "그 변화가 실제로 느껴졌던 한 장면을 조금 더 들려주세요.",
-    P13_TEXT: "겉으로 잘 보이지 않았던 때에도 이어지고 있던 것을 한 장면으로 들려주세요.",
+    P13_TEXT: "방금 적으신 것 가운데, 그때 손에 잡히던 한 장면은 무엇이었을까요?",
     P19_TEXT: "그 조건이 실제로 도움이 되었던 장면을 한 가지 들려주세요.",
     D02_TEXT: "그 변화가 시작되었다고 느낄 수 있는 가장 작은 장면은 무엇인가요?",
     NO_RECALL_RELATION: "그 순간에 문화예술이 조금 더 가깝게, 또는 멀게 느껴진 이유를 한 가지만 들려주세요.",
     D04_CONDITIONS: "그 두 조건이 실제로 함께 작동했던 한 장면을 조금 더 들려주세요.",
   },
   en: {
-    M04_TEXT: "What is one part of that reason that still feels especially vivid to you?",
+    M04_TEXT: "Of what you just wrote, what is the one thing that is still the most vivid?",
     P12: "Can you describe one moment when that change became noticeable in practice?",
-    P13_TEXT: "Can you describe one thing that continued even when it was not very visible from outside?",
+    P13_TEXT: "From what you just wrote, what is one concrete scene from that time?",
     P19_TEXT: "Can you describe one moment when that condition actually helped?",
     D02_TEXT: "What would be the smallest sign that this change had begun?",
     NO_RECALL_RELATION: "What made arts and culture feel a little closer to you, or more distant, in that moment?",
     D04_CONDITIONS: "Could you describe one moment when those two conditions were working together in practice?",
   },
   ja: {
-    M04_TEXT: "今書いた理由の中で、今も特に鮮明に残っていることを一つだけもう少し教えてください。",
+    M04_TEXT: "今書いてくださったことの中で、今もいちばん鮮明なものは何でしょうか。",
     P12: "その変化を実際に感じた場面を一つだけ、もう少し教えてください。",
-    P13_TEXT: "外からは見えにくい時期にも続いていたことを、一つの場面として教えてください。",
+    P13_TEXT: "今書いてくださったことの中で、その頃、手に触れるようにあった一つの場面は何だったでしょうか。",
     P19_TEXT: "その条件が実際に助けになった場面を一つ教えてください。",
     D02_TEXT: "その変化が始まったと感じられる最も小さな兆しは何でしょうか。",
     NO_RECALL_RELATION: "その時、文化芸術が少し身近に、または遠く感じられた理由を一つだけ教えてください。",
     D04_CONDITIONS: "その二つの条件が実際に一緒に働いた場面を、もう少し教えてください。",
   },
   "zh-Hans": {
-    M04_TEXT: "在你刚写下的原因中，能再说一个至今仍最清晰的部分吗？",
+    M04_TEXT: "在您刚写下的内容里，至今仍最清晰的一件是什么？",
     P12: "能再说一个你实际感受到这种变化的场景吗？",
-    P13_TEXT: "即使外界不太看得见，当时仍在继续的事情是什么？请说一个场景。",
+    P13_TEXT: "在您刚写下的内容里，那段时间里具体可感的一个场景是什么？",
     P19_TEXT: "能说一个这个条件实际发挥作用的场景吗？",
     D02_TEXT: "什么最小的迹象会让你觉得这种变化已经开始？",
     NO_RECALL_RELATION: "在那个时刻，是什么让文化艺术对你感觉更接近或更遥远了一些？",
     D04_CONDITIONS: "能再说一个这两个条件在实际中一起起作用的场景吗？",
   },
   "zh-Hant": {
-    M04_TEXT: "在你剛寫下的原因中，能再說一個至今仍最清晰的部分嗎？",
+    M04_TEXT: "在您剛寫下的內容裡，至今仍最清晰的一件是什麼？",
     P12: "能再說一個你實際感受到這種變化的場景嗎？",
-    P13_TEXT: "即使外界不太看得見，當時仍在繼續的事情是什麼？請說一個場景。",
+    P13_TEXT: "在您剛寫下的內容裡，那段時間裡具體可感的一個場景是什麼？",
     P19_TEXT: "能說一個這個條件實際發揮作用的場景嗎？",
     D02_TEXT: "什麼最小的跡象會讓你覺得這種變化已經開始？",
     NO_RECALL_RELATION: "在那個時刻，是什麼讓文化藝術對你感覺更接近或更遙遠了一些？",
     D04_CONDITIONS: "能再說一個這兩個條件在實際中一起起作用的場景嗎？",
   },
   fr: {
-    M04_TEXT: "Parmi les raisons que vous venez d'écrire, quel élément reste aujourd'hui le plus vif ?",
+    M04_TEXT: "Parmi ce que vous venez d’écrire, quel élément reste aujourd’hui le plus vif ?",
     P12: "Pouvez-vous décrire une scène où ce changement est devenu concret ?",
-    P13_TEXT: "Pouvez-vous décrire une chose qui a continué même lorsqu'elle était peu visible de l'extérieur ?",
+    P13_TEXT: "Parmi ce que vous venez d’écrire, quelle scène concrète de cette période vous revient ?",
     P19_TEXT: "Pouvez-vous décrire un moment où cette condition a réellement aidé ?",
     D02_TEXT: "Quel serait le plus petit signe indiquant que ce changement a commencé ?",
     NO_RECALL_RELATION: "À ce moment-là, qu'est-ce qui vous a fait sentir que l'art et la culture étaient un peu plus proches, ou plus lointains ?",
     D04_CONDITIONS: "Pouvez-vous décrire une scène où ces deux conditions ont agi ensemble concrètement ?",
   },
   es: {
-    M04_TEXT: "De la razón que acabas de escribir, ¿qué parte sigue siendo hoy la más nítida para ti?",
+    M04_TEXT: "De lo que acaba de escribir, ¿qué es lo que sigue siendo hoy más nítido?",
     P12: "¿Puedes describir una escena en la que ese cambio se hiciera concreto?",
-    P13_TEXT: "¿Puedes describir algo que siguiera presente aunque fuera poco visible desde fuera?",
+    P13_TEXT: "De lo que acaba de escribir, ¿qué escena concreta de aquel tiempo le viene a la mente?",
     P19_TEXT: "¿Puedes describir un momento en que esa condición realmente ayudó?",
     D02_TEXT: "¿Cuál sería la señal más pequeña de que ese cambio ha empezado?",
     NO_RECALL_RELATION: "En ese momento, ¿qué hizo que el arte y la cultura se sintieran un poco más cercanos o más lejanos?",
     D04_CONDITIONS: "¿Puedes describir una escena en la que esas dos condiciones actuaran juntas en la práctica?",
   },
   nl: {
-    M04_TEXT: "Welk deel van de reden die je net noemde is je nu nog het duidelijkst bijgebleven?",
+    M04_TEXT: "Wat van wat u net schreef is u nu nog het duidelijkst bijgebleven?",
     P12: "Kun je één moment beschrijven waarop die verandering echt merkbaar werd?",
-    P13_TEXT: "Kun je iets noemen dat doorging, ook toen het van buitenaf nauwelijks zichtbaar was?",
+    P13_TEXT: "Wat van wat u net schreef is één tastbare scène uit die tijd?",
     P19_TEXT: "Kun je één moment beschrijven waarop die voorwaarde daadwerkelijk hielp?",
     D02_TEXT: "Wat zou het kleinste teken zijn dat deze verandering is begonnen?",
     NO_RECALL_RELATION: "Waardoor voelde kunst en cultuur op dat moment iets dichterbij, of juist verder weg?",
     D04_CONDITIONS: "Kun je één moment beschrijven waarop die twee voorwaarden in de praktijk samenwerkten?",
   },
   ms: {
-    M04_TEXT: "Daripada sebab yang baru anda tulis, apakah satu perkara yang masih paling jelas dalam ingatan anda?",
+    M04_TEXT: "Daripada apa yang baru anda tulis, apakah satu perkara yang masih paling jelas sekarang?",
     P12: "Boleh ceritakan satu saat apabila perubahan itu benar-benar terasa dalam kehidupan atau aktiviti anda?",
-    P13_TEXT: "Boleh ceritakan satu perkara yang terus berjalan walaupun tidak begitu kelihatan dari luar?",
+    P13_TEXT: "Daripada apa yang baru anda tulis, apakah satu adegan nyata dari masa itu?",
     P19_TEXT: "Boleh ceritakan satu saat apabila keadaan itu benar-benar membantu?",
     D02_TEXT: "Apakah tanda paling kecil yang membuat anda rasa perubahan itu sudah bermula?",
     NO_RECALL_RELATION: "Apakah yang membuat seni dan budaya terasa sedikit lebih dekat, atau lebih jauh, pada saat itu?",
@@ -483,8 +483,12 @@ export function buildAnchorContext({
   participantContext = null,
   sessionId = null,
   responseId = null,
+  // 2026-09-27: 선택 문항의 인접 답은 코드(GRADUAL, D2)가 아니라 참여자가 본 보기 글로 보낸다.
+  // app.js 가 화면의 보기에서 찾아 넘긴다. 없으면 예전처럼 코드가 간다(시험·옛 기록 호환).
+  choiceLabels = {},
 }) {
   const adjacent = [];
+  const labelled = (id, value) => choiceLabels?.[id] || value;
   const addAdjacent = (id, value) => {
     const text = Array.isArray(value)
       ? value.map((item) => normalizedAnchorText(item)).filter(Boolean).join(", ")
@@ -493,11 +497,11 @@ export function buildAnchorContext({
   };
   if (anchorId === "M04_TEXT") addAdjacent("M02", answers.memory_clue_text);
   if (anchorId === "P12") {
-    addAdjacent("P11", answers.transition_state);
+    addAdjacent("P11", labelled("P11", answers.transition_state));
     addAdjacent("P18", answers.pause_context_text);
   }
   if (anchorId === "P13_TEXT") {
-    addAdjacent("P13", answers.invisible_continuity_state);
+    addAdjacent("P13", labelled("P13", answers.invisible_continuity_state));
     addAdjacent("P12", answers.transition_text);
   }
   if (anchorId === "P19_TEXT") {
@@ -505,10 +509,10 @@ export function buildAnchorContext({
     addAdjacent("P13_TEXT", answers.invisible_continuity_text);
   }
   if (anchorId === "D02_TEXT") {
-    addAdjacent("D02", answers.d_desired_change_primary);
+    addAdjacent("D02", labelled("D02", answers.d_desired_change_primary));
     addAdjacent("P19_TEXT", answers.support_conditions_text);
   }
-  if (anchorId === "NO_RECALL_RELATION") addAdjacent("M01", answers.memory_type);
+  if (anchorId === "NO_RECALL_RELATION") addAdjacent("M01", labelled("M01", answers.memory_type));
   if (anchorId === "D04_CONDITIONS") {
     addAdjacent("D03", answers.d_context_tags);
     addAdjacent("D02_TEXT", answers.desired_change_text);

@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260924-r88";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260924-r88";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260924-r88";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260924-r88";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260924-r88";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260924-r88";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260924-r88";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260924-r88";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260924-r88";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260924-r88";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260924-r88";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260924-r88";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260924-r88";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260924-r88";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260924-r88";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260924-r88";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260924-r88";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260924-r88";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260924-r88";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260924-r88";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260924-r88";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260924-r88";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260924-r88";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260924-r88";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260924-r88";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260924-r88";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260927-r89";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260927-r89";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260927-r89";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, showsContinuityQuestion, withdrawAnswer } from "./flow.js?v=v7-20260927-r89";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260927-r89";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260927-r89";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260927-r89";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260927-r89";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260927-r89";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260927-r89";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260927-r89";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260927-r89";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260927-r89";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260927-r89";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260927-r89";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260927-r89";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260927-r89";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260927-r89";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260927-r89";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260927-r89";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260927-r89";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260927-r89";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260927-r89";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260927-r89";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260927-r89";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260927-r89";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "67e9da3f4767-dirty 2026-09-24T06:53:44.571Z";
+const buildStamp = "1c6b55c4f499 2026-09-27T13:08:22.972Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -532,11 +532,12 @@ const rc2QuestionPurposes = {
 const rc2QuestionTopics = {
   CONSENT: "참여 안내", P01: "시작 위치", DOCUMENT_IDENTITY: "참여자 표기", P01_CONTEXT: "기억의 위치",
   ROLE_GROUP: "역할 범주", ROLE_PRIMARY: "주요 역할", ROLE_PARALLEL: "함께하는 역할", ROLE_BRIDGE: "역할 확인", PARTICIPANT_CONTEXT: "활동의 맥락", PROFILE: "생활과 지역",
-  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "여기서 잠깐", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "이유", AI_ANCHOR_M04_TEXT: "여기서 잠깐", M05: "남은 단서",
+  // 2026-09-27: AI 되물음 화면의 「여기서 잠깐」(TK: 과하다)을 빼고, 되물음이 붙은 문항의 주제를 그대로 잇는다.
+  M01: "기억", NO_RECALL_RELATION: "지금의 관계", AI_CONDITIONAL_NO_RECALL_RELATION: "지금의 관계", M02: "장면", M03: "초점", M03_RECONNECT: "다시 이어보기", M10_VERIFY: "관계 확인", M04: "남은 것", AI_ANCHOR_M04_TEXT: "남은 것", M05: "남은 단서",
   MEMORY_TIME: "시간", MEMORY_EVIDENCE: "경험 방식", MEMORY_TO_PRESENT: "현재",
   ACTIVITY: "현재의 연결", PRACTICE_PUBLIC_STATE: "현재 상태", STATE_BACKGROUND: "현재에 작용한 현실",
-  TRANSITION: "변화", AI_ANCHOR_P12: "여기서 잠깐", CONTINUITY: "이어온 것", AI_ANCHOR_P13_TEXT: "여기서 잠깐", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "여기서 잠깐", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "여기서 잠깐",
-  D03: "현실 경험", D04: "영향", AI_CONDITIONAL_D04_CONDITIONS: "여기서 잠깐", R01: "이어갈 방식", COMMUNITY: "다른 이름",
+  TRANSITION: "변화", AI_ANCHOR_P12: "변화", CONTINUITY: "이어온 것", AI_ANCHOR_P13_TEXT: "이어온 것", SUPPORT_CONDITIONS: "이어지게 한 기반", AI_ANCHOR_P19_TEXT: "이어지게 한 기반", D01: "현재 조건", D02: "바라는 변화", AI_ANCHOR_D02_TEXT: "바라는 변화",
+  D03: "현실 경험", D04: "남긴 것", AI_CONDITIONAL_D04_CONDITIONS: "남긴 것", R01: "이어갈 방식", COMMUNITY: "다른 이름",
   REFLECTION_REVIEW: "응답 정리", SUBMIT: "세 방향 확인", USE_SCOPE: "활용 범위",
 };
 
@@ -552,10 +553,10 @@ const rc2Phases = {
   M01: "기억의 출발점",
   NO_RECALL_RELATION: "지금 문화예술과 만나는 한 순간",
   AI_CONDITIONAL_NO_RECALL_RELATION: "현재의 관계에서 이어진 질문",
-  AI_ANCHOR_M04_TEXT: "기억의 이유에서 이어진 질문",
+  AI_ANCHOR_M04_TEXT: "남은 것에서 이어진 질문",
   M02: "남아 있는 한 장면",
   M03: "장면의 초점",
-  M04: "오래 남은 이유",
+  M04: "오래 남은 것",
   M05: "함께 남은 단서",
   MEMORY_TIME: "기억의 시간과 지역",
   MEMORY_EVIDENCE: "경험한 방식과 관계",
@@ -1219,9 +1220,14 @@ function renderSupportConditions() {
   const p19Text = question("P19_TEXT");
   const audience = isAudienceContext();
   const title = contextAwareCopy(state.answers, state.language).p19;
-  const help = audience
-    ? "작품과 프로그램을 찾게 한 사람, 기억, 정보와 환경을 기록해요. 최대 다섯 가지까지 고를 수 있어요."
-    : "활동을 실제로 지탱한 사람, 공간, 소득, 기록과 관계를 남겨요. 최대 다섯 가지까지 고를 수 있어요.";
+  // 2026-09-27 흐름 점검: P16(작용하는 현실) 뒤에 다시 「기반」을 물어 같은 것을 또 묻는 느낌이 났다.
+  // 앞 물음과 이 물음이 무엇이 다른지 한 줄로 가른다.
+  const lead = audience
+    ? t("앞의 질문은 지금에 작용하는 현실이었고, 이 질문은 그럼에도 문화예술을 다시 찾게 한 것입니다.")
+    : t("앞의 질문은 지금에 작용하는 현실이었고, 이 질문은 그럼에도 이어오게 한 것입니다.");
+  const help = `${lead} ${audience
+    ? t("작품과 프로그램을 찾게 한 사람, 기억, 정보와 환경을 기록해요. 최대 다섯 가지까지 고를 수 있어요.")
+    : t("활동을 실제로 지탱한 사람, 공간, 소득, 기록과 관계를 남겨요. 최대 다섯 가지까지 고를 수 있어요.")}`;
   return `${screenHeading(title, help)}
     ${renderChoices("P19", audience ? p19.options_audience : p19.options_professional, { multi: true, max: 5, exclusive: ["NONE"] })}
     ${renderOtherInput("P19", "직접 적고 싶은 조건을 남겨주세요.")}
@@ -1355,11 +1361,14 @@ function renderMemoryToPresent() {
     .map((value) => String(value || "").trim()).find(Boolean);
   const excerpt = rawMemory ? `${rawMemory.slice(0, 132)}${rawMemory.length > 132 ? "…" : ""}` : "";
   const noRecall = values(state.answers.memory_type).includes("NO_RECALL");
+  // 2026-09-27 흐름 점검: 예전 본문은 「그 기억이 현재와 어디에서 이어지는지 살펴봅니다」라고 약속했는데,
+  // 다음 화면들(P05·P14·P15·P16)은 기억을 다시 부르지 않는다. 지키지 못할 약속을 빼고, 구간이 바뀐다는 것만 말한다.
+  // 「왜 지금을 묻는가」는 다음 화면(ACTIVITY)의 첫 줄이 말하므로 여기서 되풀이하지 않는다.
   const body = noRecall
     ? t("특별히 떠오르는 대상을 고르지 않은 응답도 그대로 기록했습니다. 기억을 억지로 되짚지 않고 현재의 활동과 관람, 생활의 흐름으로 이동합니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.")
-    : excerpt
-      ? t("앞서 남긴 장면을 다음 질문의 출발점으로 두었습니다. 이제 그 기억이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.")
-      : t("앞에서 남긴 기억을 다음 질문의 출발점으로 두었습니다. 이제 그 경험이 현재의 활동이나 관람, 생활의 변화와 어디에서 이어지는지 살펴봅니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.");
+    : audience
+      ? t("여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.")
+      : t("여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.");
   return `${screenHeading(title, help, "앞에서 남긴 기억을 품고 있는 현재의 경험을 듣는 자리예요.")}
     <div class="transition-card">${excerpt && !noRecall ? `<blockquote>${esc(excerpt)}</blockquote>` : ""}<p>${esc(body)}</p></div>`;
 }
@@ -1372,7 +1381,11 @@ function renderTransition() {
   const transitionDetailLabel = (value, contextCopy, question12) => (value === "CONTINUED"
     ? "큰 전환 없이 이어졌더라도, 그 사이 조금 달라진 것이 있었다면 들려주세요."
     : contextCopy.p12 || question12.text);
-  const title = isProfessionalContext() ? p11.text_professional : p11.text_audience;
+  // 2026-09-27 흐름 점검: 「연령·지원·역할 등 조건의 구간이 달라졌다고 느낀 시점」은 연구자의 말이었다.
+  // 스키마 문장은 그대로 두고(부록·호환), 화면에서만 바꿔 부른다.
+  const title = isProfessionalContext()
+    ? t("활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?")
+    : p11.text_audience;
   const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.transition_state;
   const showText = stateValue && !["SKIP", "UNSURE"].includes(stateValue);
@@ -1466,9 +1479,12 @@ function renderBranch() {
 function renderMeaning() {
   const q = question("M04");
   const note = question("M04_TEXT");
-  const title = noRecall() ? q.text_no_recall : q.text;
+  // 2026-09-27 흐름 점검: 장면(M02) 바로 뒤에 「남아 있는 이유」를 묻고, 그 뒤 AI 되물음이 이유를 한 번 더
+  // 물어 '왜'가 세 번 이어졌다. 이 축이 재는 것은 「의미」이므로, 화면에서는 이유 대신 남은 것을 묻는다.
+  // 스키마 문장(부록·AI 입력의 question_label)은 그대로 둔다.
+  const title = noRecall() ? q.text_no_recall : t("이 기억에서 지금까지 남아 있는 것은 무엇인지요?");
   const options = noRecall() ? q.options_no_recall : q.options;
-  const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : note.text;
+  const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : t("남아 있는 것을 먼저 한 문장으로 적어 주세요.");
   const placeholder = noRecall() ? "현재의 거리감이나 남아 있는 느낌" : "먼저 떠오르는 내용을 적어주세요.";
   return `${screenHeading(title, "한 문장으로 적어도 좋아요.")}
     ${requiredBlock("m04-text-required", renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label }), { inset: true })}
@@ -1563,7 +1579,11 @@ function renderD2() {
   const title = options.length && dScope() === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d02 : d02.text;
   if (!isRc2) return `${screenHeading("가장 먼저 바라는 변화를 골라주세요.")}<label class="field-label">${esc(title || d02.text)}</label>${renderChoices("D02", options)}`;
   const substantive = hasSubstantiveDChange(state.answers);
-  return `${screenHeading("지금 이 흐름을 이어가거나 다시 움직이기 위해, 가장 먼저 달라졌으면 하는 장면은 무엇인가요?", "특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.")}
+  // 2026-09-27 흐름 점검: 세 번째 방향(조건)으로 넘어가는데 안내가 없었다. 「조건을 묻는 이유」 한 줄은
+  // D01 도움말(d1Help)에 있었는데 D01 을 RC2 에서 빼면서(9/20) 화면에서 사라졌다. 여기서 되살리고,
+  // 「현재」 화면과 같은 세 방향 한 줄을 붙인다.
+  const d2Help = `${t("조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.")} ${t("특정한 변화가 꼭 필요하다고 느끼지 않거나 아직 잘 모르겠다면 그 상태도 그대로 고를 수 있어요.")}`;
+  return `${screenHeading("지금 이 흐름을 이어가거나 다시 움직이기 위해, 가장 먼저 달라졌으면 하는 장면은 무엇인가요?", d2Help, undefined, "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.")}
     ${focusPart}
     <label class="field-label">${esc(t("지금과 가까운 변화의 방향을 골라주세요."))}</label>
     ${renderChoices("D02", options)}
@@ -1577,7 +1597,12 @@ function renderD3() {
   const title = scope === "SELF_ROLE" ? schema.role_question_bank[state.answers.role_primary]?.d03 : d03.text;
   const hints = dContextHints(state.answers, state.language).join(" · ");
   const copy = ui();
-  return `${screenHeading(copy.d3Title, copy.d3Help.replace("{hints}", hints))}
+  // 2026-09-27 흐름 점검: D02 에서 「변화가 필요하다고 느끼지 않음」·「아직 모르겠음」을 고른 사람에게
+  // 「그 변화가 필요한 현실」은 가리킬 것이 없다. 그때는 지금에 가까운 현실을 묻는 제목으로 바꾼다.
+  const heading = hasSubstantiveDChange(state.answers)
+    ? copy.d3Title
+    : (isAudienceContext() ? copy.d3TitleNoChangeAudience : copy.d3TitleNoChange);
+  return `${screenHeading(heading, copy.d3Help.replace("{hints}", hints))}
     <label class="field-label">${esc(title || d03.text)}</label>${renderChoices("D03", options, { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("D03", "현실의 맥락을 직접 적어주세요.")}`;
 }
 
@@ -1587,7 +1612,7 @@ function renderD4() {
   const title = copy.d4Title;
   const contextHint = dContextHints(state.answers, state.language).join(" · ");
   const help = (hasDContext() ? copy.d4HelpWithContext : copy.d4HelpWithoutContext).replace("{hints}", contextHint);
-  return `${screenHeading(title, help)}${renderText("D04", { placeholder: isAudienceContext() ? "이 조건이 관람, 기억, 공유에 남긴 영향을 적어주세요." : "이 조건이 활동·기억·관계에 남긴 영향을 적어주세요." })}`;
+  return `${screenHeading(title, help)}${renderText("D04", { placeholder: isAudienceContext() ? "이 조건이 관람, 기억, 공유에 남긴 것을 적어주세요." : "이 조건이 활동·기억·관계에 남긴 것을 적어주세요." })}`;
 }
 
 function renderReconnect() {
@@ -1613,10 +1638,12 @@ function renderCommunity() {
   // 음성 저장 필드(store[1] = community_note_audio_ref)는 일부러 비워 둔다. 스키마 type이
   // text_or_voice지만 이 앱의 음성 경로(V01~V06)는 별개 구조이고, 파일럿 전에 새 미디어 경로를
   // 여는 것은 범위를 넘는다. renderText는 store[0](community_note_text)만 쓴다.
-  return `${screenHeading("다른 이름이나 장면을 하나 더 남길까요?", "이 단계는 선택 사항입니다. 지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.")}
+  // 2026-09-27 흐름 점검: 조건 구간 끝에서 갑자기 기억 구간의 「이름」으로 돌아온다. 돌아오는 이유를 첫 줄에 둔다.
+  // C02 의 「이 인물이」는 작품·공간·장면을 적은 사람에게 맞지 않아 화면에서만 바꿔 부른다(스키마는 그대로).
+  return `${screenHeading("다른 이름이나 장면을 하나 더 남길까요?", "기억·현재·조건에 관한 질문은 여기까지입니다. 처음에 떠올리신 것 말고도 남기고 싶은 이름이나 장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.")}
     ${state.summaryGenerating ? processingSignal("응답을 정리하고 있어요") : ""}
     ${renderCommunityOptIn(c00.options)}
-    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(c02.text)}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
+    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(t("이 이름이나 장면이 지금 다시 떠오른 가장 큰 이유는 무엇인가요?"))}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
 }
 
 // 「지금 기록으로 충분해요」를 먼저, 사이를 벌려 「더 적을게요」를 아래에 따로 둔다. 나란히 두면 한 번 더
@@ -1716,8 +1743,21 @@ function buildCurrentAnchorContext(anchorId) {
   const response = createResponse("anchor_context_check");
   const primary = roleRecord(state.answers.role_primary);
   const parallels = values(state.answers.roles_parallel).map((code) => roleRecord(code, { parallel: true })).filter(Boolean);
+  // 2026-09-27 흐름 점검: 인접 답으로 선택지 **코드**(GRADUAL, D2)가 그대로 AI 에 갔다. 지시문은 코드를 쓰지 말라
+  // 하는데 입력에 코드가 있었다. 참여자가 본 보기 글을 함께 보내, 코드 대신 그 글이 들어가게 한다.
+  const optionLabel = (options, value) => {
+    const found = (options || []).find((option) => optionValue(option) === value);
+    return found ? t(Array.isArray(found) ? found[1] : found.label || "") : "";
+  };
+  const choiceLabels = {
+    P11: optionLabel(question("P11")?.options, state.answers.transition_state),
+    P13: optionLabel(question("P13")?.options, state.answers.invisible_continuity_state),
+    D02: optionLabel(dOptions("desired"), state.answers.d_desired_change_primary),
+    M01: ui().m01.options[state.answers.memory_type] || "",
+  };
   return buildAnchorContext({
     anchorId,
+    choiceLabels,
     questionLabel: localizedAnchorQuestionLabel(anchorId),
     answer: anchorSourceText(state.answers, anchorId),
     answers: state.answers,
@@ -1952,7 +1992,10 @@ function renderAdaptiveCheckpoint(checkpoint) {
   // 2026-09-20: 여기만 글자 그대로 "motif"를 보고 있어서, 제공자가 groq·morph 로 바뀐 뒤로는
   // AI 가 방금 쓴 글을 읽고 만든 질문에도 「읽었어요」 대신 예비 머리말이 나갔다. 살아 있는
   // 제공자 목록은 depth.js 한 곳에서만 정한다(anchor-live.js 가 9월 16일에 같은 이유로 고쳐졌다).
-  const questionLead = isLiveModelSource(turn.source) ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead;
+  // 2026-09-27 흐름 점검: P12 되물음은 P13 화면 뒤에 나온다(P13 우선권, flow.js). 그때 참여자가 방금 쓴 것은
+  // P13 선택이고 인용되는 글은 두 화면 전 것이라, 「방금 쓰신 문장」이 거짓이 된다. 그 경우만 머리말을 바꾼다.
+  const backToEarlier = checkpoint === "P12" && showsContinuityQuestion(state.answers);
+  const questionLead = backToEarlier ? ui().deepQuestionLeadBack : (isLiveModelSource(turn.source) ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead);
   return `${screenHeading(stage().followingQuestion, questionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>
