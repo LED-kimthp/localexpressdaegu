@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260928-r90";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260928-r91";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -204,6 +204,10 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
   if (answers.memory_type !== "NO_RECALL") {
     ids.push("M02");
     if (!adaptive) ids.push("M03");
+    // 2026-09-28: RC2 는 화면 순서(장면 → 언제·어디 → 남아 있는 것)와 같은 순서로 저장한다. 관리자 ①·연구용
+    // 기록이 이 순서를 그대로 따르므로, 여기가 화면과 어긋나면 기록의 질문 순서가 참여자가 겪은 순서와 달라진다
+    // (관리자 창 지적). 언제·어디 화면 안에서는 M06 · M07 을 먼저 보이고 M05 는 아래에 접어 둔다.
+    if (adaptive) ids.push("M06", "M07", "M05");
     ids.push("M04");
     if (adaptive) ids.push("M04_TEXT");
     // 2026-09-20: M08(경험 방식)·M09(나와의 관계)는 RC2 에서 뺐다. 좌표·분석 어디에도 쓰이지 않고
@@ -211,7 +215,7 @@ export function applicableFixedQuestionIds(answers = {}, { adaptive = false } = 
     // 참여자가 27문 가운데 유일하게 비워 둔 문항이기도 하다. M08(직접 겪었나·전해 들었나)은
     // 기억을 증거로 검증하는 틀이라 「기억을 그대로 받는다」는 이 연구의 태도와 어긋난다.
     // M05 는 남긴다 — 「그 기억과 함께 남아 있는 것」은 이 연구의 제목 질문에 가장 가깝다.
-    ids.push("M05", "M06", "M07");
+    if (!adaptive) ids.push("M05", "M06", "M07");
     if (!adaptive) ids.push("M08", "M09");
     if (!adaptive) ids.push("M10");
   }
@@ -323,7 +327,7 @@ export function fixedQuestionIdsForScreen(screen, answers = {}, { adaptive = fal
     CONTINUITY: adaptive && showsContinuityQuestion(answers) ? ["P13", ...(["YES", "MIXED"].includes(answers.invisible_continuity_state) ? ["P13_TEXT"] : [])] : [],
     SUPPORT_CONDITIONS: adaptive ? ["P19", ...(Array.isArray(answers.support_conditions) && answers.support_conditions.some((value) => value !== "NONE") ? ["P19_TEXT"] : [])] : [],
     M01: ["M01"], NO_RECALL_RELATION: ["NO_RECALL_RELATION"], M02: ["M02"], M03: ["M03"], M03_RECONNECT: ["M03"], M10_VERIFY: ["M10"], M04: adaptive ? ["M04", "M04_TEXT"] : ["M04"], M05: ["M05"],
-    MEMORY_TIME: adaptive ? ["M05", "M06", "M07"] : ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],
+    MEMORY_TIME: adaptive ? ["M06", "M07", "M05"] : ["M06", "M07"], MEMORY_EVIDENCE: adaptive ? ["M08", "M09"] : ["M08", "M09", "M10"],
     D01: ["D01"], D02: adaptive ? ["D_FOCUS", "D02", ...(hasSubstantiveDChange(answers) ? ["D02_TEXT"] : [])] : ["D02"], D03: ["D03"], D04: ["D04"], R01: ["R01"],
   };
   return map[screen] || [];

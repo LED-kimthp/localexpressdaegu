@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r90";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r91";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260928-r90";
-import { normalizedDScope } from "./flow.js?v=v7-20260928-r90";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260928-r91";
+import { normalizedDScope } from "./flow.js?v=v7-20260928-r91";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260928-r90";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260928-r90";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r90";
+import { translate } from "./i18n.js?v=v7-20260928-r91";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260928-r91";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r91";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -448,7 +448,11 @@ function locationText(answers = {}, frame = responseDocumentFrame("ko")) {
   // 조각 단위로 겹치는 것을 걸러야 「대한민국 · 대구」와 「대구」가 한 번으로 모인다.
   const places = [clean(answers.residence_country_code), clean(answers.residence_city)];
   for (const item of array(answers.activity_locations)) places.push(...locationParts(item));
-  return [...new Set(places.filter(Boolean))].join(" · ") || frame.unspecified;
+  const unique = [...new Set(places.filter(Boolean))];
+  // 「수원」과 「경기도 수원」처럼 한쪽이 다른 쪽 안에 낱말째 들어 있으면 더 자세한 쪽만 남긴다.
+  // 사는 곳을 도시만 적고, 만나는 곳을 도·시로 적으면 「대한민국 · 수원 · 경기도 수원」이 되었다(TK 메모).
+  const kept = unique.filter((place) => !unique.some((other) => other !== place && ` ${other} `.includes(` ${place} `)));
+  return kept.join(" · ") || frame.unspecified;
 }
 
 function originSection(answers = {}, english = false) {

@@ -1447,7 +1447,7 @@
         ],
         [
           "HEALTH",
-          "건강과 에너지"
+          "건강과 체력"
         ],
         [
           "OTHER",
@@ -3761,7 +3761,7 @@
     "question_bank_version": "s-bank-v0.1-seed",
     "prompt_version": "over39-adaptive-response-document-v0.3.1-2026-08-06",
     "grid_version": "grid-v1.1-pilot",
-    "consent_version": "consent-v1.3.2-response-document",
+    "consent_version": "consent-v1.3.3-text-polish",
     "community_list_version": "community-memory-v1",
     "curation_map_version": null,
     "adaptive_policy_version": "adaptive-v2.3-2026-09-28",

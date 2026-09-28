@@ -611,7 +611,7 @@ export const extraCopy = {
     "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Earning a living and other work — The weight of earning a living and other work is affecting how I am active now.",
     "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "Age limits for youth and emerging-artist funding — Having aged out of youth and emerging-artist funding is affecting how I am active now.",
     "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "Care and family — A life that includes caring for family and others is affecting how I am active now.",
-    "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "Health and energy — The energy that health and recovery require is affecting my activity and participation now.",
+    "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "Health and stamina — The stamina that health and recovery require is affecting my activity and participation now.",
     "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "Cost — The cost of making, showing, and travel is affecting how I am active now.",
     "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "Space — The space needed for working, rehearsing, and storage is affecting how I am active now.",
     "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "The burden of administration and roles — The weight of administration and of holding several roles is affecting how I am active now.",
@@ -1404,7 +1404,7 @@ export const extraCopy = {
     "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Levensonderhoud en ander werk — Het gewicht van levensonderhoud en ander werk beïnvloedt hoe ik nu werk.",
     "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "Leeftijdsgrens voor jonge en beginnende kunstenaars — Dat de leeftijdsgrens voor steun aan jonge en beginnende kunstenaars voorbij is, beïnvloedt hoe ik nu werk.",
     "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "Zorg en familie — Een leven waarin ik ook voor familie zorg, beïnvloedt hoe ik nu werk.",
-    "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "Gezondheid en energie — De energie die gezondheid en herstel vragen, beïnvloedt mijn huidige activiteit en deelname.",
+    "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "Gezondheid en conditie — De conditie die gezondheid en herstel vragen, beïnvloedt mijn huidige activiteit en deelname.",
     "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "Kosten — De kosten van productie, presentatie en reizen beïnvloeden hoe ik nu werk.",
     "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "Ruimte — De ruimte om te werken, te oefenen en op te slaan beïnvloedt hoe ik nu werk.",
     "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "De last van administratie en rollen — Het gewicht van administratie en meerdere rollen beïnvloedt hoe ik nu werk.",
@@ -2177,7 +2177,7 @@ export const extraCopy = {
     "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Sustento y otros trabajos — El peso del sustento y de otros trabajos influye en mi forma actual de trabajar.",
     "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "Límite de edad para jóvenes y emergentes — Haber superado el tramo de edad de las ayudas a jóvenes y emergentes influye en mi forma actual de trabajar.",
     "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "Cuidado y familia — Una vida en la que también cuido de la familia influye en mi forma actual de trabajar.",
-    "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "La salud y la energía — La energía que necesitan la salud y la recuperación influye en mi actividad y participación actuales.",
+    "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "La salud y las fuerzas — Las fuerzas que necesitan la salud y la recuperación influyen en mi actividad y participación actuales.",
     "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "Costes — Los costes de producción, presentación y desplazamiento influyen en mi forma actual de trabajar.",
     "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "Espacio — El espacio para trabajar, ensayar y almacenar influye en mi forma actual de trabajar.",
     "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "La carga de la administración y de los papeles — El peso de la administración y de varios papeles influye en mi forma actual de trabajar.",
@@ -2950,7 +2950,7 @@ export const extraCopy = {
     "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Les revenus et d’autres emplois — Le poids des revenus et d’autres emplois influence aujourd’hui ma manière de mener mon activité.",
     "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "Critères d’âge des aides jeunes et relève — La fin du critère d’âge des aides aux jeunes et à la relève influence aujourd’hui ma manière de mener mon activité.",
     "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "Le soin des proches et la famille — Une vie où je prends soin de ma famille et de mes proches influence aujourd’hui ma manière de mener mon activité.",
-    "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "La santé et l’énergie — L’énergie que demandent la santé et le rétablissement influence aujourd’hui mon activité et ma participation.",
+    "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "La santé et la forme physique — La forme physique que demandent la santé et le rétablissement influence aujourd’hui mon activité et ma participation.",
     "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "Le coût — Le coût de la création, des présentations et des déplacements influence aujourd’hui ma manière de mener mon activité.",
     "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "L’espace — L’espace nécessaire pour travailler, répéter et stocker influence aujourd’hui ma manière de mener mon activité.",
     "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "La charge administrative et celle des rôles — Le poids de l’administration et de plusieurs rôles influence aujourd’hui ma manière de mener mon activité.",
@@ -3724,7 +3724,7 @@ export const extraCopy = {
     "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Sara hidup dan kerja lain — Berat tanggungan sara hidup dan kerja lain mempengaruhi cara saya bergiat sekarang.",
     "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "Syarat umur belia dan pengkarya baharu — Tamatnya julat umur bagi bantuan belia dan pengkarya baharu mempengaruhi cara saya bergiat sekarang.",
     "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "Penjagaan dan keluarga — Kehidupan yang turut menjaga keluarga mempengaruhi cara saya bergiat sekarang.",
-    "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "Kesihatan dan tenaga — Tenaga yang diperlukan untuk kesihatan dan pemulihan mempengaruhi kegiatan dan penyertaan saya sekarang.",
+    "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "Kesihatan dan stamina — Stamina yang diperlukan untuk kesihatan dan pemulihan mempengaruhi kegiatan dan penyertaan saya sekarang.",
     "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "Kos — Kos penghasilan, pembentangan dan perjalanan mempengaruhi cara saya bergiat sekarang.",
     "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "Ruang — Ruang untuk berkarya, berlatih dan menyimpan mempengaruhi cara saya bergiat sekarang.",
     "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "Beban pentadbiran dan peranan — Berat pentadbiran dan pelbagai peranan mempengaruhi cara saya bergiat sekarang.",
@@ -4213,7 +4213,7 @@ Object.assign(extraCopy.en || (extraCopy.en = {}), {
   "현재 문화예술을 만나는 방식에 영향을 주고 있는 현실은 무엇인가요?": "What circumstances currently affect how you encounter arts and culture?",
   "지금 문화예술과 맺고 있는 관계는 어떤 상태에 가장 가까운가요?": "Which best describes your current relationship with arts and culture?",
   "현재의 관람과 관심 방식이 자리 잡은 시기나 장면을 들려주세요.": "Tell us about when or how your current way of attending and taking interest took shape.",
-  "일상과 학업·일의 시간": "Time for daily life, study, and work", "비용과 이동": "Cost and travel", "함께 갈 사람": "Someone to go with", "작품과 프로그램 정보": "Information about works and programmes", "언어와 설명의 방식": "Language and ways of explaining", "공간에 들어갈 때의 편안함": "Feeling comfortable entering a space", "지역의 문화공간과 기회": "Local cultural spaces and opportunities", "온라인으로 만나는 경로": "Ways of encountering it online", "개인의 관심과 우선순위": "Personal interests and priorities", "건강과 에너지": "Health and energy",
+  "일상과 학업·일의 시간": "Time for daily life, study, and work", "비용과 이동": "Cost and travel", "함께 갈 사람": "Someone to go with", "작품과 프로그램 정보": "Information about works and programmes", "언어와 설명의 방식": "Language and ways of explaining", "공간에 들어갈 때의 편안함": "Feeling comfortable entering a space", "지역의 문화공간과 기회": "Local cultural spaces and opportunities", "온라인으로 만나는 경로": "Ways of encountering it online", "개인의 관심과 우선순위": "Personal interests and priorities", "건강과 체력": "Health and stamina",
   "일상 속 관심": "Interest in daily life", "새로운 발견": "New discovery", "함께 나누는 관계": "Relationships for sharing", "온라인과 현장의 교차": "Online and in-person connections", "거리와 재조정": "Distance and readjustment", "취향과 관점의 변화": "Changes in taste and perspective", "여러 상태가 함께 있음": "Several states overlap",
   "한 번의 방문, 누군가의 추천, 학교나 일상의 변화처럼 가까운 내용을 적어주세요.": "You might write about a visit, someone’s recommendation, or a change at school or in daily life.",
   "문화예술을 만나고 참여하는 방식이 달라졌다고 느낀 시점이 있었나요?": "Was there a time when the way you came to arts and culture, and took part in it, felt different?",
@@ -4787,7 +4787,7 @@ const rc2CoreSurveyRows = [
   ["공간에 들어갈 때의 편안함", "Le fait de se sentir à l’aise en entrant dans un lieu", "La comodidad al entrar en un espacio", "Het gemak waarmee u een ruimte binnenstapt", "Keselesaan ketika memasuki ruang"],
   ["지역의 문화공간과 기회", "Les lieux et les occasions culturels de la région", "Espacios y oportunidades culturales de la región", "Culturele plekken en kansen in de regio", "Ruang dan peluang budaya di kawasan setempat"],
   ["온라인으로 만나는 경로", "Les chemins de rencontre en ligne", "Vías de encuentro en línea", "Manieren om het online te ontmoeten", "Laluan untuk bertemu secara dalam talian"],
-  ["개인의 관심과 우선순위", "Les intérêts et priorités personnelles", "Intereses y prioridades personales", "Persoonlijke interesses en prioriteiten", "Minat dan keutamaan peribadi"], ["건강과 에너지", "La santé et l’énergie", "La salud y la energía", "Gezondheid en energie", "Kesihatan dan tenaga"],
+  ["개인의 관심과 우선순위", "Les intérêts et priorités personnelles", "Intereses y prioridades personales", "Persoonlijke interesses en prioriteiten", "Minat dan keutamaan peribadi"], ["건강과 체력", "La santé et la forme physique", "La salud y las fuerzas", "Gezondheid en conditie", "Kesihatan dan stamina"],
   ["일상 속 관심", "Un intérêt dans la vie quotidienne", "Interés en la vida diaria", "Interesse in het dagelijks leven", "Minat dalam kehidupan harian"], ["새로운 발견", "De nouvelles découvertes", "Nuevos descubrimientos", "Nieuwe ontdekkingen", "Penemuan baharu"],
   ["함께 나누는 관계", "Des relations de partage", "Relaciones para compartir", "Relaties waarin u deelt", "Hubungan untuk berkongsi"], ["온라인과 현장의 교차", "Le croisement du numérique et du lieu", "El cruce entre lo digital y lo presencial", "Het kruisen van online en ter plekke", "Pertemuan antara dalam talian dan di tempat"],
   ["거리와 재조정", "La distance et le réajustement", "La distancia y el reajuste", "Afstand en herijking", "Jarak dan pelarasan semula"], ["취향과 관점의 변화", "L’évolution des goûts et des perspectives", "Cambios en gustos y perspectivas", "Verandering van smaak en perspectief", "Perubahan citarasa dan pandangan"],
@@ -6061,7 +6061,7 @@ Object.assign(extraCopy.ja || (extraCopy.ja = {}), {
   "지역의 문화공간과 기회": "地域の文化空間と機会",
   "온라인으로 만나는 경로": "オンラインで出会う経路",
   "개인의 관심과 우선순위": "個人の関心と優先順位",
-  "건강과 에너지": "健康とエネルギー",
+  "건강과 체력": "健康と体力",
   "일상 속 관심": "日常のなかの関心",
   "새로운 발견": "新しい発見",
   "함께 나누는 관계": "分かち合う関係",
@@ -7617,7 +7617,7 @@ Object.assign(extraCopy.ja || (extraCopy.ja = {}), {
   "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "生計と他の仕事 — 生計と他の仕事の比重が、今の活動のしかたに影響しています。",
   "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "若手・新進の年齢要件 — 若手・新進を対象とした支援の年齢の区分が終わったことが、今の活動のしかたに影響しています。",
   "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "ケアと家族 — ケアと家族をともに支える暮らしが、今の活動のしかたに影響しています。",
-  "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "健康とエネルギー — 健康と回復に必要なエネルギーが、今の活動と参加に影響しています。",
+  "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "健康と体力 — 健康と回復に必要な体力が、今の活動と参加に影響しています。",
   "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "費用 — 制作と発表、移動に必要な費用が、今の活動のしかたに影響しています。",
   "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "空間 — 作業と練習、保管に必要な空間が、今の活動のしかたに影響しています。",
   "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "行政と役割の負担 — 行政といくつもの役割の比重が、今の活動のしかたに影響しています。",
@@ -8307,7 +8307,7 @@ Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
   "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "生计与其他工作 — 生计与其他工作的比重正影响着我现在的活动方式。",
   "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "青年与新锐的年龄标准 — 青年与新锐补助的年龄区间届满，正影响着我现在的活动方式。",
   "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "照顾与家庭 — 一边照顾家人一边生活，正影响着我现在的活动方式。",
-  "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "健康与体力 — 健康与复原所需的体力，正影响着我现在的活动与参与。",
+  "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "健康与体力 — 健康与复原所需的体力，正影响着我现在的活动与参与。",
   "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "费用 — 制作、发表与交通所需的费用，正影响着我现在的活动方式。",
   "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "空间 — 工作、练习与存放所需的空间，正影响着我现在的活动方式。",
   "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "行政与角色的负担 — 行政与多重角色的比重，正影响着我现在的活动方式。",
@@ -8696,7 +8696,7 @@ Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
   "생계와 다른 일 — 생계와 다른 일의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "生計與其他工作 — 生計與其他工作的比重正影響著我現在的活動方式。",
   "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.": "青年與新銳的年齡標準 — 青年與新銳補助的年齡區間屆滿，正影響著我現在的活動方式。",
   "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.": "照顧與家庭 — 一邊照顧家人一邊生活，正影響著我現在的活動方式。",
-  "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.": "健康與體力 — 健康與復原所需的體力，正影響著我現在的活動與參與。",
+  "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.": "健康與體力 — 健康與復原所需的體力，正影響著我現在的活動與參與。",
   "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.": "費用 — 製作、發表與交通所需的費用，正影響著我現在的活動方式。",
   "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.": "空間 — 工作、練習與存放所需的空間，正影響著我現在的活動方式。",
   "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.": "行政與角色的負擔 — 行政與多重角色的比重，正影響著我現在的活動方式。",
@@ -8988,7 +8988,7 @@ Object.assign(extraCopy["zh-Hans"] || (extraCopy["zh-Hans"] = {}), {
   "지역의 문화공간과 기회": "本地的文化空间与机会",
   "온라인으로 만나는 경로": "通过线上接触的途径",
   "개인의 관심과 우선순위": "个人的关心与优先顺序",
-  "건강과 에너지": "健康与体力",
+  "건강과 체력": "健康与体力",
   "일상 속 관심": "日常中的关心",
   "새로운 발견": "新的发现",
   "함께 나누는 관계": "一同分享的关系",
@@ -9473,7 +9473,7 @@ Object.assign(extraCopy["zh-Hant"] || (extraCopy["zh-Hant"] = {}), {
   "지역의 문화공간과 기회": "本地的文化空間與機會",
   "온라인으로 만나는 경로": "透過線上接觸的途徑",
   "개인의 관심과 우선순위": "個人的關心與優先順序",
-  "건강과 에너지": "健康與體力",
+  "건강과 체력": "健康與體力",
   "일상 속 관심": "日常中的關心",
   "새로운 발견": "新的發現",
   "함께 나누는 관계": "一同分享的關係",
@@ -10459,8 +10459,8 @@ const flowReviewCopy = {
   en: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "There is a reason we ask about conditions. What was there to keep going, and what was missing — that is what this record will carry into policy.",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "Of the three directions — memory, the present, and the conditions for keeping going — these questions are about the last: the conditions for keeping going.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "That is the memory part. From the next screen, the questions are about your activity now.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "That is the memory part. From the next screen, the questions are about how you meet arts and culture now.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "The memory you have left becomes the starting point of this record. From the next screen, the questions are about your activity now.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "The memory you have left becomes the starting point of this record. From the next screen, the questions are about how you meet arts and culture now.",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "What has stayed with you from this memory until now?",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "First, write what has stayed with you, in one sentence.",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "While carrying on your activity, was there a time when you felt that things like age, support, or the role you held had changed?",
@@ -10474,8 +10474,8 @@ const flowReviewCopy = {
   ja: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "条件について尋ねるのには理由があります。続けるために何があり、何が欠けていたか — それがこの記録が政策の場へ持っていく内容です。",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "記憶・現在・続けていくための条件という三つの方向のうち、最後の「続けていくための条件」についての質問です。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "ここまでが記憶についてです。次の画面からは、今の活動についての質問です。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "ここまでが記憶についてです。次の画面からは、今どのように文化芸術と関わっているかについての質問です。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "残していただいた記憶は、この記録の出発点になります。次の画面からは、今の活動についての質問です。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "残していただいた記憶は、この記録の出発点になります。次の画面からは、今どのように文化芸術と関わっているかについての質問です。",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "この記憶から、今も残っているものは何でしょうか。",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "残っているものを、まず一文で書いてください。",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "活動を続けてくるなかで、年齢や支援、担う役割といったものが変わったと感じた時期はありましたか。",
@@ -10489,8 +10489,8 @@ const flowReviewCopy = {
   "zh-Hant": {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "問到條件是有原因的。為了繼續下去，曾經有什麼、又缺少什麼——這正是這份記錄要帶到政策討論中的內容。",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "在記憶、當下、繼續所需的條件這三個方向中，這裡是關於最後一個方向「繼續所需的條件」的問題。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "關於記憶的部分到這裡為止。從下一個畫面開始，是關於您現在活動的問題。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "關於記憶的部分到這裡為止。從下一個畫面開始，是關於您現在如何接觸文化藝術的問題。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "您留下的記憶，會成為這份記錄的起點。從下一個畫面開始，是關於您現在活動的問題。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "您留下的記憶，會成為這份記錄的起點。從下一個畫面開始，是關於您現在如何接觸文化藝術的問題。",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "這段記憶裡，到現在還留在您心裡的是什麼？",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "請先用一句話寫下留下來的東西。",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "在持續活動的過程中，是否有過您覺得年齡、支持或所擔任的角色之類的事情發生了變化的時候？",
@@ -10504,8 +10504,8 @@ const flowReviewCopy = {
   "zh-Hans": {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "问到条件是有原因的。为了继续下去，曾经有什么、又缺少什么——这正是这份记录要带到政策讨论中的内容。",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "在记忆、当下、继续所需的条件这三个方向中，这里是关于最后一个方向“继续所需的条件”的问题。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "关于记忆的部分到这里为止。从下一个画面开始，是关于您现在活动的问题。",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "关于记忆的部分到这里为止。从下一个画面开始，是关于您现在如何接触文化艺术的问题。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "您留下的记忆，会成为这份记录的起点。从下一个画面开始，是关于您现在活动的问题。",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "您留下的记忆，会成为这份记录的起点。从下一个画面开始，是关于您现在如何接触文化艺术的问题。",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "这段记忆里，到现在还留在您心里的是什么？",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "请先用一句话写下留下来的东西。",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "在持续活动的过程中，是否有过您觉得年龄、支持或所担任的角色之类的事情发生了变化的时候？",
@@ -10519,8 +10519,8 @@ const flowReviewCopy = {
   fr: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "Si nous vous interrogeons sur les conditions, c’est pour une raison. Ce qui était là pour continuer et ce qui manquait — voilà ce que ce dossier portera jusqu’aux politiques publiques.",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "Des trois directions — la mémoire, le présent et les conditions pour continuer — ces questions portent sur la dernière : les conditions pour continuer.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Voilà pour le souvenir. À partir de l’écran suivant, les questions portent sur votre activité d’aujourd’hui.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Voilà pour le souvenir. À partir de l’écran suivant, les questions portent sur votre façon de rencontrer les arts et la culture aujourd’hui.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Le souvenir que vous avez laissé devient le point de départ de ce récit. À partir de l’écran suivant, les questions portent sur votre activité d’aujourd’hui.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Le souvenir que vous avez laissé devient le point de départ de ce récit. À partir de l’écran suivant, les questions portent sur votre façon de rencontrer les arts et la culture aujourd’hui.",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "De ce souvenir, qu’est-ce qui est resté jusqu’à aujourd’hui ?",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "Écrivez d’abord, en une phrase, ce qui est resté.",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "Au fil de votre activité, y a-t-il eu un moment où vous avez senti que des choses comme l’âge, les aides ou le rôle que vous teniez avaient changé ?",
@@ -10534,8 +10534,8 @@ const flowReviewCopy = {
   es: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "Hay una razón para preguntar por las condiciones. Qué había para seguir y qué faltaba: eso es lo que este registro llevará al debate de políticas.",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "De las tres direcciones —la memoria, el presente y las condiciones para continuar— estas preguntas tratan de la última: las condiciones para continuar.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Hasta aquí, la memoria. A partir de la siguiente pantalla, las preguntas tratan de su actividad de ahora.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Hasta aquí, la memoria. A partir de la siguiente pantalla, las preguntas tratan de cómo se encuentra hoy con las artes y la cultura.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "El recuerdo que ha dejado se convierte en el punto de partida de este registro. A partir de la siguiente pantalla, las preguntas tratan de su actividad de ahora.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "El recuerdo que ha dejado se convierte en el punto de partida de este registro. A partir de la siguiente pantalla, las preguntas tratan de cómo se encuentra hoy con las artes y la cultura.",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "De este recuerdo, ¿qué es lo que permanece hasta hoy?",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "Escriba primero, en una frase, lo que permanece.",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "Mientras seguía con su actividad, ¿hubo algún momento en que sintiera que cosas como la edad, las ayudas o el papel que tenía habían cambiado?",
@@ -10549,8 +10549,8 @@ const flowReviewCopy = {
   nl: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "Er is een reden dat we naar voorwaarden vragen. Wat er was om door te gaan en wat ontbrak — dat is wat dit verslag meeneemt naar het beleid.",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "Van de drie richtingen — herinnering, het heden en de voorwaarden om door te gaan — gaan deze vragen over de laatste: de voorwaarden om door te gaan.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Tot hier ging het over de herinnering. Vanaf het volgende scherm gaan de vragen over uw activiteit van nu.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Tot hier ging het over de herinnering. Vanaf het volgende scherm gaan de vragen over hoe u kunst en cultuur nu tegenkomt.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "De herinnering die u achterliet, wordt het vertrekpunt van dit verslag. Vanaf het volgende scherm gaan de vragen over uw activiteit van nu.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "De herinnering die u achterliet, wordt het vertrekpunt van dit verslag. Vanaf het volgende scherm gaan de vragen over hoe u kunst en cultuur nu tegenkomt.",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "Wat is er van deze herinnering tot nu toe bij u gebleven?",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "Schrijf eerst in één zin op wat er is gebleven.",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "Was er, terwijl u uw activiteit voortzette, een moment waarop u voelde dat zaken als leeftijd, ondersteuning of uw rol waren veranderd?",
@@ -10564,8 +10564,8 @@ const flowReviewCopy = {
   ms: {
     "조건을 묻는 이유가 있어요. 계속하기 위해 무엇이 있었고 무엇이 비어 있는지가, 이 기록이 정책의 자리로 가져갈 내용입니다.": "Ada sebabnya kami bertanya tentang keadaan. Apa yang ada untuk terus berjalan dan apa yang tiada — itulah yang akan dibawa oleh rekod ini ke perbincangan dasar.",
     "기억·현재·이어가기 위한 조건, 세 방향 가운데 마지막인 '이어가기 위한 조건'에 관한 질문입니다.": "Daripada tiga arah — ingatan, masa kini, dan syarat untuk terus bergiat — soalan ini tentang arah terakhir: syarat untuk terus bergiat.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Bahagian ingatan berakhir di sini. Mulai skrin seterusnya, soalan adalah tentang kegiatan anda sekarang.",
-    "여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Bahagian ingatan berakhir di sini. Mulai skrin seterusnya, soalan adalah tentang cara anda bertemu seni dan budaya sekarang.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.": "Ingatan yang anda tinggalkan menjadi titik permulaan rekod ini. Mulai skrin seterusnya, soalan adalah tentang kegiatan anda sekarang.",
+    "남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.": "Ingatan yang anda tinggalkan menjadi titik permulaan rekod ini. Mulai skrin seterusnya, soalan adalah tentang cara anda bertemu seni dan budaya sekarang.",
     "이 기억에서 지금까지 남아 있는 것은 무엇인지요?": "Daripada ingatan ini, apakah yang masih kekal hingga sekarang?",
     "남아 있는 것을 먼저 한 문장으로 적어 주세요.": "Tulis dahulu, dalam satu ayat, apa yang masih kekal.",
     "활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?": "Sepanjang meneruskan kegiatan anda, adakah masa apabila anda rasa perkara seperti umur, sokongan atau peranan yang anda pegang telah berubah?",
@@ -10598,3 +10598,59 @@ Object.entries(memoryCluesCopy).forEach(([language, entries]) => {
   Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
 });
 Object.assign(extraCopy.zh || (extraCopy.zh = {}), memoryCluesCopy["zh-Hant"]);
+
+// 2026-09-28: TK 문구 메모 정리 — 도시 칸 이름, 동의 안내의 「문장 다듬기」.
+const memoFollowupCopy = {
+  en: {
+    "현재 머무는 도시 (선택)": "City where you live now (optional)",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "While follow-up questions and the draft participation record are being prepared, or your sentences are being tidied, what you write is sent to an external AI service. Your name and contact details are not sent with it.",
+  },
+  ja: {
+    "현재 머무는 도시 (선택)": "現在住んでいる都市（任意）",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "続く質問と参加記録の下書きを作成するあいだや、文章を整えるあいだ、書いていただいた文章は外部のAIサービスに送られます。名前と連絡先は一緒に送りません。",
+  },
+  "zh-Hant": {
+    "현재 머무는 도시 (선택)": "目前居住的城市（選填）",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "在準備延伸問題與參與記錄初稿、或整理句子的過程中，您所寫的內容會傳送到外部AI服務。姓名與聯絡方式不會一起傳送。",
+  },
+  "zh-Hans": {
+    "현재 머무는 도시 (선택)": "目前居住的城市（选填）",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "在准备延伸问题与参与记录初稿、或整理句子的过程中，您所写的内容会传送到外部AI服务。姓名与联系方式不会一起传送。",
+  },
+  fr: {
+    "현재 머무는 도시 (선택)": "Ville où vous résidez actuellement (facultatif)",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "Pendant la préparation des questions de suivi et du brouillon du récit de participation, ou pendant la mise au propre de vos phrases, le texte que vous écrivez est transmis à un service d’IA externe. Votre nom et vos coordonnées ne sont pas envoyés avec lui.",
+  },
+  es: {
+    "현재 머무는 도시 (선택)": "Ciudad donde reside ahora (opcional)",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "Mientras se preparan las preguntas de seguimiento y el borrador del registro de participación, o mientras se ordenan sus frases, el texto que escribe se envía a un servicio de IA externo. El nombre y los datos de contacto no se envían con él.",
+  },
+  nl: {
+    "현재 머무는 도시 (선택)": "Stad waar u nu verblijft (optioneel)",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "Terwijl de vervolgvragen en het concept van het participatieverslag worden gemaakt, of terwijl uw tekst wordt opgeschoond, wordt de tekst die u schreef doorgestuurd naar een externe AI-dienst. Uw naam en contactgegevens worden niet meegestuurd.",
+  },
+  ms: {
+    "현재 머무는 도시 (선택)": "Bandar tempat anda tinggal sekarang (pilihan)",
+    "후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다.": "Semasa soalan susulan dan draf rekod penyertaan disediakan, atau semasa ayat anda dikemaskan, tulisan anda dihantar kepada perkhidmatan AI luar. Nama dan maklumat hubungan tidak dihantar bersamanya.",
+  },
+};
+Object.entries(memoFollowupCopy).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), memoFollowupCopy["zh-Hant"]);
+
+// 2026-09-28(TK 메모 5): 보기가 많은 화면(P16)의 첫 줄.
+const whyManyOptionsCopy = {
+  en: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "There is a reason for the long list. Even “the present” sits differently for each person, so the closer your choices, the more accurate this record becomes as material for policy." },
+  ja: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "選択肢が多いのには理由があります。同じ「現在」でも人によって置かれた場所が違うので、近いものを選んでいただくほど、この記録は政策の資料として正確になります。" },
+  "zh-Hant": { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "選項多是有原因的。同樣是「現在」，每個人所處的位置都不同；您選得越貼近，這份記錄作為政策資料就越準確。" },
+  "zh-Hans": { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "选项多是有原因的。同样是“现在”，每个人所处的位置都不同；您选得越贴近，这份记录作为政策资料就越准确。" },
+  fr: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "Il y a une raison à cette longue liste. Même « le présent » ne se vit pas au même endroit pour chacun ; plus vos choix sont proches, plus ce récit sera précis comme matériau pour les politiques publiques." },
+  es: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "Hay una razón para que la lista sea larga. Incluso «el presente» se sitúa de forma distinta para cada persona; cuanto más cercanas sean sus elecciones, más preciso será este registro como material para las políticas." },
+  nl: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "Er is een reden voor de lange lijst. Zelfs ‘het heden’ ligt voor iedereen anders; hoe dichter uw keuzes erbij liggen, hoe nauwkeuriger dit verslag wordt als materiaal voor beleid." },
+  ms: { "보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.": "Ada sebabnya senarai ini panjang. Walaupun sama-sama “masa kini”, kedudukan setiap orang berbeza; semakin dekat pilihan anda, semakin tepat rekod ini sebagai bahan dasar." },
+};
+Object.entries(whyManyOptionsCopy).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), whyManyOptionsCopy["zh-Hant"]);

@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260928-r90";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260928-r90";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260928-r90";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260928-r90";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260928-r90";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260928-r90";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260928-r90";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260928-r90";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260928-r90";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260928-r90";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260928-r90";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r90";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260928-r90";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260928-r90";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260928-r90";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260928-r90";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260928-r90";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260928-r90";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260928-r90";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260928-r90";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r90";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260928-r90";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260928-r90";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260928-r90";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260928-r90";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260928-r90";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260928-r91";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260928-r91";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260928-r91";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260928-r91";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260928-r91";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260928-r91";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260928-r91";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260928-r91";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260928-r91";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260928-r91";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260928-r91";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r91";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260928-r91";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260928-r91";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260928-r91";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260928-r91";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260928-r91";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260928-r91";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260928-r91";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260928-r91";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r91";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260928-r91";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260928-r91";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260928-r91";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260928-r91";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260928-r91";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "c1e8da94fcca 2026-09-28T02:19:28.945Z";
+const buildStamp = "7921a002c929 2026-09-28T04:13:16.895Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -311,7 +311,7 @@ const CHOICE_COPY_KO = {
     // 떠 있었다.
     AGE_ELIGIBILITY_END: "청년·신진 연령 기준 — 청년·신진 대상 지원의 연령 구간이 끝난 것이 현재 활동 방식에 영향을 주고 있습니다.",
     CARE: "돌봄과 가족 — 돌봄과 가족을 함께 돌보는 생활이 현재 활동 방식에 영향을 주고 있습니다.",
-    HEALTH: "건강과 에너지 — 건강과 회복에 필요한 에너지가 현재 활동과 참여에 영향을 주고 있습니다.",
+    HEALTH: "건강과 체력 — 건강과 회복에 필요한 체력이 현재 활동과 참여에 영향을 주고 있습니다.",
     COST: "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.",
     SPACE: "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.",
     ADMIN: "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.",
@@ -447,9 +447,33 @@ function choiceDisplayLabel(id, value, rawLabel) {
   return String(rawLabel || "");
 }
 
+// 마지막 편지의 머리말. 이름·닉네임·이니셜을 남겼으면 「○○ 님께」, 익명이면 「당신에게」(TK 메모 10).
+function closingOfferLabelFor() {
+  const copy = greetingFirstCopy(state.language);
+  const answers = Object.keys(state.answers || {}).length ? state.answers : (state.submitted?.answers || {});
+  const name = answers.display_name_mode && answers.display_name_mode !== "ANONYMOUS" ? String(answers.display_name || "").trim() : "";
+  return name && copy.closingOfferLabelNamed ? copy.closingOfferLabelNamed.replace("{name}", name) : copy.closingOfferLabel;
+}
+
+// 화면에서만 바꿔 부르는 문항. 스키마 원문은 부록·호환을 위해 그대로 두고(original_question_text),
+// 화면 렌더 · 저장(apiQuestionText) · AI 입력(localizedAnchorQuestionLabel)이 모두 이 한 곳을 본다.
+// 관리자 창 2026-09-28 지적: 저장되는 question_text 가 스키마 문장이라, 관리자·연구용 기록이 참여자가
+// 본 문장과 다른 문장을 보여 주고 있었다(M04·M05·P11, 9/27~28 에 화면에서만 바꾼 것들).
+function screenQuestionText(id) {
+  if (noRecall() && ["M04", "M04_TEXT", "M05"].includes(id)) return null;
+  if (id === "M04") return t("이 기억에서 지금까지 남아 있는 것은 무엇인지요?");
+  if (id === "M04_TEXT") return t("남아 있는 것을 먼저 한 문장으로 적어 주세요.");
+  if (id === "M05") return t("그 기억과 함께 떠오르는 것은 무엇인가요?");
+  if (id === "C02") return t("이 이름이나 장면이 지금 다시 떠오른 가장 큰 이유는 무엇인가요?");
+  if (id === "P11" && isProfessionalContext()) return t("활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?");
+  return null;
+}
+
 // API에는 내부 코드만 보내지 않고, 참여자가 실제로 본 질문과 선택 문장을 함께 보냅니다.
 function apiQuestionText(id, q) {
   if (!q) return id;
+  const onScreen = screenQuestionText(id);
+  if (onScreen) return onScreen;
   const contextual = contextAwareCopy(state.answers, state.language);
   const contextualKey = { P12: "p12", P13: "p13", P14: "p14", P15: "p15", P16: "p16", P19: "p19" }[id];
   if (contextualKey) return t(contextual[contextualKey]);
@@ -1053,7 +1077,7 @@ function buildCurrentResponseDocument({ final = false, confirmedAt = null } = {}
     final,
     // 제안은 화면에서만 보이고 인쇄하면 사라졌다. 참여자가 들고 가는 것은 이 종이다.
     closingOffer: state.closingOffer?.text
-      ? { text: state.closingOffer.text, label: greetingFirstCopy(state.language).closingOfferLabel, note: greetingFirstCopy(state.language).closingOfferNote }
+      ? { text: state.closingOffer.text, label: closingOfferLabelFor(), note: greetingFirstCopy(state.language).closingOfferNote }
       : null,
     // 500장을 결과보고서 부록으로 붙일 때 어느 응답인지 가릴 표기다. 문서 밖의 카드에만
     // 있어 인쇄에서 빠졌다(2026-09-09 실측).
@@ -1149,7 +1173,7 @@ function renderConsent() {
       </section>
       <details class="participant-context-section participant-context-optional consent-details"><summary><span>${esc(local.consentDetails)}</span></summary><div class="consent-details-body">
       <section class="consent-choice-block">
-        <p class="ai-use-note" role="note">${esc(t("후속 질문과 참여 기록 초안을 만드는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다."))}</p>
+        <p class="ai-use-note" role="note">${esc(t("후속 질문과 참여 기록 초안을 만들거나 문장을 다듬는 동안, 작성하신 글이 외부 AI 서비스로 전달됩니다. 이름과 연락처는 함께 보내지 않습니다."))}</p>
       </section>
       <section class="consent-choice-block">
         <h3>${esc(t("저장과 보관"))}</h3>
@@ -1208,9 +1232,11 @@ function renderStateBackground() {
   const audience = isAudienceContext();
   const copy = contextAwareCopy(state.answers, state.language);
   const title = audience ? "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요." : "지금의 활동 방식에 함께 작용한 조건을 들려주세요.";
-  const help = audience
-    ? "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다."
-    : "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.";
+  // 2026-09-28(TK 메모 5): 보기가 열다섯 개라 「왜 이렇게 많이 묻나」 싶은 화면이다. 이유를 한 줄 먼저 둔다.
+  // 두 문장을 따로 t() 로 옮긴다 — 합친 문장은 사전에 없다.
+  const help = `${t("보기가 많은 이유가 있어요. 같은 '현재'라도 사람마다 놓인 자리가 달라서, 가까운 것을 골라 주실수록 이 기록이 정책 자료로 더 정확해집니다.")} ${audience
+    ? t("일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.")
+    : t("생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.")}`;
   return `${screenHeading(title, help)}
     <label class="field-label">${esc(copy.p16)}</label>${renderChoices("P16", audience ? p16.options_audience : p16.options_professional, { multi: true, max: 5, exclusive: ["NONE", "UNSURE"] })}${renderOtherInput("P16", "함께 작용한 다른 조건을 적어주세요.")}`;
 }
@@ -1361,14 +1387,15 @@ function renderMemoryToPresent() {
     .map((value) => String(value || "").trim()).find(Boolean);
   const excerpt = rawMemory ? `${rawMemory.slice(0, 132)}${rawMemory.length > 132 ? "…" : ""}` : "";
   const noRecall = values(state.answers.memory_type).includes("NO_RECALL");
+  // 2026-09-28(TK 메모 16, 안 A): 첫 문장은 남긴 기억이 이 기록의 출발점이라는 것 — 「당신의 기억과 경험이 소중하다」가 핵심.
   // 2026-09-27 흐름 점검: 예전 본문은 「그 기억이 현재와 어디에서 이어지는지 살펴봅니다」라고 약속했는데,
   // 다음 화면들(P05·P14·P15·P16)은 기억을 다시 부르지 않는다. 지키지 못할 약속을 빼고, 구간이 바뀐다는 것만 말한다.
   // 「왜 지금을 묻는가」는 다음 화면(ACTIVITY)의 첫 줄이 말하므로 여기서 되풀이하지 않는다.
   const body = noRecall
     ? t("특별히 떠오르는 대상을 고르지 않은 응답도 그대로 기록했습니다. 기억을 억지로 되짚지 않고 현재의 활동과 관람, 생활의 흐름으로 이동합니다. 다음 화면부터 지금의 상태와 실제 조건을 묻습니다.")
     : audience
-      ? t("여기까지가 기억입니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.")
-      : t("여기까지가 기억입니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.");
+      ? t("남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금 문화예술을 만나는 방식에 관한 질문입니다.")
+      : t("남겨 주신 기억은 이 기록의 출발점이 됩니다. 다음 화면부터는 지금의 활동에 관한 질문입니다.");
   return `${screenHeading(title, help, "앞에서 남긴 기억을 품고 있는 현재의 경험을 듣는 자리예요.")}
     <div class="transition-card">${excerpt && !noRecall ? `<blockquote>${esc(excerpt)}</blockquote>` : ""}<p>${esc(body)}</p></div>`;
 }
@@ -1383,9 +1410,7 @@ function renderTransition() {
     : contextCopy.p12 || question12.text);
   // 2026-09-27 흐름 점검: 「연령·지원·역할 등 조건의 구간이 달라졌다고 느낀 시점」은 연구자의 말이었다.
   // 스키마 문장은 그대로 두고(부록·호환), 화면에서만 바꿔 부른다.
-  const title = isProfessionalContext()
-    ? t("활동을 이어오는 동안, 나이나 지원, 맡은 역할 같은 것이 달라졌다고 느낀 때가 있었는지요?")
-    : p11.text_audience;
+  const title = isProfessionalContext() ? screenQuestionText("P11") : p11.text_audience;
   const copy = contextAwareCopy(state.answers, state.language);
   const stateValue = state.answers.transition_state;
   const showText = stateValue && !["SKIP", "UNSURE"].includes(stateValue);
@@ -1424,7 +1449,7 @@ function renderProfile() {
   return `${screenHeading("지금의 생활과 활동 범위를 알려주세요.", "원하지 않는 항목은 건너뛸 수 있습니다.")}
     <label class="field-label">${esc(p08.text)}</label>${renderChoices("P08", p08.options)}
     ${renderText("P09_COUNTRY", { multiline: false, placeholder: "나라 이름", label: "현재 머무는 나라 (선택)", field: "residence_country_code", value: state.answers.residence_country_code || "" })}
-    ${renderText("P09_CITY", { multiline: false, placeholder: "도시 이름", label: question("P09").text, field: "residence_city", value: state.answers.residence_city || "" })}
+    ${renderText("P09_CITY", { multiline: false, placeholder: "도시 이름", label: "현재 머무는 도시 (선택)", field: "residence_city", value: state.answers.residence_city || "" })}
     ${renderText("P10", { multiline: false, placeholder: "나라, 도시 (여러 곳이면 ;로 나눠 주세요)", label: isProfessionalContext() ? question("P10").text_professional : question("P10").text_audience, value: locations, beforeInput: sameAsResidenceButton() })}`;
 }
 
@@ -1482,9 +1507,9 @@ function renderMeaning() {
   // 2026-09-27 흐름 점검: 장면(M02) 바로 뒤에 「남아 있는 이유」를 묻고, 그 뒤 AI 되물음이 이유를 한 번 더
   // 물어 '왜'가 세 번 이어졌다. 이 축이 재는 것은 「의미」이므로, 화면에서는 이유 대신 남은 것을 묻는다.
   // 스키마 문장(부록·AI 입력의 question_label)은 그대로 둔다.
-  const title = noRecall() ? q.text_no_recall : t("이 기억에서 지금까지 남아 있는 것은 무엇인지요?");
+  const title = noRecall() ? q.text_no_recall : screenQuestionText("M04");
   const options = noRecall() ? q.options_no_recall : q.options;
-  const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : t("남아 있는 것을 먼저 한 문장으로 적어 주세요.");
+  const label = noRecall() ? "지금 떠오르는 상태를 먼저 적어주세요." : screenQuestionText("M04_TEXT");
   const placeholder = noRecall() ? "현재의 거리감이나 남아 있는 느낌" : "먼저 떠오르는 내용을 적어주세요.";
   return `${screenHeading(title, "한 문장으로 적어도 좋아요.")}
     ${requiredBlock("m04-text-required", renderText("M04_TEXT", { field: "memory_meaning_text", value: state.answers.memory_meaning_text || "", placeholder, label }), { inset: true })}
@@ -1525,7 +1550,7 @@ function renderMeaningTagsFolded() {
   // 접힌 M05 가 「그 기억과 함께 남아 있는 것」이라 같은 말이 연달아 나온다. 화면에서만 「함께 떠오르는 것」으로
   // 부른다(스키마·부록은 그대로). 고르는 보기(작품·태도·대화·분위기·사람·사진…)와 뜻이 가장 가깝다.
   return `<details class="participant-context-section participant-context-optional context-more-optional memory-support-optional" ${chosen ? "open" : ""}><summary><span>${esc(t("그 기억과 함께 떠오르는 것도 남기기"))}</span><small>${esc(stage().optional)}</small></summary><div class="context-more-optional-body">
-    <label class="field-label">${esc(noRecall() ? q.text_no_recall : t("그 기억과 함께 떠오르는 것은 무엇인가요?"))}</label>${renderChoices("M05", q.options, { multi: true, max: 2 })}
+    <label class="field-label">${esc(noRecall() ? q.text_no_recall : screenQuestionText("M05"))}</label>${renderChoices("M05", q.options, { multi: true, max: 2 })}
   </div></details>`;
 }
 
@@ -1646,7 +1671,7 @@ function renderCommunity() {
   return `${screenHeading("다른 이름이나 장면을 하나 더 남길까요?", "기억·현재·조건에 관한 질문은 여기까지입니다. 처음에 떠올리신 것 말고도 남기고 싶은 이름이나 장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.")}
     ${state.summaryGenerating ? processingSignal("응답을 정리하고 있어요") : ""}
     ${renderCommunityOptIn(c00.options)}
-    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(t("이 이름이나 장면이 지금 다시 떠오른 가장 큰 이유는 무엇인가요?"))}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
+    ${yes ? `${renderText("C01", { placeholder: "작가·작품·공간·장면, 또는 목록 밖에서 떠오르는 이름", label: c01.text })}<label class="field-label">${esc(screenQuestionText("C02"))}</label>${renderChoices("C02", c02.options)}<label class="field-label">${esc(c03.text)}</label>${renderChoices("C03", c03.options, { multi: true, max: 2 })}${renderText("C04", { label: c04.text })}` : ""}`;
 }
 
 // 「지금 기록으로 충분해요」를 먼저, 사이를 벌려 「더 적을게요」를 아래에 따로 둔다. 나란히 두면 한 번 더
@@ -1810,7 +1835,8 @@ function reconcileAnchorsAfterResearchEdit(questionId) {
 function localizedAnchorQuestionLabel(anchorId) {
   // 2026-09-28: 화면에서 바꿔 부르는 문항은 AI 에도 화면의 문장을 준다. M04_TEXT 는 스키마가 「이유」를 묻고
   // 화면은 「남아 있는 것」을 묻는다(9/27). 스키마 문장을 주면 AI 가 참여자가 받지 않은 「이유」를 다시 묻는다.
-  if (anchorId === "M04_TEXT" && !noRecall()) return t("남아 있는 것을 먼저 한 문장으로 적어 주세요.");
+  const onScreen = screenQuestionText(anchorId);
+  if (onScreen) return onScreen;
   const item = question(anchorId);
   if (!item) return anchorId;
   if (isAudienceContext() && item.text_audience) return item.text_audience;
@@ -1998,12 +2024,13 @@ function renderAdaptiveCheckpoint(checkpoint) {
   // 2026-09-20: 여기만 글자 그대로 "motif"를 보고 있어서, 제공자가 groq·morph 로 바뀐 뒤로는
   // AI 가 방금 쓴 글을 읽고 만든 질문에도 「읽었어요」 대신 예비 머리말이 나갔다. 살아 있는
   // 제공자 목록은 depth.js 한 곳에서만 정한다(anchor-live.js 가 9월 16일에 같은 이유로 고쳐졌다).
+  // 2026-09-28: 답 칸 아래의 「천천히 적으셔도 돼요.」를 뺐다(TK 메모 6: 의미 없는 말).
   const questionLead = isLiveModelSource(turn.source) ? ui().deepQuestionLead : ui().deepQuestionLeadFallback || ui().deepQuestionLead;
   return `${screenHeading(stage().followingQuestion, questionLead, turn.intent || "")}
     ${excerpt ? `<section class="adaptive-previous-answer"><span>${esc(stage().previousAnswer)}</span><blockquote>${esc(excerpt)}</blockquote></section>` : ""}
     <section class="adaptive-question"><h3>${esc(t(turn.prompt))}</h3>${aiNotice}</section>
     ${renderText(turn.id, { field: turn.answer_field, value: answer, placeholder: "한 문장이나 한 장면으로 적어도 좋아요.", label: "이어지는 답변" })}
-    <p class="adaptive-turn-note">${esc(ui().deepQuestionNote)}</p>${retry}${skip}`;
+    ${retry}${skip}`;
 }
 
 async function prepareAdaptiveSummary() {
@@ -2687,6 +2714,14 @@ function greetingReservationSignal(ms = GREETING_RESERVATION_TIMEOUT_MS) {
   return controller.signal;
 }
 
+// 2026-09-28(TK 메모 13, 안 A): 안부를 고르는 AI 가 받는 사람의 글을 읽을 수 있게, 방금 확인한 참여 기록(정리문)을
+// 함께 보낸다. 예전에는 받는 사람의 글 자리가 비어(아직 안부를 쓰기 전이다) 「닿은 이유」가 「아직 남긴 글이 없어서…」로
+// 나왔다. 서버는 이 글을 고르는 데만 쓰고 저장하지 않는다. 고른 이유는 받는 사람 자신에게만 보인다(편지함 링크는 받는 사람에게만).
+function receiverRecordText(response) {
+  const answers = response?.answers || {};
+  return String(answers.participant_approved_text || answers.depth_summary?.summary || "").trim().slice(0, 1500);
+}
+
 async function requestGreetingReservation(response, { inlineFirst = false } = {}) {
   const reference = response?.participant_access || ensureParticipantReference(response?.response_id);
   if (!globalGreetingsEnabled || !relayFunctionUrl || !reference?.access_token) return { status: "not_active" };
@@ -2709,6 +2744,7 @@ async function requestGreetingReservation(response, { inlineFirst = false } = {}
         sample_type: response.sample_type || sampleType,
         release_version: response.release_version || releaseVersion,
         delivery_surface: inlineFirst ? "inline_first" : "relay_mailbox",
+        receiver_record_text: receiverRecordText(response),
       }),
     });
     const body = await result.json();
@@ -3342,7 +3378,7 @@ function renderRc2Complete(response) {
   // 늦게 도착한 제안도 인쇄물에 들어가야 한다. 기록은 활용 범위 화면에서 만들어지므로
   // 그때 제안이 없었으면 문서에 빠져 있다. 원본을 건드리지 않고 사본에 얹는다.
   if (!document.closing_offer?.text && state.closingOffer?.text) {
-    document.closing_offer = { text: state.closingOffer.text, label: greetingFirstLocal.closingOfferLabel, note: greetingFirstLocal.closingOfferNote, source_kind: "ai_generated", approval_scope: "excluded", participant_approved: false };
+    document.closing_offer = { text: state.closingOffer.text, label: closingOfferLabelFor(), note: greetingFirstLocal.closingOfferNote, source_kind: "ai_generated", approval_scope: "excluded", participant_approved: false };
   }
   // 기록에는 더 이상 찍히지 않으므로, 창을 닫은 뒤에도 읽을 수 있게 완료 화면에 남긴다.
   // 인쇄할 때는 이 구역도 빠진다(styles.css) — 종이는 한 장이다.
@@ -3352,14 +3388,14 @@ function renderRc2Complete(response) {
   // 한 번만 뜬다. 닫아도 아래 참여 기록에 그대로 남으므로 잃는 것이 없다.
   const offerText = document.closing_offer?.text || state.closingOffer?.text || "";
   const offerDialog = offerText && !state.closingOfferSeen
-    ? `<div class="closing-offer-scrim" data-action="close-closing-offer"></div><section class="closing-offer-dialog" role="dialog" aria-modal="true" aria-labelledby="closing-offer-dialog-title" tabindex="-1"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2 id="closing-offer-dialog-title">${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(offerText).map((part) => `<p>${esc(part)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p><div class="closing-offer-dialog-actions"><button class="primary-button" type="button" data-action="close-closing-offer">${esc(greetingFirstLocal.closingOfferClose)}</button></div></section>`
+    ? `<div class="closing-offer-scrim" data-action="close-closing-offer"></div><section class="closing-offer-dialog" role="dialog" aria-modal="true" aria-labelledby="closing-offer-dialog-title" tabindex="-1"><div class="archive-label">${esc(closingOfferLabelFor())}</div><h2 id="closing-offer-dialog-title">${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(offerText).map((part) => `<p>${esc(part)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p><div class="closing-offer-dialog-actions"><button class="primary-button" type="button" data-action="close-closing-offer">${esc(greetingFirstLocal.closingOfferClose)}</button></div></section>`
     : "";
   const offerSection = offerInDocument
     ? ""
     : state.closingOffer?.text
-    ? `<section class="closing-offer"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><h2>${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(state.closingOffer.text).map((para) => `<p>${esc(para)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p></section>`
+    ? `<section class="closing-offer"><div class="archive-label">${esc(closingOfferLabelFor())}</div><h2>${esc(greetingFirstLocal.closingOfferTitle)}</h2>${summaryParagraphsOf(state.closingOffer.text).map((para) => `<p>${esc(para)}</p>`).join("")}<p class="closing-offer-note">${esc(greetingFirstLocal.closingOfferNote)}</p></section>`
     : state.closingOfferStatus === "loading"
-      ? `<section class="closing-offer closing-offer-loading" role="status"><div class="archive-label">${esc(greetingFirstLocal.closingOfferLabel)}</div><p>${esc(greetingFirstLocal.closingOfferLoading)}</p></section>`
+      ? `<section class="closing-offer closing-offer-loading" role="status"><div class="archive-label">${esc(closingOfferLabelFor())}</div><p>${esc(greetingFirstLocal.closingOfferLoading)}</p></section>`
       : "";
   const reference = response.participant_reference?.code || ensureParticipantReference(response.response_id)?.code || "";
   state.printReference = reference;
