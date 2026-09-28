@@ -4742,7 +4742,9 @@ body,
 }
 
 @media (max-width: 980px) {
-  .topbar-project span { display: none; }
+  /* 2026-09-28(TK): 720~980px 에서 「리서치 · 참여 기록 · 안부」를 숨기고 「RESEARCH」만 남기던 것을 뺀다.
+     예전 문구가 길 때의 규칙이었고, 지금 문구는 그 폭에서도 들어간다. 넘치면 말줄임으로 줄어든다. */
+  .topbar-project span { min-width: 0; }
   .rc2-intro-main { width: min(100% - 36px, 1160px); }
 }
 
@@ -7137,7 +7139,11 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   line-height: 1.4;
   letter-spacing: -.018em;
 }
+/* 2026-09-28(TK): 가운데 정렬인 「똑똑똑」 부름 바로 밑에 왼쪽 정렬 본문이 붙어 있어 정렬이 어긋나 보였다.
+   본문은 왼쪽 그대로 두고(긴 글은 왼쪽이 읽기 쉽다), 사이를 벌려 새 단락으로 읽히게 한다. */
+.rc2-intro .intro-call + .intro-copy { margin-top: clamp(56px, 6vw, 84px); }
 @media (max-width: 640px) {
+  .rc2-intro .intro-call + .intro-copy { margin-top: 48px; }
   .rc2-intro .intro-call { margin-top: 30px; }
   .rc2-intro .intro-call-knock { font-size: 36px; }
   .rc2-intro .intro-call-line { font-size: 18px; }
