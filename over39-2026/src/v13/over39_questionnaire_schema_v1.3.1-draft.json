@@ -1826,7 +1826,7 @@
       "type": "multi_or_other",
       "required": false,
       "max": 3,
-      "text": "당신의 실제 경험과 가까운 내용을 골라주세요.",
+      "text": "실제 경험과 가까운 내용을 골라주세요.",
       "options": "role_reality_indicator_bank[role or scope] + NONE + OTHER",
       "store": [
         "d_context_tags",

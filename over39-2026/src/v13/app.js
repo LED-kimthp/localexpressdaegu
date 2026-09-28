@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260928-r91";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260928-r91";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260928-r91";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260928-r91";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260928-r91";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260928-r91";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260928-r91";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260928-r91";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260928-r91";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260928-r91";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260928-r91";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r91";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260928-r91";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260928-r91";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260928-r91";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260928-r91";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260928-r91";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260928-r91";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260928-r91";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260928-r91";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r91";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260928-r91";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260928-r91";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260928-r91";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260928-r91";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260928-r91";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260928-r92";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260928-r92";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260928-r92";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260928-r92";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260928-r92";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260928-r92";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260928-r92";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260928-r92";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260928-r92";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260928-r92";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260928-r92";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r92";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260928-r92";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260928-r92";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260928-r92";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260928-r92";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260928-r92";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260928-r92";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260928-r92";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260928-r92";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r92";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260928-r92";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260928-r92";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260928-r92";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260928-r92";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260928-r92";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "7921a002c929 2026-09-28T04:13:16.895Z";
+const buildStamp = "83f14592e4cb 2026-09-28T04:51:41.766Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -1194,7 +1194,7 @@ function renderRoute() {
     ? "가장 가까운 항목을 골라주세요. 이후 질문은 이 선택에 맞춰 이어집니다."
     : "이번 이야기를 시작할 자리를 고릅니다.";
   const audienceNote = state.answers.route === "AUDIENCE"
-    ? `<div class="v13-notice audience-listening-note"><p>${esc(t("당신이 기억하고 있는 장면과 생각을 들려주세요. 그 이야기를 차분히 듣고 기록하겠습니다."))}</p></div>`
+    ? `<div class="v13-notice audience-listening-note"><p>${esc(t("기억하고 계신 장면과 생각을 들려주세요. 그 이야기를 차분히 듣고 기록하겠습니다."))}</p></div>`
     : "";
   return `${screenHeading(q.text, help)}${renderChoices("P01", q.options)}${audienceNote}`;
 }
@@ -1379,7 +1379,7 @@ function renderActivity() {
 
 function renderMemoryToPresent() {
   const audience = isAudienceContext();
-  const title = audience ? "당신에게 남아 있는 장면과 생각을 들었어요." : "당신에게 남아 있는 장면을 들었어요.";
+  const title = audience ? "들려주신 장면과 생각, 잘 들었어요." : "들려주신 장면, 잘 들었어요.";
   const help = audience
     ? "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?"
     : "이제 그 기억이나 활동은 지금의 삶과 어떻게 닿아 있을까요?";
@@ -2272,7 +2272,7 @@ function renderSubmit() {
   // 실제로 진행을 막는 것은 `coordinate_feedback` 미선택 하나뿐인데, 그 선택지는 긴
   // 설명 아래에 서술문처럼 놓여 있고 버튼은 한참 아래에 있어서 질문으로 읽히지 않았다.
   // 필수 표시를 붙여 무엇이 남았는지 보이게 한다(문구는 기존 `required` 그대로).
-  return `${screenHeading(t("당신의 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
+  return `${screenHeading(t("이 기록이 닿은 세 방향"), t("앞선 질문과 답변의 흐름을 따라 세 방향의 위치를 정리했습니다. 직접 눌러 지금의 기록과 가까운 위치로 조정할 수 있어요."))}
     ${state.translationGenerating ? processingSignal(t("원문을 기준으로 한국어 번역을 준비하고 있어요")) : ""}
     ${translationNotice}
     <section class="axis-review"><div class="axis-review-intro"><span>${esc(greetingFirst().coordinateLabel)}</span><h3>${esc(t("기억의 의미 · 현재의 흐름 · 이어가기 위한 조건을 확인해 주세요."))}</h3><p>${esc(t("선택을 바꾸면 아래 세 방향 표시에도 이번 기록과 가까운 흐름이 반영됩니다."))}</p></div>${mReview}${renderAxisReview("participant_s", "현재의 흐름")}${dReview}</section>

@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r91";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260928-r92";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260928-r91";
-import { normalizedDScope } from "./flow.js?v=v7-20260928-r91";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260928-r92";
+import { normalizedDScope } from "./flow.js?v=v7-20260928-r92";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260928-r91";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260928-r91";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r91";
+import { translate } from "./i18n.js?v=v7-20260928-r92";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260928-r92";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260928-r92";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -718,7 +718,7 @@ export function buildResponseDocument({
     descriptionOther: "문화예술을 기억하고 이어온 경험, 현재의 흐름과 필요한 조건을 한곳에 모았습니다.",
     confirmation: "이 기록은 지금까지 적은 내용을 참여자가 읽기 쉬운 순서로 정리한 문서입니다. 필요한 문장은 다시 고칠 수 있습니다.",
     original: "원문 · ", koreanTranslation: "한국어 번역", translationReady: "원문을 기준으로 작성", translationPending: "번역 대기",
-    coordinateTitle: "당신의 기록이 닿은 세 방향", coordinatePending: "세 방향을 정리하는 중", coordinateText: "기억의 의미, 현재의 흐름, 이어가기 위한 조건을 함께 확인해 이번 기록과 가까운 위치를 정리했습니다.",
+    coordinateTitle: "이 기록이 닿은 세 방향", coordinatePending: "세 방향을 정리하는 중", coordinateText: "기억의 의미, 현재의 흐름, 이어가기 위한 조건을 함께 확인해 이번 기록과 가까운 위치를 정리했습니다.",
     summary: "응답 정리", promiseTitle: "당신의 기록을 남깁니다", promise: ["여기 적힌 기억과 지금의 이야기를 오래 살펴보겠습니다.", "서로 다른 기록들이 쌓이면 우리가 무엇을 기억하고, 어떤 조건을 필요로 하는지도 조금씩 선명해집니다.", "이 기록들이 앞으로 문화예술의 제도와 정책을 이야기하는 자리까지 이어질 수 있도록 계속 가져가겠습니다.", "당신이 남긴 이야기를 기억하겠습니다."],
   };
   const frame = responseDocumentFrame(frameLanguage);
