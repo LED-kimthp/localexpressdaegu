@@ -10581,3 +10581,20 @@ Object.entries(flowReviewCopy).forEach(([language, entries]) => {
   Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
 });
 Object.assign(extraCopy.zh || (extraCopy.zh = {}), flowReviewCopy["zh-Hant"]);
+
+// 2026-09-28: 언제·어디 화면이 M04 바로 앞으로 오면서, 접힌 M05 를 「함께 떠오르는 것」으로 부른다
+// (다음 화면 「남아 있는 것」과 같은 말이 연달아 나오지 않게).
+const memoryCluesCopy = {
+  en: { "그 기억과 함께 떠오르는 것도 남기기": "Also note what comes to mind along with that memory", "그 기억과 함께 떠오르는 것은 무엇인가요?": "What comes to mind along with that memory?" },
+  ja: { "그 기억과 함께 떠오르는 것도 남기기": "その記憶と一緒に浮かぶものも残す", "그 기억과 함께 떠오르는 것은 무엇인가요?": "その記憶と一緒に浮かんでくるものは何ですか？" },
+  "zh-Hant": { "그 기억과 함께 떠오르는 것도 남기기": "也留下與那段記憶一起浮現的東西", "그 기억과 함께 떠오르는 것은 무엇인가요?": "與那段記憶一起浮現的是什麼？" },
+  "zh-Hans": { "그 기억과 함께 떠오르는 것도 남기기": "也留下与那段记忆一起浮现的东西", "그 기억과 함께 떠오르는 것은 무엇인가요?": "与那段记忆一起浮现的是什么？" },
+  fr: { "그 기억과 함께 떠오르는 것도 남기기": "Noter aussi ce qui revient avec ce souvenir", "그 기억과 함께 떠오르는 것은 무엇인가요?": "Qu’est-ce qui revient avec ce souvenir ?" },
+  es: { "그 기억과 함께 떠오르는 것도 남기기": "Anotar también lo que viene a la mente con ese recuerdo", "그 기억과 함께 떠오르는 것은 무엇인가요?": "¿Qué le viene a la mente junto con ese recuerdo?" },
+  nl: { "그 기억과 함께 떠오르는 것도 남기기": "Ook noteren wat er samen met die herinnering bovenkomt", "그 기억과 함께 떠오르는 것은 무엇인가요?": "Wat komt er samen met die herinnering bij u boven?" },
+  ms: { "그 기억과 함께 떠오르는 것도 남기기": "Catat juga apa yang terlintas bersama ingatan itu", "그 기억과 함께 떠오르는 것은 무엇인가요?": "Apakah yang terlintas bersama ingatan itu?" },
+};
+Object.entries(memoryCluesCopy).forEach(([language, entries]) => {
+  Object.assign(extraCopy[language] || (extraCopy[language] = {}), entries);
+});
+Object.assign(extraCopy.zh || (extraCopy.zh = {}), memoryCluesCopy["zh-Hant"]);

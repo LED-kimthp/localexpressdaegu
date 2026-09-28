@@ -5,7 +5,6 @@ const copy = {
   ko: {
     deepQuestionLead: "방금 쓰신 문장을 읽었어요. 한 가지만 더 듣고 싶어요.",
     deepQuestionLeadFallback: "방금 쓰신 문장에 이어, 한 가지만 더 듣고 싶어요.",
-    deepQuestionLeadBack: "앞 화면에서 쓰신 문장으로 돌아가, 한 가지만 더 듣고 싶어요.",
     deepQuestionReading: "방금 쓰신 문장을 읽고 있어요.",
     deepQuestionPause: "한 가지만 더 듣고 싶어요.",
     deepQuestionNote: "천천히 적으셔도 돼요.",
@@ -26,7 +25,6 @@ const copy = {
   en: {
     deepQuestionLead: "We have read what you just wrote. There is one more thing we would like to hear.",
     deepQuestionLeadFallback: "From what you have just written, there is one more thing we would like to hear.",
-    deepQuestionLeadBack: "Going back to what you wrote on an earlier screen, there is one more thing we would like to hear.",
     deepQuestionReading: "We are reading what you just wrote.",
     deepQuestionPause: "There is just one more thing we would like to hear.",
     deepQuestionNote: "Take your time.",
@@ -47,7 +45,6 @@ const copy = {
   ja: {
     deepQuestionLead: "今書いてくださった文章を読みました。もう一つだけ聞かせていただきたいことがあります。",
     deepQuestionLeadFallback: "今書いてくださった文章に続けて、もう一つだけ聞かせていただきたいことがあります。",
-    deepQuestionLeadBack: "前の画面で書いてくださった文章に戻って、もう一つだけ聞かせていただきたいことがあります。",
     deepQuestionReading: "今書いてくださった文章を読んでいます。",
     deepQuestionPause: "もう一つだけ聞かせていただきたいことがあります。",
     deepQuestionNote: "ゆっくり書いてくださって構いません。",
@@ -68,7 +65,6 @@ const copy = {
   "zh-Hans": {
     deepQuestionLead: "我们读了您刚写下的文字。还想再听一件事。",
     deepQuestionLeadFallback: "顺着您刚写下的文字，还想再听一件事。",
-    deepQuestionLeadBack: "回到您在前一个画面写下的文字，还想再听一件事。",
     deepQuestionReading: "正在读您刚写下的文字。",
     deepQuestionPause: "还想再听一件事。",
     deepQuestionNote: "可以慢慢写。",
@@ -89,7 +85,6 @@ const copy = {
   "zh-Hant": {
     deepQuestionLead: "我們讀了您剛寫下的文字。還想再聽一件事。",
     deepQuestionLeadFallback: "順著您剛寫下的文字，還想再聽一件事。",
-    deepQuestionLeadBack: "回到您在前一個畫面寫下的文字，還想再聽一件事。",
     deepQuestionReading: "正在讀您剛寫下的文字。",
     deepQuestionPause: "還想再聽一件事。",
     deepQuestionNote: "可以慢慢寫。",
@@ -110,7 +105,6 @@ const copy = {
   fr: {
     deepQuestionLead: "Nous avons lu ce que vous venez d’écrire. Il y a encore une chose que nous aimerions entendre.",
     deepQuestionLeadFallback: "Dans la continuité de ce que vous venez d’écrire, il y a encore une chose que nous aimerions entendre.",
-    deepQuestionLeadBack: "En revenant à ce que vous avez écrit sur un écran précédent, il y a encore une chose que nous aimerions entendre.",
     deepQuestionReading: "Nous lisons ce que vous venez d’écrire.",
     deepQuestionPause: "Il y a encore une seule chose que nous aimerions entendre.",
     deepQuestionNote: "Prenez votre temps.",
@@ -131,7 +125,6 @@ const copy = {
   es: {
     deepQuestionLead: "Hemos leído lo que acaba de escribir. Hay una cosa más que nos gustaría escuchar.",
     deepQuestionLeadFallback: "Siguiendo lo que acaba de escribir, hay una cosa más que nos gustaría escuchar.",
-    deepQuestionLeadBack: "Volviendo a lo que escribió en una pantalla anterior, hay una cosa más que nos gustaría escuchar.",
     deepQuestionReading: "Estamos leyendo lo que acaba de escribir.",
     deepQuestionPause: "Solo hay una cosa más que nos gustaría escuchar.",
     deepQuestionNote: "Puede tomarse su tiempo.",
@@ -152,7 +145,6 @@ const copy = {
   nl: {
     deepQuestionLead: "We hebben gelezen wat u zojuist schreef. Er is nog één ding dat we graag willen horen.",
     deepQuestionLeadFallback: "In het verlengde van wat u zojuist schreef, is er nog één ding dat we graag willen horen.",
-    deepQuestionLeadBack: "We keren terug naar wat u op een eerder scherm schreef; er is nog één ding dat we graag willen horen.",
     deepQuestionReading: "We lezen wat u zojuist hebt geschreven.",
     deepQuestionPause: "Er is nog één ding dat we graag willen horen.",
     deepQuestionNote: "Neem gerust de tijd.",
@@ -173,7 +165,6 @@ const copy = {
   ms: {
     deepQuestionLead: "Kami telah membaca apa yang baru anda tulis. Ada satu perkara lagi yang ingin kami dengar.",
     deepQuestionLeadFallback: "Berikutan apa yang baru anda tulis, ada satu perkara lagi yang ingin kami dengar.",
-    deepQuestionLeadBack: "Kembali kepada apa yang anda tulis di skrin sebelum ini, ada satu perkara lagi yang ingin kami dengar.",
     deepQuestionReading: "Kami sedang membaca apa yang baru anda tulis.",
     deepQuestionPause: "Ada satu perkara lagi yang ingin kami dengar.",
     deepQuestionNote: "Ambil masa anda.",

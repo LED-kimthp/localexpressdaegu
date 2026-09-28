@@ -1,10 +1,13 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260927-r89";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260928-r90";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
-export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.2-2026-08-27";
+export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.3-2026-09-28";
 export const ACTIVE_ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "D02_TEXT"];
-export const MAX_TOTAL_AI_FOLLOWUPS = 3;
+export const MAX_TOTAL_AI_FOLLOWUPS = 4;
 export const MAX_AI_FOLLOWUPS_PER_AXIS = 1;
+// 2026-09-28(TK): 현재(S) 축만 두 번 — 변화(P12)와 이어온 것(P13_TEXT)에 하나씩. 기억(M)·조건(D)은 한 번이다.
+// 그래서 설문 전체로 최대 네 번(기억 1 · 현재 2 · 조건 1). 첫 화면은 「서너 번까지」라고 안내한다.
+export const MAX_AI_FOLLOWUPS_BY_AXIS = Object.freeze({ M: 1, S: 2, D: 1 });
 
 // The original five anchors remain the strict, comparable Motif pilot set.
 // These two are separately recorded, optional follow-ups introduced from pilot
@@ -267,7 +270,8 @@ export function assessAnchorNeed({ anchorId, answers = {}, runs = [] } = {}) {
 
   const validAskRuns = (runs || []).filter((run) => run?.operation === "anchor_followup" && run?.need_decision === "ASK" && !run?.invalidated_at);
   if (validAskRuns.length >= MAX_TOTAL_AI_FOLLOWUPS) return { ...base, decision: "SKIP", reason: "survey_ai_cap_reached" };
-  if (axis && validAskRuns.some((run) => (run.axis || ANCHOR_AXES[run.anchor_id || run.checkpoint]) === axis)) return { ...base, decision: "SKIP", reason: "axis_ai_cap_reached" };
+  const axisLimit = MAX_AI_FOLLOWUPS_BY_AXIS[axis] ?? MAX_AI_FOLLOWUPS_PER_AXIS;
+  if (axis && validAskRuns.filter((run) => (run.axis || ANCHOR_AXES[run.anchor_id || run.checkpoint]) === axis).length >= axisLimit) return { ...base, decision: "SKIP", reason: "axis_ai_cap_reached" };
 
   const normalized = normalizedAnchorText(source);
   // A sufficiently developed answer is respected as complete. This is a conservative

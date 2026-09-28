@@ -1,6 +1,6 @@
-import { translate } from "./v13/i18n.js?v=v7-20260927-r89";
-import { hasPdfSignature, normalizePortfolioUrls, validatePortfolioSelection } from "./open-call-validation.js?v=v7-20260927-r89";
-import { openCallPhrase } from "./open-call-i18n.js?v=v7-20260927-r89";
+import { translate } from "./v13/i18n.js?v=v7-20260928-r90";
+import { hasPdfSignature, normalizePortfolioUrls, validatePortfolioSelection } from "./open-call-validation.js?v=v7-20260928-r90";
+import { openCallPhrase } from "./open-call-i18n.js?v=v7-20260928-r90";
 
 const form = document.querySelector("#open-call-form");
 const receipt = document.querySelector("#receipt");

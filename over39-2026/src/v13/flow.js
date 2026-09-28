@@ -1,4 +1,4 @@
-import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260927-r89";
+import { ALL_ADAPTIVE_SCREEN_MAP, anchorSourceText, isLowInformationText, shouldAskD04ConditionsFollowup, shouldAskNoRecallRelationFollowup } from "./anchor-live.js?v=v7-20260928-r90";
 
 // 이 목록은 과거 응답과 스키마를 계속 읽기 위한 ID 등록부이며, 참여자에게 무엇을 묻는지는
 // applicableFixedQuestionIds()만이 결정한다. 그래서 목록에 있으나 묻지 않는 ID가 섞여 있다.
@@ -278,26 +278,29 @@ function buildAdaptiveScreens(answers = {}) {
   screens.push("M01");
   if (answers.route === "AUDIENCE" && answers.memory_type === "NO_RECALL") screens.push("NO_RECALL_RELATION");
   if (answers.memory_type !== "NO_RECALL") {
-    screens.push("M02");
+    // 2026-09-28(TK): 언제·어디(MEMORY_TIME)를 장면(M02) 바로 뒤로 옮긴다. 예전에는 남은 것(M04) → AI 되물음으로
+    // 한 번 깊이 들어갔다가 곧바로 연도·지역 칸으로 돌아와 흐름이 끊겼다. 사실을 먼저 적고 의미로 들어가면
+    // AI 되물음이 기억 구간의 마지막이 되어 「여기까지가 기억입니다」 카드로 바로 이어진다.
+    // 되물음의 AI 입력(M02 글)은 그대로다.
+    screens.push("M02", "MEMORY_TIME");
     addAnchorScreen(screens, answers, "M04", "M04_TEXT", "AI_ANCHOR_M04_TEXT");
-    screens.push("MEMORY_TIME");
   }
   screens.push("MEMORY_TO_PRESENT", "ACTIVITY", "PRACTICE_PUBLIC_STATE", "STATE_BACKGROUND", "TRANSITION");
-  // S축 심화는 한 사람당 한 번뿐인데, 예전에는 P12 화면이 먼저 나와 그 한 번을 늘 가져갔다.
-  // P13을 여는 조건(뚜렷한 전환)이 P12를 여는 조건과 **같기 때문에**, 전환을 겪은 사람은
-  // 예외 없이 P13 심화를 잃었다 — 합성 파일럿 5명 전원이 `axis_ai_cap_reached`였다.
-  // 이 연구가 가장 알고 싶어 하는 사람들이 정확히 그들이다.
-  // 그래서 P12의 되물음을 P13 뒤로 미루고, 둘 다 받은 뒤 한 번을 어디에 쓸지 정한다.
-  // 질문 총량도 축당 상한도 그대로다. 우선권은 P13에 둔다 — 전환의 내용은 P11 선택지로도
-  // 남지만, 「보이지 않는 동안 무엇이 이어졌는가」는 그 서술 말고는 남는 곳이 없다.
+  // 2026-09-28(TK): 현재(S) 구간만 되물음을 두 번까지 둔다 — 변화(P12)와 이어온 것(P13) 각자의 글
+  // **바로 뒤에** 하나씩. 이 연구가 가장 알고 싶어 하는 곳이 이 두 서술이다(관리자 화면의 핵심 표가
+  // 「달라진 시점 × 보이지 않게 이어진 것」이다).
+  // 예전(9/20~9/27)에는 축당 한 번이라 둘 중 하나만 받았다. P13 에 우선권을 두느라 P12 되물음은
+  // P13 화면 뒤로 밀렸고, 그러면 「방금 쓰신 문장」이 두 화면 전의 글을 가리켰다. 첫 실제 참여자의
+  // 28자 「변화」 답이 되물음을 잃은 자리이기도 하다(「핵심 질문에 꼬리 질문이 따라와야」).
+  // 실제로 묻는지는 여전히 assessAnchorNeed 가 정한다 — 답이 이미 충분하거나 앞 칸과 겹치면 넘어간다.
+  const transitionFollowUp = hasSubstantiveTransition(answers)
+    && !isLowInformationText(anchorSourceText(answers, "P12"));
+  if (transitionFollowUp) screens.push("AI_ANCHOR_P12");
   if (showsContinuityQuestion(answers)) screens.push("CONTINUITY");
   const continuityFollowUp = showsContinuityQuestion(answers)
     && ["YES", "MIXED"].includes(answers.invisible_continuity_state)
     && !isLowInformationText(anchorSourceText(answers, "P13_TEXT"));
-  const transitionFollowUp = hasSubstantiveTransition(answers)
-    && !isLowInformationText(anchorSourceText(answers, "P12"));
   if (continuityFollowUp) screens.push("AI_ANCHOR_P13_TEXT");
-  else if (transitionFollowUp) screens.push("AI_ANCHOR_P12");
   screens.push("SUPPORT_CONDITIONS", "D02");
   if (hasSubstantiveDChange(answers) && !isLowInformationText(anchorSourceText(answers, "D02_TEXT"))) screens.push("AI_ANCHOR_D02_TEXT");
   screens.push("D03", "D04");
