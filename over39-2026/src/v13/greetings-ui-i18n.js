@@ -53,7 +53,7 @@ const receiptFirstNotification = {
   ja: { arrivalMethod: "次の便りが届いた時に通知を受ける", emailPermissionYes: "このメールを次の便りの到着通知だけに使ってよい", emailNeeded: "便りを読んだあと、ご希望の場合だけメール通知を選べます。" },
   "zh-Hans": { arrivalMethod: "下一则问候到达时接收通知", emailPermissionYes: "此邮箱仅可用于下一则问候的到达通知", emailNeeded: "读完问候之后，如果您愿意，再选择要不要邮件通知。" },
   "zh-Hant": { arrivalMethod: "下一則問候到達時接收通知", emailPermissionYes: "此電子郵件僅可用於下一則問候的到達通知", emailNeeded: "讀完問候之後，如果您願意，再選擇要不要郵件通知。" },
-  fr: { arrivalMethod: "Recevoir un avis lorsqu’un autre message arrive", emailPermissionYes: "Cet e-mail peut servir uniquement à signaler l’arrivée d’un autre message", emailNeeded: "Après l’avoir lu, vous pourrez demander à être prévenu par e-mail, si vous le souhaitez." },
+  fr: { arrivalMethod: "Recevoir un avis lorsqu’un autre message arrive", emailPermissionYes: "Cet e-mail peut servir uniquement à signaler l’arrivée d’un autre message", emailNeeded: "Après l’avoir lu, vous pourrez demander à être prévenu·e par e-mail, si vous le souhaitez." },
   es: { arrivalMethod: "Recibir un aviso cuando llegue otro saludo", emailPermissionYes: "Este correo puede usarse solo para avisar de otro saludo", emailNeeded: "Después de leer un saludo, puede pedir que le avisemos por correo si lo desea." },
   nl: { arrivalMethod: "Een melding krijgen wanneer een volgende groet aankomt", emailPermissionYes: "Dit e-mailadres mag alleen worden gebruikt voor een volgende groetmelding", emailNeeded: "Na het lezen kunt u aangeven of u hierover een e-mail wilt krijgen." },
   ms: { arrivalMethod: "Terima notis apabila salam seterusnya tiba", emailPermissionYes: "E-mel ini boleh digunakan hanya untuk notis salam seterusnya", emailNeeded: "Selepas membaca salam, anda boleh meminta kami memberitahu anda melalui e-mel jika mahu." },
