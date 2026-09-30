@@ -1,8 +1,9 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260928-r93";
-import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260928-r93";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260928-r93";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260928-r93";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260928-r93";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260930-r94";
+import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260930-r94";
+import { OVERVIEW_RANGES, dayLabel, hourLabel, overviewSummary } from "./admin-overview.js?v=v7-20260930-r94";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r94";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260930-r94";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260930-r94";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -12,7 +13,7 @@ const isRc2Admin = document.body.dataset.edition === "rc2-admin";
 const sessionKey = "over39-rc1-admin-session";
 const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 // 목록의 기본은 **연구** 표본이다. 전체로 두면 테스트 269건 사이에서 열여섯 분을 찾아야 했다(TK 2026-09-23).
-let state = { session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, sheet: null, detailSource: null, detailNotice: "", people: new Map(), peopleError: "", folds: {}, list: { ...EMPTY_LIST_CRITERIA }, status: "loading", filter: "research", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
+let state = { overviewRange: "all", session: null, sessions: [], sessionsTotal: null, selected: null, detail: null, sheet: null, detailSource: null, detailNotice: "", people: new Map(), peopleError: "", folds: {}, list: { ...EMPTY_LIST_CRITERIA }, status: "loading", filter: "research", error: "", relayResult: null, relayError: "", view: "responses", aiRuns: null, aiRunsError: "", insights: null, insightsError: "", insightsNote: "", insightsIncludeTest: false, exportStatus: "", exportBusy: false, care: null, careError: "", careStatus: "", careLink: null };
 
 // 매직링크가 돌아올 주소. 토큰은 프래그먼트로 오므로 `#`을, 표본 쿼리가 붙은 채 열렸을
 // 수도 있으므로 `?`를 함께 떼어 이 화면의 정확한 경로만 남긴다.
@@ -400,7 +401,8 @@ const fold = (key, summary, body, { open = false } = {}) => `<details class="adm
 // 맨 아래 「운영 기록」으로 내린다.
 function renderDetail() {
   // 고르기 전에는 비워 둔다(TK 2026-09-24 — 안내 한 줄과 그 위 가로줄을 뺐다).
-  if (!state.selected) return "";
+  // 고르기 전에는 한눈에 보기를 둔다(TK 2026-09-30).
+  if (!state.selected) return renderOverview();
   if (!state.detail || !state.sheet) return `<div class="empty-match">이 사람의 기록을 불러오고 있어요.</div>`;
   const d = state.detail;
   const known = new Set(state.sessions.map((row) => row.response_id));
@@ -722,9 +724,55 @@ function renderDashboard() {
   const rows = sessionRows();
   const on = (view) => (state.view === view ? " active" : "");
   // 도구 단추는 위 한 줄로 올렸다. 왼쪽은 사람 목록만 — 목록이 따로 스크롤된다.
-  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button><button class="secondary-button${on("dev-tests")}" data-admin-action="dev-tests">개발 과정 시험 기록</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-final-pdfs" ${state.exportBusy ? "disabled" : ""}>최종 PDF 모아 받기 · ${koNum(rows.filter((row) => state.people.get(row.response_id)?.hasDocument ?? true).length)}명</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
+  const tools = `<nav class="admin-tools" aria-label="관리 도구"><div class="admin-tools-group"><button class="secondary-button${on("overview")}" data-admin-action="overview">한눈에 보기</button><button class="secondary-button${on("research-insights")}" data-admin-action="research-insights">연구 지표</button><button class="secondary-button${on("ai-health")}" data-admin-action="ai-health">AI 운영 지표</button><button class="secondary-button${on("care")}" data-admin-action="care">철회·알림 관리</button><button class="secondary-button${on("dev-tests")}" data-admin-action="dev-tests">개발 과정 시험 기록</button></div><div class="admin-tools-group"><span>내려받기</span><button class="secondary-button" data-admin-action="export-final-pdfs" ${state.exportBusy ? "disabled" : ""}>최종 PDF 모아 받기 · ${koNum(rows.filter((row) => state.people.get(row.response_id)?.hasDocument ?? true).length)}명</button><button class="secondary-button" data-admin-action="export-records" ${state.exportBusy ? "disabled" : ""}>참여 기록 묶음 · ${esc(exportSampleTypes().map(adminSampleLabel).join(" + "))}</button><button class="secondary-button" data-admin-action="export-json">백업 JSON (원문 포함)</button><button class="secondary-button" data-admin-action="export-csv">요약 CSV</button></div>${state.exportStatus ? `<p class="ai-health-note" role="status">${esc(state.exportStatus)}</p>` : ""}</nav>`;
   const tabs = ADMIN_SAMPLE_ORDER.map((value) => `<button data-admin-filter="${value}" class="${state.filter === value ? "active" : ""}">${esc(adminSampleLabel(value))} ${koNum(totals[value])}${value === "all" && Number.isFinite(state.sessionsTotal) && state.sessionsTotal > totals.all ? ` / ${koNum(state.sessionsTotal)}` : ""}</button>`).join("");
-  return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : state.view === "dev-tests" ? renderDevTests() : renderDetail()}</section></main></div>`;
+  return `<div class="site-shell dashboard-shell admin-shell"><header class="topbar"><div class="brand"><span class="brand-mark">LED</span><span>Local Express Daegu</span></div><div class="topbar-project"><span>AUTHENTICATED RESEARCHER VIEW</span><strong>〈만 39세 이상〉 RC2</strong></div><button class="secondary-button" data-admin-action="set-password">비밀번호 정하기</button><button class="secondary-button" data-admin-action="logout">로그아웃</button></header>${tools}<main class="dashboard-grid"><aside class="dashboard-sidebar"><div class="dashboard-sidebar-head"><div class="queue-head"><span>${esc(adminSampleLabel(state.filter))}</span><strong id="admin-list-count">${listCountHtml(rows)}</strong><em>명</em></div><div class="dashboard-filters">${tabs}</div>${sessionCapNotice()}${state.peopleError ? `<p class="ai-health-note" role="status" style="margin:8px 0 0;">${esc(state.peopleError)}</p>` : ""}${renderListControls()}</div><div class="dashboard-profile-list" id="admin-list">${listHtml(rows)}</div></aside><section class="dashboard-main">${state.view === "ai-health" ? renderAiHealth() : state.view === "research-insights" ? renderResearchInsights() : state.view === "care" ? renderCare() : state.view === "dev-tests" ? renderDevTests() : state.view === "overview" ? renderOverview() : renderDetail()}</section></main></div>`;
+}
+
+// 한눈에 보기(TK 2026-09-30): 숫자 타일 한 줄과, 날마다 몇 명이 참여를 시작했는지 보이는 칸 그림.
+// 표본은 왼쪽 목록을 따른다(기본 참여자). 안부 타일을 누르면 왼쪽 목록이 그 사람들로 걸러진다.
+function renderOverview() {
+  const summary = overviewSummary(state.sessions, state.people, { sample: state.filter, range: state.overviewRange });
+  const t = summary.tiles;
+  const tile = (label, value, { unit = "명", greeting = "", hint = "" } = {}) => {
+    const body = `<span>${esc(label)}</span><strong>${esc(value)}${unit ? `<small>${esc(unit)}</small>` : ""}</strong>`;
+    return greeting
+      ? `<button type="button" class="overview-tile${state.list.greeting === greeting ? " is-active" : ""}" data-list-greeting="${esc(greeting)}" aria-pressed="${state.list.greeting === greeting}" title="${esc(hint)}">${body}</button>`
+      : `<div class="overview-tile">${body}</div>`;
+  };
+  // 타일은 뜻에 따라 세 묶음. 묶음마다 줄을 꽉 채워 어느 폭에서도 양쪽 끝이 맞는다(TK: 휴대폰에서 하나가 혼자 남았다).
+  const group = (title, columns, tiles) => `<div class="overview-group"><h3>${esc(title)}</h3><div class="overview-tiles cols-${columns}">${tiles.join("")}</div></div>`;
+  const ranges = Object.entries(OVERVIEW_RANGES).map(([value, label]) => `<button type="button" data-overview-range="${esc(value)}" class="${state.overviewRange === value ? "active" : ""}" aria-pressed="${state.overviewRange === value}">${esc(label)}</button>`).join("");
+  const cells = summary.weeks.map((week) => `<div class="overview-week">${week.map((cell) => cell.level < 0
+    ? `<i class="overview-cell is-outside" aria-hidden="true"></i>`
+    : `<i class="overview-cell level-${cell.level}" data-overview-day="${esc(cell.date)}" data-overview-value="${cell.value}" title="${esc(`${dayLabel(cell.date)} · ${cell.value}명`)}" aria-label="${esc(`${dayLabel(cell.date)} ${cell.value}명`)}"></i>`).join("")}</div>`).join("");
+  const readout = summary.busiest ? `가장 많은 날: ${dayLabel(summary.busiest.date)} · ${summary.busiest.value}명` : "이 기간에 참여를 시작한 사람이 없어요.";
+  return `<section class="detail-section overview">
+    <div class="overview-head"><h2>한눈에 보기 <span>${esc(adminSampleLabel(state.filter))}</span></h2><div class="overview-ranges" role="group" aria-label="기간">${ranges}</div></div>
+    ${group("참여", 4, [
+      tile("참여자", koNum(t.participants)),
+      tile("끝까지 마침", koNum(t.completed)),
+      tile("참여한 날", koNum(t.activeDays), { unit: "일" }),
+      tile("많이 시작한 시간", t.peakHour === null ? "—" : hourLabel(t.peakHour), { unit: "" }),
+    ])}
+    ${group("안부", 3, [
+      tile("남긴 사람", koNum(t.wrote), { greeting: "wrote", hint: "안부를 남긴 사람 — 누르면 왼쪽 목록이 이 사람들로" }),
+      tile("전달된 사람", koNum(t.delivered), { greeting: "delivered", hint: "남긴 안부가 다른 참여자에게 닿은 사람" }),
+      tile("받은 사람", koNum(t.received), { greeting: "received", hint: "다른 참여자의 안부를 받은 사람" }),
+    ])}
+    ${group("기록", 2, [
+      tile("제안문 받음", koNum(t.offer)),
+      tile("최종 PDF", koNum(t.document)),
+    ])}
+    <div class="overview-calendar">
+      <div class="overview-weekdays" aria-hidden="true">${summary.weekdays.map((day, index) => `<span>${index % 2 === 0 ? esc(day) : ""}</span>`).join("")}</div>
+      <div class="overview-grid" role="img" aria-label="${esc(`${summary.from} ~ ${summary.to} 날마다 참여를 시작한 사람 수`)}">${cells}</div>
+    </div>
+    <div class="overview-legend"><p class="overview-readout" role="status">${esc(readout)}</p><span aria-hidden="true">적음 <i class="overview-cell level-1"></i><i class="overview-cell level-2"></i><i class="overview-cell level-3"></i><i class="overview-cell level-4"></i> 많음</span></div>
+    <details class="ai-health-detail"><summary>날짜별로 보기</summary>
+      <table class="ai-health-table"><thead><tr><th scope="col">날짜</th><th scope="col">참여를 시작한 사람</th></tr></thead><tbody>${summary.days.map((day) => `<tr><th scope="row">${esc(dayLabel(day.date))}</th><td>${day.value}</td></tr>`).join("") || `<tr><td colspan="2">기록 없음</td></tr>`}</tbody></table>
+    </details>
+  </section>`;
 }
 
 // 개발 과정 시험 기록(TK 2026-09-24). 보고서에 「개발하면서 응답을 이렇게 시험했다」를 쓸 때의 근거.
@@ -873,6 +921,8 @@ document.addEventListener("click", async (event) => {
   if (button.dataset.adminAction === "research-insights") return loadResearchInsights();
   if (button.dataset.adminAction === "care") return loadCare();
   if (button.dataset.adminAction === "dev-tests") { state.view = "dev-tests"; render(); return; }
+  if (button.dataset.adminAction === "overview") { state.view = "overview"; render(); return; }
+  if (button.dataset.overviewRange) { state.overviewRange = button.dataset.overviewRange; render(); return; }
   if (button.dataset.adminAction === "care-withdraw-record") {
     const responseId = document.querySelector("#care-withdraw-id")?.value.trim();
     const submitEndpoint = String(window.OVER39_SUPABASE_SUBMIT_URL || "");
@@ -1141,6 +1191,14 @@ document.addEventListener("click", async (event) => {
     const fields = ["response_id", "sample_type", "include_in_policy_statistics", "institution_code", "route", "coordinate_scope", "status", "questionnaire_version", "classification_version", "source_language", "m_primary", "s_primary", "d_primary", "coordinate_status", "participant_action", "relationship_opt_in", "has_institution_feedback", "completed_at"];
     download(`over39-research-summary-${new Date().toISOString().slice(0, 10)}.csv`, [fields.join(","), ...rows.map((row) => fields.map((field) => csvValue(row[field])).join(","))].join("\n"), "text/csv;charset=utf-8");
   }
+});
+
+// 한눈에 보기의 칸에 마우스를 올리면 아래 한 줄에 그날과 사람 수가 나온다.
+document.addEventListener("pointerover", (event) => {
+  const cell = event.target?.closest?.("[data-overview-day]");
+  const readout = root.querySelector(".overview-readout");
+  if (!cell || !readout) return;
+  readout.textContent = `${dayLabel(cell.dataset.overviewDay)} · ${cell.dataset.overviewValue}명`;
 });
 
 // 찾기는 칠 때마다, 필터·정렬은 고를 때마다 목록에 반영한다.
