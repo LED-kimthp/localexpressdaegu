@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260930-r94";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260930-r95";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260930-r94";
-import { normalizedDScope } from "./flow.js?v=v7-20260930-r94";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260930-r95";
+import { normalizedDScope } from "./flow.js?v=v7-20260930-r95";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260930-r94";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260930-r94";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260930-r94";
+import { translate } from "./i18n.js?v=v7-20260930-r95";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20260930-r95";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260930-r95";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -1037,6 +1037,14 @@ export function buildResponseDocument({
         axes: axisReadings,
         coordinate_grid: coordinateGrid,
         coordinate_number: coordinate.number || null,
+        // 2026-09-30 TK: 판 위에 현재의 흐름 넷, 오른쪽에 기억의 의미 넷. 휴대폰에서는 판을 한 덩어리로 두고
+        // 이름표를 판 아래에 풀어 적는다. 인쇄·PDF 에는 싣지 않는다(전과 같은 색 없는 모눈).
+        coordinate_labels: coordinate.number ? {
+          rows: ["M1", "M2", "M3", "M4"].map((code) => ({ screen: axisText[code] || code, appendix: codebookText[code] || axisText[code] || code })),
+          groups: ["S1", "S2", "S3", "S4"].map((code) => ({ screen: axisText[code] || code, appendix: codebookText[code] || axisText[code] || code })),
+          rows_note: [frame.axisTitleM, frame.gridRowsNote].filter(Boolean).join(" · "),
+          groups_note: [frame.axisTitleS, frame.gridGroupsNote].filter(Boolean).join(" · "),
+        } : null,
         reading_source: readingSource || null,
         uncertainty: readingUncertainty || null,
         source_kind: "research_derived", editable: false,
@@ -1159,8 +1167,34 @@ export function renderResponseDocument(document = {}) {
     }
     if (array(layer.coordinate_grid).length) {
       // 판 자체는 모든 장에 같고, 찍힌 칸만 다르다. 그래서 넘겨볼 때 분포가 보인다.
-      const cells = array(layer.coordinate_grid).map((row) => `<div class="response-document-grid-row">${array(row).map((n) => `<i${n === layer.coordinate_number ? ' class="is-here"' : ""}></i>`).join("")}</div>`).join("");
-      body += `<div class="response-document-grid" aria-hidden="true">${cells}</div>`;
+      // 2026-09-30 TK: 찍힌 칸에서 파란 기운이 번지게 — 가까운 칸(판에서 한두 칸 떨어진 자리)일수록 진하다.
+      // 가로로 옆 칸은 기억·현재가 같고 조건만 다른 자리라, 번짐이 판의 뜻과도 어긋나지 않는다.
+      const here = Number(layer.coordinate_number) - 1;
+      const nearClass = (n) => {
+        if (n === layer.coordinate_number) return ' class="is-here"';
+        if (!(here >= 0)) return "";
+        const distance = Math.abs(Math.floor((n - 1) / 16) - Math.floor(here / 16)) + Math.abs(((n - 1) % 16) - (here % 16));
+        return distance <= 3 ? ` class="near-${distance}"` : "";
+      };
+      const labels = layer.coordinate_labels;
+      if (labels) {
+        // 이름표: 위에 현재의 흐름(네 칸씩), 오른쪽에 기억의 의미(한 줄씩). 이 기록이 놓인 줄·묶음만 파랑.
+        const hereRow = here >= 0 ? Math.floor(here / 16) : -1;
+        const hereGroup = here >= 0 ? Math.floor((here % 16) / 4) : -1;
+        const name = (item) => (item?.appendix && item.appendix !== item.screen
+          ? `<span class="response-document-title-screen">${esc(item.screen)}</span><span class="response-document-title-appendix">${esc(item.appendix)}</span>`
+          : esc(item?.screen || ""));
+        const mark = (index, hereIndex) => (index === hereIndex ? ' class="is-here-label"' : "");
+        const groups = array(labels.groups).map((item, index) => `<span${mark(index, hereGroup)}>${name(item)}</span>`).join("");
+        const rows = array(layer.coordinate_grid).map((row, rowIndex) => `<div class="response-document-grid-row">${array(row).map((n) => `<i${nearClass(n)}></i>`).join("")}</div><span class="response-document-grid-rowlabel${rowIndex === hereRow ? " is-here-label" : ""}">${name(array(labels.rows)[rowIndex])}</span>`).join("");
+        const legendRows = array(labels.rows).map((item, index) => `<span${mark(index, hereRow)}>${name(item)}</span>`).join("");
+        const legendGroups = array(labels.groups).map((item, index) => `<span${mark(index, hereGroup)}>${name(item)}</span>`).join("");
+        body += `<div class="response-document-grid is-labeled" aria-hidden="true"><div class="response-document-grid-groups">${groups}</div><span class="response-document-grid-corner"></span>${rows}</div>`;
+        body += `<dl class="response-document-grid-legend" aria-hidden="true"><div><dt>${esc(labels.rows_note)}</dt><dd>${legendRows}</dd></div><div><dt>${esc(labels.groups_note)}</dt><dd>${legendGroups}</dd></div></dl>`;
+      } else {
+        const cells = array(layer.coordinate_grid).map((row) => `<div class="response-document-grid-row">${array(row).map((n) => `<i${nearClass(n)}></i>`).join("")}</div>`).join("");
+        body += `<div class="response-document-grid" aria-hidden="true">${cells}</div>`;
+      }
     }
     if (array(layer.axes).length) {
       // 축 하나에 「무엇으로 읽었는가 → 참여자의 어느 문장이 근거인가」를 붙인다.

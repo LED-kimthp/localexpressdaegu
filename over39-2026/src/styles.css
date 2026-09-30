@@ -845,15 +845,52 @@ h2:focus {
    500장에서 아무것도 말하지 못한다(2026-09-09). */
 /* 64칸 좌표 판. 4행(M) × 16열(S 안의 D). 판은 모든 장에 같고 찍힌 칸만 다르므로,
    500장을 넘길 때 분포가 눈에 들어온다(2026-09-11). */
-.response-document-grid { display: grid; gap: 2px; margin: 10px 0 0; }
-.response-document-grid-row { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; }
+/* 2026-09-30 TK: 이름표 없이 64칸만 이어 붙인다 — 둥근 칸, 이 기록의 칸에서 가까울수록 진한 파랑,
+   이 기록의 칸만 그라데이션. 인쇄·PDF 에서도 배경과 그라데이션이 빠지지 않게 한다. */
+.response-document-grid { display: grid; gap: 4px; margin: 14px 0 0; max-width: 720px; }
+.response-document-grid-row { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 4px; }
 .response-document-grid i {
   display: block;
   aspect-ratio: 1;
-  border: 1px solid var(--line);
-  background: transparent;
+  border-radius: 26%;
+  background: #eeece5;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
-.response-document-grid i.is-here { background: #1c1a17; border-color: #1c1a17; }
+.response-document-grid i.near-3 { background: #d2dcf6; }
+.response-document-grid i.near-2 { background: #aabdee; }
+.response-document-grid i.near-1 { background: #7d9be5; }
+.response-document-grid i.is-here { background: linear-gradient(150deg, #6f97f2 0%, #2a4fb8 100%); }
+@media (max-width: 520px) {
+  .response-document-grid, .response-document-grid-row { gap: 3px; }
+}
+/* 2026-09-30 TK: 판에 이름표 — 위에 현재의 흐름(네 칸씩), 오른쪽에 기억의 의미(한 줄씩). 칸은 그대로 16칸을 고르게 잇는다.
+   이 기록이 놓인 줄·묶음 이름만 파랑. 휴대폰에서는 판을 한 덩어리로 두고 이름표를 판 아래에 풀어 적는다. */
+.response-document-grid.is-labeled {
+  grid-template-columns: minmax(0, 1fr) max-content;
+  column-gap: 14px;
+  row-gap: 4px;
+  align-items: center;
+  max-width: 820px;
+}
+.response-document-grid-groups { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 4px; }
+.response-document-grid-groups > span,
+.response-document-grid-rowlabel { font-size: 12.5px; line-height: 1.3; color: var(--muted); }
+.response-document-grid-groups > span { padding: 0 0 5px 2px; }
+.response-document-grid-rowlabel { white-space: nowrap; }
+.response-document-grid .is-here-label,
+.response-document-grid-legend .is-here-label { color: #3a64d2 !important; font-weight: 600; }
+.response-document-grid-legend { display: none; }
+@media (max-width: 640px) {
+  .response-document-grid.is-labeled { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
+  .response-document-grid-groups,
+  .response-document-grid-corner,
+  .response-document-grid-rowlabel { display: none; }
+  .response-document-grid-legend { display: grid; gap: 10px; margin: 14px 0 0; }
+  .response-document-grid-legend div { display: grid; gap: 4px; }
+  .response-document-grid-legend dt { font-size: 11.5px; color: var(--muted); }
+  .response-document-grid-legend dd { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--ink); }
+}
 
 .response-document-axes { display: grid; gap: 0; margin: 14px 0 0; }
 .response-document-axis { padding: 11px 0; border-top: 1px solid var(--line); }
@@ -6679,6 +6716,15 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .relay-arrival-reason p { margin: 0; color: var(--ink-soft, var(--muted)); font-size: 15px; line-height: 1.65; word-break: keep-all; }
 
 
+/* 참여 기록은 흰 종이다(.response-document-sheet * { background: #fff !important }, 인쇄에서는 글자도 검정).
+   「연구에서 읽는 세 방향」의 64칸 판만은 색을 지킨다 — 이 규칙 때문에 칸이 하얗게 지워지고
+   인쇄에서는 테두리만 남았다(TK 2026-09-30 캡처). */
+.response-document-sheet .response-document-grid i { background: #eeece5 !important; }
+.response-document-sheet .response-document-grid i.near-3 { background: #d2dcf6 !important; }
+.response-document-sheet .response-document-grid i.near-2 { background: #aabdee !important; }
+.response-document-sheet .response-document-grid i.near-1 { background: #7d9be5 !important; }
+.response-document-sheet .response-document-grid i.is-here { background: linear-gradient(150deg, #6f97f2 0%, #2a4fb8 100%) !important; }
+
 /* ─────────────────────────────────────────────────────────────────────────────
    부록 인쇄 판 — 결과보고서에 붙는 참여 기록 한 장
 
@@ -6866,9 +6912,15 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final .response-document-side .response-document-cite { font-size: 6.4pt !important; }
 
   /* 오른쪽 단은 좁으므로 더 작게. 코드형 값이라 좁은 폭을 견딘다. */
-  .response-document-final .response-document-grid { gap: 0.35mm !important; margin: 1.6mm 0 0 !important; }
+  /* 인쇄·PDF 는 전과 같은 색 없는 모눈이다 — 이름표·풀이도 싣지 않는다(TK 2026-09-30 「pdf 출력물에는 기존 그대로 색 넣지 말고」). */
+  .response-document-final .response-document-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 0.35mm !important; margin: 1.6mm 0 0 !important; max-width: none !important; }
   .response-document-final .response-document-grid-row { gap: 0.35mm !important; }
-  .response-document-final .response-document-grid i { border-width: 0.25pt !important; }
+  .response-document-final .response-document-grid-groups,
+  .response-document-final .response-document-grid-corner,
+  .response-document-final .response-document-grid-rowlabel,
+  .response-document-final .response-document-grid-legend { display: none !important; }
+  .response-document-final .response-document-sheet .response-document-grid i { border: 0.25pt solid #d2d0c7 !important; border-radius: 0 !important; background: #fff !important; }
+  .response-document-final .response-document-sheet .response-document-grid i.is-here { border-color: #1c1a17 !important; background: #fff !important; }
   .response-document-final .response-document-axis { padding: 1.3mm 0 !important; }
   .response-document-final .response-document-axis dt { font-size: 8pt !important; line-height: 1.4 !important; }
   .response-document-final .response-document-axis dt small { font-size: 6.4pt !important; }
@@ -7015,9 +7067,15 @@ input[type="checkbox"] { width: 20px; height: 20px; }
   .response-document-final .response-document-side .response-document-cite { font-size: 6.4pt !important; }
 
   /* 오른쪽 단은 좁으므로 더 작게. 코드형 값이라 좁은 폭을 견딘다. */
-  .response-document-final .response-document-grid { gap: 0.35mm !important; margin: 1.6mm 0 0 !important; }
+  /* 인쇄·PDF 는 전과 같은 색 없는 모눈이다 — 이름표·풀이도 싣지 않는다(TK 2026-09-30 「pdf 출력물에는 기존 그대로 색 넣지 말고」). */
+  .response-document-final .response-document-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 0.35mm !important; margin: 1.6mm 0 0 !important; max-width: none !important; }
   .response-document-final .response-document-grid-row { gap: 0.35mm !important; }
-  .response-document-final .response-document-grid i { border-width: 0.25pt !important; }
+  .response-document-final .response-document-grid-groups,
+  .response-document-final .response-document-grid-corner,
+  .response-document-final .response-document-grid-rowlabel,
+  .response-document-final .response-document-grid-legend { display: none !important; }
+  .response-document-final .response-document-sheet .response-document-grid i { border: 0.25pt solid #d2d0c7 !important; border-radius: 0 !important; background: #fff !important; }
+  .response-document-final .response-document-sheet .response-document-grid i.is-here { border-color: #1c1a17 !important; background: #fff !important; }
   .response-document-final .response-document-axis { padding: 1.3mm 0 !important; }
   .response-document-final .response-document-axis dt { font-size: 8pt !important; line-height: 1.4 !important; }
   .response-document-final .response-document-axis dt small { font-size: 6.4pt !important; }

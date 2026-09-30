@@ -1,9 +1,9 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260930-r94";
-import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260930-r94";
-import { OVERVIEW_RANGES, dayLabel, hourLabel, overviewSummary } from "./admin-overview.js?v=v7-20260930-r94";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r94";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260930-r94";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260930-r94";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260930-r95";
+import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260930-r95";
+import { OVERVIEW_RANGES, dayLabel, hourLabel, overviewSummary } from "./admin-overview.js?v=v7-20260930-r95";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r95";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260930-r95";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260930-r95";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -412,7 +412,7 @@ function renderDetail() {
     ${fold("ops", "운영 기록 · 저장된 표 그대로", `<div class="dashboard-kicker">RESPONSE TRACE · ${esc(state.selected)}</div>
     ${detailSection("고정질문 원문과 기여", d.over39_fixed_answers, (row) => `<article><strong>${esc(row.question_id)} · ${esc(row.axis || "맥락")} · ${esc(row.evidence_level || "context")}</strong><p>${esc(JSON.stringify(row.answer))}</p></article>`)}
     ${detailSection("좌표 스냅샷", d.over39_axis_snapshots, (row) => `<article><strong>${esc(row.stage)} · ${esc(row.status)}</strong><p>${esc(row.coordinate_scope || "범위 미기록")} · ${esc([row.m_primary, row.s_primary, row.d_primary].filter(Boolean).join(" · ") || "정보 부족")} ${row.coordinate_candidate ? `· 내부 후보 ${row.coordinate_candidate}` : ""}</p></article>`)}
-    ${detailSection("심화질문 3개", d.over39_depth_questions, (row) => `<article><strong>${row.position}. ${esc(row.axis)} · ${esc(row.source)}</strong><p>${esc(row.prompt)}</p><small>의도: ${esc(row.participant_intent)}${row.prompt_version ? ` · ${esc(row.prompt_version)}` : ""}</small></article>`)}
+    ${detailSection("심화질문", d.over39_depth_questions, (row) => `<article><strong>${row.position}. ${esc(row.axis)} · ${esc(row.source)}</strong><p>${esc(row.prompt)}</p><small>의도: ${esc(row.participant_intent)}${row.prompt_version ? ` · ${esc(row.prompt_version)}` : ""}</small></article>`)}
     ${detailSection("심화답변", d.over39_depth_answers, (row) => `<article><strong>${esc(row.axis)} · ${esc(row.selected_value || "건너뜀")}</strong><p>${esc(row.answer_text || "추가 서술 없음")}</p></article>`)}
     ${detailSection("API 실행", d.over39_ai_runs, (row) => `<article><strong>${esc(row.operation)} · ${esc(row.status)} · ${esc(row.model || "fallback")}</strong><p>${row.latency_ms || 0}ms ${row.error_code ? `· ${esc(row.error_code)}` : ""}</p></article>`)}
     ${detailSection("참여자 수정·승인", d.over39_participant_revisions, (row) => `<article><strong>${esc(row.participant_action || "미확인")}</strong><p>${esc(row.participant_approved_text || row.participant_revision || "공개 승인문 없음")}</p></article>`)}
