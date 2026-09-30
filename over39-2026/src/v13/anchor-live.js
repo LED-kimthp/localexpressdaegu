@@ -1,4 +1,4 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260930-r95";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260930-r96";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.3-2026-09-28";
@@ -408,8 +408,8 @@ const FALLBACKS = {
   },
   ms: {
     M04_TEXT: "Daripada apa yang baru anda tulis, apakah satu perkara yang masih paling jelas sekarang?",
-    P12: "Boleh ceritakan satu saat apabila perubahan itu benar-benar terasa dalam kehidupan atau aktiviti anda?",
-    P13_TEXT: "Daripada apa yang baru anda tulis, apakah satu adegan nyata dari masa itu?",
+    P12: "Boleh ceritakan satu saat apabila perubahan itu benar-benar terasa dalam kehidupan atau kegiatan anda?",
+    P13_TEXT: "Daripada apa yang baru anda tulis, apakah satu babak nyata dari masa itu?",
     P19_TEXT: "Boleh ceritakan satu saat apabila keadaan itu benar-benar membantu?",
     D02_TEXT: "Apakah tanda paling kecil yang membuat anda rasa perubahan itu sudah bermula?",
     NO_RECALL_RELATION: "Apakah yang membuat seni dan budaya terasa sedikit lebih dekat, atau lebih jauh, pada saat itu?",

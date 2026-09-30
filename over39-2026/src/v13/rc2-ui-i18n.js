@@ -173,13 +173,13 @@ const copy = {
     topics: { PARTICIPANT_CONTEXT: "Konteks kegiatan" },
     m01: {
       title: "Apakah yang mula-mula terlintas hari ini berkaitan dengan seni dan budaya?",
-      help: "Ada sebabnya kami bermula dengan ingatan. Kami mencari apa yang kekal selepas sokongan berakhir, dan permulaannya ada dalam apa yang anda ingat. Tidak mengapa jika anda tidak tahu nama tepatnya. Anda boleh bermula dengan seseorang, sebuah karya, sesuatu tempat, satu adegan, sepatah ayat, satu rasa, atau kegiatan anda sekarang.",
-      options: { ARTIST: "Seseorang atau seniman", WORK_OBJECT: "Karya, objek atau imej", SPACE: "Sebuah tempat", EXHIBITION: "Pameran, persembahan atau acara", SCENE: "Satu adegan", PHRASE: "Ayat atau cerita", SENSATION: "Rasa yang sukar dinamakan", PRACTICE: "Kegiatan, latihan atau sikap saya yang kekal", NO_RECALL: "Tiada apa-apa yang khusus terlintas sekarang" },
+      help: "Ada sebabnya kami bermula dengan ingatan. Kami mencari apa yang kekal selepas sokongan berakhir, dan permulaannya ada dalam apa yang anda ingat. Tidak mengapa jika anda tidak tahu nama tepatnya. Anda boleh bermula dengan seseorang, sebuah karya, sesuatu tempat, satu babak, sepatah ayat, satu rasa, atau kegiatan anda sekarang.",
+      options: { ARTIST: "Seseorang atau seniman", WORK_OBJECT: "Karya, objek atau imej", SPACE: "Sebuah tempat", EXHIBITION: "Pameran, persembahan atau acara", SCENE: "Satu babak", PHRASE: "Ayat atau cerita", SENSATION: "Rasa yang sukar dinamakan", PRACTICE: "Kegiatan, latihan atau sikap saya yang kekal", NO_RECALL: "Tiada apa-apa yang khusus terlintas sekarang" },
     },
     practiceHelp: { AUDIENCE: "Kami mencatat secara berasingan minat yang biasa anda cari dan keadaan sebenar anda menonton atau menyertainya.", EVERYDAY: "Kami merekod secara berasingan bagaimana kegiatan ini diteruskan dan bertemu orang lain melalui latihan, pertemuan, persembahan atau perkongsian.", PROFESSIONAL: "Kami merekod secara berasingan bagaimana kegiatan utama diteruskan dan bagaimana ia kelihatan kepada orang lain." },
-    transitionPlaceholder: "Satu adegan apabila kegiatan, latihan, persembahan, peranan, kehidupan, hubungan atau cara menyertai berubah",
+    transitionPlaceholder: "Satu babak apabila kegiatan, latihan, persembahan, peranan, kehidupan, hubungan atau cara menyertai berubah",
     d1Title: "Pilih keadaan yang paling terasa kosong bagi anda sekarang.", d1Help: "Ada sebabnya kami bertanya tentang keadaan. Apa yang ada untuk terus berjalan dan apa yang tiada — itulah yang akan dibawa oleh rekod ini ke perbincangan dasar. Dalam konteks kegiatan anda, anda boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
-    d3Title: "Pilih keadaan nyata yang menjadikan perubahan ini perlu.", d3TitleNoChange: "Pilih keadaan nyata yang paling dekat dengan kegiatan anda sekarang.", d3TitleNoChangeAudience: "Pilih keadaan nyata yang paling dekat dengan cara anda bertemu seni dan budaya sekarang.", d3Help: "Anda boleh meninggalkan sehingga tiga keadaan yang sesuai dengan apa yang anda ceritakan sekarang. Anda juga boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
+    d3Title: "Pilih keadaan nyata yang menjadikan perubahan ini perlu.", d3TitleNoChange: "Pilih keadaan nyata yang paling dekat dengan kegiatan anda sekarang.", d3TitleNoChangeAudience: "Pilih keadaan nyata yang paling dekat dengan cara anda bertemu seni dan budaya sekarang.", d3Help: "Anda boleh memilih sehingga tiga keadaan yang sesuai dengan apa yang anda ceritakan sekarang. Anda juga boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
     d4Title: "Ceritakan apa yang ditinggalkan oleh keadaan yang anda nyatakan setakat ini dalam kegiatan, ingatan atau hubungan anda.", d4HelpWithContext: "Satu atau dua ayat sudah memadai. Jika antara {hints} ada keadaan yang benar-benar berkaitan, anda boleh menulisnya sekali.", d4HelpWithoutContext: "Satu atau dua ayat sudah memadai. Jika tiada apa-apa seperti {hints} yang terlintas sekarang, anda boleh membiarkannya kosong.",
   },
 };
@@ -969,7 +969,7 @@ const revisedPhrases = {
   },
   "ms": {
     "이대로 좋아요 — 지금 보이는 세 방향을 이번 기록의 위치로 남겨요.": "Begini sudah baik — Simpan tiga arah yang dipaparkan sebagai kedudukan rekod ini.",
-    "더 떠오르는 이름이나 장면이 있다면": "Jika ada nama atau adegan lain yang terlintas",
+    "더 떠오르는 이름이나 장면이 있다면": "Jika ada nama atau babak lain yang terlintas",
     "영화, 책, 만화, 웹툰, 음악, 온라인에서 본 것처럼 다른 길로 이어진 관심도 다 들어가요. 공연장이나 전시장에 가지 않던 때에도 남아 있던 관심은 무엇이었을까요?": "Minat yang berterusan melalui jalan lain juga dikira: filem, buku, komik, webtoon, muzik, apa yang anda tonton dalam talian. Minat apakah yang masih tinggal ketika anda tidak pergi ke tempat persembahan atau pameran?",
     "혼자 하던 연습, 가끔 모이던 사람들, 배우던 것, 돌보던 일도 다 들어가요. 무대나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Berlatih seorang diri, orang yang sesekali anda temui, sesuatu yang sedang anda pelajari, seseorang yang anda jaga, semuanya dikira. Apakah yang masih tinggal ketika tiada pentas dan tiada persembahan?",
     "작업노트, 습작, 자료 조사, 동료와 나눈 이야기, 쉬면서 한 생각도 다 들어가요. 지원이나 발표가 없던 때에도 남아 있던 것은 무엇이었을까요?": "Nota kerja, lakaran, kajian, perbualan dengan rakan sekerja, malah fikiran semasa berehat, semuanya dikira. Apakah yang masih tinggal ketika tiada sokongan dan tiada persembahan?",
@@ -978,7 +978,7 @@ const revisedPhrases = {
     "이제 그 경험은 지금의 관심과 선택에 어떻게 이어져 있을까요?": "Bagaimanakah pengalaman itu berterusan dalam minat dan pilihan anda sekarang?",
     "지금의 활동 방식에 함께 작용한 조건을 들려주세요.": "Ceritakan kepada kami syarat yang turut mempengaruhi cara kegiatan anda sekarang.",
     "지금의 관람과 관심 방식에 함께 작용한 조건을 들려주세요.": "Ceritakan kepada kami syarat yang turut mempengaruhi cara anda menonton dan minat anda sekarang.",
-    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Daripada tiga arah — ingatan, masa kini, dan syarat untuk terus berjalan — soalan-soalan ini tentang arah kedua: masa kini.",
+    "기억·현재·이어가기 위한 조건, 세 방향 가운데 두 번째인 '현재'에 관한 질문입니다.": "Daripada tiga arah — ingatan, masa kini, dan keadaan untuk meneruskan — soalan-soalan ini tentang arah kedua: masa kini.",
     "일상, 이동, 정보, 함께한 사람과 공간의 분위기 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Pilih yang paling hampir antara kehidupan harian, pergerakan, maklumat, orang yang bersama anda dan suasana ruang. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya.",
     "생활, 역할, 관계와 현장의 조건 가운데 가까운 내용을 골라주세요. 해당되는 조건이 없거나 아직 모르겠다면 그대로 표시할 수 있습니다.": "Pilih yang paling hampir antara kehidupan, peranan, hubungan dan keadaan di lapangan. Jika tiada syarat yang berkenaan atau anda belum pasti, anda boleh menyatakannya seadanya."
   }

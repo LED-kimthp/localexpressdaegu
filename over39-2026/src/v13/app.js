@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20260930-r95";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260930-r95";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260930-r95";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260930-r95";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260930-r95";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260930-r95";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260930-r95";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20260930-r95";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260930-r95";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260930-r95";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260930-r95";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260930-r95";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260930-r95";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260930-r95";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260930-r95";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260930-r95";
-import { completionCopy } from "./completion-i18n.js?v=v7-20260930-r95";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260930-r95";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260930-r95";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260930-r95";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260930-r95";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260930-r95";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260930-r95";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260930-r95";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260930-r95";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260930-r95";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20260930-r96";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20260930-r96";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20260930-r96";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20260930-r96";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20260930-r96";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20260930-r96";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20260930-r96";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20260930-r96";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20260930-r96";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260930-r96";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20260930-r96";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260930-r96";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20260930-r96";
+import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20260930-r96";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20260930-r96";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20260930-r96";
+import { completionCopy } from "./completion-i18n.js?v=v7-20260930-r96";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20260930-r96";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20260930-r96";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20260930-r96";
+import { task7Copy } from "./task7-i18n.js?v=v7-20260930-r96";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20260930-r96";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20260930-r96";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20260930-r96";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20260930-r96";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20260930-r96";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "df5367d3c941 2026-09-30T02:54:17.034Z";
+const buildStamp = "f4b8f7939b60 2026-09-30T07:36:00.889Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -2999,7 +2999,7 @@ function header() {
   const projectMeta = isRc2 ? greetingFirst().projectMeta : "PUBLIC MEMORY RESEARCH · RC1";
   const currentLanguage = languages.find(([code]) => code === state.language)?.[1] || "한국어";
   return `<header class="topbar" aria-label="Site header">
-    <div class="brand project-brand"><span class="brand-mark" aria-hidden="true">39+</span><span>〈만 39세 이상〉</span></div>
+    <div class="brand project-brand"><span class="brand-mark" aria-hidden="true">39+</span><span>${esc(isRc2 ? greetingFirst().projectName || "〈만 39세 이상〉" : "〈만 39세 이상〉")}</span></div>
     <div class="topbar-project"><span>${esc(projectMeta)}</span><strong>RESEARCH</strong></div>
     <details class="language-menu">
       <summary aria-label="${esc(t("언어 선택"))}"><span>${esc(currentLanguage)}</span><i aria-hidden="true">⌄</i></summary>
@@ -3540,7 +3540,7 @@ function renderIntro() {
       <section class="rc2-intro-main">
         <div class="intro-hero">
           <div class="archive-label">${esc(local.introEyebrow)}</div>
-          <h1 tabindex="-1"><span class="intro-title-lead">${esc(local.introTitleLead)}</span><span class="intro-title-main">${esc(local.introTitleMain)}</span></h1>
+          <h1 tabindex="-1"><span class="intro-title-lead">${esc(local.introTitleLead)}</span> <span class="intro-title-main">${esc(local.introTitleMain)}</span></h1>
           <!-- 2026-09-20: 표제·두 물음·「똑똑똑」 부름·프로젝트 문장·초대는 이생강 님(총괄기획)의 원고를 그대로 쓴다
                (수정0916 슬라이드 2, TK 「저대로」 승인). 제도 사실 한 문장(만 39세)은 프로젝트 문장 앞에 남기고,
                먼저 도착하는 안부·예순네 자리·질문 수 문단은 원고 아래로 내려갔다 — TK 9/11·9/15 의 순서 결정은 그대로다. -->

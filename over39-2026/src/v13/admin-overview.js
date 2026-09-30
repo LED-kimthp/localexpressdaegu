@@ -13,6 +13,7 @@ const startedAt = (session) => Date.parse(text(session?.first_seen_at || session
 export const OVERVIEW_RANGES = Object.freeze({ all: "전체", "30d": "30일", "7d": "7일" });
 const RANGE_DAYS = { "30d": 30, "7d": 7 };
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
+export const CALENDAR_WEEKS = 53;
 
 export function hourLabel(hour) {
   if (!Number.isFinite(hour)) return "";
@@ -69,25 +70,30 @@ export function overviewSummary(sessions = [], people = new Map(), { sample = "r
     document: count((row) => row.person?.hasDocument),
   };
 
-  // 칸 그림: 월요일에서 시작하는 주를 세로줄로, 요일을 가로줄로. 기간의 첫날이 든 주부터 오늘이 든 주까지.
+  // 칸 그림: 사용량 화면처럼 최근 53주(1년)를 가로로 깐다(TK 2026-09-30 「가로로 길게」). 주 = 세로줄(월~일), 오늘이 든 주가 맨 오른쪽.
+  // 기간의 첫날(전체면 첫 참여일) 앞은 옅은 칸, 오늘 뒤는 빈자리. 자료가 몇 주뿐이어도 판은 늘 같은 폭이다.
   const first = from || [...perDay.keys()].sort()[0] || today;
-  const firstTime = Date.parse(`${first}T00:00:00Z`);
-  const mondayOffset = (new Date(firstTime).getUTCDay() + 6) % 7;
-  const start = firstTime - mondayOffset * DAY;
   const end = Date.parse(`${today}T00:00:00Z`);
+  const thisMonday = end - ((new Date(end).getUTCDay() + 6) % 7) * DAY;
+  const start = thisMonday - (CALENDAR_WEEKS - 1) * 7 * DAY;
   const max = Math.max(0, ...perDay.values());
   // 한 가지 색의 진하기 네 단계. 가장 많은 날을 4로 두고 나머지를 나눈다 — 0 은 빈 칸.
   const level = (value) => (!value ? 0 : max <= 1 ? 4 : Math.min(4, Math.max(1, Math.ceil((value / max) * 4))));
   const weeks = [];
+  let lastMonth = "";
   for (let weekStart = start; weekStart <= end; weekStart += 7 * DAY) {
     const cells = [];
     for (let offset = 0; offset < 7; offset += 1) {
-      const time = weekStart + offset * DAY;
-      const date = new Date(time).toISOString().slice(0, 10);
-      const outside = date < first || date > today;
+      const date = new Date(weekStart + offset * DAY).toISOString().slice(0, 10);
+      const future = date > today;
+      const outside = future || date < first;
       const value = outside ? 0 : perDay.get(date) || 0;
-      cells.push({ date, value, level: outside ? -1 : level(value) });
+      cells.push({ date, value, level: outside ? -1 : level(value), ...(future ? { future: true } : {}) });
     }
+    // 달 이름은 그 달의 첫 월요일이 든 주 위에.
+    const month = cells[0].date.slice(0, 7);
+    cells.month = month !== lastMonth && weeks.length ? `${Number(month.slice(5))}월` : "";
+    lastMonth = month;
     weeks.push(cells);
   }
   const busiest = [...perDay.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0] || null;

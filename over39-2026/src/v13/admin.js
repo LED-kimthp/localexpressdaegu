@@ -1,9 +1,9 @@
-import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260930-r95";
-import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260930-r95";
-import { OVERVIEW_RANGES, dayLabel, hourLabel, overviewSummary } from "./admin-overview.js?v=v7-20260930-r95";
-import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r95";
-import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260930-r95";
-import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260930-r95";
+import { OPERATIONS, OPERATION_LABEL, POLISH_LABEL, aiHealthSummary, sampleTypeIndex } from "./ai-health.js?v=v7-20260930-r96";
+import { DEV_TEST_LEDGER_PLACE, devTestSummary, koreaTime } from "./admin-dev-tests.js?v=v7-20260930-r96";
+import { OVERVIEW_RANGES, dayLabel, hourLabel, overviewSummary } from "./admin-overview.js?v=v7-20260930-r96";
+import { buildRecordBundle, collectSnapshots, recordBundleFilename, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r96";
+import { CODED_QUESTIONS, CONTEXT_PROVENANCE_SELECT, LABELS, NARRATIVE_QUESTION_IDS, PROFILE_FIELDS, READABILITY_COPY, RESEARCH_FRAME_COPY, narrativeLengths, researchInsights } from "./research-insights.js?v=v7-20260930-r96";
+import { ADMIN_SAMPLE_ORDER, EMPTY_LIST_CRITERIA, FINAL_DOCUMENT_SELECT, GREETING_FILTERS, finalDocumentsPrintHtml, pickFinalDocuments, GREETING_INDEX_SELECT, greetingCounts, LIST_CHECKS, LIST_SORTS, PERSON_SNAPSHOT_SELECT, PLACE_LABEL, activeCriteriaCount, adminSampleLabel, buildPeopleIndex, buildPersonSheet, filterSessions, languageLabel, listFacets, personLabelText, personRecordPrintHtml, renderPersonSheet, responseDocumentPrintHtml, routeLabel, sessionStatusLabel, shortId } from "./admin-person.js?v=v7-20260930-r96";
 
 const root = document.querySelector("#admin-root");
 const supabaseUrl = String(window.OVER39_SUPABASE_URL || "").replace(/\/$/, "");
@@ -743,8 +743,9 @@ function renderOverview() {
   // 타일은 뜻에 따라 세 묶음. 묶음마다 줄을 꽉 채워 어느 폭에서도 양쪽 끝이 맞는다(TK: 휴대폰에서 하나가 혼자 남았다).
   const group = (title, columns, tiles) => `<div class="overview-group"><h3>${esc(title)}</h3><div class="overview-tiles cols-${columns}">${tiles.join("")}</div></div>`;
   const ranges = Object.entries(OVERVIEW_RANGES).map(([value, label]) => `<button type="button" data-overview-range="${esc(value)}" class="${state.overviewRange === value ? "active" : ""}" aria-pressed="${state.overviewRange === value}">${esc(label)}</button>`).join("");
-  const cells = summary.weeks.map((week) => `<div class="overview-week">${week.map((cell) => cell.level < 0
-    ? `<i class="overview-cell is-outside" aria-hidden="true"></i>`
+  // 칸 그림은 한 장의 격자: 첫 세로줄은 요일, 그다음부터 주마다 한 줄(맨 위는 달 이름). 칸 크기는 폭을 따라간다.
+  const cells = summary.weeks.map((week) => `<div class="overview-week"><span class="overview-month">${esc(week.month || "")}</span>${week.map((cell) => cell.level < 0
+    ? `<i class="overview-cell ${cell.future ? "is-future" : "is-outside"}" aria-hidden="true"></i>`
     : `<i class="overview-cell level-${cell.level}" data-overview-day="${esc(cell.date)}" data-overview-value="${cell.value}" title="${esc(`${dayLabel(cell.date)} · ${cell.value}명`)}" aria-label="${esc(`${dayLabel(cell.date)} ${cell.value}명`)}"></i>`).join("")}</div>`).join("");
   const readout = summary.busiest ? `가장 많은 날: ${dayLabel(summary.busiest.date)} · ${summary.busiest.value}명` : "이 기간에 참여를 시작한 사람이 없어요.";
   return `<section class="detail-section overview">
@@ -764,9 +765,8 @@ function renderOverview() {
       tile("제안문 받음", koNum(t.offer)),
       tile("최종 PDF", koNum(t.document)),
     ])}
-    <div class="overview-calendar">
-      <div class="overview-weekdays" aria-hidden="true">${summary.weekdays.map((day, index) => `<span>${index % 2 === 0 ? esc(day) : ""}</span>`).join("")}</div>
-      <div class="overview-grid" role="img" aria-label="${esc(`${summary.from} ~ ${summary.to} 날마다 참여를 시작한 사람 수`)}">${cells}</div>
+    <div class="overview-calendar" role="img" aria-label="${esc(`${summary.from} ~ ${summary.to} 날마다 참여를 시작한 사람 수`)}">
+      <div class="overview-weekdays" aria-hidden="true"><span></span>${summary.weekdays.map((day, index) => `<span>${index % 2 === 0 ? esc(day) : ""}</span>`).join("")}</div>${cells}
     </div>
     <div class="overview-legend"><p class="overview-readout" role="status">${esc(readout)}</p><span aria-hidden="true">적음 <i class="overview-cell level-1"></i><i class="overview-cell level-2"></i><i class="overview-cell level-3"></i><i class="overview-cell level-4"></i> 많음</span></div>
     <details class="ai-health-detail"><summary>날짜별로 보기</summary>
