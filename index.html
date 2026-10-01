@@ -775,6 +775,15 @@ a, p, h1, h2, h3, h4, div, span, small, strong {
   .nav{gap:10px 14px;flex-wrap:wrap}
   .nav a{display:inline-block;padding:7px 3px}
 }
+/* v23 고정 헤더가 가리는 이동 위치
+   헤더는 position:sticky 라서 메뉴·버튼으로 섹션에 이동하면 제목이 헤더 뒤에 깔렸다.
+   헤더 높이는 폭에 따라 66 / 96 / 133px 로 달라지고 (메뉴가 두 줄로 꺾이면 133),
+   휴대폰에서는 달성공원·신장동·Letter·Contact 의 제목이 모두 가려졌다.
+   높이를 CSS 로는 알 수 없어 아래쪽 스크립트가 잰 값(--header-h)을 쓴다.
+   스크립트가 돌기 전에도 가려지지 않게 기본값은 폭별로 넉넉히 둔다. */
+html{scroll-padding-top:var(--header-h,72px)}
+@media(max-width:820px){html{scroll-padding-top:var(--header-h,140px)}}
+
 /* v22 달성공원 — 열려 있는 기록면
    나머지 다섯은 끝난 프로젝트라 제목·이미지·한 문단이면 충분했다. 달성공원만
    2017년부터 닫히지 않았는데 판이 같아서 같은 무게로 읽혔다. 겹쳐 있는 시간과
@@ -1062,6 +1071,16 @@ document.addEventListener('click',e=>{
       window.location.href='mailto:'+email;
     });
   });
+})();
+</script>
+<script>
+/* 고정 헤더 높이를 CSS 변수로 알린다 — 이동한 섹션의 제목이 헤더 뒤에 가려지지 않게 (v23). */
+(function(){
+  var h=document.querySelector('.top'); if(!h) return;
+  var r=document.documentElement;
+  function set(){ r.style.setProperty('--header-h', h.offsetHeight+'px'); }
+  set();
+  if(window.ResizeObserver) new ResizeObserver(set).observe(h); else addEventListener('resize', set);
 })();
 </script>
 </body></html>
