@@ -9,9 +9,9 @@
 // 이 파일은 자료를 받아 조립하고 HTML 문자열을 돌려주기만 한다. 요청도 DOM 도 없다.
 // 불러오는 일은 admin.js 의 api()(관리자 토큰, RLS)만 한다.
 
-import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20260930-r97";
-import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20260930-r97";
-import { LABELS } from "./research-insights.js?v=v7-20260930-r97";
+import { buildRecord, buildRecordBundle, collectSnapshots, polishChosenText, polishForValue, renderRecordBundleHtml } from "./record-export.js?v=v7-20261001-r98";
+import { renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261001-r98";
+import { LABELS } from "./research-insights.js?v=v7-20261001-r98";
 
 const text = (value) => String(value ?? "").trim();
 const array = (value) => (Array.isArray(value) ? value : value === null || value === undefined || value === "" ? [] : [value]);
@@ -164,7 +164,7 @@ export const PLACE_LABEL = Object.freeze({ domestic: "국내", abroad: "해외",
 
 // 표기 방식. 익명을 고른 사람과 이름·별명을 남긴 사람을 가른다.
 export const DISPLAY_MODE_LABEL = Object.freeze({ ANONYMOUS: "익명", NAME: "이름", NICKNAME: "별명", INITIAL: "이니셜" });
-export const LANGUAGE_LABEL = Object.freeze({ ko: "한국어", en: "영어", ja: "일본어", "zh-Hans": "중국어 간체", "zh-Hant": "중국어 번체", nl: "네덜란드어", es: "스페인어", fr: "프랑스어", ms: "말레이어" });
+export const LANGUAGE_LABEL = Object.freeze({ ko: "한국어", en: "영어", ja: "일본어", "zh-Hans": "중국어 간체", "zh-Hant": "중국어 번체(대만)", "zh-Hant-HK": "중국어 번체(홍콩)", nl: "네덜란드어", es: "스페인어", fr: "프랑스어", ms: "말레이어" });
 export const languageLabel = (code) => LANGUAGE_LABEL[text(code)] || text(code) || "미기록";
 
 /**

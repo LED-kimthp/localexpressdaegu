@@ -1,3 +1,4 @@
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 // Direct copy for RC2 screens that compose participant-facing sentences at
 // runtime. These strings cannot safely rely on a Korean source-key lookup,
 // because the surrounding sentence is assembled with contextual values.
@@ -987,3 +988,6 @@ const revisedPhrases = {
 export function rc2UiPhrase(language = "ko", source = "") {
   return revisedPhrases[language]?.[source] || phrases[language]?.[source] || null;
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+[copy, phrases, revisedPhrases].forEach(withHongKong);

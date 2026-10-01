@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20260930-r97";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20260930-r97";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20260930-r97";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20261001-r98";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20261001-r98";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20261001-r98";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1091,7 +1091,8 @@ export function hasForeignWordsAdaptiveSummary(summary, context = {}) {
 // 그렇게 들어온다.
 export function hasWrongChineseScriptAdaptiveSummary(summary, context = {}) {
   const language = String(context.response_language || "");
-  const wrong = language === "zh-Hant" ? SIMPLIFIED_ONLY : language === "zh-Hans" ? TRADITIONAL_ONLY : null;
+  // 홍콩판(zh-Hant-HK)도 번체다(2026-10-01).
+  const wrong = language === "zh-Hant" || language === "zh-Hant-HK" ? SIMPLIFIED_ONLY : language === "zh-Hans" ? TRADITIONAL_ONLY : null;
   if (!wrong) return false;
   const source = participantSourceText(context);
   return [...String(summary || "")].some((character) => wrong.has(character) && !source.includes(character));
@@ -1340,11 +1341,14 @@ const languageTag = (value) => {
   return rest.length ? `${base.toLowerCase()}-${rest.join("-")}` : base.toLowerCase();
 };
 
+const chineseScriptOf = (tag) => (/hant|-tw\b|-hk\b|-mo\b/i.test(tag) || tag === "zh" ? "Hant" : "Hans");
+
 export function greetingTranslationNeeded(originalLanguage, readerLanguage) {
   const from = languageTag(originalLanguage);
   const to = languageTag(readerLanguage);
   if (!from || !to || from === to) return false;
-  if (languageBase(from) === "zh" && languageBase(to) === "zh") return true;
+  // 대만판과 홍콩판은 같은 번체다 — 옮기면 같은 글이 두 번 나온다(2026-10-01).
+  if (languageBase(from) === "zh" && languageBase(to) === "zh") return chineseScriptOf(from) !== chineseScriptOf(to);
   return languageBase(from) !== languageBase(to);
 }
 

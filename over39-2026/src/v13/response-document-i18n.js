@@ -1,3 +1,4 @@
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 // Participant-facing frames for the participation record. Free-text answers
 // remain in the language the participant used; these frames never turn them
 // into a Korean administrative document.
@@ -374,3 +375,6 @@ frames.ms = {
 export function responseDocumentFrame(language = "ko") {
   return frames[language] || frames.en;
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+[frames].forEach(withHongKong);

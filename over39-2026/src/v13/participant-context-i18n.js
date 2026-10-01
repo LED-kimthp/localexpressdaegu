@@ -1,3 +1,4 @@
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 // Direct participant-facing copy for the additive cultural-arts context.
 // IDs remain stable in participant-context.js; this table never changes R01–R20.
 const base = {
@@ -250,3 +251,7 @@ for (const [language, groups] of Object.entries(contextualLanguage)) {
 export function participantContextualCopy(language = "ko", kind = "PROFESSIONAL") {
   return contextualCopy[language]?.[kind] || contextualCopy.en[kind] || contextualCopy.ko.PROFESSIONAL;
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+// contextualCopy 는 위 반복문이 contextualLanguage 에서 이미 만들었으므로 그쪽에 붙인다.
+[base, labels, activityScreenCopy, dContextHintCopy, contextualCopy].forEach(withHongKong);

@@ -1,24 +1,24 @@
 // 안부 글을 보여 주는 두 자리 — 설문 안의 도착 화면(app.js)과 메일 링크의 편지함(relay.js) —
 // 가 같이 쓰는 것. 한쪽에만 고치면 두 화면이 다르게 보인다(2026-09-23 편지함에 번역을 붙이며 뺌).
 
-// 브라우저가 알려주는 말(ko-KR · zh-SG · ja-JP)을 우리가 내놓는 아홉 개 중 하나로 좁힌다.
+// 브라우저가 알려주는 말(ko-KR · zh-SG · ja-JP)을 우리가 내놓는 열 개 중 하나로 좁힌다(2026-10-01 홍콩판으로 열).
 // 설문 화면(app.js)은 이 일을 하는데 편지함(relay.js)은 하지 않아, 「ko-KR 로 옮기되 한국어를
 // 쓰지 말라」는 앞뒤가 맞지 않는 지시가 나가고 한국 사람에게 영어 안내가 보였다(2026-09-23 검증).
-export const OFFERED_LANGUAGE_CODES = Object.freeze(["ko", "en", "ja", "zh-Hans", "zh-Hant", "nl", "es", "fr", "ms"]);
+export const OFFERED_LANGUAGE_CODES = Object.freeze(["ko", "en", "ja", "zh-Hans", "zh-Hant", "zh-Hant-HK", "nl", "es", "fr", "ms"]);
 export function narrowLanguage(value) {
   const tag = String(value || "").trim().toLowerCase();
   if (!tag) return "";
   if (tag.startsWith("ko")) return "ko";
   if (tag.startsWith("ja")) return "ja";
-  // 홍콩·대만·마카오와 「번체」 표기는 번체로, 나머지 중국어는 간체로 연다.
-  if (tag.startsWith("zh")) return /hant|-tw|-hk|-mo/u.test(tag) ? "zh-Hant" : "zh-Hans";
+  // 홍콩·마카오는 홍콩판(2026-10-01), 대만과 그 밖의 「번체」 표기는 번체로, 나머지 중국어는 간체로 연다.
+  if (tag.startsWith("zh")) return /-hk\b|-mo\b/u.test(tag) ? "zh-Hant-HK" : /hant|-tw/u.test(tag) ? "zh-Hant" : "zh-Hans";
   for (const code of ["en", "nl", "es", "fr", "ms"]) if (tag.startsWith(code)) return code;
   return "";
 }
 
 // 사람이 읽는 언어 이름. 「원문 · Français」처럼 쓴다. 코드(zh-Hant)를 그대로 보이지 않는다.
 export const LANGUAGE_LABELS = Object.freeze({
-  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文",
+  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文（台灣）", "zh-Hant-HK": "繁體中文（香港）",
   nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
 });
 export const languageLabel = (code) => LANGUAGE_LABELS[String(code || "")] || String(code || "");

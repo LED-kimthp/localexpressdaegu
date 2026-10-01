@@ -1,4 +1,5 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20260930-r97";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20261001-r98";
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.3-2026-09-28";
@@ -781,3 +782,6 @@ export function verifyDomQuestion(turn, domText) {
   const renderedQuestion = rendered.startsWith("한 걸음 더 — ") ? rendered.slice("한 걸음 더 — ".length) : rendered;
   return Boolean(serverText && renderedQuestion && serverText === renderedQuestion);
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+[FALLBACKS].forEach(withHongKong);

@@ -1,3 +1,4 @@
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 // Completion is a participant-facing service screen. Keep it separate from
 // the response-document frame so a record can remain in its source language
 // while this surrounding interface follows the selected interface language.
@@ -70,3 +71,6 @@ const copy = {
 export function completionCopy(language = "ko") {
   return copy[language] || copy.en;
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+[copy].forEach(withHongKong);

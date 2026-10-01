@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20260930-r97";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261001-r98";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20260930-r97";
-import { normalizedDScope } from "./flow.js?v=v7-20260930-r97";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261001-r98";
+import { normalizedDScope } from "./flow.js?v=v7-20261001-r98";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20260930-r97";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20260930-r97";
-import { task7Copy } from "./task7-i18n.js?v=v7-20260930-r97";
+import { translate } from "./i18n.js?v=v7-20261001-r98";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20261001-r98";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261001-r98";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -142,7 +142,7 @@ const SUPPORT_LABELS = {
 };
 
 const LANGUAGE_LABELS = {
-  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文",
+  ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文（台灣）", "zh-Hant-HK": "繁體中文（香港）",
   nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
 };
 
@@ -348,7 +348,7 @@ function dateLabel(value, language = "ko") {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return clean(value) || "—";
-  const locale = { ko: "ko-KR", en: "en-GB", ja: "ja-JP", "zh-Hans": "zh-CN", "zh-Hant": "zh-TW", fr: "fr-FR", es: "es-ES", nl: "nl-NL", ms: "ms-MY" }[language] || "en-GB";
+  const locale = { ko: "ko-KR", en: "en-GB", ja: "ja-JP", "zh-Hans": "zh-CN", "zh-Hant": "zh-TW", "zh-Hant-HK": "zh-HK", fr: "fr-FR", es: "es-ES", nl: "nl-NL", ms: "ms-MY" }[language] || "en-GB";
   return new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 

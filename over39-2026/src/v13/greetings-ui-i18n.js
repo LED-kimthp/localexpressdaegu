@@ -1,3 +1,4 @@
+import { withHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 // Participant-facing copy for the Coordinates of Greeting writing flow.
 // Internal table/API names deliberately remain independent from this wording.
 const copy = {
@@ -85,3 +86,6 @@ export function greetingUiCopy(language = "ko") {
     travel: [selected.travel[0], selected.travel[1], task10a4.shortlist, receiptFirstTravel[language] || receiptFirstTravel.en],
   };
 }
+
+// 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
+[copy, receiptFirstTravel, receiptFirstNotification, task10a4UxCopy].forEach(withHongKong);

@@ -1,5 +1,6 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20260930-r97";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20260930-r97";
+import { extraCopy } from "./i18n-v038.js?v=v7-20261001-r98";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261001-r98";
+import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261001-r98";
 
 const copy = {
   en: {
@@ -351,3 +352,7 @@ const applyZhHansResidual = (value) => {
 };
 questions["zh-Hans"] = applyZhHansResidual(questions["zh-Hans"]);
 copy["zh-Hans"] = applyZhHansResidual(copy["zh-Hans"]);
+
+// 홍콩판은 번체 사전이 모두 모인 뒤에 만든다(2026-10-01, hong-kong.js). 「您」→「你」와 홍콩 낱말만 바뀐다.
+copy[HONG_KONG] = toHongKong(copy["zh-Hant"]);
+questions[HONG_KONG] = toHongKong(questions["zh-Hant"]);
