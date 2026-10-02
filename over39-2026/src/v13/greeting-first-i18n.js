@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r99";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
 // Greeting-first landing and opening flow. Korean is the semantic source;
 // every locale keeps the same four-part journey without adding a matching or
 // system explanation before the participant reads the greeting.

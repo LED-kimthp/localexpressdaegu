@@ -1,5 +1,5 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20261002-r99";
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r99";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20261002-r100";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.3-2026-09-28";

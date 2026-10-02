@@ -1,7 +1,7 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261002-r99";
-import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261002-r99";
-import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261002-r99";
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r99";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261002-r100";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261002-r100";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261002-r100";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -21,6 +21,9 @@ const interfaceLanguageCode = [relayQuery.get("lang"), storedRelayLanguage(), ..
 // 이 페이지의 html 은 늘 lang="ko" 였다. 일본어·중국어로 보여도 한국어로 적혀 있어서, 말마다
 // 다르게 줄을 바꾸는 규칙(:lang)이 듣지 않았고 화면 낭독기는 일본어를 한국어로 읽었다.
 document.documentElement.lang = interfaceLanguageCode || "ko";
+// 탭 제목도 그 말로(2026-10-02 휴대폰 통과). 모든 언어에서 한국어 옛 이름 「안부의 좌표」가 떠 있었다 —
+// 화면 맨 위 이름표와 같은 말을 쓴다.
+document.title = greetingSimplificationCopy(interfaceLanguageCode).projectLabel || document.title;
 const text = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 
 const copy = {

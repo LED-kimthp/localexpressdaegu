@@ -39,6 +39,7 @@ export function createParticipantReference({ randomValues } = {}) {
 }
 
 export function publicParticipantReference(reference = {}) {
+  reference = reference || {};
   return {
     code: String(reference.code || "").trim() || null,
     access_model: "opaque_token_required",

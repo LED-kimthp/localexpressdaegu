@@ -7159,6 +7159,8 @@ input[type="checkbox"] { width: 20px; height: 20px; }
 .consent-details > summary { padding: 18px 0; cursor: pointer; font-weight: 730; line-height: 1.45; }
 .consent-details[open] > summary { border-bottom: 1px solid var(--line); }
 .consent-details-body { padding: 4px 0 18px; }
+/* 철회 주소는 휴대폰에서 170×15 로 손가락 끝보다 작았다(2026-10-02). 줄 높이는 그대로 두고 누르는 자리만 위아래로 넓힌다. */
+.consent-contact-link { display: inline-block; padding: 14px 0; margin: -14px 0; }
 @media (max-width: 640px) {
   .context-more-optional > summary { min-width: 0; }
   .context-more-optional > summary span { overflow-wrap: anywhere; }
