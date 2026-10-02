@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r102";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r103";
 // Task 10A greeting simplification. Korean is the semantic source; each
 // participant-facing locale keeps the same receive-first, next-person meaning.
 const copy = {
@@ -128,23 +128,23 @@ const copy = {
     exampleText: "我是在大邱畫了很多年畫的人。\n最近，創作的時間比以前少了一些。\n不過，只要坐進工作室，我就覺得自己又回到了原來的位置。\n有時我也會猶豫要不要繼續。\n想必讀到這段話的人，也有屬於自己的時間。\n希望您今天能稍微輕鬆一些。",
   },
   fr: {
-    featureName: "Salutation",
-    projectLabel: "〈39 ans et plus〉 · Salutation",
-    entryTitle: "Souhaitez-vous découvrir cette salutation ?",
+    featureName: "Message",
+    projectLabel: "〈39 ans et plus〉 · Message",
+    entryTitle: "Souhaitez-vous découvrir ce message ?",
     entryDescription: "Une personne passée ici avant vous a laissé un message.",
-    entryPrimary: "Découvrir la salutation",
+    entryPrimary: "Découvrir le message",
     entrySecondary: "Je termine ici cette fois",
     entrySavedNote: "Vos réponses et votre récit de participation restent enregistrés même si vous ne prenez pas part aux messages.",
     gateOff: "Les messages ne sont pas encore ouverts au partage. Vos réponses et votre récit de participation restent enregistrés.",
-    receivedTitle: "Une salutation est arrivée.",
+    receivedTitle: "Un message est arrivé.",
     receivedHelp: "Cette phrase a été laissée par une personne passée ici avant vous. Prenez le temps de la lire.",
     arrivalOriginalLabel: "Original · {language}",
     arrivalTranslationNote: "Le texte ci-dessus est une traduction. Ci-dessous se trouve l’original.",
     arrivalTranslationLoading: "Nous le transposons dans une langue que vous pouvez lire.",
     arrivalTranslationFailed: "La traduction n’a pas pu être obtenue pour l’instant. L’original est laissé tel quel.",
     arrivalTranslationRetry: "Réessayer la traduction",
-    continuationTitle: "Après avoir lu cette salutation, comment souhaitez-vous poursuivre ?",
-    continuationPrimary: "Laisser une salutation à la personne suivante",
+    continuationTitle: "Après avoir lu ce message, comment souhaitez-vous poursuivre ?",
+    continuationPrimary: "Laisser un message à la personne suivante",
     continuationSecondary: "Terminer ici",
     continuationHelp: "Vous pouvez aussi terminer votre participation d’aujourd’hui en lisant simplement ce message.",
     writingTitle: "Quel message souhaitez-vous laisser à la personne suivante ?",
