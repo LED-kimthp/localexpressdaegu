@@ -1,6 +1,6 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20261002-r100";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261002-r100";
-import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261002-r100";
+import { extraCopy } from "./i18n-v038.js?v=v7-20261002-r101";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261002-r101";
+import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261002-r101";
 
 const copy = {
   en: {
@@ -53,10 +53,10 @@ const copy = {
     "현재 답변의 중심이 되는 역할을 선택해 주세요.": "Choose the role that is central to this response.",
     "겸하는 역할이 없으면 ‘없음’을 선택해 주세요.": "If you do not hold another role alongside this one, choose “None.”",
     "활동의 시간과 현재 상태를 알려주세요.": "Tell us about the duration and current state of your involvement.",
-    "지금의 생활과 활동 범위를 알려주세요.": "Tell us about where you live and work now.",
+    "지금의 생활과 활동 범위를 알려주세요.": "Tell us about where you live and are active now.",
     "원하지 않는 항목은 건너뛸 수 있습니다.": "You may skip anything you prefer not to answer.",
     "현재 머무는 나라 (선택)": "Country where you live now (optional)",
-    "오늘 가장 먼저 떠오르는 것은 무엇인가요?": "What comes to mind first about arts and culture today?",
+    "오늘 가장 먼저 떠오르는 것은 무엇인가요?": "What comes to mind first about arts and culture today? It is fine if you do not know the exact name.",
     "이름이나 연도가 선명하지 않아도 괜찮습니다. 남아 있는 장면 하나에서, 이야기를 천천히 시작해 주세요.": "Names and dates do not need to be exact. Let us begin gently with one remaining scene.",
     "이전": "Back",
     "다음": "Next",
@@ -117,7 +117,7 @@ const copy = {
     "이 기기에 임시 저장됨": "この端末に一時保存済み",
     "최대 800자": "800文字まで", "최대 {n}자": "{n}文字まで",
     "짧게 적어도 괜찮습니다.": "短く書いても大丈夫です。",
-    "기타 내용을 짧게 적어주세요.": "補足を短く入力してください。",
+    "기타 내용을 짧게 적어주세요.": "その他の内容を短く書いてください。",
     "없음": "なし",
     "기타": "その他",
     "해당 없음": "該当なし",
@@ -234,7 +234,7 @@ const simplifyChinese = (value) => {
       .replaceAll("繼", "继").replaceAll("歸", "归").replaceAll("納", "纳").replaceAll("圖", "图")
       .replaceAll("徑", "径").replaceAll("懸", "悬").replaceAll("掛", "挂").replaceAll("製", "制")
       .replaceAll("彈", "弹").replaceAll("臺", "台").replaceAll("灣", "湾").replaceAll("來", "来")
-      .replaceAll("著", "着").replaceAll("辦", "办").replaceAll("舉", "举").replaceAll("脈", "脉")
+      .replaceAll(/著(?!作|名)/g, "着").replaceAll("辦", "办").replaceAll("舉", "举").replaceAll("脈", "脉")
       .replaceAll("載", "载").replaceAll("擔", "担").replaceAll("農", "农").replaceAll("詳", "详")
       .replaceAll("類", "类").replaceAll("橫", "横").replaceAll("徵", "征").replaceAll("刪", "删")
       .replaceAll("錢", "钱").replaceAll("產", "产").replaceAll("維", "维").replaceAll("爭", "争")
@@ -278,12 +278,12 @@ const questions = {
     P08: { text: "Please choose your age group." },
     P09: { text: "Please tell us the country and city where you mostly live now." },
     P10: { text_professional: "Please tell us the country and city where you mainly work.", text_audience: "Please tell us the country and city where you most often encounter arts and culture." },
-    M01: { text: "What comes to mind first about arts and culture today?", }
+    M01: { text: "What comes to mind first about arts and culture today? It is fine if you do not know the exact name.", }
   },
   ja: {
-    P01: { text: "今回は、どの立場から話を始めたいですか？", },
+    P01: { text: "今日はどこから話を始めましょうか？", },
     P01_CONTEXT: { text: "この記憶を、主にどの立場から語っていますか？", },
-    P02G: { text: "今回の回答に最も近い大きな役割を選んでください。", },
+    P02G: { text: "今回の回答に最も近い役割の大きな区分を選んでください。", },
     P02: { text: "その中で、今回の回答に最も近い主な役割を選んでください。" },
     P03: { text: "この役割と並行している別の役割はありますか？" },
     P05: { text_professional: "今お話しいただいた文化芸術の活動を始めてから、どのくらい経ちましたか？", text_audience: "自分から文化芸術を探したり、展覧会やプログラムに参加したりするようになってから、どのくらい経ちましたか？" },
@@ -298,8 +298,8 @@ const questions = {
   zh: {
     P01: { text: "這次您想從哪一個位置開始談起？", },
     P01_CONTEXT: { text: "您主要從什麼位置談這段記憶？", },
-    P02G: { text: "請選擇最接近這次回覆的大類角色。", },
-    P02: { text: "請在這個類別中選擇最接近這次回覆的主要角色。" },
+    P02G: { text: "請選擇最接近這次回答的大類角色。", },
+    P02: { text: "請在這個類別中選擇最接近這次回答的主要角色。" },
     P03: { text: "您是否同時承擔其他角色？" },
     P05: { text_professional: "您剛才說的這項文化藝術活動，開始到現在有多久了？", text_audience: "您開始主動接觸文化藝術、參與展覽和活動，到現在有多久了？" },
     P05_YEAR: { text: "若記得，請填寫開始的年份。" },

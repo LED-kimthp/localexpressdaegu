@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r101";
 // Task 10A greeting simplification. Korean is the semantic source; each
 // participant-facing locale keeps the same receive-first, next-person meaning.
 const copy = {
@@ -63,10 +63,10 @@ const copy = {
     gateOff: "あいさつのやりとりは、まだ始まっていません。調査回答と参加記録は保存されています。",
     receivedTitle: "あいさつが一通届きました。",
     receivedHelp: "ひと足先にここを通った方が残した文章です。ゆっくり読んでみてください。",
-    arrivalOriginalLabel: "原文 · {language}",
+    arrivalOriginalLabel: "原文・{language}",
     arrivalTranslationNote: "上の文章は翻訳です。下が書いた方の原文です。",
     arrivalTranslationLoading: "お読みになれる言葉に移しています。",
-    arrivalTranslationFailed: "いまは翻訳を取得できませんでした。書いた方の原文をそのまま置いています。",
+    arrivalTranslationFailed: "今回は翻訳を取得できませんでした。書いた方の原文をそのままにしています。",
     arrivalTranslationRetry: "もう一度翻訳する",
     continuationTitle: "このあいさつを読んで、このあとどうされますか？",
     continuationPrimary: "次の人へあいさつを残す",
@@ -125,7 +125,7 @@ const copy = {
     writingTitle: "您想給下一位參與者留下怎樣的問候？",
     writingHelp: "不用寫得很長。\n可以說一點現在的自己和近來的生活，\n也可以向下一位參與者說幾句話。",
     exampleLabel: "也可以這樣寫",
-    exampleText: "我是在大邱畫了很多年畫的人。\n最近，創作的時間比以前少了一些。\n不過，只要坐進工作室，我就覺得自己又回到了原來的位置。\n有時我也會猶豫要不要繼續。\n想必讀到這段話的人，也有屬於自己的時間。\n希望你今天能稍微輕鬆一些。",
+    exampleText: "我是在大邱畫了很多年畫的人。\n最近，創作的時間比以前少了一些。\n不過，只要坐進工作室，我就覺得自己又回到了原來的位置。\n有時我也會猶豫要不要繼續。\n想必讀到這段話的人，也有屬於自己的時間。\n希望您今天能稍微輕鬆一些。",
   },
   fr: {
     featureName: "Salutation",
@@ -173,7 +173,7 @@ const copy = {
     continuationSecondary: "Terminar aquí",
     continuationHelp: "Con solo leer el saludo, ya puede dar por terminada su participación de hoy.",
     writingTitle: "¿Qué saludo quiere dejar para la siguiente persona?",
-    writingHelp: "No hace falta escribir mucho.\nPuede contarnos un poco de quién es usted ahora y de cómo son estos días,\ny dirigir unas palabras a la siguiente persona.",
+    writingHelp: "No hace falta escribir mucho.\nPuede contar un poco quién es usted ahora y cómo son estos días,\ny dirigir unas palabras a la siguiente persona.",
     exampleLabel: "También puede escribir algo así",
     exampleText: "Llevo muchos años pintando en Daegu.\nÚltimamente le dedico algo menos de tiempo a mi trabajo que antes.\nAun así, cuando me pongo a trabajar en el estudio, siento que he vuelto a mi sitio.\nA veces me pregunto si debería seguir.\nImagino que quien lea esto también tendrá su propio recorrido.\nOjalá hoy le salga un día un poco más tranquilo.",
   },
@@ -208,14 +208,14 @@ const copy = {
     entryTitle: "Adakah anda mahu melihat salam ini?",
     entryDescription: "Seseorang yang melalui tempat ini lebih awal telah meninggalkan salam.",
     entryPrimary: "Lihat salam",
-    entrySecondary: "Saya akan tamat di sini kali ini",
+    entrySecondary: "Saya akan berhenti di sini kali ini",
     entrySavedNote: "Jawapan penyelidikan anda dan rekod penyertaan anda tetap disimpan walaupun anda tidak menyertai salam.",
     gateOff: "Pertukaran salam masih belum dibuka. Jawapan penyelidikan anda dan rekod penyertaan anda tetap disimpan.",
     receivedTitle: "Satu salam telah tiba.",
     receivedHelp: "Ayat ini ditinggalkan oleh seseorang yang pernah melalui tempat ini sebelum anda. Bacalah dengan tenang.",
     arrivalOriginalLabel: "Teks asal · {language}",
     arrivalTranslationNote: "Teks di atas ialah terjemahan. Di bawah ialah tulisan asal penulisnya.",
-    arrivalTranslationLoading: "Kami sedang memindahkannya ke bahasa yang boleh anda baca.",
+    arrivalTranslationLoading: "Kami sedang menterjemahkannya ke dalam bahasa yang boleh anda baca.",
     arrivalTranslationFailed: "Terjemahan tidak dapat diperoleh buat masa ini. Teks asal dikekalkan seadanya.",
     arrivalTranslationRetry: "Cuba terjemah semula",
     continuationTitle: "Selepas membaca salam ini, bagaimanakah anda mahu meneruskannya dari sini?",

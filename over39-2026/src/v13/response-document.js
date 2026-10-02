@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r100";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r101";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261002-r100";
-import { normalizedDScope } from "./flow.js?v=v7-20261002-r100";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261002-r101";
+import { normalizedDScope } from "./flow.js?v=v7-20261002-r101";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20261002-r100";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20261002-r100";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r100";
+import { translate } from "./i18n.js?v=v7-20261002-r101";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20261002-r101";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r101";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -901,7 +901,7 @@ export function buildResponseDocument({
   });
   const rawWords = rawParticipantWords(answers);
   const sectionTitles = english
-    ? { origin: audience ? "A remembered encounter" : "Where this record begins", present: audience ? "Arts and culture in the present" : "Current practice and arts and culture", background: "Conditions in the background", continuity: "What has continued", support: "What has supported it", needs: "Conditions for continuing" }
+    ? { origin: audience ? "A remembered encounter" : "Where this record begins", present: audience ? "Arts and culture in the present" : "Current practice and arts and culture", background: "Conditions in the background", continuity: "What continued out of view", support: "What has supported it", needs: "Conditions for continuing" }
     : { origin: audience ? "관객의 기억과 판단" : "이번 응답의 출발점", present: audience ? "현재의 관람과 문화예술의 관계" : "현재의 활동과 문화예술의 관계", background: audience ? "관람과 참여의 흐름에 함께 있던 조건" : "현재 상태가 형성된 배경", continuity: audience ? "전시장 밖에서도 이어진 관심" : "밖으로 드러나지 않아도 이어진 활동", support: audience ? "관심과 참여를 이어가게 한 조건" : "활동과 참여를 지지하는 조건", needs: "이어가기 위한 조건" };
   if (frameLanguage !== "ko" && frameLanguage !== "en") Object.assign(sectionTitles, {
     origin: audience ? frame.audienceOrigin : frame.origin,
@@ -1159,7 +1159,7 @@ export function renderResponseDocument(document = {}) {
     } else if (layer.id === "participant_confirmed_synthesis") {
       // 2026-09-21: 정리문 전체가 한 덩어리 <p> 로 나갔다. 모델이 문단을 나눠도 화면에서 뭉개져,
       // 대여섯 문장이 벽처럼 붙어 「나열처럼 보인다」(TK). 빈 줄로 나뉜 곳을 문단으로 살린다.
-      body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span>${summaryParagraphsOf(item.text).map((part) => `<p>${esc(part)}</p>`).join("")}${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
+      body = array(layer.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span>${summaryParagraphsOf(item.text).map((part) => `<p>${esc(part)}</p>`).join(" ")}${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(frame.summaryEmpty)}</p>`;
     } else {
       body = array(layer.paragraphs).map((paragraph) => (paragraph && typeof paragraph === "object"
         ? `<p><span class="response-document-title-screen">${esc(paragraph.screen)}</span><span class="response-document-title-appendix">${esc(paragraph.appendix)}</span></p>`
@@ -1249,7 +1249,7 @@ export function renderResponseDocument(document = {}) {
   const sections = array(document.sections).map((section) => {
     const body = section.id === "summary"
       ? array(section.paragraphs).map((item) => `<div class="response-document-translation"><span>${esc(item.label)}</span><p>${esc(item.text)}</p>${item.status ? `<small>${esc(item.status)}</small>` : ""}</div>`).join("") || `<p class="response-document-empty">${esc(responseDocumentFrame(document.display_language || document.source_language).summaryEmpty)}</p>`
-      : array(section.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join("");
+      : array(section.paragraphs).map((paragraph) => `<p>${esc(paragraph)}</p>`).join(" ");
     return `<section class="response-document-section response-document-section-${esc(section.id)}"><div class="response-document-section-head"><span>${esc(section.number)}</span><h3>${esc(section.title)}</h3></div><div class="response-document-section-body">${body}</div></section>`;
   }).join("");
   const metadata = array(document.metadata).map(([label, value, kind]) => `<div${kind ? ` data-metadata="${esc(kind)}"` : ""}><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("");

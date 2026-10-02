@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r101";
 // Direct copy for RC2 screens that compose participant-facing sentences at
 // runtime. These strings cannot safely rely on a Korean source-key lookup,
 // because the surrounding sentence is assembled with contextual values.
@@ -35,12 +35,12 @@ const copy = {
     m01: {
       title: "When you think of arts and culture today, what comes to mind first?",
       help: "There is a reason we begin with memory. We are looking for what remains after support ends, and its beginning is in what you remember. You do not need an exact name. You can start from a person, a work, a place, a scene, a line, a sensation, or what you are doing now.",
-      options: { ARTIST: "A person or artist", WORK_OBJECT: "A work, object, or image", SPACE: "A place", EXHIBITION: "An exhibition, performance, or event", SCENE: "A scene", PHRASE: "A phrase or story", SENSATION: "A sensation that is hard to name", PRACTICE: "My activity, practice, or a lasting attitude", NO_RECALL: "Nothing in particular comes to mind right now" },
+      options: { ARTIST: "A person or artist", WORK_OBJECT: "A work, object, or image", SPACE: "A place", EXHIBITION: "An exhibition, performance, or event", SCENE: "A scene", PHRASE: "A phrase or story", SENSATION: "A feeling that is hard to name", PRACTICE: "My activity, practice, or a lasting attitude", NO_RECALL: "Nothing in particular comes to mind right now" },
     },
     practiceHelp: { AUDIENCE: "We keep two things apart here: what you usually seek out, and how you actually go and take part.", EVERYDAY: "We keep two things apart here: how this activity carries on, and how it meets other people — in practice, gatherings, performances, and presentations.", PROFESSIONAL: "We keep two things apart here: how your main activity carries on, and how it looks from outside." },
-    transitionPlaceholder: "One scene in which activity, practice, presentation, role, livelihood, relationships, or attending changed",
-    d1Title: "Choose the condition you feel the lack of most right now.", d1Help: "There is a reason we ask about conditions. What was there to keep going, and what was missing — that is what this record will carry into policy. Thinking about this activity, you might have in mind conditions that actually make a difference, such as {hints}.",
-    d3Title: "Choose the circumstances in which that change is needed.", d3TitleNoChange: "Choose the circumstances closest to your activity now.", d3TitleNoChangeAudience: "Choose the circumstances closest to how you meet arts and culture now.", d3Help: "You can leave up to three conditions that fit where this response sits. It is fine to think of circumstances that actually made a difference, such as {hints}.",
+    transitionPlaceholder: "One scene in which activity, practice, presentation, role, livelihood, relationships, or the way you attend changed",
+    d1Title: "Choose the condition you feel is most lacking right now.", d1Help: "There is a reason we ask about conditions. What was there to keep going, and what was missing — that is what this record will carry into policy. Thinking about this activity, you might have in mind conditions that actually make a difference, such as {hints}.",
+    d3Title: "Choose the circumstances in which that change is needed.", d3TitleNoChange: "Choose the circumstances closest to your activity now.", d3TitleNoChangeAudience: "Choose the circumstances closest to how you encounter arts and culture now.", d3Help: "You can choose up to three conditions that fit where this response sits. It is fine to think of circumstances that actually made a difference, such as {hints}.",
     d4Title: "Tell us what the conditions you named have left in your activity, your memories, or your relationships.", d4HelpWithContext: "One or two sentences are enough. If any of these are really part of it, include them: {hints}.", d4HelpWithoutContext: "One or two sentences are enough. If nothing like {hints} comes to mind, you can leave this blank.",
   },
   ja: {
@@ -59,7 +59,7 @@ const copy = {
     },
     practiceHelp: { AUDIENCE: "普段どんなことに関心を向けているかと、実際の鑑賞や参加の流れを、分けて記録します。", EVERYDAY: "練習・集まり・公演・発表のように活動が続いていく流れと、他の人と出会う流れを、分けて記録します。", PROFESSIONAL: "中心となる活動が続いている状態と、それが外に現れている状態を、分けて記録します。" },
     transitionPlaceholder: "活動、練習、発表、役割、生計、関係、または鑑賞の方法で変わった一つの場面",
-    d1Title: "今、最も足りないと感じる条件を選んでください。", d1Help: "条件について尋ねるのには理由があります。続けるために何があり、何が欠けていたか — それがこの記録が政策の場へ持っていく内容です。この活動の背景では、{hints}のように実際に働いている条件を思い浮かべていただいてもかまいません。",
+    d1Title: "今、最も足りないと感じる条件を選んでください。", d1Help: "条件について尋ねるのには理由があります。続けるために何があり、何が欠けていたか。それを、この記録は政策の場へ届けます。この活動の背景では、{hints}のように実際に働いている条件を思い浮かべていただいてもかまいません。",
     d3Title: "その変化が必要になっている、暮らしの中の事情を選んでください。", d3TitleNoChange: "今の活動に近い、暮らしの中の事情を選んでください。", d3TitleNoChangeAudience: "今の文化芸術との関わり方に近い、暮らしの中の事情を選んでください。", d3Help: "この回答の位置に合う条件を、最大三つまで残せます。{hints}のように、実際に働いていた背景も思い浮かべてみてください。",
     d4Title: "ここまでに挙げていただいた条件が、活動や記憶、人との関係に残したものを聞かせてください。", d4HelpWithContext: "一、二文で十分です。{hints}の中に実際につながっている条件があれば、あわせて書いてください。", d4HelpWithoutContext: "一、二文で十分です。{hints}のように今思い浮かぶものがなければ、空欄のままでもかまいません。",
   },
@@ -119,8 +119,8 @@ const copy = {
     },
     practiceHelp: { AUDIENCE: "Nous notons à part ce que vous cherchez habituellement et la manière dont vous vous y rendez ou dont vous y prenez part.", EVERYDAY: "Nous notons à part la façon dont cette activité se poursuit et celle dont vous y rencontrez d’autres personnes : en répétant, lors de rencontres, pendant des représentations ou des présentations.", PROFESSIONAL: "Nous distinguons la continuité de l’activité principale et la manière dont elle apparaît à l’extérieur." },
     transitionPlaceholder: "Une scène où l’activité, la pratique, la présentation, le rôle, les moyens de subsistance, les relations ou la manière de participer ont changé",
-    d1Title: "Choisissez la condition qui vous semble aujourd’hui la plus absente.", d1Help: "Si nous vous interrogeons sur les conditions, c’est pour une raison. Ce qui était là pour continuer et ce qui manquait — voilà ce que ce dossier portera jusqu’aux politiques publiques. Pour cette activité, pensez à des conditions qui jouent concrètement, comme {hints}.",
-    d3Title: "Choisissez les circonstances qui rendent ce changement nécessaire.", d3TitleNoChange: "Choisissez les circonstances les plus proches de votre activité aujourd’hui.", d3TitleNoChangeAudience: "Choisissez les circonstances les plus proches de votre façon de rencontrer les arts et la culture aujourd’hui.", d3Help: "Vous pouvez indiquer jusqu’à trois conditions correspondant à cette situation. Pensez aussi à celles qui ont vraiment compté ensemble, comme {hints}.",
+    d1Title: "Choisissez la condition qui vous semble aujourd’hui la plus absente.", d1Help: "Si nous vous interrogeons sur les conditions, c’est pour une raison. Ce qui était là pour continuer et ce qui manquait — voilà ce que ce récit portera jusqu’aux politiques publiques. Pour cette activité, pensez à des conditions qui jouent concrètement, comme {hints}.",
+    d3Title: "Choisissez les circonstances qui rendent ce changement nécessaire.", d3TitleNoChange: "Choisissez les circonstances les plus proches de votre activité aujourd’hui.", d3TitleNoChangeAudience: "Choisissez les circonstances les plus proches de votre façon de rencontrer les arts et la culture aujourd’hui.", d3Help: "Vous pouvez indiquer jusqu’à trois conditions correspondant à cette situation. Vous pouvez aussi penser à des circonstances qui ont réellement joué, comme {hints}.",
     d4Title: "Dites-nous ce que ces conditions ont laissé dans votre activité, vos souvenirs ou vos relations.", d4HelpWithContext: "Une ou deux phrases suffisent. Si l’une de ces conditions compte vraiment ici, vous pouvez la nommer : {hints}.", d4HelpWithoutContext: "Une ou deux phrases suffisent. Si rien ne vous vient, laissez vide ; {hints} ne sont que des exemples.",
   },
   es: {
@@ -137,10 +137,10 @@ const copy = {
       help: "Hay una razón para empezar por la memoria. Buscamos lo que permanece cuando el apoyo termina, y su comienzo está en lo que usted recuerda. No hace falta saber el nombre exacto. Puede empezar por una persona, una obra, un lugar, una escena, una frase, una sensación o por su actividad de ahora.",
       options: { ARTIST: "Una persona o artista", WORK_OBJECT: "Una obra, objeto o imagen", SPACE: "Un lugar", EXHIBITION: "Una exposición, actuación o evento", SCENE: "Una escena", PHRASE: "Una frase o historia", SENSATION: "Una sensación difícil de nombrar", PRACTICE: "Mi actividad, práctica o una actitud que permanece", NO_RECALL: "Ahora no me viene a la mente nada en particular" },
     },
-    practiceHelp: { AUDIENCE: "Anotamos por separado lo que suele buscar y el curso real de lo que ve y de aquello en lo que participa.", EVERYDAY: "Registramos por separado cómo esta actividad continúa y se encuentra con otras personas mediante la práctica, los encuentros, las actuaciones o el intercambio.", PROFESSIONAL: "Anotamos por separado cómo continúa la actividad principal y cómo se muestra hacia fuera." },
+    practiceHelp: { AUDIENCE: "Anotamos por separado lo que suele buscar y el curso real de lo que ve y de aquello en lo que participa.", EVERYDAY: "Registramos por separado cómo esta actividad continúa y se encuentra con otras personas mediante la práctica, los encuentros, las actuaciones o las presentaciones.", PROFESSIONAL: "Anotamos por separado cómo continúa la actividad principal y cómo se muestra hacia fuera." },
     transitionPlaceholder: "Una escena en la que cambiaron la actividad, la práctica, la presentación, el rol, el sustento, las relaciones o la forma de asistir",
     d1Title: "Elija la condición que más echa en falta ahora mismo.", d1Help: "Hay una razón para preguntar por las condiciones. Qué había para seguir y qué faltaba: eso es lo que este registro llevará al debate de políticas. En el contexto de su actividad puede pensar en condiciones que de verdad influyen, como {hints}.",
-    d3Title: "Elija las circunstancias que hacen necesario este cambio.", d3TitleNoChange: "Elija las circunstancias más cercanas a su actividad de ahora.", d3TitleNoChangeAudience: "Elija las circunstancias más cercanas a cómo se encuentra hoy con las artes y la cultura.", d3Help: "Puede dejar hasta tres condiciones que encajen con lo que está contando. También puede pensar en circunstancias que de verdad actuaron, como {hints}.",
+    d3Title: "Elija las circunstancias que hacen necesario este cambio.", d3TitleNoChange: "Elija las circunstancias más cercanas a su actividad de ahora.", d3TitleNoChangeAudience: "Elija las circunstancias más cercanas a cómo se encuentra hoy con las artes y la cultura.", d3Help: "Puede elegir hasta tres condiciones que encajen con lo que está contando. También puede pensar en circunstancias que de verdad actuaron, como {hints}.",
     d4Title: "Cuéntenos qué han dejado en su actividad, en sus recuerdos o en sus relaciones las condiciones que ha señalado hasta aquí.", d4HelpWithContext: "Basta con una o dos frases. Si entre {hints} hay alguna condición que de verdad tenga que ver, puede escribirla también.", d4HelpWithoutContext: "Basta con una o dos frases. Si ahora no se le viene a la mente nada como {hints}, puede dejarlo en blanco.",
   },
   nl: {
@@ -155,13 +155,13 @@ const copy = {
     m01: {
       title: "Wat komt er vandaag als eerste bij u op als u aan kunst en cultuur denkt?",
       help: "Er is een reden dat we bij de herinnering beginnen. We zoeken wat er overblijft nadat de steun ophoudt, en het begin daarvan ligt in wat u zich herinnert. U hoeft de precieze naam niet te weten. Begin gerust bij een persoon, een werk, een plek, een scène, een zin, een gevoel, of bij wat u nu doet.",
-      options: { ARTIST: "Een persoon of kunstenaar", WORK_OBJECT: "Een werk, object of beeld", SPACE: "Een plaats", EXHIBITION: "Een tentoonstelling, voorstelling of gebeurtenis", SCENE: "Een scène", PHRASE: "Een zin of verhaal", SENSATION: "Een gevoel dat moeilijk te benoemen is", PRACTICE: "Mijn activiteit, oefening of een blijvende houding", NO_RECALL: "Er komt nu niets in het bijzonder bij me op" },
+      options: { ARTIST: "Een persoon of kunstenaar", WORK_OBJECT: "Een werk, object of beeld", SPACE: "Een plaats", EXHIBITION: "Een tentoonstelling, voorstelling of evenement", SCENE: "Een scène", PHRASE: "Een zin of verhaal", SENSATION: "Een gevoel dat moeilijk te benoemen is", PRACTICE: "Mijn activiteit, oefening of een blijvende houding", NO_RECALL: "Er komt nu niets in het bijzonder bij me op" },
     },
     practiceHelp: { AUDIENCE: "We noteren apart wat u gewoonlijk opzoekt en hoe u er werkelijk naartoe gaat of aan meedoet.", EVERYDAY: "We noteren apart hoe deze activiteit doorloopt en hoe u daarin anderen tegenkomt: bij het oefenen, op bijeenkomsten, tijdens optredens of presentaties.", PROFESSIONAL: "We noteren apart hoe het werk zelf doorloopt en hoe het naar buiten toe zichtbaar wordt." },
     transitionPlaceholder: "Eén scène waarin activiteit, oefening, presentatie, rol, levensonderhoud, relaties of de manier van deelnemen veranderde",
     d1Title: "Kies de voorwaarde die nu het meest ontbreekt.", d1Help: "Er is een reden dat we naar voorwaarden vragen. Wat er was om door te gaan en wat ontbrak — dat is wat dit verslag meeneemt naar het beleid. Denk bij deze activiteit aan voorwaarden die in de praktijk echt iets doen, zoals {hints}.",
-    d3Title: "Kies de omstandigheden die deze verandering nodig maken.", d3TitleNoChange: "Kies de omstandigheden die het dichtst bij uw activiteit van nu liggen.", d3TitleNoChangeAudience: "Kies de omstandigheden die het dichtst liggen bij hoe u kunst en cultuur nu tegenkomt.", d3Help: "U kunt maximaal drie voorwaarden noemen die bij deze situatie passen. Denk ook aan omstandigheden die er samen toe deden, zoals {hints}.",
-    d4Title: "Beschrijf wat die voorwaarden hebben achtergelaten in uw activiteit, uw herinneringen of uw relaties.", d4HelpWithContext: "Een of twee zinnen zijn genoeg. Hoort een van deze voorwaarden er echt bij, noem hem dan: {hints}.", d4HelpWithoutContext: "Een of twee zinnen zijn genoeg. Komt er niets in u op, laat het dan gerust leeg; {hints} zijn alleen voorbeelden.",
+    d3Title: "Kies de omstandigheden die deze verandering nodig maken.", d3TitleNoChange: "Kies de omstandigheden die het dichtst bij uw activiteit van nu liggen.", d3TitleNoChangeAudience: "Kies de omstandigheden die het dichtst liggen bij hoe u kunst en cultuur nu tegenkomt.", d3Help: "U kunt maximaal drie voorwaarden noemen die bij deze situatie passen. Denk ook aan omstandigheden die er echt toe deden, zoals {hints}.",
+    d4Title: "Beschrijf wat die voorwaarden hebben achtergelaten in uw activiteit, uw herinneringen of uw relaties.", d4HelpWithContext: "Een of twee zinnen zijn genoeg. Hoort een van deze voorwaarden er echt bij, noem die dan: {hints}.", d4HelpWithoutContext: "Een of twee zinnen zijn genoeg. Komt er niets in u op, laat het dan gerust leeg; {hints} zijn alleen voorbeelden.",
   },
   ms: {
     deepQuestionLead: "Kami telah membaca apa yang baru anda tulis. Ada satu perkara lagi yang ingin kami dengar.",
@@ -174,14 +174,14 @@ const copy = {
     topics: { PARTICIPANT_CONTEXT: "Konteks kegiatan" },
     m01: {
       title: "Apakah yang mula-mula terlintas hari ini berkaitan dengan seni dan budaya?",
-      help: "Ada sebabnya kami bermula dengan ingatan. Kami mencari apa yang kekal selepas sokongan berakhir, dan permulaannya ada dalam apa yang anda ingat. Tidak mengapa jika anda tidak tahu nama tepatnya. Anda boleh bermula dengan seseorang, sebuah karya, sesuatu tempat, satu babak, sepatah ayat, satu rasa, atau kegiatan anda sekarang.",
+      help: "Ada sebabnya kami bermula dengan ingatan. Apa yang kekal selepas sokongan berakhir — kami ingin mencari permulaannya dalam ingatan anda. Tidak mengapa jika anda tidak tahu nama tepatnya. Anda boleh bermula dengan seseorang, sebuah karya, sesuatu tempat, satu babak, satu ayat, satu rasa, atau kegiatan anda sekarang.",
       options: { ARTIST: "Seseorang atau seniman", WORK_OBJECT: "Karya, objek atau imej", SPACE: "Sebuah tempat", EXHIBITION: "Pameran, persembahan atau acara", SCENE: "Satu babak", PHRASE: "Ayat atau cerita", SENSATION: "Rasa yang sukar dinamakan", PRACTICE: "Kegiatan, latihan atau sikap saya yang kekal", NO_RECALL: "Tiada apa-apa yang khusus terlintas sekarang" },
     },
     practiceHelp: { AUDIENCE: "Kami mencatat secara berasingan minat yang biasa anda cari dan keadaan sebenar anda menonton atau menyertainya.", EVERYDAY: "Kami merekod secara berasingan bagaimana kegiatan ini diteruskan dan bertemu orang lain melalui latihan, pertemuan, persembahan atau perkongsian.", PROFESSIONAL: "Kami merekod secara berasingan bagaimana kegiatan utama diteruskan dan bagaimana ia kelihatan kepada orang lain." },
     transitionPlaceholder: "Satu babak apabila kegiatan, latihan, persembahan, peranan, kehidupan, hubungan atau cara menyertai berubah",
-    d1Title: "Pilih keadaan yang paling terasa kosong bagi anda sekarang.", d1Help: "Ada sebabnya kami bertanya tentang keadaan. Apa yang ada untuk terus berjalan dan apa yang tiada — itulah yang akan dibawa oleh rekod ini ke perbincangan dasar. Dalam konteks kegiatan anda, anda boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
+    d1Title: "Pilih keadaan yang paling terasa kurang bagi anda sekarang.", d1Help: "Ada sebabnya kami bertanya tentang keadaan. Apa yang ada untuk terus berjalan dan apa yang tiada — itulah yang akan dibawa oleh rekod ini ke perbincangan dasar. Dalam konteks kegiatan anda, anda boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
     d3Title: "Pilih keadaan nyata yang menjadikan perubahan ini perlu.", d3TitleNoChange: "Pilih keadaan nyata yang paling dekat dengan kegiatan anda sekarang.", d3TitleNoChangeAudience: "Pilih keadaan nyata yang paling dekat dengan cara anda bertemu seni dan budaya sekarang.", d3Help: "Anda boleh memilih sehingga tiga keadaan yang sesuai dengan apa yang anda ceritakan sekarang. Anda juga boleh memikirkan keadaan yang benar-benar memberi kesan, seperti {hints}.",
-    d4Title: "Ceritakan apa yang ditinggalkan oleh keadaan yang anda nyatakan setakat ini dalam kegiatan, ingatan atau hubungan anda.", d4HelpWithContext: "Satu atau dua ayat sudah memadai. Jika antara {hints} ada keadaan yang benar-benar berkaitan, anda boleh menulisnya sekali.", d4HelpWithoutContext: "Satu atau dua ayat sudah memadai. Jika tiada apa-apa seperti {hints} yang terlintas sekarang, anda boleh membiarkannya kosong.",
+    d4Title: "Ceritakan apa yang ditinggalkan oleh keadaan yang anda nyatakan setakat ini dalam kegiatan, ingatan atau hubungan anda.", d4HelpWithContext: "Satu atau dua ayat sudah memadai. Jika antara {hints} ada keadaan yang benar-benar berkaitan, anda boleh menulisnya juga.", d4HelpWithoutContext: "Satu atau dua ayat sudah memadai. Jika tiada apa-apa seperti {hints} yang terlintas sekarang, anda boleh membiarkannya kosong.",
   },
 };
 
@@ -206,7 +206,7 @@ const phrases = {
     "이 기억과 경험이 다음에 어떤 모습으로 이어지면 좋을지 기록합니다.": "この記憶と経験が次にどのようにつながるとよいかを記録します。", "지금 남은 기억을 누구와 나누고 어떤 방식으로 다시 만나고 싶은지 기록합니다.": "今残っている記憶を誰と分かち合い、どのようにもう一度出会いたいかを記録します。",
     "다른 이름이나 장면을 하나 더 남길까요?": "別の名前や場面をもう一つ残しますか？", "이 단계는 선택 사항입니다. 지금 떠오르는 다른 작가·작품·공간·장면이 있다면 직접 적을 수 있고, 지금까지의 기록으로 마쳐도 괜찮아요.": "この段階は任意です。今思い浮かぶ別の作家、作品、空間、場面があれば書けますし、ここまでの記録で終えても大丈夫です。",
     "지금까지의 응답을 한곳에 모았습니다.": "ここまでの回答を一つにまとめました。", "겹치거나 반복되는 내용을 정리한 초안입니다. 읽어보고 뜻이 어긋난 문장은 직접 다듬어주세요.": "重なりや繰り返しを整えた下書きです。読んで、意味が違うと感じる文は直接整えてください。",
-    "이 기록이 닿은 세 방향": "あなたの記録が届いた三つの方向",
+    "이 기록이 닿은 세 방향": "この記録が届いた三つの方向",
     "이 기록이 어디까지 이어지면 좋을까요?": "この記録はどこまでつながるとよいですか？", "연구 분석, 문장 인용, 공개 제안의 범위를 각각 정합니다. 선택은 이후에도 별도로 확인할 수 있도록 기록합니다.": "研究分析、文章の引用、公開提案の範囲をそれぞれ決めます。選択は後からも別に確認できるよう記録します。",
     "정책연구": "政策研究", "문장 인용": "文章の引用", "전시·출판·웹 기록": "展示・出版・ウェブ記録", "현재 선택": "現在の選択", "익명 분석과 집계": "匿名での分析と集計", "프로젝트 내부 연구": "プロジェクト内の研究", "익명 문장 인용 가능": "匿名での文章引用を許可", "개별 문장 인용 제외": "個別文章の引用を除外", "필요할 때 다시 제안받기": "必要な時にもう一度提案を受ける", "이번 기록은 연구 범위에서 마무리": "今回の記録は研究の範囲で終える", "이 범위로 기록 저장하기": "この範囲で記録を保存する", "이전": "戻る",
   },
@@ -223,7 +223,7 @@ Object.assign(phrases.ja, {
   "현재 머무는 나라 (선택)": "現在住んでいる国（任意）", "현재 주로 생활하는 국가와 도시를 알려주세요.": "現在主に暮らしている国と都市を教えてください。", "현재 주로 활동하는 국가와 도시를 알려주세요.": "現在主に活動している国と都市を教えてください。", "문화예술을 주로 만나는 국가와 도시를 알려주세요.": "文化芸術に主に出会う国と都市を教えてください。", "예: 대한민국": "例：韓国", "예: 대구": "例：大邱", "예: KR,대구; 온라인": "例：KR, 大邱；オンライン", "예: 2008": "例：2008", "20~24세": "20〜24歳", "25~29세": "25〜29歳", "30~34세": "30〜34歳", "35~39세": "35〜39歳", "40대": "40代", "50대": "50代", "60대": "60代", "70대 이상": "70代以上",
   "질문": "質問", "한 문장 또는 몇 개의 단어": "一文またはいくつかの言葉", "기억의 방향 — 가까운 항목을 골라주세요.": "記憶の方向 — 近い項目を選んでください。", "이 기억이 남아 있는 이유를 먼저 적어주세요.": "この記憶が残っている理由を先に書いてください。", "먼저 떠오르는 내용을 적어주세요.": "最初に浮かぶことを書いてください。", "그 기억과 함께 남아 있는 것은 무엇인가요?": "その記憶とともに残っているものは何ですか？", "이 일은 언제쯤이었나요?": "この出来事はいつ頃でしたか？", "기억나는 연도 (선택)": "覚えている年（任意）", "장소 — 어디에서 만난 경험인가요?": "場所 — どこで出会った経験ですか？", "예: 광주, 전시장 / 온라인": "例：光州、展示会場／オンライン",
   "작품이나 이미지": "作品やイメージ", "작가의 태도": "作家の姿勢", "당시 나눈 대화": "当時交わした会話", "공간의 분위기": "空間の雰囲気", "함께 있었던 사람": "その場にいた人", "사진·도록·포스터·기사": "写真・図録・ポスター・記事", "지역이나 사회의 상황": "地域や社会の状況", "당시의 내 삶": "当時の自分の暮らし", "설명하기 어려운 감각": "説明しにくい感覚", "잘 모르겠다": "まだよく分からない",
-  "최근 1년": "最近1年", "1~3년 전": "1〜3年前", "3~5년 전": "3〜5年前", "5~10년 전": "5〜10年前", "10~20년 전": "10〜20年前", "20년 이상": "20年以上前", "여러 시기에 걸쳐 이어짐": "複数の時期にまたがる", "정확히 기억나지 않음": "正確には覚えていない",
+  "최근 1년": "この1年", "1~3년 전": "1〜3年前", "3~5년 전": "3〜5年前", "5~10년 전": "5〜10年前", "10~20년 전": "10〜20年前", "20년 이상": "20年以上前", "여러 시기에 걸쳐 이어짐": "複数の時期にまたがる", "정확히 기억나지 않음": "正確には覚えていない",
   "그 경험이 당신에게 닿은 방식과 관계를 알려주세요.": "その経験があなたに届いた経路と関係を教えてください。", "그 경험을 어떤 방식으로 만났나요?": "その経験にどのように出会いましたか？", "그 기억과 당신의 관계는 무엇에 가까운가요?": "その記憶とあなたの関係はどれに近いですか？", "이 기억을 함께 나누거나 떠올릴 수 있는 사람이 있다면 어떤 관계인가요?": "この記憶を共有したり思い出したりできる人がいるなら、どんな関係ですか？", "현장에서 직접 경험했다": "現場で直接経験した", "작가나 관계자를 통해 들었다": "作家や関係者から聞いた", "사진·도록·기사·영상으로 접했다": "写真・図録・記事・映像で知った", "온라인에서 접했다": "オンラインで知った", "직접 경험과 기록을 함께 가지고 있다": "直接の経験と記録の両方がある", "오래되어 분명하게 구분하기 어렵다": "古くてはっきり区別しにくい", "나의 활동이나 작업과 직접 연결되어 있다": "自分の活動や仕事と直接つながっている", "함께 작업하거나 협업한 경험이 있다": "一緒に制作・協働した経験がある", "동료나 같은 현장의 관계로 지켜보았다": "同僚または同じ現場の立場で見ていた", "교육·연구·취재 과정에서 접했다": "教育・研究・取材の過程で出会った", "관객이나 참여자로 경험했다": "観客または参加者として経験した", "기록이나 다른 사람의 말을 통해 알게 되었다": "記録や他の人の話を通じて知った", "개인적인 관계가 있다": "個人的な関係がある", "한 가지로 말하기 어렵다": "一つには言いにくい", "작가 본인": "作家本人", "동료": "同僚", "기획자": "企画者", "공간 운영자": "空間運営者", "비평가·연구자": "批評家・研究者", "관객": "観客", "가족·지인": "家族・知人", "기관 관계자": "機関関係者", "지금은 떠오르지 않음": "今は思い浮かばない",
   "평소 문화예술을 찾아보는 방식과 가장 가까운 상태는 무엇인가요?": "普段、文化芸術を探す方法として最も近い状態はどれですか？", "최근 몇 년 동안 관심과 실제 참여의 관계는 무엇에 가까웠나요?": "ここ数年、関心と実際の参加の関係はどれに近かったですか？", "1년 미만": "1年未満", "1년 이상 3년 미만": "1年以上3年未満", "3년 이상 5년 미만": "3年以上5年未満", "5년 이상 10년 미만": "5年以上10年未満", "10년 이상 20년 미만": "10年以上20年未満", "20년 이상 30년 미만": "20年以上30年未満", "30년 이상": "30年以上", "정확한 시기를 말하기 어려움": "正確な時期は言いにくい", "관심이 생길 때 스스로 찾아본다": "関心が生じた時に自分で探す", "친구·가족·수업·추천을 따라 만난다": "友人・家族・授業・推薦をきっかけに出会う", "영화·공연·웹툰·디자인·온라인 콘텐츠와 함께 본다": "映画・公演・ウェブトゥーン・デザイン・オンラインコンテンツと行き来する", "전시나 프로그램이 있을 때 참여한다": "展示やプログラムがある時に参加する", "한동안 자주 찾았고 지금은 속도를 조절하고 있다": "しばらくは頻繁に探し、今はペースを調整している", "문화예술을 만나는 방식이 달라지고 있다": "文化芸術との出会い方が変わっている", "관심과 현장 참여가 함께 이어졌다": "関心と現場への参加がともに続いた", "관심은 이어졌고 실제 방문은 줄었다": "関心は続いたが実際の訪問は減った", "온라인·출판·영상으로 만나는 비중이 커졌다": "オンライン・出版・映像で出会う比重が大きくなった", "친구·가족·학교와 함께할 때 주로 참여했다": "友人・家族・学校と一緒の時に主に参加した", "비용·시간·이동에 맞추어 참여했다": "費用・時間・移動に合わせて参加した", "한동안 문화예술 현장과 거리를 두었다": "しばらく文化芸術の現場と距離を置いた",
   "비교적 꾸준히 찾아보고 참여하고 있다": "比較的継続して探し、参加している", "시기와 상황에 따라 찾아보고 참여하고 있다": "時期や状況に応じて探し、参加している", "기록·읽기·온라인 경험을 중심으로 이어가고 있다": "記録・読むこと・オンライン経験を中心に続けている", "현재는 문화예술 현장과 거리를 두고 있다": "現在は文化芸術の現場と距離を置いている", "이전과 다른 방식으로 만나고 있다": "以前とは異なる方法で出会っている", "전시·프로그램에 비교적 꾸준히 참여하고 있다": "展示・プログラムに比較的継続して参加している", "온라인·출판·기록을 중심으로 만나고 있다": "オンライン・出版・記録を中心に出会っている", "현재는 관람과 참여를 쉬고 있다": "現在は鑑賞と参加を休んでいる",
@@ -792,6 +792,8 @@ Object.assign(zhHantPhrases, {
   "분명히 기억해요": "我記得很清楚", "대체로 기억해요": "大致上記得",
   "흐릿해요": "有些模糊", "확신이 없어요": "不太確定",
 });
+// 「著」는 낱말에 따라 갈린다(2026-10-02 간체 검토): 조사 「續著·存著」는 「着」, 「著作權·著名」은 그대로 「著」.
+// 한 글자로 바꾸면 「着作权」이 된다 — 뒤에 作·名 이 오는 자리는 두고 바꾼다.
 const zhHantToHansPairs = [
   // v0.4.7: the rows below were already used by reviewed Traditional wording but
   // had no Simplified counterpart here, so the derived zh-Hans kept Traditional
@@ -819,7 +821,7 @@ const zhHantToHansPairs = [
   ["漸", "渐"], ["尋", "寻"], ["啟", "启"], ["備", "备"], ["屆", "届"], ["項", "项"], ["壓", "压"],
   ["碼", "码"], ["頁", "页"], ["設", "设"], ["計", "计"], ["減", "减"], ["靜", "静"], ["狀", "状"],
   ["態", "态"], ["繼", "继"], ["歸", "归"], ["納", "纳"], ["圖", "图"], ["徑", "径"], ["懸", "悬"],
-  ["掛", "挂"], ["製", "制"], ["臺", "台"], ["灣", "湾"], ["來", "来"], ["著", "着"], ["辦", "办"],
+  ["掛", "挂"], ["製", "制"], ["臺", "台"], ["灣", "湾"], ["來", "来"], [/著(?!作|名)/g, "着"], ["辦", "办"],
   ["舉", "举"], ["脈", "脉"], ["載", "载"], ["擔", "担"], ["農", "农"], ["詳", "详"], ["類", "类"],
   ["橫", "横"], ["徵", "征"], ["刪", "删"], ["錢", "钱"], ["產", "产"], ["維", "维"], ["爭", "争"],
   ["獨", "独"], ["壽", "寿"], ["臨", "临"],

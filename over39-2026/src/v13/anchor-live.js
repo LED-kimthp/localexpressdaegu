@@ -1,5 +1,5 @@
-import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20261002-r100";
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r100";
+import { hasWrongLanguageText, isLiveModelSource } from "./depth.js?v=v7-20261002-r101";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r101";
 
 export const ANCHOR_ORDER = ["M04_TEXT", "P12", "P13_TEXT", "P19_TEXT", "D02_TEXT"];
 export const ADAPTIVE_POLICY_VERSION = "adaptive-v2.3-2026-09-28";
@@ -334,6 +334,8 @@ export function anchorContextFingerprint(anchorId, context = {}) {
   return `${anchorId}:ctx:${semanticHash(semantic)}`;
 }
 
+// 2026-10-02 TK 검토: 스페인어 셋은 tú(¿Puedes…?), 네덜란드어 셋은 je(Kun je…), 중국어 셋은 「你」였다 — 같은 화면의 다른 질문은
+// 모두 usted·u·「您」이다. 화면 전체의 부르는 말로 맞췄다(홍콩판은 아래에서 「你」로 만든다).
 const FALLBACKS = {
   ko: {
     M04_TEXT: "방금 적으신 것 가운데, 지금도 가장 선명한 한 가지는 무엇일까요?",
@@ -356,7 +358,7 @@ const FALLBACKS = {
   ja: {
     M04_TEXT: "今書いてくださったことの中で、今もいちばん鮮明なものは何でしょうか。",
     P12: "その変化を実際に感じた場面を一つだけ、もう少し教えてください。",
-    P13_TEXT: "今書いてくださったことの中で、その頃、手に触れるようにあった一つの場面は何だったでしょうか。",
+    P13_TEXT: "今書いてくださったことの中で、その頃、手に取るように感じられた一つの場面は何だったでしょうか。",
     P19_TEXT: "その条件が実際に助けになった場面を一つ教えてください。",
     D02_TEXT: "その変化が始まったと感じられる最も小さな兆しは何でしょうか。",
     NO_RECALL_RELATION: "その時、文化芸術が少し身近に、または遠く感じられた理由を一つだけ教えてください。",
@@ -364,20 +366,20 @@ const FALLBACKS = {
   },
   "zh-Hans": {
     M04_TEXT: "在您刚写下的内容里，至今仍最清晰的一件是什么？",
-    P12: "能再说一个你实际感受到这种变化的场景吗？",
+    P12: "能再说一个您实际感受到这种变化的场景吗？",
     P13_TEXT: "在您刚写下的内容里，那段时间里具体可感的一个场景是什么？",
     P19_TEXT: "能说一个这个条件实际发挥作用的场景吗？",
-    D02_TEXT: "什么最小的迹象会让你觉得这种变化已经开始？",
-    NO_RECALL_RELATION: "在那个时刻，是什么让文化艺术对你感觉更接近或更遥远了一些？",
+    D02_TEXT: "什么最小的迹象会让您觉得这种变化已经开始？",
+    NO_RECALL_RELATION: "在那个时刻，是什么让您觉得文化艺术更接近或更遥远了一些？请说一个原因就好。",
     D04_CONDITIONS: "能再说一个这两个条件在实际中一起起作用的场景吗？",
   },
   "zh-Hant": {
     M04_TEXT: "在您剛寫下的內容裡，至今仍最清晰的一件是什麼？",
-    P12: "能再說一個你實際感受到這種變化的場景嗎？",
+    P12: "能再說一個您實際感受到這種變化的場景嗎？",
     P13_TEXT: "在您剛寫下的內容裡，那段時間裡具體可感的一個場景是什麼？",
     P19_TEXT: "能說一個這個條件實際發揮作用的場景嗎？",
-    D02_TEXT: "什麼最小的跡象會讓你覺得這種變化已經開始？",
-    NO_RECALL_RELATION: "在那個時刻，是什麼讓文化藝術對你感覺更接近或更遙遠了一些？",
+    D02_TEXT: "什麼最小的跡象會讓您覺得這種變化已經開始？",
+    NO_RECALL_RELATION: "在那個時刻，是什麼讓您覺得文化藝術更接近或更遙遠了一些？請說一個原因就好。",
     D04_CONDITIONS: "能再說一個這兩個條件在實際中一起起作用的場景嗎？",
   },
   fr: {
@@ -386,26 +388,26 @@ const FALLBACKS = {
     P13_TEXT: "Parmi ce que vous venez d’écrire, quelle scène concrète de cette période vous revient ?",
     P19_TEXT: "Pouvez-vous décrire un moment où cette condition a réellement aidé ?",
     D02_TEXT: "Quel serait le plus petit signe indiquant que ce changement a commencé ?",
-    NO_RECALL_RELATION: "À ce moment-là, qu'est-ce qui vous a fait sentir que l'art et la culture étaient un peu plus proches, ou plus lointains ?",
+    NO_RECALL_RELATION: "À ce moment-là, qu’est-ce qui vous a fait sentir que l’art et la culture étaient un peu plus proches, ou plus lointains ?",
     D04_CONDITIONS: "Pouvez-vous décrire une scène où ces deux conditions ont agi ensemble concrètement ?",
   },
   es: {
     M04_TEXT: "De lo que acaba de escribir, ¿qué es lo que sigue siendo hoy más nítido?",
-    P12: "¿Puedes describir una escena en la que ese cambio se hiciera concreto?",
+    P12: "¿Puede describir una escena en la que ese cambio se sintiera de verdad?",
     P13_TEXT: "De lo que acaba de escribir, ¿qué escena concreta de aquel tiempo le viene a la mente?",
-    P19_TEXT: "¿Puedes describir un momento en que esa condición realmente ayudó?",
+    P19_TEXT: "¿Puede describir un momento en que esa condición realmente ayudó?",
     D02_TEXT: "¿Cuál sería la señal más pequeña de que ese cambio ha empezado?",
     NO_RECALL_RELATION: "En ese momento, ¿qué hizo que el arte y la cultura se sintieran un poco más cercanos o más lejanos?",
-    D04_CONDITIONS: "¿Puedes describir una escena en la que esas dos condiciones actuaran juntas en la práctica?",
+    D04_CONDITIONS: "¿Puede describir una escena en la que esas dos condiciones actuaran juntas en la práctica?",
   },
   nl: {
     M04_TEXT: "Wat van wat u net schreef is u nu nog het duidelijkst bijgebleven?",
-    P12: "Kun je één moment beschrijven waarop die verandering echt merkbaar werd?",
+    P12: "Kunt u één moment beschrijven waarop die verandering echt merkbaar werd?",
     P13_TEXT: "Wat van wat u net schreef is één tastbare scène uit die tijd?",
-    P19_TEXT: "Kun je één moment beschrijven waarop die voorwaarde daadwerkelijk hielp?",
+    P19_TEXT: "Kunt u één moment beschrijven waarop die voorwaarde daadwerkelijk hielp?",
     D02_TEXT: "Wat zou het kleinste teken zijn dat deze verandering is begonnen?",
     NO_RECALL_RELATION: "Waardoor voelde kunst en cultuur op dat moment iets dichterbij, of juist verder weg?",
-    D04_CONDITIONS: "Kun je één moment beschrijven waarop die twee voorwaarden in de praktijk samenwerkten?",
+    D04_CONDITIONS: "Kunt u één moment beschrijven waarop die twee voorwaarden in de praktijk samenwerkten?",
   },
   ms: {
     M04_TEXT: "Daripada apa yang baru anda tulis, apakah satu perkara yang masih paling jelas sekarang?",
