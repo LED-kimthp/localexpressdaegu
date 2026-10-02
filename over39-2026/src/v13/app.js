@@ -1,29 +1,29 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20261001-r98";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261001-r98";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261001-r98";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261001-r98";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261001-r98";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261001-r98";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261001-r98";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20261001-r98";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261001-r98";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261001-r98";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261001-r98";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261001-r98";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261001-r98";
-import { participantActivityScreenCopy, participantContextCopy } from "./participant-context-i18n.js?v=v7-20261001-r98";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261001-r98";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261001-r98";
-import { completionCopy } from "./completion-i18n.js?v=v7-20261001-r98";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261001-r98";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261001-r98";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261001-r98";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261001-r98";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261001-r98";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261001-r98";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261001-r98";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261001-r98";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261001-r98";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20261002-r99";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261002-r99";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261002-r99";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261002-r99";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261002-r99";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261002-r99";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261002-r99";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20261002-r99";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261002-r99";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261002-r99";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261002-r99";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r99";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261002-r99";
+import { participantActivityScreenCopy, participantContextCopy, participantFieldDescriptions, participantRoleDescriptions } from "./participant-context-i18n.js?v=v7-20261002-r99";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261002-r99";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261002-r99";
+import { completionCopy } from "./completion-i18n.js?v=v7-20261002-r99";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261002-r99";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261002-r99";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261002-r99";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r99";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261002-r99";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261002-r99";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261002-r99";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261002-r99";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261002-r99";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -36,7 +36,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "282a21ac01f4 2026-10-01T05:24:18.372Z";
+const buildStamp = "4cbe85dc7d42 2026-10-02T02:12:02.553Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -297,7 +297,7 @@ const CHOICE_COPY_KO = {
     MAKING_AND_SHOWING: "제작과 공개 — 제작과 외부 공개 활동이 함께 이어지고 있습니다.",
     MAKING_NOT_SHOWING: "공개 밖의 제작 — 제작이나 핵심 활동은 이어지고, 외부 공개 활동은 쉬고 있습니다.",
     SHOWING_PROJECT_BASED: "프로젝트 단위의 공개 — 프로젝트가 열리는 시기에 공개 활동을 이어가고 있습니다.",
-    PUBLIC_ROLE_SHIFT: "공개 역할의 변화 — 발표와 전시 외의 역할을 통해 활동이 밖으로 드러나고 있습니다.",
+    PUBLIC_ROLE_SHIFT: "공개 역할의 변화 — 발표·전시·공연 외의 역할을 통해 활동이 밖으로 드러나고 있습니다.",
     BOTH_PAUSED: "제작과 공개의 휴식 — 제작과 공개 활동을 모두 잠시 쉬고 있습니다.",
     NOT_WANTED: "개인적인 지속 — 현재는 공개 일정을 두지 않고 자신의 방식으로 활동을 이어가고 있습니다.",
     AUDIENCE_REGULAR: "꾸준한 현장 참여 — 전시와 프로그램에 비교적 꾸준히 참여하고 있습니다.",
@@ -316,7 +316,7 @@ const CHOICE_COPY_KO = {
     COST: "비용 — 제작과 발표, 이동에 필요한 비용이 현재 활동 방식에 영향을 주고 있습니다.",
     SPACE: "공간 — 작업과 연습, 보관에 필요한 공간이 현재 활동 방식에 영향을 주고 있습니다.",
     ADMIN: "행정과 역할 부담 — 행정과 여러 역할의 비중이 현재 활동 방식에 영향을 주고 있습니다.",
-    OPPORTUNITY: "발표와 참여 기회 — 전시와 발표, 참여 기회의 범위가 현재 활동 방식에 영향을 주고 있습니다.",
+    OPPORTUNITY: "발표와 참여 기회 — 전시·공연과 발표, 참여 기회의 범위가 현재 활동 방식에 영향을 주고 있습니다.",
     RELATIONSHIP: "관계와 협업 — 관계망과 협업의 조건이 현재 활동 방식에 영향을 주고 있습니다.",
     REGION: "지역과 이동 — 지역의 문화환경과 이동 가능성이 현재의 활동과 경험에 영향을 주고 있습니다.",
     DIRECTION: "방향을 살필 여유 — 작업의 방향을 충분히 생각할 수 있는 여유가 현재 활동에 영향을 주고 있습니다.",
@@ -367,7 +367,7 @@ const CHOICE_COPY_KO = {
   M01: {
     ARTIST: "한 명의 작가 — 지금 가장 먼저 떠오르는 한 사람에서 이야기를 시작합니다.",
     WORK_OBJECT: "한 작품·물건·이미지 — 형태나 이미지가 선명하게 남아 있는 대상에서 시작합니다.",
-    SPACE: "하나의 공간 — 오래 남아 있는 전시장과 작업실, 거리와 장소에서 시작합니다.",
+    SPACE: "하나의 공간 — 오래 남아 있는 전시장·공연장과 작업실·연습실, 거리와 장소에서 시작합니다.",
     EXHIBITION: "하나의 전시·프로그램 — 전시와 공연, 프로그램 전체에 관한 기억에서 시작합니다.",
     SCENE: "하나의 장면 — 사람의 모습과 움직임, 빛과 소리가 남아 있는 순간에서 시작합니다.",
     PHRASE: "남아 있는 문장 — 작품이나 사람에게서 들은 말과 글에서 시작합니다.",
@@ -381,7 +381,7 @@ const CHOICE_COPY_KO = {
     DIALOGUE: "당시의 대화 — 그때 나눈 말과 대화가 이 기억과 함께 남아 있습니다.",
     SPACE: "공간의 분위기 — 장소의 빛과 소리, 분위기가 이 기억과 함께 남아 있습니다.",
     PEOPLE: "함께 있던 사람 — 그 순간을 함께 경험한 사람이 이 기억과 함께 남아 있습니다.",
-    RECORD: "기록과 자료 — 사진과 도록, 포스터와 기사가 이 기억과 함께 남아 있습니다.",
+    RECORD: "기록과 자료 — 사진과 도록, 공연 프로그램과 포스터, 기사가 이 기억과 함께 남아 있습니다.",
     SOCIAL: "지역과 사회의 상황 — 당시 지역과 사회의 상황이 이 기억과 함께 남아 있습니다.",
     LIFE: "그때의 삶 — 당시 나의 생활과 관계가 이 기억과 함께 남아 있습니다.",
     SENSORY: "설명하기 어려운 감각 — 말로 정리하기 어려운 감각이 이 기억과 함께 남아 있습니다.",
@@ -903,6 +903,23 @@ function dOptions(kind) {
   return schema.d_scope_bank?.[scope]?.[kind] || [];
 }
 
+// 2026-10-02(TK): 앞에서 고른 분야의 창작 역할을 맨 위에 둔다. 체크는 하지 않는다 — 역할은 참여자가 직접
+// 고른 것만 기록에 남는다(분야에서 나온 후보가 저절로 역할이 되지 않게).
+const FIELD_CREATOR_ROLE = Object.freeze({
+  VISUAL_ARTS: "R01", PHOTO_MEDIA: "R02", FILM: "R02", CRAFT_DESIGN: "R03",
+  MUSIC: "R21", THEATRE_PERFORMANCE: "R22", DANCE: "R23", LITERATURE_PUBLISHING: "R24",
+});
+function orderedByField(options) {
+  const first = new Set(values(state.answers.field).map((code) => FIELD_CREATOR_ROLE[code]).filter(Boolean));
+  return [...options.filter(([code]) => first.has(code)), ...options.filter(([code]) => !first.has(code))];
+}
+// 역할 이름은 그대로 두고, 미술 쪽 말뿐이던 역할에 설명 한 줄을 붙인다(공연장·소극장·기획사 등).
+// 이름을 먼저 그 언어로 옮긴 뒤 붙인다 — 설명까지 붙인 한국어 문장은 사전에 없어 옮겨지지 않는다.
+function withRoleDescription([code, label]) {
+  const description = participantRoleDescriptions(state.language)[code];
+  return description ? [code, `${t(label)} — ${description}`] : [code, label];
+}
+
 function roleOptions(groupCode) {
   return schema.roles.filter((role) => role.group === groupCode).map((role) => [role.value, role.label]);
 }
@@ -911,7 +928,13 @@ function realityOptions() {
   const scope = dScope();
   const key = scope === "SELF_ROLE" ? state.answers.role_primary || "OTHER" : scope;
   const indicators = (schema.role_reality_indicator_bank?.[key] || schema.role_reality_indicator_bank?.OTHER || []).filter((label) => !/기타.*직접/.test(label));
-  return indicators.map((label, index) => [`${key}_${String(index + 1).padStart(2, "0")}`, label]).concat([["NONE", "해당 없음"], ["OTHER", "기타"]]);
+  // 2026-10-02(TK): 음악·공연·무용·문학 창작자(R21~R24)에게 그 일에 맞춘 보기를 더했다. 번호는 목록 순서로 매기므로
+  // 새 보기는 뒤에 붙여 새 번호를 받고, 예전 일반 보기는 화면에서만 숨긴다 — 참여 기록(response-document.js)은
+  // 같은 목록으로 번호를 읽으므로 예전 답은 예전 뜻 그대로 읽힌다.
+  const retired = new Set(schema.role_reality_indicator_retired?.[key] || []);
+  return indicators.map((label, index) => [`${key}_${String(index + 1).padStart(2, "0")}`, label])
+    .filter(([, label]) => !retired.has(label))
+    .concat([["NONE", "해당 없음"], ["OTHER", "기타"]]);
 }
 
 function renderChoices(id, options, { multi = false, max = 0, exclusive = [] } = {}) {
@@ -1298,23 +1321,25 @@ function renderRoleBridge() {
     ? []
     : otherOnly
       ? [["OTHER", t("현재 활동을 직접 적기")]]
-      : [...roleOptions(group), ["OTHER", t("기타")]];
+      : [...orderedByField(roleOptions(group)).map(withRoleDescription), ["OTHER", t("기타")]];
   const otherRoles = schema.roles
     .filter((role) => role.value !== state.answers.role_primary)
     .map((role) => [role.value, role.label]);
   const local = stage();
   return `${screenHeading(local.roleBridgeTitle, local.roleBridgeHelp)}
-    <section class="participant-context-section"><label class="field-label">${esc(groupQuestion.text)}</label>${renderChoices("P02G", groupQuestion.options)}</section>
+    <section class="participant-context-section"><label class="field-label">${esc(groupQuestion.text)}</label>${renderChoices("P02G", groupQuestion.options.map(withRoleDescription))}</section>
     ${group ? `<section class="participant-context-section"><label class="field-label">${esc(primaryQuestion.text)}</label>${renderChoices("P02", primaryOptions)}${renderOtherInput("P02", local.roleBridgePrimaryOther)}</section>` : ""}
     ${state.answers.role_primary ? `<details class="participant-context-section participant-context-optional role-bridge-optional" ${values(state.answers.roles_parallel).length ? "open" : ""}><summary><span>${esc(parallelQuestion.text)}</span><small>${esc(local.optional)}</small></summary><div class="role-bridge-optional-body">${renderChoices("P03", [...otherRoles, ["NON_ARTS", t("문화예술 외 역할")], ["NONE", t("없음")], ["OTHER", t("기타")]], { multi: true, max: 3, exclusive: ["NONE"] })}${renderOtherInput("P03", local.roleBridgeParallelOther)}</div></details>` : ""}`;
 }
 
 const CONTEXT_OPTION_GROUPS = {
+  // 2026-10-02(TK 「모든 참여자에게 자기 자리가 보이게」): 묶음만 다시 나눈다. 사진이 「무대와 화면」에 있던 것 등.
+  // 묶음은 화면에서 보여 주는 순서일 뿐이라 분야 코드와 이미 받은 기록은 그대로다.
   field: [
-    ["VISUAL_ARTS", "CRAFT_DESIGN", "INTERDISCIPLINARY"],
-    ["PHOTO_MEDIA", "FILM", "THEATRE_PERFORMANCE", "DANCE", "MUSIC", "TRADITIONAL_ARTS"],
-    ["LITERATURE_PUBLISHING", "HERITAGE_ARCHIVE"],
-    ["LOCAL_EVERYDAY_CULTURE", "OTHER"],
+    ["VISUAL_ARTS", "PHOTO_MEDIA", "CRAFT_DESIGN"],
+    ["THEATRE_PERFORMANCE", "DANCE", "MUSIC", "TRADITIONAL_ARTS"],
+    ["LITERATURE_PUBLISHING", "FILM"],
+    ["HERITAGE_ARCHIVE", "LOCAL_EVERYDAY_CULTURE", "INTERDISCIPLINARY", "OTHER"],
   ],
   mode: [
     ["CREATION_PRODUCTION", "DIRECTION_CHOREOGRAPHY_COMPOSITION", "PERFORMANCE_LIVE"],
@@ -1335,6 +1360,13 @@ function renderGroupedContextChoices(id, options, groupKey, { multi = false, max
   return `<p class="context-selection-help">${esc(stage().oneOrMore)}</p><div class="context-choice-groups">${groups}</div>`;
 }
 
+// 2026-10-02(TK): 분야 칸은 13칸 그대로 두고 칸마다 설명 한 줄을 붙인다 — 조각가·판화가·건축가·웹툰 작가가
+// 「기타」로 가지 않고 자기 이름을 찾게. 이 화면에서만 붙인다(참여 기록·관리자 화면의 분야 이름은 그대로).
+function withFieldDescriptions(fieldOptions) {
+  const descriptions = participantFieldDescriptions(state.language);
+  return fieldOptions.map(([code, label]) => (descriptions[code] ? [code, `${label} — ${descriptions[code]}`] : [code, label]));
+}
+
 function renderParticipantContext() {
   const field = question("CTX_FIELD");
   const mode = question("CTX_MODE");
@@ -1350,7 +1382,7 @@ function renderParticipantContext() {
   // 분야와 형태뿐이다. 되돌리려면 이 함수의 이전 판(git 85fbb5b 이전)을 다시 두면 된다.
   const moreOpen = values(state.answers.participation_mode).length || state.answers.activity_form || state.answers.participation_unit;
   return `${screenHeading(copy.title, copy.help)}
-    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", options.field, "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
+    <section class="participant-context-section"><label class="field-label">${esc(copy.field || field.text)}</label>${renderGroupedContextChoices("CTX_FIELD", withFieldDescriptions(options.field), "field", { multi: true, max: 4 })}${renderOtherInput("CTX_FIELD", copy.fieldOther)}</section>
     <details class="participant-context-section participant-context-optional context-more-optional" ${moreOpen ? "open" : ""}><summary><span>${esc(copy.more)}</span><small>${esc(local.optional)}</small></summary><div class="context-more-optional-body">
       <section class="participant-context-section"><label class="field-label">${esc(copy.mode || mode.text)}</label>${renderGroupedContextChoices("CTX_MODE", options.participation_mode, "mode", { multi: true, max: 4 })}${renderOtherInput("CTX_MODE", copy.modeOther)}</section>
       <section class="participant-context-section"><label class="field-label">${esc(copy.form || form.text)}</label>${renderChoices("CTX_FORM", options.activity_form)}</section>
