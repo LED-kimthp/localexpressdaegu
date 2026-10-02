@@ -2043,9 +2043,9 @@ export const extraCopy = {
     "지금 특별한 대상이 떠오르지 않는 이유는 무엇에 가까운가요?": "¿Qué se acerca más al motivo por el que hoy no le viene nada en particular?",
     "참여 안내": "Guía de participación",
     "프로젝트가 다루는 시간": "El periodo de tiempo que aborda este proyecto",
-    "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않습니다.": "〈Mayores de 39〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra.",
+    "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않습니다.": "〈39 y más〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra.",
     // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 1개.
-    "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈Mayores de 39〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra: lee el tiempo que ha recorrido cada práctica junto con las preguntas que sostiene ahora.",
+    "〈만 39세 이상〉은 문화예술 활동이 쌓여 온 시간과 지속의 조건에서 출발한 이름입니다. 공모에서는 숫자로 참가자를 나누지 않고 각 작업이 지나온 시간과 지금의 질문을 함께 읽습니다.": "〈39 y más〉 es un nombre que parte del tiempo acumulado en la práctica artística y de las condiciones para continuarla. La convocatoria no clasifica a las personas por una cifra: lee el tiempo que ha recorrido cada práctica junto con las preguntas que sostiene ahora.",
     // 2026-09-11 보강: 화면·M03 분기·역할 은행(D01~D03) 문장 11개.
     "답변을 정리하고 있어요": "Estamos organizando sus respuestas",
     "응답을 정리하고 있어요": "Estamos organizando su respuesta",
@@ -2354,7 +2354,7 @@ export const extraCopy = {
     "공모 신청서와 작업 자료만 검토해 주세요": "Revisen solo la solicitud y el material de trabajo",
     "공모 연락을 위해 이름과 이메일을 별도 보관하는 데 동의합니다": "Acepto que mi nombre y mi correo electrónico se guarden por separado para el contacto de la convocatoria",
     "연락처를 보관하지 않습니다": "No se guardan los datos de contacto",
-    "[〈만 39세 이상〉] 안부 한 통이 도착했습니다": "[〈Mayores de 39〉] Ha llegado un saludo",
+    "[〈만 39세 이상〉] 안부 한 통이 도착했습니다": "[〈39 y más〉] Ha llegado un saludo",
     "연구팀이 익명 안부 또는 질문을 중계": "El equipo de investigación transmite un saludo o una pregunta anónimos",
     "이메일과 연락처는 상대에게 공개하지 않습니다.": "El correo electrónico y los datos de contacto no se revelan a la otra persona.",
     "매칭 제안이 오면 이메일 알림 받기": "Recibir un aviso por correo electrónico si llega una propuesta de conexión",

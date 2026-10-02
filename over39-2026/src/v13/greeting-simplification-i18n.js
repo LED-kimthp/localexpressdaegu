@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r101";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r102";
 // Task 10A greeting simplification. Korean is the semantic source; each
 // participant-facing locale keeps the same receive-first, next-person meaning.
 const copy = {
@@ -154,7 +154,7 @@ const copy = {
   },
   es: {
     featureName: "Saludo",
-    projectLabel: "〈Mayores de 39〉 · Saludo",
+    projectLabel: "〈39 y más〉 · Saludo",
     entryTitle: "¿Quiere ver este saludo?",
     entryDescription: "Una persona que pasó por aquí antes ha dejado un saludo.",
     entryPrimary: "Ver el saludo",

@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r101";
+import { withHongKong } from "./hong-kong.js?v=v7-20261002-r102";
 // Stage 1 additions deliberately live apart from the historical question
 // dictionary. Every supported language has its own copy; zh-Hans and zh-Hant
 // are never aliases of one another.
@@ -137,7 +137,7 @@ const entryCopy = {
     introAi: "En algunas respuestas escritas, la IA puede crear una pregunta de seguimiento a partir de sus palabras y ayudar a preparar el borrador del registro de participación final. Usted podrá leer y editar el registro.",
     introVoluntary: "La participación es voluntaria. Puede saltarse las preguntas que le resulten difíciles y dejarlo en cualquier momento.",
     consentTitle: "Revise la información sobre la participación y sobre el uso de IA.",
-    consentHelp: "Esta respuesta forma parte del estudio «Más de 39». Los registros reunidos se usan para proponer políticas de arte y cultura. Confirme los dos puntos siguientes para empezar.",
+    consentHelp: "Esta respuesta forma parte del estudio 〈39 y más〉. Los registros reunidos se usan para proponer políticas de arte y cultura. Confirme los dos puntos siguientes para empezar.",
     consentDetails: "Detalles sobre el guardado, la conservación y el uso de IA",
     consentResearch: "He revisado el propósito y el proceso de esta investigación y elijo participar voluntariamente.",
     consentAi: "Entiendo que la IA puede procesar algunas de mis respuestas escritas para formular preguntas de seguimiento, ordenar mis frases y redactar un borrador del registro de participación.",
