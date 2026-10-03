@@ -1,6 +1,6 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20261003-r106";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261003-r106";
-import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261003-r106";
+import { extraCopy } from "./i18n-v038.js?v=v7-20261003-r107";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261003-r107";
+import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261003-r107";
 
 const copy = {
   en: {

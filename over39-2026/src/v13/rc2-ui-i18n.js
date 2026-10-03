@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r106";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r107";
 // Direct copy for RC2 screens that compose participant-facing sentences at
 // runtime. These strings cannot safely rely on a Korean source-key lookup,
 // because the surrounding sentence is assembled with contextual values.

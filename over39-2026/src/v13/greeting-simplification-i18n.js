@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r106";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r107";
 // Task 10A greeting simplification. Korean is the semantic source; each
 // participant-facing locale keeps the same receive-first, next-person meaning.
 const copy = {
