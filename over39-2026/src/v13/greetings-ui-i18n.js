@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r105";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r106";
 // Participant-facing copy for the Coordinates of Greeting writing flow.
 // Internal table/API names deliberately remain independent from this wording.
 const copy = {

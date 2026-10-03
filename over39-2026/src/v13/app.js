@@ -1,30 +1,30 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20261003-r105";
-import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r105";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261003-r105";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261003-r105";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261003-r105";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261003-r105";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261003-r105";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261003-r105";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20261003-r105";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261003-r105";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261003-r105";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r105";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261003-r105";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261003-r105";
-import { participantActivityScreenCopy, participantContextCopy, participantFieldDescriptions, participantRoleDescriptions } from "./participant-context-i18n.js?v=v7-20261003-r105";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261003-r105";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261003-r105";
-import { completionCopy } from "./completion-i18n.js?v=v7-20261003-r105";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261003-r105";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261003-r105";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r105";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261003-r105";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261003-r105";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261003-r105";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261003-r105";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261003-r105";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261003-r105";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20261003-r106";
+import { applyFrenchSpacing, frenchSpacingText } from "./french-typography.js?v=v7-20261003-r106";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261003-r106";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261003-r106";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261003-r106";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261003-r106";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261003-r106";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261003-r106";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20261003-r106";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261003-r106";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261003-r106";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r106";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261003-r106";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261003-r106";
+import { participantActivityScreenCopy, participantContextCopy, participantFieldDescriptions, participantRoleDescriptions } from "./participant-context-i18n.js?v=v7-20261003-r106";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261003-r106";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261003-r106";
+import { completionCopy } from "./completion-i18n.js?v=v7-20261003-r106";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261003-r106";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261003-r106";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r106";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261003-r106";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261003-r106";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261003-r106";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261003-r106";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261003-r106";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261003-r106";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -37,7 +37,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "14709342aa2c 2026-10-03T04:53:18.910Z";
+const buildStamp = "03f22c9d59bb 2026-10-03T05:08:29.022Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -99,6 +99,13 @@ const initialLanguage = OFFERED_LANGUAGES.includes(requestedLanguage) ? requeste
 // 그것을 덮으면, 링크로 언어를 지정해도 지난번 언어로 열린다 — 언어별 확인 통과에서
 // 네덜란드어 링크가 영어로 열려 드러났다(2026-09-11 실측).
 const urlLanguage = OFFERED_LANGUAGES.includes(String(query.get("lang") || "")) ? String(query.get("lang")) : "";
+// 검색(TK 2026-10-03): ?lang= 으로 연 주소는 그 언어판이다. 정본 주소도 그 언어판을 가리켜야
+// 첫 화면 머리에 적은 언어별 주소(hreflang)가 서로 이어진다. 다른 꼬리(?pid= 등)는 정본에 싣지 않는다.
+// 참여자 화면에는 아무 변화가 없다.
+try {
+  const canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (urlLanguage && canonicalLink?.getAttribute("href") === "https://over39.org/") canonicalLink.setAttribute("href", `https://over39.org/?lang=${urlLanguage}`);
+} catch { /* 정본 표시는 검색엔진용이다. 실패해도 설문은 그대로 연다 */ }
 const institutionCode = String(query.get("institution") || "").trim().slice(0, 80);
 const acquisitionSource = String(query.get("source") || "direct").trim().slice(0, 80);
 // 초대 링크를 사람마다 다르게 보내기 위한 표식(`?pid=A01`). 참여자 화면에는 아무 영향이
@@ -3802,9 +3809,14 @@ function render(focusHeading = false) {
   lastRenderedScreenKey = screenKey;
   document.documentElement.lang = state.language;
   // 탭 제목이 정적 HTML에 한글로 박혀 있어, 영어 화면에서도 탭만 한글이었다.
+  // 2026-10-03(TK): 탭·검색 결과 제목은 첫 화면의 물음 「그 많던 신진작가는 어디로 갔을까?」를 그 언어로 쓴다.
+  // 일본어·중국어는 낱말 사이를 띄지 않으므로 붙여 쓴다.
   if (isRc2) {
     const brand = greetingFirst();
-    const title = [brand.projectName || "〈만 39세 이상〉", brand.researchTitle].filter(Boolean).join(" ");
+    const joiner = /^(ja|zh)/u.test(state.language) ? "" : " ";
+    const headline = [brand.introTitleLead, brand.introTitleMain].filter(Boolean).join(joiner) || brand.researchTitle;
+    let title = [brand.projectName || "〈만 39세 이상〉", headline].filter(Boolean).join(joiner);
+    if (/^fr/u.test(state.language)) title = frenchSpacingText(title);
     if (title && document.title !== title) document.title = title;
   }
   if (state.phase === "complete") retryQueuedAuxOnComplete();

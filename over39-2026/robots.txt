@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /letter/
+Disallow: /over39-rc2-relay.html
+
+Sitemap: https://over39.org/sitemap.xml
