@@ -1,30 +1,30 @@
-import { localizeQuestion, translate } from "./i18n.js?v=v7-20261003-r108";
-import { applyFrenchSpacing, frenchSpacingText } from "./french-typography.js?v=v7-20261003-r108";
-import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261003-r108";
-import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261003-r108";
-import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261003-r108";
-import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261003-r108";
-import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261003-r108";
-import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261003-r108";
-import { QUESTION_METADATA } from "./question-map.js?v=v7-20261003-r108";
-import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261003-r108";
-import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261003-r108";
-import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r108";
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261003-r108";
-import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261003-r108";
-import { participantActivityScreenCopy, participantContextCopy, participantFieldDescriptions, participantRoleDescriptions } from "./participant-context-i18n.js?v=v7-20261003-r108";
-import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261003-r108";
-import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261003-r108";
-import { completionCopy } from "./completion-i18n.js?v=v7-20261003-r108";
-import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261003-r108";
-import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261003-r108";
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r108";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261003-r108";
-import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261003-r108";
-import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261003-r108";
-import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261003-r108";
-import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261003-r108";
-import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261003-r108";
+import { localizeQuestion, translate } from "./i18n.js?v=v7-20261003-r109";
+import { applyFrenchSpacing, frenchSpacingText } from "./french-typography.js?v=v7-20261003-r109";
+import { COORDINATE_SCOPE_LABELS, buildCoordinateSnapshots, deriveCoordinateScope, deriveSContextTags } from "./classification.js?v=v7-20261003-r109";
+import { buildConnectionProfile, connectionTopics } from "./connection.js?v=v7-20261003-r109";
+import { applicableFixedQuestionIds, buildActiveScreens, fixedQuestionIdsForScreen, flowCounts, hasSubstantiveDChange, hasSubstantiveTransition, needsContinuityQuestion, needsPauseContext, normalizedDScope, resetForRouteChange, sanitizeAnswersForRoute, withdrawAnswer } from "./flow.js?v=v7-20261003-r109";
+import { ACTIVE_ANCHOR_ORDER, ADAPTIVE_POLICY_VERSION, ALL_ADAPTIVE_SCREEN_MAP, ANCHOR_AXES, ANCHOR_ORDER, aggregateAnchorSource, anchorAnswerFingerprint, anchorContextFingerprint, anchorSourceText, anchorsAffectedByChangedQuestion, assessAnchorNeed, buildAnchorContext, conditionalAnchorsAffectedByChangedQuestion, createAnchorFollowup, isLowInformationText, isStrictRealMotifPass, lowInformationReason, reconcileAnchorTurnsAfterQuestionEdit, upsertAnchorTurn, verifyDomQuestion } from "./anchor-live.js?v=v7-20261003-r109";
+import { normalizeIntegratedRoleRecord, shouldShowP13Text, shouldShowP19Text, translationReuseDecision } from "./integration-r2-helpers.js?v=v7-20261003-r109";
+import { ADAPTIVE_CHECKPOINTS, createClosingOffer, DEPTH_AXIS_OPTIONS, buildAdaptiveContext, buildAdaptiveSummaryContext, buildDepthTurnContext, buildMinimalDepthContext, buildMinimalSummaryContext, createAdaptiveSummary, createAdaptiveTurn, createDepthPlan, createDepthQuestion, createDepthSummary, greetingTranslationNeeded, isLiveModelSource, translateArrivedGreeting, translateResponseSummary } from "./depth.js?v=v7-20261003-r109";
+import { QUESTION_METADATA } from "./question-map.js?v=v7-20261003-r109";
+import { createEnvelope, readOutbox, retryOutbox, sendEnvelope, splitResearchAndContact } from "./storage.js?v=v7-20261003-r109";
+import { RESPONSE_DOCUMENT_VERSION, buildResponseDocument, rawParticipantWords, renderResponseDocument, summaryParagraphsOf } from "./response-document.js?v=v7-20261003-r109";
+import { GREETING_LONG_CHARS, LANGUAGE_LABELS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r109";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261003-r109";
+import { compactParticipantContext, contextAwareCopy, dContextHints, hasParticipantContext, participantContextKind, participantContextOptions } from "./participant-context.js?v=v7-20261003-r109";
+import { participantActivityScreenCopy, participantContextCopy, participantFieldDescriptions, participantRoleDescriptions } from "./participant-context-i18n.js?v=v7-20261003-r109";
+import { greetingUiCopy } from "./greetings-ui-i18n.js?v=v7-20261003-r109";
+import { rc2UiCopy, rc2UiPhrase } from "./rc2-ui-i18n.js?v=v7-20261003-r109";
+import { completionCopy } from "./completion-i18n.js?v=v7-20261003-r109";
+import { greetingVisibilityCopy, stage1ConsentCopy, stage1Copy, stage1UiExtraCopy } from "./stage1-i18n.js?v=v7-20261003-r109";
+import { greetingFirstCopy } from "./greeting-first-i18n.js?v=v7-20261003-r109";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r109";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261003-r109";
+import { POLISH_EXCLUDED_IDS, POLISH_PREFERENCE_KEY, POLISH_STATE_KEY, answerFromPolish, canPolishAgain, livePolishEntry, polishEntry, polishLeadIsShort, polishTurnedOff, rejectPolished, renderPolishExtras, renderPolishLead, requestTextPolish, withBoxEdit, withPolishFailure, withPolishResult, withPolishUse } from "./text-polish.js?v=v7-20261003-r109";
+import { textPolishCopy } from "./text-polish-i18n.js?v=v7-20261003-r109";
+import { createParticipantReference, publicParticipantReference } from "./participant-reference.js?v=v7-20261003-r109";
+import { buildReferralBatch, parseReferralRecipients, safeReferrerLabel } from "./referral.js?v=v7-20261003-r109";
+import { EXHIBITION_OPEN_CALL, buildExhibitionApplicationPayload, createDefaultExhibitionApplication, validateExhibitionApplication } from "./exhibition-application.js?v=v7-20261003-r109";
 
 const root = document.querySelector("#root");
 // 자료 파일도 판 표식을 붙여 받는다. 모듈은 ?v= 로 고정되는데 이 둘만 표식이 없어, 브라우저가
@@ -37,7 +37,7 @@ const edition = document.body.dataset.edition || "pilot";
 const isRc2 = edition === "rc2";
 // 빌드가 이 자리를 실제 커밋으로 갈아 끼운다(scripts/build-static.mjs). 손으로 고치는
 // 버전 문자열은 12일 동안 낡은 채 네 번의 배포를 지나왔다 — 그래서 사람 손을 뺐다.
-const buildStamp = "84593a875136 2026-10-03T05:25:53.817Z";
+const buildStamp = "4e4163bce179 2026-10-03T05:52:36.230Z";
 const releaseVersion = isRc2 ? "rc2-v0.6.1-task9-live-data-local-2026-08-18" : "rc1-2026-08-03";
 const draftKey = `over39-${edition}-draft`;
 const pendingKey = `over39-${edition}-pending-submission`;
@@ -790,6 +790,14 @@ function getConnection() {
   // 대신 쓰는 화면이 「번역이 함께 갑니다」가 아니라 「원문만 전달됩니다」라고 말한다.
   if (state.connection.translation_allowed !== "YES" && state.connection.translation_allowed !== "NO") {
     state.connection.translation_allowed = "YES";
+  }
+  // 2026-10-03(TK 「두 개만 남겨서 올려」): 「역할·지역 정도만 보여주세요」를 뺐다. 받는 화면에는 처음부터
+  // 아무것도 나오지 않아(9월, 적은 인원에서 역할 하나가 사실상 지목이라) 익명과 같았다 — 지키지 못하는 약속이었다.
+  // 그것을 골라 둔 채 아직 보내지 않은 초안은 다시 고르게 한다. 이미 보낸 안부는 그대로 둔다.
+  if (state.connection.sender_visibility === "CONTEXTUAL" && state.connection.stage !== "done") {
+    state.connection.sender_visibility = "";
+    state.connection.preview_confirmed = false;
+    if (state.connection.stage === "preview") state.connection.stage = "message";
   }
   return state.connection;
 }
@@ -3135,7 +3143,7 @@ function connectionCanSave() {
   if (connection.stage !== "preview") return false;
   return hasOutgoingMessage
     && Boolean(connection.message_audience)
-    && ["NAMED", "CONTEXTUAL", "ANONYMOUS"].includes(connection.sender_visibility)
+    && ["NAMED", "ANONYMOUS"].includes(connection.sender_visibility)
     && ["YES", "NO"].includes(connection.translation_allowed)
     && connection.preview_confirmed === true;
 }
@@ -3254,7 +3262,7 @@ function renderGlobalGreetingsConnection(connection) {
   const polishCopy = textPolishCopy(state.language);
   const greetingPolishOpen = greetingPolishable ? `<div class="text-field-polish greeting-polish" data-polish-field="${GREETING_POLISH_FIELD}">${renderPolishLead({ copy: polishCopy, esc, short: true, off: polishOff() })}` : "";
   const greetingPolishClose = greetingPolishable ? `${renderPolishExtras({ copy: polishCopy, id: "greeting", field: GREETING_POLISH_FIELD, entry: greetingPolishEntry, busy: polishBusy.has(GREETING_POLISH_FIELD), status: polishStatus.get(GREETING_POLISH_FIELD) || "", off: polishOff(), text: String(messageValue || ""), lead: false, esc })}</div>` : "";
-  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p>${greetingPolishOpen}<textarea class="text-input" data-connection-input="message_text"${greetingPolishable ? ` data-polish-field="${GREETING_POLISH_FIELD}" data-input-id="greeting"` : ""} maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count"${greetingPolishable ? "" : ` placeholder="${esc(copy.messagePlaceholder)}"`}>${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count">${messageLength} / ${GREETING_MESSAGE_MAX}</p>${greetingPolishClose}<h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["CONTEXTUAL", visibilityOptions[1]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(connection.translation_allowed === "NO" ? local.translationNoteOriginalOnly : local.translationNote)}</p></section>`;
+  const messageSection = `<section class="connection-section message-first"><h2>${esc(local.nextSentenceTitle)}</h2><p class="greeting-writing-help">${esc(local.nextSentenceHelp)}</p>${greetingPolishOpen}<textarea class="text-input" data-connection-input="message_text"${greetingPolishable ? ` data-polish-field="${GREETING_POLISH_FIELD}" data-input-id="greeting"` : ""} maxlength="${GREETING_MESSAGE_MAX}" aria-describedby="greeting-message-count"${greetingPolishable ? "" : ` placeholder="${esc(copy.messagePlaceholder)}"`}>${esc(messageValue)}</textarea><p class="greeting-message-count${messageLength >= GREETING_MESSAGE_MAX ? " is-full" : ""}" id="greeting-message-count">${messageLength} / ${GREETING_MESSAGE_MAX}</p>${greetingPolishClose}<h3>${esc(local.senderVisibilityTitle)}</h3>${renderConnectionChoices("sender_visibility", [["NAMED", visibilityOptions[0]], ["ANONYMOUS", visibilityOptions[2]]])}<p class="greeting-translation-note">${esc(connection.translation_allowed === "NO" ? local.translationNoteOriginalOnly : local.translationNote)}</p></section>`;
   const profile = buildConnectionProfile(state.submitted || createResponse(), connection);
   const contextLabel = connection.sender_visibility === "ANONYMOUS" ? visibilityOptions[2] : connection.sender_visibility === "NAMED" ? safeReferrerLabel(state.submitted?.response_document?.participant?.display_name || copy.publicRecord) : (profile.participant_context?.kind === "EVERYDAY" ? copy.publicEveryday : profile.role ? copy.publicRole : copy.publicRecord);
   const previewSection = `<section class="connection-section greeting-preview"><div class="greeting-preview-letter"><span>${esc(copy.original)} · ${esc(languageLabel(state.submitted?.source_language || state.language))}</span><p>${esc(messageValue || copy.noMessage)}</p></div><div class="greeting-preview-disclosure"><dl class="greeting-preview-summary"><div><dt>${esc(copy.publicContext)}</dt><dd>${esc(contextLabel)}</dd></div><div><dt>${esc(copy.language)}</dt><dd>${esc(languageLabel(state.submitted?.source_language || state.language))}</dd></div><div><dt>${esc(copy.translation)}</dt><dd>${esc(connection.translation_allowed === "YES" ? copy.translationAllowed : copy.originalOnly)}</dd></div></dl><p class="greeting-privacy-note">${esc(copy.previewPrivacy)}</p></div>${hasMessage ? `<label class="final-check greeting-preview-confirmation"><input type="checkbox" data-connection-preview-confirmed ${connection.preview_confirmed ? "checked" : ""} /><span>${esc(local.previewConfirm)}</span></label>` : ""}</section>`;

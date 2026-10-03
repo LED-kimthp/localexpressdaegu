@@ -1,8 +1,8 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r108";
-import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r108";
-import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261003-r108";
-import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r108";
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r108";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r109";
+import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r109";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261003-r109";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -303,7 +303,8 @@ function renderScreen() {
   if (state.result) { root.innerHTML = `<main class="relay-layout"><section class="relay-card"><div class="archive-label">${text(simplified.projectLabel)}</div><h1>${text(state.result)}</h1>${notification}</section></main>`; return; }
   const thread = state.relay.thread; const messages = thread.messages || [];
   const draft = state.draft;
-  const identityChoices = [["NAMED", compose().named], ["CONTEXTUAL", compose().contextual], ["ANONYMOUS", compose().anonymous]];
+  // 「역할·지역 정도만」은 뺐다(TK 2026-10-03) — 받는 화면에 아무것도 안 나와 익명과 같았다. 설문 쪽 안부 화면과 같다.
+  const identityChoices = [["NAMED", compose().named], ["ANONYMOUS", compose().anonymous]];
   const choiceButtons = (field, options) => `<div class="choice-list">${options.map(([value, label]) => `<button type="button" class="choice ${draft[field] === value ? "selected" : ""}" data-relay-choice="${text(field)}" data-relay-choice-value="${text(value)}" aria-pressed="${draft[field] === value}"><span aria-hidden="true">${draft[field] === value ? "✓" : ""}</span><strong>${text(label)}</strong></button>`).join("")}</div>`;
   const composeFlow = state.composeStep === "read"
     ? `<section class="relay-reply relay-read-actions"><div class="relay-next-prompt"><h2>${text(simplified.continuationTitle)}</h2><p>${text(simplified.continuationHelp)}</p></div><div class="relay-actions relay-next-actions"><button class="primary-button" data-relay-action="begin">${text(simplified.continuationPrimary)} <span aria-hidden="true">→</span></button><button class="secondary-button" data-relay-action="pass">${text(simplified.continuationSecondary)}</button></div></section>`
