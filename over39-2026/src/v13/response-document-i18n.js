@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r107";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r108";
 // Participant-facing frames for the participation record. Free-text answers
 // remain in the language the participant used; these frames never turn them
 // into a Korean administrative document.

@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r107";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r108";
 // Completion is a participant-facing service screen. Keep it separate from
 // the response-document frame so a record can remain in its source language
 // while this surrounding interface follows the selected interface language.

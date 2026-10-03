@@ -1,8 +1,8 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r107";
-import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r107";
-import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261003-r107";
-import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r107";
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r107";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r108";
+import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r108";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261003-r108";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r108";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r108";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
