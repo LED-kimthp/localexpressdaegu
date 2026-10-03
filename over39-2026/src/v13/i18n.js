@@ -1,6 +1,6 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20261002-r103";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261002-r103";
-import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261002-r103";
+import { extraCopy } from "./i18n-v038.js?v=v7-20261002-r104";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261002-r104";
+import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261002-r104";
 
 const copy = {
   en: {
@@ -54,8 +54,8 @@ const copy = {
     "겸하는 역할이 없으면 ‘없음’을 선택해 주세요.": "If you do not hold another role alongside this one, choose “None.”",
     "활동의 시간과 현재 상태를 알려주세요.": "Tell us about the duration and current state of your involvement.",
     "지금의 생활과 활동 범위를 알려주세요.": "Tell us about where you live and are active now.",
-    "원하지 않는 항목은 건너뛸 수 있습니다.": "You may skip anything you prefer not to answer.",
-    "현재 머무는 나라 (선택)": "Country where you live now (optional)",
+    "원하지 않는 항목은 건너뛸 수 있습니다.": "You can skip anything you would rather not answer.",
+    "현재 머무는 나라 (선택)": "Country you are in now (optional)",
     "오늘 가장 먼저 떠오르는 것은 무엇인가요?": "What comes to mind first about arts and culture today? It is fine if you do not know the exact name.",
     "이름이나 연도가 선명하지 않아도 괜찮습니다. 남아 있는 장면 하나에서, 이야기를 천천히 시작해 주세요.": "Names and dates do not need to be exact. Let us begin gently with one remaining scene.",
     "이전": "Back",
@@ -66,7 +66,7 @@ const copy = {
     "기타 내용을 짧게 적어주세요.": "Please add a brief note.",
     "없음": "None",
     "기타": "Other",
-    "해당 없음": "Not applicable",
+    "해당 없음": "None of these",
     "응답하지 않음": "Prefer not to answer"
   },
   ja: {
@@ -266,12 +266,12 @@ export function translate(language, text) {
 
 const questions = {
   en: {
-    P01: { text: "Where would you like to begin this conversation?", },
-    P01_CONTEXT: { text: "From which position are you mainly speaking about this memory?", },
-    P02G: { text: "Choose the broad role that feels closest to this response.", },
+    P01: { text: "Where would you like to start today?", },
+    P01_CONTEXT: { text: "Where do you mainly stand as you tell us about this memory?", },
+    P02G: { text: "Choose the broad category of role closest to this answer.", },
     P02: { text: "Within that group, choose the role closest to this response." },
     P03: { text: "Do you hold any other roles alongside this one?" },
-    P05: { text_professional: "How long has it been since you began the arts and culture activity you just described?", text_audience: "How long has it been since you began seeking out arts and culture or taking part in exhibitions and programmes?" },
+    P05: { text_professional: "How long has it been since you began the arts and culture activity you just described?", text_audience: "How long is it since you started seeking out arts and culture yourself, or taking part in exhibitions and programmes?" },
     P05_YEAR: { text: "If you remember, please enter the year you began." },
     P06: { text: "Which description is closest to your current arts and culture activity?" },
     P07: { text: "Which description is closest to your actual activity and public visibility in recent years?" },
@@ -281,24 +281,24 @@ const questions = {
     M01: { text: "What comes to mind first about arts and culture today? It is fine if you do not know the exact name.", }
   },
   ja: {
-    P01: { text: "今日はどこから話を始めましょうか？", },
+    P01: { text: "今日はどこからお話を始めましょうか？", },
     P01_CONTEXT: { text: "この記憶を、主にどの立場から語っていますか？", },
-    P02G: { text: "今回の回答に最も近い役割の大きな区分を選んでください。", },
+    P02G: { text: "今回の回答にいちばん近い役割を、大きな区分から選んでください。", },
     P02: { text: "その中で、今回の回答に最も近い主な役割を選んでください。" },
     P03: { text: "この役割と並行している別の役割はありますか？" },
     P05: { text_professional: "今お話しいただいた文化芸術の活動を始めてから、どのくらい経ちましたか？", text_audience: "自分から文化芸術を探したり、展覧会やプログラムに参加したりするようになってから、どのくらい経ちましたか？" },
     P05_YEAR: { text: "覚えていれば、始めた年を入力してください。" },
     P06: { text: "現在の文化芸術活動に最も近い状態はどれですか？" },
     P07: { text: "近年の実際の活動と外部からの見え方に最も近いものはどれですか？" },
-    P08: { text: "年齢層を選んでください。" },
+    P08: { text: "現在の年代を選んでください。" },
     P09: { text: "現在主に生活している国と都市を教えてください。" },
-    P10: { text_professional: "現在主に活動している国と都市を教えてください。", text_audience: "文化芸術に主に出会う国と都市を教えてください。" },
+    P10: { text_professional: "現在主に活動している国と都市を教えてください。", text_audience: "主に文化芸術に触れている国と都市を教えてください。" },
     M01: { text: "今日、文化芸術に関して最初に思い浮かぶものは何ですか？正確な名前が分からなくても大丈夫です。", }
   },
   zh: {
-    P01: { text: "這次您想從哪一個位置開始談起？", },
-    P01_CONTEXT: { text: "您主要從什麼位置談這段記憶？", },
-    P02G: { text: "請選擇最接近這次回答的大類角色。", },
+    P01: { text: "今天想從哪裡開始說起？", },
+    P01_CONTEXT: { text: "您主要是站在什麼位置談這段記憶？", },
+    P02G: { text: "請選出與這次回答最接近的角色大類。", },
     P02: { text: "請在這個類別中選擇最接近這次回答的主要角色。" },
     P03: { text: "您是否同時承擔其他角色？" },
     P05: { text_professional: "您剛才說的這項文化藝術活動，開始到現在有多久了？", text_audience: "您開始主動接觸文化藝術、參與展覽和活動，到現在有多久了？" },
@@ -340,7 +340,8 @@ export function localizeQuestion(language, item) {
 //
 // 낱말째 바꿔야 하는 것은 글자 대응으로 안 된다. 覆 는 간체에도 있는 글자라
 // 한 글자로 바꾸면 覆盖 가 깨진다 — 그래서 回覆 는 낱말로 따로 둔다.
-const zhHansWordPairs = [["回覆", "回复"]];
+// 2026-10-02 간체 다시 쓰기 검토: 번체에서 글자째 바꾸면 대만 낱말이 간체에 따라온다(展場·聯絡·年齡層). 대륙 말로 낱말째 바꾼다. 「聯絡」은 넣지 않는다 — 「联络负责人」(연락 담당)처럼 대륙에서도 그대로 쓰는 자리가 있다.
+const zhHansWordPairs = [["回覆", "回复"], ["展場", "展厅"], ["展场", "展厅"], ["年齡層", "年龄段"], ["年龄层", "年龄段"]];
 const applyZhHansResidual = (value) => {
   if (typeof value === "string") {
     const word = zhHansWordPairs.reduce((text, [from, to]) => text.replaceAll(from, to), value);

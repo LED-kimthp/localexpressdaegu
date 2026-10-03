@@ -41,7 +41,7 @@ export function translationReuseDecision({ action, sourceLanguage, approvedText,
 const FINAL_SUMMARY_UNAVAILABLE_NOTE = {
   ko: "구체적인 정리 결과를 불러오지 못했습니다.",
   en: "The summary could not be prepared this time.",
-  ja: "整理の結果を取得できませんでした。",
+  ja: "まとめの結果を読み込めませんでした。",
   "zh-Hans": "这次未能取得整理结果。",
   "zh-Hant": "這次未能取得整理結果。",
   // 옛 코드 zh 는 번체였다(i18n.js 가 zh-Hant 를 zh 위에 얹는다). zh-HK 처럼

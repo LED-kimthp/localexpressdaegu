@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r103";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r104";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261002-r103";
-import { normalizedDScope } from "./flow.js?v=v7-20261002-r103";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261002-r104";
+import { normalizedDScope } from "./flow.js?v=v7-20261002-r104";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20261002-r103";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20261002-r103";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r103";
+import { translate } from "./i18n.js?v=v7-20261002-r104";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20261002-r104";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r104";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -24,7 +24,7 @@ const ROLE_LABELS = {
 };
 
 const ROLE_LABELS_EN = {
-  R01: "visual artist", R02: "photography, video, or media artist", R03: "craft or design practitioner",
+  R01: "visual artist", R02: "photography, moving image or media artist", R03: "craft or design practitioner",
   R04: "curator or exhibition planner", R05: "independent planner or producer", R06: "critic",
   R07: "researcher", R08: "arts and culture journalist", R09: "independent media practitioner",
   R10: "editor or publishing planner", R11: "archivist or records researcher", R12: "photography or video documenter",
@@ -147,23 +147,23 @@ const LANGUAGE_LABELS = {
 };
 
 const EN_LABELS = {
-  SELF: "my own practice and continuity", MEMORY: "a remembered artist, work, place, or scene", BOTH: "my practice and a memory of someone else", AUDIENCE: "arts and culture experienced as an audience member",
+  SELF: "my activity and keeping it going", MEMORY: "a remembered artist, work, place, or scene", BOTH: "my activity and a memory of someone else", AUDIENCE: "arts and culture experienced as an audience member or citizen",
   ARTIST: "a person or artist", WORK_OBJECT: "a work, object, image, or performance", SPACE: "a place", EXHIBITION: "an exhibition or event", SCENE: "a scene", PHRASE: "a phrase that remains", SENSATION: "a feeling that is hard to name", PRACTICE: "a practice, activity, or long-held interest", SELF_PRACTICE: "my own practice and activity", NO_RECALL: "no specific subject comes to mind",
   ACTIVE_MAIN: "a main activity", ACTIVE_PARALLEL: "alongside other work", PROJECT_BASED: "around particular projects", ROLE_CHANGED: "through a changed role or way of working", PACE_ADJUSTED: "at an adjusted pace", DISTANCED: "at some distance from the field", MIXED: "difficult to describe in one way",
   AUDIENCE_SELF_DIRECTED: "self-directed when interest arises", AUDIENCE_WITH_OTHERS: "through friends, family, classes, or recommendations", AUDIENCE_CROSS_MEDIA: "alongside film, performance, comics, design, or online content", AUDIENCE_EVENT_BASED: "when exhibitions or programmes are available", AUDIENCE_PACE_ADJUSTED: "at an adjusted pace after a more frequent period", AUDIENCE_RELATION_CHANGED: "in a changing way",
   VISIBLE_ACTIVE: "activity and public presentation continuing together", ACTIVE_LESS_VISIBLE: "activity continuing with less public presentation", ROLE_SHIFT: "a changed role, medium, or way of working", PROJECT_ONLY: "particular projects", LIFE_ADJUSTED: "an adjusted pace around life conditions", AUDIENCE_VISIBLE_ACTIVE: "interest and in-person participation continuing together", AUDIENCE_INTEREST_LESS_VISIT: "interest continuing while visits have become less frequent", AUDIENCE_ONLINE_SHIFT: "a growing use of online, published, and video paths", AUDIENCE_COMPANION_BASED: "participation mainly with friends, family, or school", AUDIENCE_CONDITION_ADJUSTED: "participation adjusted around cost, time, and travel", AUDIENCE_DISTANCED: "a period of distance from arts and culture",
   STEADY: "fairly steady", SEASONAL: "varying with time and circumstances", RESEARCH_RECORD: "centred on preparation, research, or records", PAUSED: "currently paused", SHIFTED: "moving into a different role or way of working", CLOSED: "feeling that the work or activity has come to an end", AUDIENCE_ACTIVE: "fairly steady", AUDIENCE_OCCASIONAL: "varying with time and circumstances",
-  MAKING_AND_SHOWING: "making and public presentation continuing together", MAKING_NOT_SHOWING: "core activity continuing while public presentation is paused", SHOWING_PROJECT_BASED: "public activity around particular projects", PUBLIC_ROLE_SHIFT: "public activity changing beyond presentation or exhibition", BOTH_PAUSED: "both activity and public presentation currently paused", NOT_WANTED: "not planning public presentation at present", AUDIENCE_REGULAR: "fairly steady", AUDIENCE_ONLINE: "centred on online, published, or recorded encounters", AUDIENCE_PAUSED: "currently paused",
+  MAKING_AND_SHOWING: "making and showing both continuing", MAKING_NOT_SHOWING: "core activity continuing while public presentation is paused", SHOWING_PROJECT_BASED: "public activity around particular projects", PUBLIC_ROLE_SHIFT: "public activity changing beyond presentation or exhibition", BOTH_PAUSED: "both activity and public presentation currently paused", NOT_WANTED: "not planning public presentation at present", AUDIENCE_REGULAR: "fairly steady", AUDIENCE_ONLINE: "centred on online, published, or recorded encounters", AUDIENCE_PAUSED: "currently paused",
   LIVELIHOOD: "livelihood and other work", CARE: "care and family time", HEALTH: "health and recovery", COST: "production, presentation, or travel costs", SPACE: "space for working, practising, or storing", ADMIN: "administrative and role demands", OPPORTUNITY: "opportunities for exhibition, presentation, or participation", RELATIONSHIP: "networks and collaboration", REGION: "place and travel", DIRECTION: "time to consider direction", CHOICE: "personal choices and priorities", DAILY_SCHEDULE: "daily, study, and work schedules", COST_MOVE: "cost and travel", COMPANION: "someone to go with", INFORMATION: "information about works and programmes", LANGUAGE_GUIDE: "language and ways of explaining", COMFORT: "comfort in entering a space", ONLINE: "online routes", OTHER: "a condition named by the participant",
   REST: "rest and recovery", PREPARATION: "preparation and inquiry", LONG_RESEARCH: "continuity and accumulation", TRANSITION: "a shift in role or approach", DISTANCE: "distance and readjustment", CLOSURE: "closure and movement onward", AUDIENCE_DAILY_INTEREST: "everyday interest", AUDIENCE_DISCOVERY: "new discovery", AUDIENCE_SHARED: "shared connection", AUDIENCE_HYBRID: "a meeting of online and in-person paths", AUDIENCE_CHANGE: "a change in taste and perspective", UNDECIDED: "several states at once",
-  PEOPLE: "people who went together", AUDIENCE: "audience members and participants", INCOME: "income that supports everyday life", OTHER_WORK: "other work and roles", INSTITUTION: "institutions and support", EDUCATION: "education, research, and learning", RECORD: "records, materials, and archives", FAMILY_CARE: "family and care relationships", MEMORY: "memory and a long-held question", SELF_PACE: "a self-chosen pace", TIME_COST_MOVE: "time, cost, and travel room", GUIDE: "clear information and guidance", ONLINE_MEDIA: "online, published, and video media", RECOMMENDATION: "another person's recommendation", NONE: "no particular condition comes to mind",
+  PEOPLE: "people and peers who were with me", AUDIENCE: "audience members and participants", INCOME: "income that supports everyday life", OTHER_WORK: "other work and roles", INSTITUTION: "institutions and support", EDUCATION: "education, research, and learning", RECORD: "records, materials, and archives", FAMILY_CARE: "family and care relationships", MEMORY: "memories and a long-held question", SELF_PACE: "a self-chosen pace", TIME_COST_MOVE: "time, cost, and travel room", GUIDE: "clear information and guidance", ONLINE_MEDIA: "online, published, and video media", RECOMMENDATION: "another person's recommendation", NONE: "no particular condition comes to mind",
 };
 
 const EN_ROUTE_LABELS = {
-  SELF: "my own practice and continuity",
+  SELF: "my activity and keeping it going",
   MEMORY: "a remembered artist, work, place, or scene",
-  BOTH: "my practice and a memory of someone else",
-  AUDIENCE: "arts and culture experienced as an audience member",
+  BOTH: "my activity and a memory of someone else",
+  AUDIENCE: "arts and culture experienced as an audience member or citizen",
 };
 
 const esc = (value) => String(value ?? "")
@@ -246,14 +246,14 @@ const RECONNECT_LABELS = {
 // 한국어 값이 찍히고 칸 이름은 undefined 가 됐다(2026-09-11 실측). 스키마 보기 문구를
 // 옮긴 것이며, appendix-document.test.js 가 한국어 사전과 열쇠가 맞는지 대조한다.
 const EN_PAUSE_REASON_LABELS = {
-  LIVELIHOOD: "Livelihood and other work", CARE: "Care and family time",
+  LIVELIHOOD: "Earning a living and other work", CARE: "Care and family time",
   HEALTH: "Health and recovery", COST: "Production, presentation and travel costs",
   SPACE: "Studio, rehearsal and storage space", ADMIN: "Administration and role burden",
   OPPORTUNITY: "Opportunities to exhibit, present and take part",
   AGE_ELIGIBILITY_END: "End of the young-artist funding age limit",
   RELATIONSHIP: "Networks and terms of collaboration", REGION: "Region and mobility",
   DIRECTION: "Time to consider direction", CHOICE: "Personal choice and priorities",
-  DAILY_SCHEDULE: "Daily life, study and work time", COST_MOVE: "Cost and travel",
+  DAILY_SCHEDULE: "Time for daily life, study and work", COST_MOVE: "Cost and travel",
   COMPANION: "Someone to go with", INFORMATION: "Information about works and programmes",
   LANGUAGE_GUIDE: "Language and how things are explained",
   COMFORT: "Feeling at ease entering the space", ONLINE: "Ways of meeting it online",
@@ -265,11 +265,11 @@ const EN_TRANSITION_STATE_LABELS = {
   UNSURE: "Not sure", SKIP: "Skipped",
 };
 const EN_INVISIBLE_STATE_LABELS = {
-  YES: "Something was continuing", MIXED: "Continuing and pausing together",
+  YES: "Something was carrying on", MIXED: "Continuing and pausing together",
   NO: "Hard to recall", NO_SUCH_PERIOD: "No such less-visible period", UNSURE: "Not sure",
 };
 const EN_ACTIVITY_DURATION_LABELS = {
-  LT1: "Under 1 year", Y1_3: "1–3 years", Y3_5: "3–5 years", Y5_10: "5–10 years",
+  LT1: "Less than 1 year", Y1_3: "1–3 years", Y3_5: "3–5 years", Y5_10: "5–10 years",
   Y10_20: "10–20 years", Y20_30: "20–30 years", Y30_PLUS: "Over 30 years",
   DIFFICULT: "Hard to say exactly", SKIP: "Not answered",
 };
@@ -705,12 +705,12 @@ export function buildResponseDocument({
   const copy = english ? {
     title: "〈Over 39〉 Participation Record",
     subtitle: "A record of remembering and continuing with arts and culture",
-    descriptionAudience: "This record brings together a remembered scene, ways of encountering arts and culture now, and the conditions that make participation possible.",
+    descriptionAudience: "This record brings together a scene remembered as an audience member, the ways you have encountered arts and culture, and the conditions that kept your participation going.",
     descriptionOther: "This record brings together experiences of remembering and continuing with arts and culture, the current flow, and the conditions that matter for continuing.",
     confirmation: "This record gathers what you have shared in an order that is easy to revisit. You may revise the words that need changing.",
     original: "Original · ", koreanTranslation: "Korean translation", translationReady: "Prepared from the original", translationPending: "Translation in preparation",
     coordinateTitle: "The three directions your record reaches", coordinatePending: "The three directions are being gathered", coordinateText: "We brought together the meaning of the memory, the current flow, and the conditions for continuing to mark the position closest to this record.",
-    summary: "Response summary", promiseTitle: "We keep your record", promise: ["We will stay with the memories and the stories of the present gathered here.", "As different records accumulate, what we remember and which conditions we need can become clearer.", "We will carry these records into conversations about cultural institutions and policy wherever that is possible.", "We will remember the story you have left here."],
+    summary: "Response summary", promiseTitle: "We keep your record", promise: ["We will stay with the memories and the stories of the present gathered here.", "As different records accumulate, what we remember and which conditions we need can become clearer.", "We will keep carrying these records forward so that they can reach the conversations where the systems and policies of arts and culture are discussed.", "We will remember the story you have left here."],
   } : {
     title: "〈만 39세 이상〉 참여 기록",
     subtitle: "문화예술을 기억하고 이어온 경험",
@@ -742,7 +742,7 @@ export function buildResponseDocument({
   // The final document shows the confirmed text itself, not the editing process
   // that led to it. Draft/approved provenance remains in the response snapshot.
   if (original) summaryParagraphs.push({ label: `${copy.original}${sourceLabel}`, text: original, status: "" });
-  if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation in preparation" : copy.translationPending), status: korean ? copy.translationReady : copy.translationPending });
+  if (sourceLanguage !== "ko") summaryParagraphs.push({ label: copy.koreanTranslation, text: korean || (english ? "Korean translation pending" : copy.translationPending), status: korean ? copy.translationReady : copy.translationPending });
   const coordinate = recordCoordinate(answers);
   const axisText = frameLanguage === "ko" ? AXIS_TEXT : frameLanguage === "en" ? AXIS_TEXT_EN : frame.axis;
   // 참여자가 화면에서 본 이름과 코드북 이름이 다르다 — 「감각과 정서」 대 「감각·정서」.
