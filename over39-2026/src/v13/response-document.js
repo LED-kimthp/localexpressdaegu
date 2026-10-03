@@ -1,13 +1,13 @@
-import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261002-r104";
+import { responseDocumentFrame } from "./response-document-i18n.js?v=v7-20261003-r105";
 // 연구용 어투 라벨은 이미 research-insights.js 에 있다. 부록에서 새로 지어내면
 // 관리자 묶음의 어휘와 어긋나 같은 값이 두 이름으로 불린다(2026-09-09).
-import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261002-r104";
-import { normalizedDScope } from "./flow.js?v=v7-20261002-r104";
+import { LABELS as RESEARCH_LABELS } from "./research-insights.js?v=v7-20261003-r105";
+import { normalizedDScope } from "./flow.js?v=v7-20261003-r105";
 // 설문이 참여자에게 보여준 문구를 부록도 그대로 쓴다. 부록이 자기 사전을 따로 들면
 // 같은 값이 두 이름으로 불리고, 사전을 채워도 부록은 비어 있게 된다(2026-09-11).
-import { translate } from "./i18n.js?v=v7-20261002-r104";
-import { stage1Copy } from "./stage1-i18n.js?v=v7-20261002-r104";
-import { task7Copy } from "./task7-i18n.js?v=v7-20261002-r104";
+import { translate } from "./i18n.js?v=v7-20261003-r105";
+import { stage1Copy } from "./stage1-i18n.js?v=v7-20261003-r105";
+import { task7Copy } from "./task7-i18n.js?v=v7-20261003-r105";
 
 export const RESPONSE_DOCUMENT_VERSION = "over39-participation-record-v0.7.0-layered-approval-2026-08-18";
 
@@ -146,9 +146,18 @@ const LANGUAGE_LABELS = {
   nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
 };
 
-const EN_LABELS = {
-  SELF: "my activity and keeping it going", MEMORY: "a remembered artist, work, place, or scene", BOTH: "my activity and a memory of someone else", AUDIENCE: "arts and culture experienced as an audience member or citizen",
+// 2026-10-02(TK 「영어 이름표 고쳐서 올려」): 영어 이름표를 한 객체(EN_LABELS)에 모아 두어 같은 열쇠가 두 번 있었다 —
+// MEMORY(경로·지원 조건)·AUDIENCE(경로·지원 조건)·SPACE(기억의 대상·제약 조건). 객체에서는 뒤의 것이 이겨, 기억의 대상으로
+// 「공간」을 고른 사람의 영어 기록에 「space for working, practising, or storing」(제약 조건)이 찍혔다. 항목마다 따로 둔다.
+const EN_MEMORY_TYPE_LABELS = {
   ARTIST: "a person or artist", WORK_OBJECT: "a work, object, image, or performance", SPACE: "a place", EXHIBITION: "an exhibition or event", SCENE: "a scene", PHRASE: "a phrase that remains", SENSATION: "a feeling that is hard to name", PRACTICE: "a practice, activity, or long-held interest", SELF_PRACTICE: "my own practice and activity", NO_RECALL: "no specific subject comes to mind",
+};
+
+const EN_SUPPORT_LABELS = {
+  PEOPLE: "people and peers who were with me", AUDIENCE: "audience members and participants", INCOME: "income that supports everyday life", OTHER_WORK: "other work and roles", INSTITUTION: "institutions and support", EDUCATION: "education, research, and learning", RECORD: "records, materials, and archives", FAMILY_CARE: "family and care relationships", MEMORY: "memories and a long-held question", SELF_PACE: "a self-chosen pace", TIME_COST_MOVE: "time, cost, and travel room", GUIDE: "clear information and guidance", ONLINE_MEDIA: "online, published, and video media", RECOMMENDATION: "another person's recommendation", NONE: "no particular condition comes to mind", SPACE: "a space where I can work", REGION: "local relationships and surroundings", OTHER: "a condition I described myself",
+};
+
+const EN_LABELS = {
   ACTIVE_MAIN: "a main activity", ACTIVE_PARALLEL: "alongside other work", PROJECT_BASED: "around particular projects", ROLE_CHANGED: "through a changed role or way of working", PACE_ADJUSTED: "at an adjusted pace", DISTANCED: "at some distance from the field", MIXED: "difficult to describe in one way",
   AUDIENCE_SELF_DIRECTED: "self-directed when interest arises", AUDIENCE_WITH_OTHERS: "through friends, family, classes, or recommendations", AUDIENCE_CROSS_MEDIA: "alongside film, performance, comics, design, or online content", AUDIENCE_EVENT_BASED: "when exhibitions or programmes are available", AUDIENCE_PACE_ADJUSTED: "at an adjusted pace after a more frequent period", AUDIENCE_RELATION_CHANGED: "in a changing way",
   VISIBLE_ACTIVE: "activity and public presentation continuing together", ACTIVE_LESS_VISIBLE: "activity continuing with less public presentation", ROLE_SHIFT: "a changed role, medium, or way of working", PROJECT_ONLY: "particular projects", LIFE_ADJUSTED: "an adjusted pace around life conditions", AUDIENCE_VISIBLE_ACTIVE: "interest and in-person participation continuing together", AUDIENCE_INTEREST_LESS_VISIT: "interest continuing while visits have become less frequent", AUDIENCE_ONLINE_SHIFT: "a growing use of online, published, and video paths", AUDIENCE_COMPANION_BASED: "participation mainly with friends, family, or school", AUDIENCE_CONDITION_ADJUSTED: "participation adjusted around cost, time, and travel", AUDIENCE_DISTANCED: "a period of distance from arts and culture",
@@ -156,7 +165,6 @@ const EN_LABELS = {
   MAKING_AND_SHOWING: "making and showing both continuing", MAKING_NOT_SHOWING: "core activity continuing while public presentation is paused", SHOWING_PROJECT_BASED: "public activity around particular projects", PUBLIC_ROLE_SHIFT: "public activity changing beyond presentation or exhibition", BOTH_PAUSED: "both activity and public presentation currently paused", NOT_WANTED: "not planning public presentation at present", AUDIENCE_REGULAR: "fairly steady", AUDIENCE_ONLINE: "centred on online, published, or recorded encounters", AUDIENCE_PAUSED: "currently paused",
   LIVELIHOOD: "livelihood and other work", CARE: "care and family time", HEALTH: "health and recovery", COST: "production, presentation, or travel costs", SPACE: "space for working, practising, or storing", ADMIN: "administrative and role demands", OPPORTUNITY: "opportunities for exhibition, presentation, or participation", RELATIONSHIP: "networks and collaboration", REGION: "place and travel", DIRECTION: "time to consider direction", CHOICE: "personal choices and priorities", DAILY_SCHEDULE: "daily, study, and work schedules", COST_MOVE: "cost and travel", COMPANION: "someone to go with", INFORMATION: "information about works and programmes", LANGUAGE_GUIDE: "language and ways of explaining", COMFORT: "comfort in entering a space", ONLINE: "online routes", OTHER: "a condition named by the participant",
   REST: "rest and recovery", PREPARATION: "preparation and inquiry", LONG_RESEARCH: "continuity and accumulation", TRANSITION: "a shift in role or approach", DISTANCE: "distance and readjustment", CLOSURE: "closure and movement onward", AUDIENCE_DAILY_INTEREST: "everyday interest", AUDIENCE_DISCOVERY: "new discovery", AUDIENCE_SHARED: "shared connection", AUDIENCE_HYBRID: "a meeting of online and in-person paths", AUDIENCE_CHANGE: "a change in taste and perspective", UNDECIDED: "several states at once",
-  PEOPLE: "people and peers who were with me", AUDIENCE: "audience members and participants", INCOME: "income that supports everyday life", OTHER_WORK: "other work and roles", INSTITUTION: "institutions and support", EDUCATION: "education, research, and learning", RECORD: "records, materials, and archives", FAMILY_CARE: "family and care relationships", MEMORY: "memories and a long-held question", SELF_PACE: "a self-chosen pace", TIME_COST_MOVE: "time, cost, and travel room", GUIDE: "clear information and guidance", ONLINE_MEDIA: "online, published, and video media", RECOMMENDATION: "another person's recommendation", NONE: "no particular condition comes to mind",
 };
 
 const EN_ROUTE_LABELS = {
@@ -366,7 +374,11 @@ function localizedValue(koreanLabel, language, englishLabel = "") {
 
 function documentLabel(labels, value, english = false) {
   const raw = value === "OTHER" ? "OTHER" : value;
-  return english ? EN_LABELS[raw] || labels[raw] || "" : labels[raw] || "";
+  const englishLabels = labels === MEMORY_TYPE_LABELS ? EN_MEMORY_TYPE_LABELS
+    : labels === SUPPORT_LABELS ? EN_SUPPORT_LABELS
+      : labels === ROUTE_LABELS ? EN_ROUTE_LABELS
+        : EN_LABELS;
+  return english ? englishLabels[raw] || labels[raw] || "" : labels[raw] || "";
 }
 
 function labels(values, map, other = "") {
@@ -816,7 +828,7 @@ export function buildResponseDocument({
         ? clean(answers.role_primary_local_title) || localizedValue(ROLE_LABELS.OTHER, frameLanguage, ROLE_LABELS_EN.OTHER)
         : localizedValue(ROLE_LABELS[answers.role_primary], frameLanguage, ROLE_LABELS_EN[answers.role_primary])),
       ...many(L.roles, answers.roles_parallel, ROLE_LABELS, ROLE_LABELS_EN),
-      ...one(L.memory, MEMORY_TYPE_LABELS, answers.memory_type, EN_LABELS),
+      ...one(L.memory, MEMORY_TYPE_LABELS, answers.memory_type, EN_MEMORY_TYPE_LABELS),
       // M03 은 대상마다 다른 것을 묻는다. 칸 이름은 실제로 물은 것을 따라가고, 그 이름이
       // 없는 언어에서는 「기억에서 이어 고른 답」으로 둔다.
       // 저장되는 값은 참여자의 언어와 무관하게 스키마의 한국어 선택지 문자열이다
@@ -835,7 +847,7 @@ export function buildResponseDocument({
       ...many(L.realityNow, answers.pause_context_tags, RESEARCH_LABELS.pause_context_tags, EN_PAUSE_REASON_LABELS),
       ...one(L.transition, RESEARCH_LABELS.transition_state, answers.transition_state, EN_TRANSITION_STATE_LABELS),
       ...one(L.invisible, RESEARCH_LABELS.invisible_continuity_state, answers.invisible_continuity_state, EN_INVISIBLE_STATE_LABELS),
-      ...many(L.support, answers.support_conditions, SUPPORT_LABELS, EN_LABELS),
+      ...many(L.support, answers.support_conditions, SUPPORT_LABELS, EN_SUPPORT_LABELS),
       ...one(L.duration, ACTIVITY_DURATION_LABELS, answers.activity_duration_band, EN_ACTIVITY_DURATION_LABELS),
       // R01 은 설문이 심층인터뷰 대상을 고르는 통로다.
       ...many(L.reconnect, answers.reconnect_preferences, RECONNECT_LABELS, EN_RECONNECT_LABELS),

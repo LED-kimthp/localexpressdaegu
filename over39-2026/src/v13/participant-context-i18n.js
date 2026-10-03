@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r104";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r105";
 // Direct participant-facing copy for the additive cultural-arts context.
 // IDs remain stable in participant-context.js; this table never changes R01–R20.
 const base = {

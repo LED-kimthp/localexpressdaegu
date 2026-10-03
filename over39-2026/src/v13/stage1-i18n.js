@@ -1,4 +1,4 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261002-r104";
+import { withHongKong } from "./hong-kong.js?v=v7-20261003-r105";
 // Stage 1 additions deliberately live apart from the historical question
 // dictionary. Every supported language has its own copy; zh-Hans and zh-Hant
 // are never aliases of one another.

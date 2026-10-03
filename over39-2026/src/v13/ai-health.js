@@ -1,4 +1,4 @@
-import { isLiveModelSource } from "./depth.js?v=v7-20261002-r104";
+import { isLiveModelSource } from "./depth.js?v=v7-20261003-r105";
 // Reads `over39_ai_runs` and answers one question: is it safe to widen the distribution?
 //
 // A rate-limited or failed AI call is invisible to the participant - the follow-up simply
