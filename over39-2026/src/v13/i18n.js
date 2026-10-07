@@ -1,6 +1,7 @@
-import { extraCopy } from "./i18n-v038.js?v=v7-20261003-r109";
-import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261003-r109";
-import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { extraCopy } from "./i18n-v038.js?v=v7-20261006-r110";
+import { TO_SIMPLIFIED } from "./chinese-script-sets.js?v=v7-20261006-r110";
+import { HONG_KONG, toHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { PT_BR } from "./portuguese-i18n.js?v=v7-20261006-r110";
 
 const copy = {
   en: {
@@ -191,6 +192,8 @@ const characterLimitCopy = { nl: "Maximaal {n} tekens", es: "Hasta {n} caractere
 Object.entries(characterLimitCopy).forEach(([language, value]) => {
   copy[language] = { ...(copy[language] || {}), "최대 {n}자": value };
 });
+// 포르투갈어(브라질)는 사전 한 벌이 전부다(portuguese.js). 다른 파일의 화면 문구도 같은 사전에서 만들어진다.
+copy.pt = { ...(copy.pt || {}), ...PT_BR };
 
 // RC2 exposes Simplified and Traditional Chinese as separate language choices.
 // The legacy bank predates those codes and only stored a reviewed zh set.

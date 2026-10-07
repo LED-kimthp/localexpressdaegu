@@ -4,7 +4,7 @@
 // 브라우저가 알려주는 말(ko-KR · zh-SG · ja-JP)을 우리가 내놓는 열 개 중 하나로 좁힌다(2026-10-01 홍콩판으로 열).
 // 설문 화면(app.js)은 이 일을 하는데 편지함(relay.js)은 하지 않아, 「ko-KR 로 옮기되 한국어를
 // 쓰지 말라」는 앞뒤가 맞지 않는 지시가 나가고 한국 사람에게 영어 안내가 보였다(2026-09-23 검증).
-export const OFFERED_LANGUAGE_CODES = Object.freeze(["ko", "en", "ja", "zh-Hans", "zh-Hant", "zh-Hant-HK", "nl", "es", "fr", "ms"]);
+export const OFFERED_LANGUAGE_CODES = Object.freeze(["ko", "en", "ja", "zh-Hans", "zh-Hant", "zh-Hant-HK", "nl", "es", "pt", "fr", "ms"]);
 export function narrowLanguage(value) {
   const tag = String(value || "").trim().toLowerCase();
   if (!tag) return "";
@@ -12,14 +12,15 @@ export function narrowLanguage(value) {
   if (tag.startsWith("ja")) return "ja";
   // 홍콩·마카오는 홍콩판(2026-10-01), 대만과 그 밖의 「번체」 표기는 번체로, 나머지 중국어는 간체로 연다.
   if (tag.startsWith("zh")) return /-hk\b|-mo\b/u.test(tag) ? "zh-Hant-HK" : /hant|-tw/u.test(tag) ? "zh-Hant" : "zh-Hans";
-  for (const code of ["en", "nl", "es", "fr", "ms"]) if (tag.startsWith(code)) return code;
+  // 포르투갈어는 pt-BR·pt-PT 모두 브라질판으로 연다(2026-10-04) — 판은 하나다.
+  for (const code of ["en", "nl", "es", "pt", "fr", "ms"]) if (tag.startsWith(code)) return code;
   return "";
 }
 
 // 사람이 읽는 언어 이름. 「원문 · Français」처럼 쓴다. 코드(zh-Hant)를 그대로 보이지 않는다.
 export const LANGUAGE_LABELS = Object.freeze({
   ko: "한국어", en: "English", ja: "日本語", "zh-Hans": "简体中文", "zh-Hant": "繁體中文（台灣）", "zh-Hant-HK": "繁體中文（香港）",
-  nl: "Nederlands", es: "Español", fr: "Français", ms: "Bahasa Melayu",
+  nl: "Nederlands", es: "Español", pt: "Português (Brasil)", fr: "Français", ms: "Bahasa Melayu",
 });
 export const languageLabel = (code) => LANGUAGE_LABELS[String(code || "")] || String(code || "");
 

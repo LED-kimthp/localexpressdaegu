@@ -1,6 +1,6 @@
-import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20261003-r109";
-import { compactParticipantContext } from "./participant-context.js?v=v7-20261003-r109";
-import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20261003-r109";
+import { safeFinalSummaryFailure } from "./integration-r2-helpers.js?v=v7-20261006-r110";
+import { compactParticipantContext } from "./participant-context.js?v=v7-20261006-r110";
+import { SIMPLIFIED_ONLY, TRADITIONAL_ONLY } from "./chinese-script-sets.js?v=v7-20261006-r110";
 
 const AXES = ["M", "S", "D"];
 // 살아 있는 모델이 실제로 답한 경우의 이름들. 여기에 없는 이름(rules, error,
@@ -1029,7 +1029,7 @@ export function isTranscriptLikeAdaptiveSummary(summary, context = {}) {
 
 const SUMMARY_LANGUAGE_NAMES = Object.freeze({
   en: "English", nl: "Dutch (Nederlands)", es: "Spanish (Español)",
-  fr: "French (Français)", ms: "Malay (Bahasa Melayu)", ja: "Japanese",
+  fr: "French (Français)", pt: "Brazilian Portuguese (Português do Brasil)", ms: "Malay (Bahasa Melayu)", ja: "Japanese",
   "zh-hans": "Simplified Chinese", "zh-hant": "Traditional Chinese",
 });
 

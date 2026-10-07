@@ -1,4 +1,5 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 // Direct participant-facing copy for the additive cultural-arts context.
 // IDs remain stable in participant-context.js; this table never changes R01–R20.
 const base = {
@@ -284,4 +285,4 @@ export function participantRoleDescriptions(language = "ko") { return roleDescri
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
 // contextualCopy 는 위 반복문이 contextualLanguage 에서 이미 만들었으므로 그쪽에 붙인다.
-[base, labels, activityScreenCopy, dContextHintCopy, contextualCopy, fieldDescriptions, roleDescriptions].forEach(withHongKong);
+[base, labels, activityScreenCopy, dContextHintCopy, contextualCopy, fieldDescriptions, roleDescriptions].forEach((table) => { withHongKong(table); withPortuguese(table); });

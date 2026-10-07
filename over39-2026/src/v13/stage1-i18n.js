@@ -1,4 +1,5 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 // Stage 1 additions deliberately live apart from the historical question
 // dictionary. Every supported language has its own copy; zh-Hans and zh-Hant
 // are never aliases of one another.
@@ -371,4 +372,4 @@ export function stage1UiExtraCopy(language = "ko") {
 }
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
-[copy, entryCopy, finalGoldCopy, task5Copy, greetingVisibility, consent, uiExtra].forEach(withHongKong);
+[copy, entryCopy, finalGoldCopy, task5Copy, greetingVisibility, consent, uiExtra].forEach((table) => { withHongKong(table); withPortuguese(table); });

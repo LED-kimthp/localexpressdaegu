@@ -1,8 +1,9 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r109";
-import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261003-r109";
-import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261003-r109";
-import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261003-r109";
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261006-r110";
+import { applyFrenchSpacing } from "./french-typography.js?v=v7-20261006-r110";
+import { greetingTranslationNeeded, translateArrivedGreeting } from "./depth.js?v=v7-20261006-r110";
+import { GREETING_LONG_CHARS, greetingParagraphsOf, languageLabel, narrowLanguage } from "./greeting-text.js?v=v7-20261006-r110";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 
 const root = document.querySelector("#relay-root");
 const endpoint = String(window.OVER39_SUPABASE_RELAY_URL || "").trim();
@@ -123,7 +124,7 @@ const greetingReasonCopy = {
 let state = { loading: true, relay: null, error: "", result: "", notification: "", composeStep: "read", draft: { message: "", sender_visibility: "", translation_allowed: "YES", confirmed: false } };
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01). 이 파일은 읽는 도중에 화면을 그리므로
 // (링크가 틀리면 곧바로 안내를 띄운다) 맨 끝이 아니라 사전 바로 아래에서 만든다.
-[copy, forwardingCopy, receiptCopy, task10a4ReceiptCopy, composeCopy, greetingReasonCopy].forEach(withHongKong);
+[copy, forwardingCopy, receiptCopy, task10a4ReceiptCopy, composeCopy, greetingReasonCopy].forEach((table) => { withHongKong(table); withPortuguese(table); });
 
 function c() { return copy[interfaceLanguageCode] || copy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }
 function forwarding() { return forwardingCopy[interfaceLanguageCode] || forwardingCopy[String(interfaceLanguageCode).toLowerCase().startsWith("ko") ? "ko" : "en"]; }

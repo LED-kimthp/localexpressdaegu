@@ -51,6 +51,8 @@ const FINAL_SUMMARY_UNAVAILABLE_NOTE = {
   es: "Esta vez no se pudo obtener el resumen.",
   fr: "Le résumé n\u2019a pas pu être établi cette fois.",
   ms: "Ringkasan tidak dapat disediakan kali ini.",
+  // 포르투갈어(브라질, 2026-10-04) — 이 파일은 아무것도 불러오지 않으므로 사전(portuguese-i18n.js)의 같은 문장을 그대로 적는다.
+  pt: "Não conseguimos carregar um resumo detalhado.",
 };
 
 export function finalSummaryUnavailableNote(language = "ko") {

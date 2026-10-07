@@ -1,4 +1,5 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 // Task 10A greeting simplification. Korean is the semantic source; each
 // participant-facing locale keeps the same receive-first, next-person meaning.
 const copy = {
@@ -236,4 +237,4 @@ export function greetingSimplificationCopy(language = "ko") {
 }
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
-[copy].forEach(withHongKong);
+[copy].forEach((table) => { withHongKong(table); withPortuguese(table); });

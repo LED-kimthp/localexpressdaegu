@@ -1,4 +1,5 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 // Greeting-first landing and opening flow. Korean is the semantic source;
 // every locale keeps the same four-part journey without adding a matching or
 // system explanation before the participant reads the greeting.
@@ -362,4 +363,4 @@ export function greetingFirstCopy(language = "ko") {
 }
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
-[copy, circularFlowCopy].forEach(withHongKong);
+[copy, circularFlowCopy].forEach((table) => { withHongKong(table); withPortuguese(table); });

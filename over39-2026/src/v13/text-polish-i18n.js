@@ -1,4 +1,5 @@
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 // 「문장 다듬기」 문구(2026-09-24). 한국어가 원문이고 여덟 언어는 그 뜻만 옮긴다.
 // offNote·turnOn: r80–r83 에서 다듬기를 끈 사람의 이어쓰기 초안에만 보인다(끄는 선택 줄은 r84 에서 뺐다).
 // notice·hint·예시는 참여자가 다듬기 칸을 처음 본 칸에만 둔다. 그 뒤 칸은 칸 밑 단추만(TK 2026-09-24:
@@ -219,4 +220,4 @@ export function textPolishCopy(language = "ko") {
 }
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
-[copy].forEach(withHongKong);
+[copy].forEach((table) => { withHongKong(table); withPortuguese(table); });

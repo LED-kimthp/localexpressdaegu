@@ -1,5 +1,6 @@
-import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261003-r109";
-import { withHongKong } from "./hong-kong.js?v=v7-20261003-r109";
+import { greetingSimplificationCopy } from "./greeting-simplification-i18n.js?v=v7-20261006-r110";
+import { withHongKong } from "./hong-kong.js?v=v7-20261006-r110";
+import { withPortuguese } from "./portuguese.js?v=v7-20261006-r110";
 
 // Task 7 participant-facing copy. Korean is the semantic source. Each
 // supported language is explicit so the completion/record/greeting path never
@@ -154,4 +155,4 @@ export function task7Copy(language = "ko") {
 }
 
 // 홍콩판(zh-Hant-HK)은 번체에서 만든다 — hong-kong.js(2026-10-01).
-[copy, reflectionCopy, reflectionStatusCopy, receiptFirstUxCopy].forEach(withHongKong);
+[copy, reflectionCopy, reflectionStatusCopy, receiptFirstUxCopy].forEach((table) => { withHongKong(table); withPortuguese(table); });
